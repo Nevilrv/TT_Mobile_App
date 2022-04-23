@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tcm_mobile_app/screen/set_profile_page.dart';
+import 'package:tcm/screen/set_profile_page.dart';
+import 'package:tcm/screen/sing_up.dart';
 
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
@@ -28,6 +30,7 @@ class _SingInScreenState extends State<SingInScreen> {
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
                       onPressed: () {
@@ -37,13 +40,13 @@ class _SingInScreenState extends State<SingInScreen> {
                         Icons.arrow_back_ios_sharp,
                         color: ColorUtils.kTint,
                       )),
-                  Padding(
-                    padding: EdgeInsets.only(left: Get.width * 0.3),
-                    child: Text(
-                      'Login',
-                      style: FontTextStyle.kWhite17BoldRoboto,
-                    ),
+                  Text(
+                    'Login',
+                    style: FontTextStyle.kWhite17BoldRoboto,
                   ),
+                  SizedBox(
+                    width: Get.width*0.1,
+                  )
                 ],
               ),
               SizedBox(
@@ -91,9 +94,11 @@ class _SingInScreenState extends State<SingInScreen> {
               ),
               TextFormField(
                   obscureText: selected ? false : true,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: Get.height*0.018),
                   controller: pass,
                   decoration: InputDecoration(
                     hintText: 'Password',
+                    hintStyle: TextStyle(fontSize: Get.height*0.02,fontWeight: FontWeight.w500),
                     filled: true,
                     contentPadding: EdgeInsets.all(10),
                     fillColor: Color(0xff363636),
@@ -166,11 +171,41 @@ class _SingInScreenState extends State<SingInScreen> {
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
-                          fontSize: 17),
+                          fontSize: Get.height*0.02),
                     )),
                   ),
                 ),
               ),
+                  SizedBox(
+                    height: Get.height * 0.017,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Not a member?',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w400,
+                            color: Colors.white,
+                            fontSize: Get.height*0.018),
+                      ),
+                      InkWell(
+                        child: Text(
+                          ' Sign Up',
+                          style: TextStyle(
+                            color: ColorUtils.kTint,
+                            fontSize: Get.height*0.022,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: 'Roboto',
+                          ),
+                        ),
+                        onTap: () {
+                          // Get.to(SingInScreen());
+                          Get.to(SignUpScreen());
+                        },
+                      )
+                    ],
+                  )
             ]),
           ),
         ),
@@ -184,13 +219,14 @@ class _SingInScreenState extends State<SingInScreen> {
       String? text,
       String? Function(String?)? validation}) {
     return TextFormField(
-      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: Get.height*0.018),
       validator: validation!,
       readOnly: readOnly!,
       onTap: () {},
       controller: controller,
       decoration: InputDecoration(
           hintText: text,
+          hintStyle: TextStyle(fontSize: Get.height*0.02,fontWeight: FontWeight.w500),
           filled: true,
           contentPadding: EdgeInsets.all(10),
           fillColor: Color(0xff363636),

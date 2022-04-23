@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/screen/singIn_screens.dart';
 
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
@@ -122,7 +123,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontSize: 17),
+                      fontSize: Get.height*0.02),
                 )),
               ),
             ),
@@ -138,15 +139,21 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 style: TextStyle(
                     fontWeight: FontWeight.w400,
                     color: Colors.white,
-                    fontSize: 16),
+                    fontSize: Get.height*0.018),
               ),
               InkWell(
                 child: Text(
-                  ' Sing In',
-                  style: FontTextStyle.kTine16W400Roboto,
+                  ' Sign In',
+                  style: TextStyle(
+                    color: ColorUtils.kTint,
+                    fontSize: Get.height*0.022,
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Roboto',
+                  ),
                 ),
                 onTap: () {
-                  Get.to(SignUpScreen());
+                  Get.to(SingInScreen());
+                  // Get.to(SignUpScreen());
                 },
               )
             ],

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:sizer/sizer.dart';
 
 import '../utils/ColorUtils.dart';
 import 'on_boarding_screen.dart';
@@ -24,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
-      body: Center(child: Image.asset('asset/images/logo.png')),
+      body: Center(child: Image.asset('asset/images/logo.png',height: 100.h,width: 100.h,)),
     );
   }
 }

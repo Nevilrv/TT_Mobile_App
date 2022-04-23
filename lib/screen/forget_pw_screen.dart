@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tcm_mobile_app/screen/reset_pw_screen.dart';
+import 'package:tcm/screen/reset_pw_screen.dart';
 import '../utils/ColorUtils.dart';
 
 import '../utils/font_styles.dart';

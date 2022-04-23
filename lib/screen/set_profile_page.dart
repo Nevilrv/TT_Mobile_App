@@ -37,147 +37,150 @@ class _SetProfilePageState extends State<SetProfilePage> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: ColorUtils.kBlack,
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_sharp,
-                      color: ColorUtils.kTint,
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(top: Get.height * 0.01),
-                  child: Text('Profile Photo',
-                      style: FontTextStyle.kWhite17BoldRoboto),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: Get.height * 0.01),
-                  child: InkWell(
-                    onTap: () {},
-                    child: Text('Skip', style: FontTextStyle.kTine16W400Roboto),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: Get.height * 0.06,
-            ),
-            Center(
-                child: Text(
-              'Add a profile photo',
-              style: FontTextStyle.kWhite24BoldRoboto,
-            )),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Get.width * 0.1, vertical: Get.height * 0.03),
-              child: Text(
-                  'This photo will be used inside this app and also on the forums site.',
-                  textAlign: TextAlign.center,
-                  style: FontTextStyle.kWhite17BoldRoboto),
-            ),
-            SizedBox(
-              height: Get.height * 0.08,
-            ),
-            Center(
-              child: Stack(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  widget.image == null
-                      ? CircleAvatar(
-                          radius: 120,
-                          backgroundColor: Color(0xff363636),
-                          child: ClipRRect(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(120),
-                                  border: Border.all(color: Colors.grey),
-                                  color: Color(0xff363636),
-                                  image: DecorationImage(
-                                    image:
-                                        AssetImage('asset/images/profile.png'),
-                                  )),
-                            ),
-                          ),
-                        )
-                      : CircleAvatar(
-                          radius: 120,
-                          backgroundColor: Color(0xff363636),
-                          child: ClipRRect(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(120),
-                                  border: Border.all(color: Colors.grey),
-                                  color: Color(0xff363636),
-                                  image: DecorationImage(
-                                    image: FileImage(widget.image!),
-                                    fit: BoxFit.cover,
-                                  )),
-                            ),
-                          ),
-                        ),
-                  Positioned(
-                    top: 180,
-                    left: 160,
-                    child: FlatButton(
-                      onPressed: () async {
-                        pickImage().then((value) => Get.to(ProfileSizer(
-                              image: _image,
-                            )));
+                  IconButton(
+                      onPressed: () {
+                        Get.back();
                       },
-                      child: Container(
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: ColorUtils.kTint,
-                            borderRadius: BorderRadius.circular(50),
+                      icon: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: ColorUtils.kTint,
+                      )),
+                  Padding(
+                    padding: EdgeInsets.only(top: Get.height * 0.01),
+                    child: Text('Profile Photo',
+                        style: FontTextStyle.kWhite17BoldRoboto),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: Get.height * 0.01),
+                    child: InkWell(
+                      onTap: () {},
+                      child:
+                          Text('Skip', style: FontTextStyle.kTine16W400Roboto),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(
+                height: Get.height * 0.06,
+              ),
+              Center(
+                  child: Text(
+                'Add a profile photo',
+                style: FontTextStyle.kWhite24BoldRoboto,
+              )),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                    horizontal: Get.width * 0.1, vertical: Get.height * 0.03),
+                child: Text(
+                    'This photo will be used inside this app and also on the forums site.',
+                    textAlign: TextAlign.center,
+                    style: FontTextStyle.kWhite17BoldRoboto),
+              ),
+              SizedBox(
+                height: Get.height * 0.08,
+              ),
+              Center(
+                child: Stack(
+                  children: [
+                    widget.image == null
+                        ? CircleAvatar(
+                            radius: 120,
+                            backgroundColor: Color(0xff363636),
+                            child: ClipRRect(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(120),
+                                    border: Border.all(color: Colors.grey),
+                                    color: Color(0xff363636),
+                                    image: DecorationImage(
+                                      image: AssetImage(
+                                          'asset/images/profile.png'),
+                                    )),
+                              ),
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 120,
+                            backgroundColor: Color(0xff363636),
+                            child: ClipRRect(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(120),
+                                    border: Border.all(color: Colors.grey),
+                                    color: Color(0xff363636),
+                                    image: DecorationImage(
+                                      image: FileImage(widget.image!),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
+                            ),
                           ),
-                          child: Center(
+                    Positioned(
+                      top: 180,
+                      left: 160,
+                      child: FlatButton(
+                        onPressed: () async {
+                          pickImage().then((value) => Get.to(ProfileSizer(
+                                image: _image,
+                              )));
+                        },
+                        child: Container(
+                            alignment: Alignment.center,
+                            height: 50,
+                            width: 50,
+                            decoration: BoxDecoration(
+                              color: ColorUtils.kTint,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                             child: Text(
                               '+',
                               style: TextStyle(
                                   color: Color(0xff363636),
                                   fontSize: 44,
                                   fontWeight: FontWeight.bold),
-                            ),
-                          )),
+                            )),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: Get.height * 0.26,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-              child: GestureDetector(
-                onTap: () {
-                  Get.to(ExperienceLevelPage());
-                },
-                child: Container(
-                  height: Get.height * 0.06,
-                  width: Get.width * 0.9,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(50),
-                      color: ColorUtils.kTint),
-                  child: Center(
-                      child: Text(
-                    'Next',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 17),
-                  )),
+                  ],
                 ),
               ),
-            ),
-          ]),
+              SizedBox(
+                height: Get.height * 0.2,
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
+                child: GestureDetector(
+                  onTap: () {
+                    Get.to(ExperienceLevelPage());
+                  },
+                  child: Container(
+                    margin: EdgeInsets.only(bottom: 15),
+                    alignment: Alignment.center,
+                    height: Get.height * 0.06,
+                    width: Get.width * 0.9,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(50),
+                        color: ColorUtils.kTint),
+                    child: Text(
+                      'Next',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: Get.height*0.02),
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+          ),
         ),
       ),
     );

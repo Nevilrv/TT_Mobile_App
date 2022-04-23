@@ -8,6 +8,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "auto_size_text",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/auto_size_text-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "boolean_selector",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/boolean_selector-2.1.0",
       "packageUri": "lib/",
@@ -24,6 +30,12 @@
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/charcode-1.3.1",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "chewie",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/chewie-1.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.13"
     },
     {
       "name": "clock",
@@ -44,6 +56,18 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "crypto",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "csslib",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/csslib-0.17.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.4",
       "packageUri": "lib/",
@@ -52,6 +76,12 @@
     {
       "name": "fake_async",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/fake_async-1.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "ffi",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/ffi-1.1.2",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -88,6 +118,12 @@
     {
       "name": "get",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/get-4.6.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "html",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/html-0.15.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -170,6 +206,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "nested",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/nested-1.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "path",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/path-1.8.0",
       "packageUri": "lib/",
@@ -178,6 +220,24 @@
     {
       "name": "plugin_platform_interface",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/plugin_platform_interface-2.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "provider",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/provider-6.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "simple_gesture_detector",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/simple_gesture_detector-0.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "sizer",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/sizer-2.0.15",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     },
@@ -212,6 +272,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "table_calendar",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/table_calendar-3.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "term_glyph",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/term_glyph-1.2.0",
       "packageUri": "lib/",
@@ -230,19 +296,145 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "universal_io",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/universal_io-2.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher-6.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_android",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_android-6.0.15",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_ios",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_ios-6.0.15",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "url_launcher_linux",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_linux-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_macos",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_macos-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_platform_interface",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_platform_interface-2.0.5",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_web",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_web-2.0.9",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "url_launcher_windows",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/url_launcher_windows-3.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "vector_math",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/vector_math-2.1.1",
       "packageUri": "lib/",
       "languageVersion": "2.14"
     },
     {
-      "name": "tcm_mobile_app",
+      "name": "very_good_analysis",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/very_good_analysis-2.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "video_player",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/video_player-2.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "video_player_android",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_android-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "video_player_avfoundation",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_avfoundation-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.14"
+    },
+    {
+      "name": "video_player_platform_interface",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_platform_interface-5.1.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "video_player_web",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/video_player_web-2.0.8",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "wakelock",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock-0.6.1+2",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "wakelock_macos",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_macos-0.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "wakelock_platform_interface",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_platform_interface-0.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "wakelock_web",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_web-0.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "wakelock_windows",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/wakelock_windows-0.2.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
+      "name": "win32",
+      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.3-stable/flutter/.pub-cache/hosted/pub.dartlang.org/win32-2.5.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.15"
+    },
+    {
+      "name": "tcm",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-04-18T13:45:17.922562Z",
+  "generated": "2022-04-23T05:37:26.397350Z",
   "generator": "pub",
   "generatorVersion": "2.16.1"
 }

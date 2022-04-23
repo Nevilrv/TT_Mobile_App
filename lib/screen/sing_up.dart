@@ -37,6 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: SingleChildScrollView(
           child: Column(children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding: EdgeInsets.only(bottom: Get.height * 0.1),
@@ -49,14 +50,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         color: ColorUtils.kTint,
                       )),
                 ),
-                SizedBox(
-                  width: Get.width * 0.2,
-                ),
+
                 SizedBox(
                   height: Get.height * 0.2,
                   width: Get.width * 0.37,
                   child: Image.asset('asset/images/logo.png'),
                 ),
+                SizedBox( )
               ],
             ),
             Padding(
@@ -94,7 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: index == 1 ? Colors.black : ColorUtils.kTint,
-                            fontSize: 20),
+                            fontSize: Get.height*0.023),
                       )),
                     ),
                   ),
@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 color: index == 2
                                     ? Colors.black
                                     : ColorUtils.kTint,
-                                fontSize: 20),
+                                fontSize: Get.height*0.023),
                           ),
                           Text(
                             'Save \$400 a year',
@@ -138,7 +138,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 color: index == 2
                                     ? Colors.black
                                     : ColorUtils.kTint,
-                                fontSize: 14),
+                                fontSize: Get.height*0.015),
                           ),
                         ],
                       )),
@@ -271,13 +271,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ? 'December 19,2022'
                                   : '${DateFormat.yMMMMd().format(pickedDate!)}',
                               style: pickedDate == null
-                                  ? TextStyle(
-                                      color: ColorUtils.kBlack,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 15)
+                                  ?
+                              TextStyle(fontSize: Get.height*0.02,fontWeight: FontWeight.w500)
                                   : TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white),
+                                  fontWeight: FontWeight.bold, color: Colors.white,fontSize: Get.height*0.018),
                             ),
                           ))),
                   SizedBox(
@@ -314,13 +311,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     height: Get.height * 0.01,
                   ),
                   TextFormField(
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: Get.height*0.018),
+
                       obscureText: selected ? false : true,
                       controller: pass,
                       decoration: InputDecoration(
+                        hintStyle: TextStyle(fontSize: Get.height*0.02,fontWeight: FontWeight.w500),
                         hintText: 'Password',
                         filled: true,
                         contentPadding: EdgeInsets.all(10),
@@ -418,6 +414,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
+                                          fontSize: Get.height*0.016
                                         ),
                                       ),
                                     ],
@@ -464,6 +461,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
+                                          fontSize: Get.height*0.016
                                         ),
                                       ),
                                     ],
@@ -523,13 +521,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         children: [
                           Text(
                             'By creating an account you agree to our',
-                            style: FontTextStyle.kWhite16W300Roboto,
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Get.height*0.016,
+                                fontWeight: FontWeight.w300,
+                                fontFamily: 'Roboto'),
                             textAlign: TextAlign.center,
                           ),
                           InkWell(
                             child: Text(
-                              ' Privacy Policy',
-                              style: FontTextStyle.kTine16W400Roboto,
+                              ' Privacy Policy ',
+                              style:TextStyle(
+                                color: ColorUtils.kTint,
+                                fontSize: Get.height * 0.018,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: 'Roboto',
+                              ),
                             ),
                           ),
                         ],
@@ -537,6 +544,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
+
                           Text('and', style: FontTextStyle.kWhite16W300Roboto),
                           InkWell(
                             child: Text(' Terms of Use.',
@@ -568,13 +576,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
-                              fontSize: 17),
+                              fontSize: Get.height*0.02),
                         )),
                       ),
                     ),
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: Get.height * 0.03,
             ),
           ]),
         ),
@@ -588,13 +599,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       String? text,
       String? Function(String?)? validation}) {
     return TextFormField(
-      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,fontSize: Get.height*0.018),
+
       validator: validation!,
       readOnly: readOnly!,
       onTap: () {},
       controller: controller,
       decoration: InputDecoration(
           hintText: text,
+          hintStyle: TextStyle(fontSize: Get.height*0.02,fontWeight: FontWeight.w500),
           filled: true,
           contentPadding: EdgeInsets.all(10),
           fillColor: Color(0xff363636),
