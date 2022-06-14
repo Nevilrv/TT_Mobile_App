@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:sizer/sizer.dart';
+import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/splash_screen.dart';
 
 void main() async {
@@ -21,7 +22,7 @@ class MyApp extends StatelessWidget {
     return Sizer(
       builder: (context, orientation, deviceType) {
         return GetMaterialApp(
-            debugShowCheckedModeBanner: false, home: SplashScreen());
+            debugShowCheckedModeBanner: false, home: HomeScreen());
       },
     );
   }
