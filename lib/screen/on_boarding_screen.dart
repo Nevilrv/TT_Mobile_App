@@ -1,13 +1,11 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tcm/screen/singIn_screens.dart';
+import 'package:tcm/screen/signIn_screens.dart';
+import 'package:tcm/screen/sign_up.dart';
 
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
-import 'sing_up.dart';
 
 class OnBoardingScreen extends StatefulWidget {
   const OnBoardingScreen({Key? key}) : super(key: key);
@@ -110,7 +108,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Get.to(SignUpScreen());
+              },
               child: Container(
                 height: Get.height * 0.06,
                 width: Get.width * 0.9,
@@ -123,7 +123,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
-                      fontSize: Get.height*0.02),
+                      fontSize: Get.height * 0.02),
                 )),
               ),
             ),
@@ -139,20 +139,20 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 style: TextStyle(
                     fontWeight: FontWeight.w400,
                     color: Colors.white,
-                    fontSize: Get.height*0.018),
+                    fontSize: Get.height * 0.018),
               ),
               InkWell(
                 child: Text(
                   ' Sign In',
                   style: TextStyle(
                     color: ColorUtils.kTint,
-                    fontSize: Get.height*0.022,
+                    fontSize: Get.height * 0.022,
                     fontWeight: FontWeight.w400,
                     fontFamily: 'Roboto',
                   ),
                 ),
                 onTap: () {
-                  Get.to(SingInScreen());
+                  Get.to(SignInScreen());
                   // Get.to(SignUpScreen());
                 },
               )

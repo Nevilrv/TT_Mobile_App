@@ -1,9 +1,31 @@
 /// images
 
+String baseImageUrl = 'https://tcm.sataware.dev/images/';
+
 class AppImages {
   static const String workout1 = 'asset/images/workout_1.png';
+  static const String logo = 'asset/images/logo.png';
+  static const String gym = 'asset/images/gym.png';
   static const String chestIllustration = 'asset/images/chest_illustration.png';
   static const String videoThumbnail = 'asset/images/video_thumbnail.png';
+  static const String habitTrackerIllustration =
+      'asset/images/habit_tracker_illustration.png';
+  static const String perfectDayIllustration =
+      'asset/images/perfect_day_illustration.png';
+  static const String training = 'asset/images/training.png';
+  static const String pick = 'asset/images/pick.png';
+  static const List<String> body_illustration = [
+    'asset/habit/body_illu_0.png',
+    'asset/habit/body_illu_1.png',
+    'asset/habit/body_illu_2.png',
+    'asset/habit/body_illu_3.png',
+    'asset/habit/body_illu_4.png',
+    'asset/habit/body_illu_5.png',
+    'asset/habit/body_illu_6.png',
+    'asset/habit/body_illu_7.png',
+    'asset/habit/body_illu_8.png',
+  ];
+  static const String noData = 'asset/lottie/no_data.json';
 }
 
 /// icons
@@ -23,5 +45,7 @@ class AppIcons {
   static const String journal = 'asset/icons/journal.png';
   static const String like = 'asset/icons/like.png';
   static const String disLike = 'asset/icons/dislike.png';
-
+  static const String facebook = 'asset/icons/facebook.png';
+  static const String kettle_bell = 'asset/icons/kettle_bell.png';
+  static const String logout = 'asset/icons/logout.png';
 }

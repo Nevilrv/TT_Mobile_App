@@ -1,44 +1,35 @@
 import 'dart:convert';
 import 'dart:developer';
-
-import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 enum APIType { aGet, aPost }
 
 class ApiService {
-  var respose;
+  var response;
   Future<dynamic> getResponse({
     required APIType apiType,
     required String url,
     Map<String, dynamic>? body,
   }) async {
-    Map<String, String> headers = {
-      "Host": "<calculated when request is sent>",
-      "User-Agent": "PostmanRuntime/7.29.0",
-      "Accept": "*/*",
-      "Accept-Encoding": "gzip, deflate, br",
-      "Connection": "keep-alive"
-    };
+    Map<String, String> header = {'content-type': 'application/json'};
 
     try {
       if (apiType == APIType.aGet) {
         final result = await http.get(Uri.parse(url));
-        respose = returnResponse(result.statusCode, result.body);
+        response = returnResponse(result.statusCode, result.body);
         print("REQUEST PARAMETER url  $url");
       } else if (apiType == APIType.aPost) {
-        final result =
-            await http.post(Uri.parse(url), body: body, headers: headers);
+        final result = await http.post(Uri.parse(url), body: body);
 
         log("resp${result.body}");
 
-        respose = returnResponse(result.statusCode, result.body);
+        response = returnResponse(result.statusCode, result.body);
         print(result.statusCode);
       }
     } catch (error) {
       return print(error);
     }
-    return respose;
+    return response;
   }
 
   returnResponse(int status, String result) {

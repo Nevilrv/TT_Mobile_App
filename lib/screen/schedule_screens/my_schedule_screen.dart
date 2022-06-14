@@ -1,14 +1,16 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/scheduler/ticker.dart';
 import 'package:get/get.dart';
-import 'package:table_calendar/table_calendar.dart';
+import 'package:tcm/custom_packages/table_calender/customization/calendar_style.dart';
+import 'package:tcm/custom_packages/table_calender/customization/days_of_week_style.dart';
+import 'package:tcm/custom_packages/table_calender/customization/header_style.dart';
+import 'package:tcm/custom_packages/table_calender/shared/utils.dart';
+import 'package:tcm/custom_packages/table_calender/table_calendar.dart';
 import 'package:tcm/screen/schedule_screens/widgets/my_schedule_screen_widget.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/utils/images.dart';
 
 class MyScheduleScreen extends StatefulWidget {
   @override
@@ -129,11 +131,130 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
               ),
               Expanded(
                 child: TabBarView(children: [
-                  calendarTab(
-                    getEventForDay: _getEventForDay,
-                    calendarFormat: _calendarFormat,
-                    focusedDay: _focusedDay,
-                    selectedDay: _selectedDay,
+                  Padding(
+                    padding: EdgeInsets.only(top: Get.height * 0.02),
+                    child: SingleChildScrollView(
+                      physics: BouncingScrollPhysics(),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * .03),
+                            child: TableCalendar(
+                              calendarStyle: CalendarStyle(
+                                  markerSize: 0,
+                                  outsideDaysVisible: false,
+                                  weekendTextStyle:
+                                      FontTextStyle.kWhite17W400Roboto,
+                                  defaultTextStyle:
+                                      FontTextStyle.kWhite17W400Roboto,
+                                  selectedTextStyle:
+                                      FontTextStyle.kBlack18w600Roboto,
+                                  selectedDecoration: BoxDecoration(
+                                      color: ColorUtils.kTint,
+                                      shape: BoxShape.circle),
+                                  todayTextStyle:
+                                      FontTextStyle.kWhite17W400Roboto,
+                                  todayDecoration: BoxDecoration(
+                                    color: Colors.transparent,
+                                  )),
+                              daysOfWeekHeight: Get.height * .05,
+                              daysOfWeekStyle: DaysOfWeekStyle(
+                                  // decoration: BoxDecoration(
+                                  //     borderRadius: BorderRadius.circular(5),
+                                  //     border:
+                                  //         Border.all(color: ColorUtils.kGray)),
+                                  weekdayStyle:
+                                      FontTextStyle.kWhite17W400Roboto,
+                                  weekendStyle:
+                                      FontTextStyle.kWhite17W400Roboto),
+                              headerStyle: HeaderStyle(
+                                titleTextStyle:
+                                    FontTextStyle.kWhite20BoldRoboto,
+                                leftChevronIcon: Icon(
+                                  Icons.arrow_back_ios_sharp,
+                                  color: ColorUtils.kTint,
+                                  size: Get.height * 0.025,
+                                ),
+                                rightChevronIcon: Icon(
+                                  Icons.arrow_forward_ios_sharp,
+                                  color: ColorUtils.kTint,
+                                  size: Get.height * 0.025,
+                                ),
+                                formatButtonVisible: false,
+                                titleCentered: true,
+                              ),
+                              availableGestures:
+                                  AvailableGestures.horizontalSwipe,
+                              startingDayOfWeek: StartingDayOfWeek.monday,
+                              focusedDay: _focusedDay,
+                              firstDay: DateTime.utc(2018, 01, 01),
+                              lastDay: DateTime.utc(2030, 12, 31),
+                              calendarFormat: _calendarFormat,
+                              eventLoader: _getEventForDay,
+                              onFormatChanged: (format) {
+                                if (_calendarFormat != format) {
+                                  setState(() {
+                                    _calendarFormat = format;
+                                  });
+                                }
+                              },
+                              selectedDayPredicate: (day) {
+                                return isSameDay(_selectedDay, day);
+                              },
+                              onDaySelected: (selectedDay, focusedDay) {
+                                if (!isSameDay(_selectedDay, selectedDay)) {
+                                  setState(() {
+                                    _selectedDay = selectedDay;
+                                    _focusedDay = focusedDay;
+                                  });
+                                }
+                              },
+                              onPageChanged: (focusedDay) {
+                                focusedDay = focusedDay;
+                              },
+                            ),
+                          ),
+                          SizedBox(height: Get.width * 0.04),
+                          Text(
+                            AppText.scheduleWorkout,
+                            style: FontTextStyle.kWhite18BoldRoboto,
+                          ),
+                          Divider(
+                            color: ColorUtils.kTint,
+                            thickness: 1.5,
+                            height: Get.height * 0.04,
+                          ),
+                          ListView(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            children: _getEventForDay(_selectedDay!)
+                                .map((event) => ListTile(
+                                      title: Text(
+                                        event['title'].toString(),
+                                        style: FontTextStyle.kWhite17BoldRoboto,
+                                      ),
+                                      subtitle: Text(
+                                        event['subtitle'].toString(),
+                                        style: FontTextStyle
+                                            .kLightGray16W300Roboto,
+                                      ),
+                                      trailing: InkWell(
+                                        onTap: () {
+                                          openBottomSheet(event);
+                                        },
+                                        child: Icon(
+                                          Icons.more_horiz_sharp,
+                                          color: ColorUtils.kTint,
+                                        ),
+                                      ),
+                                    ))
+                                .toList(),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   listViewTab(
                       getEventForDay: _getEventForDay,

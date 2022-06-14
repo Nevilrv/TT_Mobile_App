@@ -1,24 +1,38 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:chewie/chewie.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/training_plan_screens/program_setup_page.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/utils/images.dart';
-
+import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ExerciseDetailPage extends StatefulWidget {
+  final String? exerciseId;
+  final String? day;
+  final String? workoutId;
+
+  ExerciseDetailPage({
+    Key? key,
+    required this.exerciseId,
+    this.workoutId,
+    this.day,
+  }) : super(key: key);
+
   @override
   State<ExerciseDetailPage> createState() => _ExerciseDetailPageState();
 }
 
 class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
-  late VideoPlayerController _videoPlayerController1;
-  late VideoPlayerController _videoPlayerController2;
+  VideoPlayerController? _videoPlayerController;
+  YoutubePlayerController? _youTubePlayerController;
   ChewieController? _chewieController;
+  ExerciseByIdViewModel _exerciseByIdViewModel =
+      Get.put(ExerciseByIdViewModel());
 
   @override
   void initState() {
@@ -28,250 +42,264 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
 
   @override
   void dispose() {
-    _videoPlayerController1.dispose();
-    _videoPlayerController2.dispose();
+    _videoPlayerController?.dispose();
     _chewieController?.dispose();
+    _youTubePlayerController?.dispose();
     super.dispose();
   }
 
-  List<String> srcs = [
-    "https://assets.mixkit.co/videos/preview/mixkit-daytime-city-traffic-aerial-view-56-large.mp4",
-    "https://assets.mixkit.co/videos/preview/mixkit-a-girl-blowing-a-bubble-gum-at-an-amusement-park-1226-large.mp4"
-  ];
+  Future initializePlayer() async {
+    await _exerciseByIdViewModel.getExerciseByIdDetails(id: widget.exerciseId);
 
-  Future<void> initializePlayer() async {
-    _videoPlayerController1 =
-        VideoPlayerController.network(srcs[currPlayIndex]);
-    _videoPlayerController2 =
-        VideoPlayerController.network(srcs[currPlayIndex]);
-    await Future.wait([
-      _videoPlayerController1.initialize(),
-      _videoPlayerController2.initialize()
-    ]);
-    _createChewieController();
+    ExerciseByIdResponseModel responseVid =
+        _exerciseByIdViewModel.apiResponse.data;
+
+    youtubeVideoID() {
+      String finalLink;
+      String videoID = '${responseVid.data![0].exerciseVideo}';
+      List<String> splittedLink = videoID.split('v=');
+      List<String> longLink = splittedLink.last.split('&');
+      finalLink = longLink.first;
+
+      return finalLink;
+    }
+
+    if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
+      if ('${responseVid.data![0].exerciseVideo}'.contains('www.youtube.com')) {
+        _youTubePlayerController = YoutubePlayerController(
+          initialVideoId: youtubeVideoID(),
+          flags: YoutubePlayerFlags(
+            autoPlay: true,
+            mute: false,
+            controlsVisibleAtStart: true,
+            hideControls: false,
+            loop: true,
+          ),
+        );
+      } else {
+        _videoPlayerController = VideoPlayerController.network(
+            '${responseVid.data![0].exerciseVideo}');
+
+        await Future.wait([
+          _videoPlayerController!.initialize(),
+        ]);
+        _createChewieController();
+      }
+    } else {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     setState(() {});
   }
 
   void _createChewieController() {
-    final subtitles = [
-      Subtitle(
-        index: 0,
-        start: Duration.zero,
-        end: const Duration(seconds: 10),
-        text: const TextSpan(
-          children: [],
-        ),
-      ),
-      Subtitle(
-        index: 0,
-        start: const Duration(seconds: 10),
-        end: const Duration(seconds: 20),
-        text: 'Whats up? :)',
-        // text: const TextSpan(
-        //   text: 'Whats up? :)',
-        //   style: TextStyle(color: Colors.amber, fontSize: 22, fontStyle: FontStyle.italic),
-        // ),
-      ),
-    ];
-
     _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController1,
+      videoPlayerController: _videoPlayerController!,
       autoPlay: true,
       looping: true,
-      additionalOptions: (context) {
-        return <OptionItem>[
-          OptionItem(
-            onTap: toggleVideo,
-            iconData: Icons.live_tv_sharp,
-            title: 'Toggle Video Src',
-          ),
-        ];
-      },
-      subtitle: Subtitles(subtitles),
-      subtitleBuilder: (context, dynamic subtitle) => Container(
-        padding: const EdgeInsets.all(10.0),
-        child: subtitle is InlineSpan
-            ? RichText(
-                text: subtitle,
-              )
-            : Text(
-                subtitle.toString(),
-                style: const TextStyle(color: Colors.black),
-              ),
-      ),
-      hideControlsTimer: const Duration(seconds: 1),
+      showControls: true,
+      showControlsOnInitialize: true,
+      hideControlsTimer: Duration(hours: 5),
     );
   }
 
   int currPlayIndex = 0;
 
   Future<void> toggleVideo() async {
-    await _videoPlayerController1.pause();
+    await _videoPlayerController!.pause();
     currPlayIndex = currPlayIndex == 0 ? 1 : 0;
     await initializePlayer();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-        title:
-            Text('Seated Cable Row', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-        actions: [
-          Center(
-            child: Padding(
-              padding: EdgeInsets.only(right: 18),
-              child: InkWell(
-                onTap: () {
-                  Get.to(ProgramSetupPage());
+    return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
+      if (controller.apiResponse.status == Status.COMPLETE) {
+        ExerciseByIdResponseModel response = controller.apiResponse.data;
+
+        String htmlData = '${response.data![0].exerciseInstructions}';
+        List<String> splitHTMLString = htmlData.split('</li>');
+        List<String> finalHTMLString = [];
+        splitHTMLString.forEach((element) {
+          finalHTMLString
+              .add(element.replaceAll('<ol>', '').replaceAll('</ol>', ''));
+        });
+
+        return Scaffold(
+          backgroundColor: ColorUtils.kBlack,
+          appBar: AppBar(
+            elevation: 0,
+            leading: IconButton(
+                onPressed: () {
+                  Get.back();
                 },
-                child: Text('Start', style: FontTextStyle.kTine16W400Roboto),
-              ),
-            ),
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(children: [
-          SizedBox(
-            height: Get.height * 0.036,
-          ),
-          Container(
-            height: Get.height / 2.75,
-            width: Get.width,
-            child: Center(
-              child: _chewieController != null &&
-                      _chewieController!
-                          .videoPlayerController.value.isInitialized
-                  ? Chewie(
-                      controller: _chewieController!,
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 20),
-                        Text('Loading'),
-                      ],
-                    ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 18),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Seatble Cable Row',
-                        style: FontTextStyle.kWhite17BoldRoboto),
-                    RichText(
-                      text: TextSpan(
-                          text: 'Suggested: ',
-                          style: FontTextStyle.kLightGray16W300Roboto
-                              .copyWith(fontWeight: FontWeight.w600),
-                          children: [
-                            TextSpan(
-                              text: '3x10 reps',
-                              style: FontTextStyle.kLightGray16W300Roboto,
-                            )
-                          ]),
-                    ),
-                  ],
-                ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  height: Get.height * 0.25,
-                  width: Get.width,
-                  decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(AppImages.chestIllustration))),
-                ),
-                Container(
-                  padding: EdgeInsets.only(top: 20),
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    'VIEW WORKOUTS',
-                    style: FontTextStyle.kWhite16BoldRoboto,
+                icon: Icon(
+                  Icons.arrow_back_ios_sharp,
+                  color: ColorUtils.kTint,
+                )),
+            backgroundColor: ColorUtils.kBlack,
+            title: Text('${response.data![0].exerciseTitle}',
+                style: FontTextStyle.kWhite16BoldRoboto),
+            centerTitle: true,
+            actions: [
+              Center(
+                child: Padding(
+                  padding: EdgeInsets.only(right: 18),
+                  child: InkWell(
+                    onTap: () {
+                      if ('${response.data![0].exerciseVideo}'
+                          .contains('www.youtube.com')) {
+                        _youTubePlayerController?.pause();
+                      } else {
+                        _videoPlayerController?.pause();
+                        _chewieController?.pause();
+                      }
+
+                      Get.to(ProgramSetupPage(
+                        exerciseId: response.data![0].exerciseId,
+                        day: widget.day,
+                        workoutId: widget.workoutId,
+                      ));
+                    },
+                    child:
+                        Text('Start', style: FontTextStyle.kTine16W400Roboto),
                   ),
                 ),
-                Divider(
-                  color: ColorUtils.kTint,
-                  thickness: 1,
-                ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: ColorUtils.kTint,
-                      radius: Get.width * 0.04,
-                      child: Text('1', style: FontTextStyle.kBlack12BoldRoboto),
-                    ),
-                    SizedBox(width: Get.width * 0.038),
-                    Expanded(
-                      child: Text(
-                          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet",
-                          maxLines: 4,
-                          style: FontTextStyle.kWhite16W300Roboto),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Get.height * 0.03),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: ColorUtils.kTint,
-                      radius: Get.width * 0.04,
-                      child: Text('2', style: FontTextStyle.kBlack12BoldRoboto),
-                    ),
-                    SizedBox(width: Get.width * 0.038),
-                    Expanded(
-                      child: Text(
-                          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet",
-                          maxLines: 4,
-                          style: FontTextStyle.kWhite16W300Roboto),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Get.height * 0.03),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: ColorUtils.kTint,
-                      radius: Get.width * 0.04,
-                      child: Text('3', style: FontTextStyle.kBlack12BoldRoboto),
-                    ),
-                    SizedBox(width: Get.width * 0.038),
-                    Expanded(
-                      child: Text(
-                          "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet",
-                          maxLines: 4,
-                          style: FontTextStyle.kWhite16W300Roboto),
-                    ),
-                  ],
-                ),
-                SizedBox(height: Get.height * 0.03),
-              ],
-            ),
+              ),
+            ],
           ),
-        ]),
-      ),
-    );
+          body: SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(children: [
+              Container(
+                height: Get.height / 2.75,
+                width: Get.width,
+                child: '${response.data![0].exerciseVideo}'
+                        .contains('www.youtube.com')
+                    ? Center(
+                        child: _youTubePlayerController != null ||
+                                _youTubePlayerController != ''
+                            ? YoutubePlayer(
+                                controller: _youTubePlayerController!,
+                                showVideoProgressIndicator: true,
+                                bufferIndicator: CircularProgressIndicator(
+                                    color: ColorUtils.kTint),
+                                controlsTimeOut: Duration(hours: 2),
+                                aspectRatio: 16 / 9,
+                                progressColors: ProgressBarColors(
+                                    handleColor: ColorUtils.kRed,
+                                    playedColor: ColorUtils.kRed,
+                                    backgroundColor: ColorUtils.kGray,
+                                    bufferedColor: ColorUtils.kLightGray),
+                              )
+                            : noDataLottie(),
+                      )
+                    : Center(
+                        child: _chewieController != null &&
+                                _chewieController!
+                                    .videoPlayerController.value.isInitialized
+                            ? Chewie(
+                                controller: _chewieController!,
+                              )
+                            : noDataLottie(),
+                      ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 18),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                            '${response.data![0].exerciseTitle}'.length >= 25
+                                ? '${response.data![0].exerciseTitle!.substring(0, 25) + ' ..'}'
+                                : '${response.data![0].exerciseTitle}',
+                            style: FontTextStyle.kWhite17BoldRoboto),
+                        RichText(
+                          text: TextSpan(
+                              text: 'Suggested: ',
+                              style: FontTextStyle.kLightGray16W300Roboto
+                                  .copyWith(fontWeight: FontWeight.w600),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      '${response.data![0].exerciseSets}x${response.data![0].exerciseReps} reps',
+                                  style: FontTextStyle.kLightGray16W300Roboto,
+                                )
+                              ]),
+                        ),
+                      ],
+                    ),
+                    // response.data![0].exerciseImage!.isEmpty
+                    //     ? SizedBox()
+                    //     : Container(
+                    //         alignment: Alignment.center,
+                    //         margin: EdgeInsets.symmetric(vertical: 5),
+                    //         height: Get.height * 0.25,
+                    //         width: Get.width,
+                    //         decoration: BoxDecoration(
+                    //             image: DecorationImage(
+                    //           fit: BoxFit.fitWidth,
+                    //           image: NetworkImage(
+                    //               '$baseImageUrl${response.data![0].exerciseImage}'),
+                    //         )),
+                    //       ),
+                    Container(
+                      padding: EdgeInsets.only(top: 20),
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        'VIEW WORKOUTS',
+                        style: FontTextStyle.kWhite16BoldRoboto,
+                      ),
+                    ),
+                    Divider(
+                      color: ColorUtils.kTint,
+                      thickness: 1,
+                    ),
+                    ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: finalHTMLString.length - 1,
+                        itemBuilder: (_, index) {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(top: 10),
+                                child: CircleAvatar(
+                                  backgroundColor: ColorUtils.kTint,
+                                  radius: Get.width * 0.04,
+                                  child: Text('${index + 1}',
+                                      style: FontTextStyle.kBlack12BoldRoboto),
+                                ),
+                              ),
+                              Expanded(
+                                  child:
+                                      htmlToText(data: finalHTMLString[index]))
+                              // Text(
+                              //     '${response.data![0].exerciseInstructions}',
+                              //     maxLines: 4,
+                              //     style: FontTextStyle.kWhite16W300Roboto)
+                              // ),
+                            ],
+                          );
+                        }),
+                    SizedBox(height: Get.height * 0.03),
+                  ],
+                ),
+              ),
+            ]),
+          ),
+        );
+      } else {
+        return Center(
+          child: CircularProgressIndicator(
+            color: ColorUtils.kTint,
+          ),
+        );
+      }
+    });
   }
 }

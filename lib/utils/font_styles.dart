@@ -12,13 +12,13 @@ class FontTextStyle {
   );
   static TextStyle kWhite18BoldRoboto = TextStyle(
     color: Colors.white,
-    fontSize: Get.height * 0.025,
+    fontSize: Get.height * 0.024,
     fontWeight: FontWeight.bold,
     fontFamily: 'Roboto',
   );
   static TextStyle kWhite17BoldRoboto = TextStyle(
     color: Colors.white,
-    fontSize: Get.height*0.018,
+    fontSize: Get.height * 0.018,
     fontWeight: FontWeight.bold,
     fontFamily: 'Roboto',
   );
@@ -35,6 +35,12 @@ class FontTextStyle {
     fontWeight: FontWeight.bold,
     fontFamily: 'Roboto',
   );
+  static TextStyle kBlack22BoldRoboto = TextStyle(
+    color: ColorUtils.kBlack,
+    fontSize: Get.height * 0.024,
+    fontWeight: FontWeight.bold,
+    fontFamily: 'Roboto',
+  );
   static TextStyle kTine17BoldRoboto = TextStyle(
     color: ColorUtils.kTint,
     fontSize: Get.height * 0.018,
@@ -44,34 +50,43 @@ class FontTextStyle {
 
   static TextStyle kWhite16W300Roboto = TextStyle(
       color: Colors.white,
-      fontSize: Get.height*0.018,
+      fontSize: Get.height * 0.018,
       fontWeight: FontWeight.w300,
       fontFamily: 'Roboto');
 
   static TextStyle kLightGray16W300Roboto = TextStyle(
       color: ColorUtils.kLightGray,
-      fontSize: Get.width * 0.036,
+      fontSize: Get.height * 0.018,
+      fontWeight: FontWeight.w300,
+      fontFamily: 'Roboto');
+  static TextStyle kLightGray18W300Roboto = TextStyle(
+      color: ColorUtils.kLightGray,
+      fontSize: Get.height * 0.02,
       fontWeight: FontWeight.w300,
       fontFamily: 'Roboto');
 
   static TextStyle kWhite16BoldRoboto = TextStyle(
       color: Colors.white,
-      fontSize:Get.height*0.018,
+      fontSize: Get.height * 0.02,
       fontWeight: FontWeight.bold,
       fontFamily: 'Roboto');
   static TextStyle kBlack16W300Roboto = TextStyle(
       color: Colors.black,
-      fontSize: Get.height * 0.02,
+      fontSize: Get.height * 0.018,
       fontWeight: FontWeight.w300,
       fontFamily: 'Roboto');
   static TextStyle kWhite20BoldRoboto = TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.bold,
-      fontSize: Get.height * .023);
+      fontSize: Get.height * .02);
   static TextStyle kBlack20BoldRoboto = TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.bold,
-      fontSize:Get.height*0.02);
+      fontSize: Get.height * 0.02);
+  static TextStyle kBlack24W400Roboto = TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.w400,
+      fontSize: Get.height * 0.024);
   static TextStyle kBlack18w600Roboto = TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.w600,
@@ -79,7 +94,7 @@ class FontTextStyle {
   static TextStyle kTint20BoldRoboto = TextStyle(
       color: ColorUtils.kTint,
       fontWeight: FontWeight.bold,
-      fontSize: Get.width * .038);
+      fontSize: Get.height * .02);
 
   static TextStyle kBlack12BoldRoboto = TextStyle(
       color: Colors.black,
@@ -91,7 +106,10 @@ class FontTextStyle {
       fontSize: Get.width * .033);
 
   static TextStyle kGreyBoldRoboto = TextStyle(
-      color: Colors.grey, fontWeight: FontWeight.bold, fontFamily: 'Roboto',fontSize: Get.height*0.018);
+      color: Colors.grey,
+      fontWeight: FontWeight.bold,
+      fontFamily: 'Roboto',
+      fontSize: Get.height * 0.018);
   static TextStyle kGrey18BoldRoboto = TextStyle(
       color: Colors.grey,
       fontWeight: FontWeight.bold,
@@ -109,8 +127,7 @@ class FontTextStyle {
       fontFamily: 'Roboto');
   static TextStyle kBlack16BoldRoboto = TextStyle(
       color: Colors.black,
-      fontSize: Get.width * 0.036,
+      fontSize: Get.height * 0.02,
       fontWeight: FontWeight.bold,
       fontFamily: 'Roboto');
-
 }
