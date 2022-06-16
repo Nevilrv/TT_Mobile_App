@@ -120,44 +120,39 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                             goalController.apiResponse.data;
 
                         if (response.data!.isNotEmpty && response.data != []) {
-                          // return ListView.builder(
-                          //     shrinkWrap: true,
-                          //     itemCount: focusCatTitle.length,
-                          //     itemBuilder: (_, index) {
-                          //       return focusSelected == index
-                          //           ? buildMuscle(
-                          //               context: context,
-                          //               workoutResponse: response,
-                          //               goalsResModel: goalResponse)
-                          //           : SizedBox();
-                          //     });
+                          return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: goalResponse.data!.length,
+                              itemBuilder: (_, index) {
+                                return focusSelected == index
+                                    ? focusTiles(
+                                        context: context,
+                                        workoutResponse: response,
+                                        goalsResModel: goalResponse)
+                                    : SizedBox();
+                              });
 
-                          return Column(children: [
-                            focusSelected == 0
-                                ? buildMuscle(
-                                    context: context,
-                                    workoutResponse: response,
-                                    goalsResModel: goalResponse)
-                                : SizedBox(),
-                            focusSelected == 1
-                                ? cardio(
-                                    context: context,
-                                    workoutResponse: response,
-                                    goalsResModel: goalResponse)
-                                : SizedBox(),
-                            focusSelected == 2
-                                ? strength(
-                                    context: context,
-                                    workoutResponse: response,
-                                    goalsResModel: goalResponse)
-                                : SizedBox(),
-                            focusSelected == 3
-                                ? fatLoss(
-                                    context: context,
-                                    workoutResponse: response,
-                                    goalsResModel: goalResponse)
-                                : SizedBox(),
-                          ]);
+                          // return Column(children: [
+                          //   focusSelected == 0
+                          //       ? buildMuscle(
+                          //           context: context,
+                          //           workoutResponse: response,
+                          //           goalsResModel: goalResponse)
+                          //       : SizedBox(),
+                          //   focusSelected == 1
+                          //       ? cardio(
+                          //           context: context,
+                          //           workoutResponse: response,
+                          //           goalsResModel: goalResponse)
+                          //       : SizedBox(),
+                          //   focusSelected == 2
+                          //       ? strength(
+                          //           context: context,
+                          //           workoutResponse: response,
+                          //           goalsResModel: goalResponse)
+                          //       : SizedBox(),
+                          // ]);
                         } else {
                           return noDataLottie();
                         }
@@ -177,7 +172,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
     );
   }
 
-  Widget buildMuscle(
+  Widget focusTiles(
       {BuildContext? context,
       WorkoutByFilterResponseModel? workoutResponse,
       GoalsResModel? goalsResModel}) {
@@ -199,108 +194,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                   Get.to(PlanOverviewScreen(
                     id: '${workoutResponse.data![index].workoutId}',
                   ));
-                });
-          } else {
-            print('Data not Found');
-
-            return Center(
-                child: Text(
-              'Data Not Found!',
-              style: FontTextStyle.kWhite17W400Roboto,
-            ));
-          }
-        });
-  }
-
-  Widget cardio(
-      {BuildContext? context,
-      WorkoutByFilterResponseModel? workoutResponse,
-      GoalsResModel? goalsResModel}) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: workoutResponse!.data!.length,
-        itemBuilder: (context, index) {
-          print('data ----- ${workoutResponse.data}');
-
-          if (workoutResponse.data!.isNotEmpty &&
-              workoutResponse.data != null) {
-            print('data ----- ${workoutResponse.data}');
-            return selectedFocus(
-                text: '${workoutResponse.data![index].workoutTitle}',
-                image: '${workoutResponse.data![index].workoutImage}',
-                onTap: () {
-                  Get.to(PlanOverviewScreen(
-                    id: '${workoutResponse.data![index].workoutId}',
-                  ));
-                });
-          } else {
-            print('Data not Found');
-
-            return Center(
-                child: Text(
-              'Data Not Found!',
-              style: FontTextStyle.kWhite17W400Roboto,
-            ));
-          }
-        });
-  }
-
-  Widget strength(
-      {BuildContext? context,
-      WorkoutByFilterResponseModel? workoutResponse,
-      GoalsResModel? goalsResModel}) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: workoutResponse!.data!.length,
-        itemBuilder: (context, index) {
-          print('data ----- ${workoutResponse.data}');
-          if (workoutResponse.data!.isNotEmpty &&
-              workoutResponse.data != null) {
-            print('data ----- ${workoutResponse.data}');
-            return selectedFocus(
-                text: '${workoutResponse.data![index].workoutTitle}',
-                image: '${workoutResponse.data![index].workoutImage}',
-                onTap: () {
-                  print(
-                      'ID ------------ ${workoutResponse.data![index].workoutId}');
-                  Get.to(PlanOverviewScreen(
-                    id: '${workoutResponse.data![index].workoutId}',
-                  ));
-                });
-          } else {
-            print('Data not Found');
-
-            return Center(
-                child: Text(
-              'Data Not Found!',
-              style: FontTextStyle.kWhite17W400Roboto,
-            ));
-          }
-        });
-  }
-
-  Widget fatLoss(
-      {BuildContext? context,
-      WorkoutByFilterResponseModel? workoutResponse,
-      GoalsResModel? goalsResModel}) {
-    return ListView.builder(
-        shrinkWrap: true,
-        physics: NeverScrollableScrollPhysics(),
-        itemCount: workoutResponse!.data!.length,
-        itemBuilder: (context, index) {
-          if (workoutResponse.data!.isNotEmpty &&
-              workoutResponse.data != null) {
-            return selectedFocus(
-                text: '${workoutResponse.data![index].workoutTitle}',
-                image: '${workoutResponse.data![index].workoutImage}',
-                onTap: () {
-                  Get.to(
-                    PlanOverviewScreen(
-                      id: '${workoutResponse.data![index].workoutId}',
-                    ),
-                  );
                 });
           } else {
             print('Data not Found');
@@ -348,8 +241,9 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                       _workoutByFilterViewModel.getWorkoutByFilterDetails(
                           goal: goal, duration: duration, gender: gender);
 
-                      print('focus select ---- ${focusCatTitle[index]}');
-                      print('focus select ---- ${focusCatTitle.length}');
+                      print('focus select ---- ${response.data![index]}');
+                      print(
+                          'focus select id---- ${response.data![index].goalId}');
                     });
                   },
                   child: focusSelected == index

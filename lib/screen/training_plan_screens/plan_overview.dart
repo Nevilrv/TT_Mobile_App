@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,8 +11,6 @@ import 'package:tcm/screen/training_plan_screens/workout_overview_page.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
-import 'package:tcm/viewModel/all_workout_viewModel.dart';
-import 'package:tcm/viewModel/training_plan_viewModel/day_based_exercise_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -30,8 +30,6 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
   ChewieController? _chewieController;
 
   WorkoutByIdViewModel _workoutByIdViewModel = Get.put(WorkoutByIdViewModel());
-  DayBasedExerciseViewModel _dayBasedExerciseViewModel =
-      Get.put(DayBasedExerciseViewModel());
 
   @override
   void initState() {
@@ -44,7 +42,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
   //   await _allWorkoutByIdViewModel.getWorkoutByIdDetails(id: widget.id);
   //   AllWorkoutResponseModel response =
   //       _allWorkoutByIdViewModel.apiResponse.data;
-  //   print('Url ========= ${response.data![0].workoutVideo}');
+  //   log('Url ========= ${response.data![0].workoutVideo}');
   //   initializePlayer(url: '${response.data![0].workoutVideo}');
   // }
 
@@ -57,6 +55,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
   }
 
   Future initializePlayer() async {
+    log('id ---- ${widget.id}');
+
     await _workoutByIdViewModel.getWorkoutByIdDetails(id: widget.id);
 
     WorkoutByIdResponseModel responseVid =
@@ -64,7 +64,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
 
     youtubeVideoID() {
       String finalLink;
-      String videoID = '${responseVid.data![0].workoutImage}';
+      String videoID = '${responseVid.data![0].workoutVideo}';
       List<String> splittedLink = videoID.split('v=');
       List<String> longLink = splittedLink.last.split('&');
       finalLink = longLink.first;
@@ -72,7 +72,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
     }
 
     if (_workoutByIdViewModel.apiResponse.status == Status.COMPLETE) {
-      if ('${responseVid.data![0].workoutImage}'.contains('www.youtube.com')) {
+      if ('${responseVid.data![0].workoutVideo}'.contains('www.youtube.com')) {
         _youTubePlayerController = YoutubePlayerController(
           initialVideoId: youtubeVideoID(),
           flags: YoutubePlayerFlags(
@@ -85,7 +85,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
         );
       } else {
         _videoPlayerController = VideoPlayerController.network(
-            '${responseVid.data![int.parse(widget.id)].workoutImage}');
+            '${responseVid.data![0].workoutVideo}');
 
         await Future.wait([
           _videoPlayerController!.initialize(),
@@ -126,7 +126,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<AllWorkoutByIdViewModel>(
+    return GetBuilder<WorkoutByIdViewModel>(
       builder: (controller) {
         if (controller.apiResponse.status == Status.LOADING) {
           return Center(
@@ -137,15 +137,15 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
           return Center(
               child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: noDataLottie(),
+            child: CircularProgressIndicator(),
           ));
         }
         if (controller.apiResponse.status == Status.COMPLETE) {
           WorkoutByIdResponseModel response = controller.apiResponse.data;
 
-          print('runtime type ${response.data![0].workoutLevel.runtimeType}');
+          // log('runtime type ${response.data![0].workoutLevel}');
 
-          // print(
+          // log(
           //     'response.data![0].levelTitle${response.data![0].levelTitle.toString()}');
           return Scaffold(
             backgroundColor: ColorUtils.kBlack,
@@ -160,7 +160,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                     color: ColorUtils.kTint,
                   )),
               backgroundColor: ColorUtils.kBlack,
-              title: Text('title', style: FontTextStyle.kWhite16BoldRoboto),
+              title: Text('${response.data![0].workoutTitle}',
+                  style: FontTextStyle.kWhite16BoldRoboto),
               centerTitle: true,
               actions: [
                 Center(
@@ -168,14 +169,15 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                     padding: const EdgeInsets.only(right: 18),
                     child: InkWell(
                       onTap: () {
-                        if ('video link '.contains('www.youtube.com')) {
+                        if ('${response.data![0].workoutVideo}'
+                            .contains('www.youtube.com')) {
                           _youTubePlayerController?.pause();
                         } else {
                           _videoPlayerController?.pause();
                           _chewieController?.pause();
                         }
                         Get.to(ProgramSetupPage(
-                          workoutId: 'workout id',
+                          workoutId: '${response.data![0].workoutId}',
                           day: '1',
                         ));
                       },
@@ -193,11 +195,14 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                   Container(
                     height: Get.height / 2.75,
                     width: Get.width,
-                    child: 'video link'.contains('www.youtube.com')
+                    child: '${response.data![0].workoutVideo}'
+                            .contains('www.youtube.com')
                         ? Center(
-                            child: _youTubePlayerController != null ||
-                                    _youTubePlayerController != ''
-                                ? YoutubePlayer(
+                            child: _youTubePlayerController == null ||
+                                    _youTubePlayerController == ''
+                                ? CircularProgressIndicator(
+                                    color: ColorUtils.kTint)
+                                : YoutubePlayer(
                                     controller: _youTubePlayerController!,
                                     showVideoProgressIndicator: true,
                                     bufferIndicator: CircularProgressIndicator(
@@ -209,8 +214,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                         playedColor: ColorUtils.kRed,
                                         backgroundColor: ColorUtils.kGray,
                                         bufferedColor: ColorUtils.kLightGray),
-                                  )
-                                : noDataLottie(),
+                                  ),
                           )
                         : Center(
                             child: _chewieController != null &&
@@ -238,7 +242,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                   Image.asset(AppIcons.calender,
                                       height: 15, width: 15),
                                   SizedBox(width: 5),
-                                  Text('total weeks WEEKS',
+                                  Text(
+                                      '${response.data![0].workoutDuration} WEEKS',
                                       style: FontTextStyle.kWhite16BoldRoboto),
                                 ],
                               ),
@@ -247,8 +252,14 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                   Image.asset(AppIcons.clock,
                                       height: 15, width: 15),
                                   SizedBox(width: 5),
-                                  Text('day per week x PER WEEK',
-                                      style: FontTextStyle.kWhite16BoldRoboto),
+                                  response.data![0].daysAllData!.isEmpty
+                                      ? Text('0 x PER WEEK',
+                                          style:
+                                              FontTextStyle.kWhite16BoldRoboto)
+                                      : Text(
+                                          '${response.data![0].daysAllData![0].days!.length} x PER WEEK',
+                                          style:
+                                              FontTextStyle.kWhite16BoldRoboto),
                                 ],
                               ),
                               Row(
@@ -256,7 +267,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                   Image.asset(AppIcons.medal,
                                       height: 15, width: 15),
                                   SizedBox(width: 5),
-                                  Text('level',
+                                  Text('${response.data![0].levelTitle}',
                                       style: FontTextStyle.kWhite16BoldRoboto),
                                 ],
                               ),
@@ -264,7 +275,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                           ),
                         ),
                         SizedBox(height: Get.height * .02),
-                        htmlToText(data: 'description'),
+                        htmlToText(
+                            data: '${response.data![0].workoutDescription}'),
                         // Text("${response.data![0].workoutDescription}",
                         //     maxLines: 5,
                         //     style: FontTextStyle.kWhite16W300Roboto),
@@ -288,34 +300,51 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                           child: ListView.separated(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: response.data![0].dayNames!.length,
+                            itemCount: response.data![0].daysAllData!.length,
                             separatorBuilder: (_, index) {
                               return SizedBox(height: Get.height * .022);
                             },
                             itemBuilder: (_, index) {
-                              return GestureDetector(
-                                onTap: () {
-                                  print('Button pressed');
-                                  print(
-                                      'workout id ================ ${response.data![0].workoutId}');
-                                  print('Day =========== ${index + 1} ');
-                                  if ('video link'
-                                      .contains('www.youtube.com')) {
-                                    _youTubePlayerController?.pause();
-                                  } else {
-                                    _videoPlayerController?.pause();
-                                    _chewieController?.pause();
-                                  }
-                                  Get.to(WorkoutOverviewPage(
-                                    day: index,
-                                    workoutId: 'workout id',
-                                  ));
-                                },
-                                child: exerciseDayButton(
-                                  day: '${response.data![0].dayNames![index]}',
-                                  exercise: 'Chest',
-                                ),
-                              );
+                              return ListView.separated(
+                                  shrinkWrap: true,
+                                  itemCount: response.data![0]
+                                      .daysAllData![index].days!.length,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  separatorBuilder: (_, index) {
+                                    return SizedBox(height: Get.height * .022);
+                                  },
+                                  itemBuilder: (_, index1) {
+                                    log('length [ind 1] -=-=-=-=-=-=-=- ${response.data![0].daysAllData![index].days![index1].dayName} $index1');
+                                    log('${response.data![0].daysAllData![index].days!.length}');
+                                    log('dyuehrfvhugfruhi ------------- ${index1 + 1}');
+                                    return GestureDetector(
+                                      onTap: () {
+                                        log('Button pressed');
+                                        log('workout id ================ ${response.data![0].workoutId}');
+                                        log('Day =========== ${index + 1}');
+                                        if ('video link'
+                                            .contains('www.youtube.com')) {
+                                          _youTubePlayerController?.pause();
+                                        } else {
+                                          _videoPlayerController?.pause();
+                                          _chewieController?.pause();
+                                        }
+                                        Get.to(WorkoutOverviewPage(
+                                          day: index1 + 1,
+                                          workoutId:
+                                              '${response.data![0].workoutId}',
+                                        ));
+                                      },
+                                      child: exerciseDayButton(
+                                        day:
+                                            '${response.data![0].daysAllData![index].days![index1].dayName}',
+                                        exercise:
+                                            '${response.data![0].daysAllData![index].days![index1].day}',
+                                      ),
+                                    );
+                                    // return Text(
+                                    //     '${response.data![0].daysAllData![index].days![index1].day}');
+                                  });
                             },
                           ),
                         ),
@@ -323,14 +352,15 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                         SizedBox(height: Get.height * .025),
                         InkWell(
                           onTap: () {
-                            if ('video link'.contains('www.youtube.com')) {
+                            if ('${response.data![0].workoutVideo}'
+                                .contains('www.youtube.com')) {
                               _youTubePlayerController?.pause();
                             } else {
                               _videoPlayerController?.pause();
                               _chewieController?.pause();
                             }
                             Get.to(ProgramSetupPage(
-                              workoutId: 'workout id',
+                              workoutId: '${response.data![0].workoutId}',
                               day: '1',
                             ));
                           },

@@ -9,14 +9,14 @@ class WorkoutByIdViewModel extends GetxController {
   ApiResponse get apiResponse => _apiResponse;
   Future<void> getWorkoutByIdDetails({String? id}) async {
     _apiResponse = ApiResponse.loading(message: 'Loading');
-    // update();
+    update();
     try {
       WorkoutByIdResponseModel response =
           await WorkoutByIdRepo().workoutByIdRepo(id: id);
-      print('workout by id ====>${response}');
+      print('workout by id try ====> $response');
       _apiResponse = ApiResponse.complete(response);
     } catch (e) {
-      print("workout by id ====>$e");
+      print("workout by id catch ====>$e");
       _apiResponse = ApiResponse.error(message: 'error');
     }
     update();

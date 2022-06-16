@@ -40,7 +40,7 @@ dependencies:
   auto_size_text: ^3.0.0
 #  table_calendar: ^3.0.2
   simple_gesture_detector: ^0.2.0
-  sizer: ^2.0.15
+#  sizer: ^2.0.15
   url_launcher: ^6.0.8
   simple_timer: ^2.0.0
   dio: ^4.0.6

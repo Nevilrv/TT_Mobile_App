@@ -196,7 +196,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                       width: Get.height * .2,
                       margin: EdgeInsets.symmetric(vertical: 10),
                       child: SimpleTimer(
-                        duration: Duration(seconds: timeDuration()),
+                        duration: Duration(seconds: timeDuration() ?? 30),
                         controller: _timerController,
                         timerStyle: _timerStyle,
                         progressTextFormatter: (format) {

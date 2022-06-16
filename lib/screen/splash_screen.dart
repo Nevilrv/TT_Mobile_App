@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:sizer/sizer.dart';
 import 'package:tcm/preference_manager/prefrence_store.dart';
 import 'package:tcm/screen/home_screen.dart';
 
@@ -38,8 +37,8 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Center(
           child: Image.asset(
         'asset/images/logo.png',
-        height: 100.h,
-        width: 100.h,
+        height: Get.height,
+        width: Get.width,
       )),
     );
   }

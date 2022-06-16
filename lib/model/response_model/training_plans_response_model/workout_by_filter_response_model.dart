@@ -54,7 +54,7 @@ class WorkoutByFilter {
   String? workoutDescription;
   String? workoutGoal;
   String? workoutLevel;
-  String? workoutDuration;
+  dynamic workoutDuration;
   String? workoutImage;
   String? goalTitle;
   String? levelTitle;

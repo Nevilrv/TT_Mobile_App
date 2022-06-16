@@ -547,7 +547,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                   body: Center(
                       child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: noDataLottie(),
+                    child: CircularProgressIndicator(color: ColorUtils.kTint),
                   )));
             }
           });

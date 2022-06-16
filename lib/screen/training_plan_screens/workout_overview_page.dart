@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
@@ -7,7 +10,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/day_based_exercise_viewModel.dart';
-import 'excercise_detail_page.dart';
+import 'exercise_detail_page.dart';
 
 class WorkoutOverviewPage extends StatefulWidget {
   final int day;
@@ -40,8 +43,8 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
     return GetBuilder<DayBasedExerciseViewModel>(builder: (controller) {
       if (controller.apiResponse.status == Status.COMPLETE) {
         DayBasedExerciseResponseModel response = controller.apiResponse.data;
-        print(response.data!.length);
-        print('data -------------- ${response.data!}');
+        // log('length -- - - - ${response.data!.length}');
+        // log('data -------------- ${response.data!}');
         // if (response.data!.isNotEmpty && response.data != []) {
         return Scaffold(
             backgroundColor: ColorUtils.kBlack,
@@ -56,7 +59,7 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                     color: ColorUtils.kTint,
                   )),
               backgroundColor: ColorUtils.kBlack,
-              title: Text('Day ${widget.day + 1} Workout',
+              title: Text('Day ${widget.day} Workout',
                   style: FontTextStyle.kWhite16BoldRoboto),
               centerTitle: true,
               actions: response.data!.isNotEmpty && response.data != []
@@ -73,7 +76,7 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                 // data: response.data!,
                                 // indexId: index,
                               ));
-                              print("button pressed ");
+                              // log("button pressed ");
                             },
                             child: Text('Start',
                                 style: FontTextStyle.kTine16W400Roboto),
@@ -101,56 +104,68 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                               color: ColorUtils.kTint,
                               thickness: 1,
                             ),
+                            // ListView.builder(
+                            //     shrinkWrap: true,
+                            //     physics: NeverScrollableScrollPhysics(),
+                            //     itemCount: response.data!.length,
+                            //     itemBuilder: (_, index) {
+                            // log('index ============== $index');
+                            // log('length ============== ${response.data!.length}');
+
+                            // log('data -------------- 111 ${response.data![index].exercises![index]}');
+                            // log('---------- $index ${response.data![1].exercises![index].exerciseTitle}');
+
+                            // return
                             ListView.builder(
                                 shrinkWrap: true,
                                 physics: NeverScrollableScrollPhysics(),
-                                itemCount: response.data!.length,
+                                itemCount: response.data![0].exercises!.length,
                                 itemBuilder: (_, index) {
-                                  print(
-                                      '${response.data![index].exercises![0].exerciseImage}');
+                                  // log('index1 ============== $index1');
+
                                   return GestureDetector(
                                     onTap: () {
                                       Get.to(ExerciseDetailPage(
                                         exerciseId:
-                                            '${response.data![index].exercises![0].exerciseId}',
-
+                                            '${response.data![0].exercises![index].exerciseId}',
                                         workoutId: widget.workoutId,
                                         // data: response.data!,
                                         // indexId: index,
                                       ));
-                                      print("button pressed ");
+                                      // log("button pressed");
                                     },
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          margin: EdgeInsets.only(top: 12),
-                                          height: Get.height * 0.12,
-                                          width: Get.width * 0.32,
-                                          decoration: BoxDecoration(
-                                              border: Border.all(
-                                                  color: ColorUtils.kTint,
-                                                  width: 2),
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                              image: DecorationImage(
-                                                  image: response
-                                                                  .data![index]
-                                                                  .exercises![0]
-                                                                  .exerciseImage !=
-                                                              null ||
-                                                          response
-                                                                  .data![index]
-                                                                  .exercises![0]
-                                                                  .exerciseImage !=
-                                                              ''
-                                                      ? NetworkImage(
-                                                          '$baseImageUrl${response.data![index].exercises![0].exerciseImage}')
-                                                      : NetworkImage(
-                                                          'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRW3Y7khQ-HoaS-SjqUniPtFKPZVn5uqVYL9LTQhgjPlYzd1_aLj3QZt9DEO-QJpR6iVhg&usqp=CAU'),
-                                                  fit: BoxFit.cover)),
-                                        ),
+                                            margin: EdgeInsets.only(top: 12),
+                                            height: Get.height * 0.12,
+                                            width: Get.width * 0.32,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color: ColorUtils.kTint,
+                                                    width: 2),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                image: DecorationImage(
+                                                    image: response
+                                                                    .data![0]
+                                                                    .exercises![
+                                                                        index]
+                                                                    .exerciseImage ==
+                                                                null ||
+                                                            response
+                                                                .data![0]
+                                                                .exercises![
+                                                                    index]
+                                                                .exerciseImage!
+                                                                .isEmpty
+                                                        ? NetworkImage(
+                                                            'https://cdn.sanity.io/images/0vv8moc6/ophtalmology/d198c3b708a35d9adcfa0435ee12fe454db49662-640x400.png/no-image-available-icon-6.jpg?w=1500&fit=max&auto=format')
+                                                        : NetworkImage(
+                                                            '$baseImageUrl${response.data![0].exercises![index].exerciseImage}'),
+                                                    fit: BoxFit.fill))),
                                         SizedBox(
                                           width: 15,
                                         ),
@@ -160,15 +175,57 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                '${response.data![index].exercises![0].exerciseTitle}',
+                                                '${response.data![0].exercises![index].exerciseTitle}',
                                                 // textAlign: TextAlign.center,
                                                 style: FontTextStyle
                                                     .kWhite16BoldRoboto,
                                               ),
-                                              Text(
-                                                  '${response.data![index].exercises![0].exerciseSets} sets : ${response.data![index].exercises![0].exerciseReps},${response.data![index].exercises![0].exerciseReps},${response.data![index].exercises![0].exerciseReps},${response.data![index].exercises![0].exerciseReps}',
-                                                  style: FontTextStyle
-                                                      .kLightGray16W300Roboto)
+                                              SizedBox(
+                                                height: Get.height * .019,
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                        '${response.data![0].exercises![index].exerciseSets} sets : ',
+                                                        style: FontTextStyle
+                                                            .kLightGray16W300Roboto),
+                                                    ListView.separated(
+                                                        itemCount: int.parse(
+                                                                    '${response.data![0].exercises![index].exerciseSets!}') >=
+                                                                7
+                                                            ? 7
+                                                            : int.parse(
+                                                                '${response.data![0].exercises![index].exerciseSets!}'),
+                                                        scrollDirection:
+                                                            Axis.horizontal,
+                                                        physics:
+                                                            NeverScrollableScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        separatorBuilder:
+                                                            (_, index1) {
+                                                          return Text(
+                                                            ',',
+                                                            style: FontTextStyle
+                                                                .kLightGray16W300Roboto,
+                                                          );
+                                                        },
+                                                        itemBuilder:
+                                                            (_, index1) {
+                                                          // log('length --==--==--==${response.data![0].exercises![index].exerciseSets!}');
+                                                          // log('test--==--==--==${response.data![0].exercises![index].exerciseReps}');
+                                                          return Text(
+                                                              '${response.data![0].exercises![index].exerciseReps}',
+                                                              style: FontTextStyle
+                                                                  .kLightGray16W300Roboto);
+                                                        }),
+                                                    int.parse('${response.data![0].exercises![index].exerciseSets!}') >
+                                                            7
+                                                        ? Text(' ..',
+                                                            style: FontTextStyle
+                                                                .kLightGray16W300Roboto)
+                                                        : SizedBox(),
+                                                  ],
+                                                ),
+                                              )
                                             ],
                                           ),
                                         ),
@@ -180,6 +237,7 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                       ],
                                     ),
                                   );
+                                  // });
                                 })
                           ],
                         ),
