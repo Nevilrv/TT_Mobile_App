@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:developer';
 
 import 'package:chewie/chewie.dart';
@@ -100,12 +99,20 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
 
   int counterSets = 0;
   int counterReps = 0;
-  Duration counterTime = Duration(seconds: 0);
-  Duration timerPM = Duration(seconds: 15);
+  int counterTime = 0;
+
+  String timeCounter({int? counterTime}) {
+    int finalCounter = counterTime! * 15;
+    var setTime = Duration(seconds: finalCounter).toString().split('.')[0];
+    var formatTime = setTime.split(':');
+    var finalTime = '${formatTime[1]} : ${formatTime[2]}';
+    return finalTime;
+  }
 
   @override
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
+      // log('final time ======== ${formatTime[1]} : ${formatTime[2]}');
       return Scaffold(
         backgroundColor: ColorUtils.kBlack,
         appBar: AppBar(
@@ -294,7 +301,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                                   setState(() {
                                     counterReps++;
                                   });
-                                  log(' plus $counterReps');
+                                  log('plus $counterReps');
                                 },
                                 child: CircleAvatar(
                                   radius: Get.height * .03,
@@ -323,12 +330,13 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  log('minus $counterReps');
-
                                   setState(() {
-                                    if (counterTime > Duration(seconds: 0))
-                                      counterTime - timerPM;
+                                    if (counterTime > 0) {
+                                      counterTime--;
+                                      timeCounter(counterTime: counterTime);
+                                    }
                                   });
+                                  log('time minus ------- ${timeCounter(counterTime: counterTime)}');
                                 },
                                 child: CircleAvatar(
                                   radius: Get.height * .03,
@@ -340,11 +348,9 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                               SizedBox(width: Get.width * .08),
                               RichText(
                                   text: TextSpan(
-                                      text: '${counterTime}\t',
-                                      style: counterTime == Duration(seconds: 0)
-                                          ? FontTextStyle.kWhite24BoldRoboto
-                                              .copyWith(color: ColorUtils.kGray)
-                                          : FontTextStyle.kWhite24BoldRoboto,
+                                      text:
+                                          '${timeCounter(counterTime: counterTime)}\t',
+                                      style: counterTime == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
                                       children: [
                                     TextSpan(
                                         text: 'Time',
@@ -354,9 +360,10 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                               InkWell(
                                 onTap: () {
                                   setState(() {
-                                    counterTime + timerPM;
+                                    counterTime++;
+                                    timeCounter(counterTime: counterTime);
                                   });
-                                  log(' plus timer $counterTime');
+                                  log('time plus ------- ${timeCounter(counterTime: counterTime)}');
                                 },
                                 child: CircleAvatar(
                                   radius: Get.height * .03,
