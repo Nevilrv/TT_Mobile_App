@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
@@ -8,19 +7,22 @@ import 'package:tcm/model/response_model/training_plans_response_model/day_based
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/day_based_exercise_viewModel.dart';
 import 'exercise_detail_page.dart';
 
 class WorkoutOverviewPage extends StatefulWidget {
   final int day;
   final String workoutId;
+  final String? workoutDay;
+  final String? workoutName;
 
-  WorkoutOverviewPage({
-    Key? key,
-    required this.day,
-    required this.workoutId,
-  }) : super(key: key);
+  WorkoutOverviewPage(
+      {Key? key,
+      required this.day,
+      required this.workoutId,
+      this.workoutDay,
+      this.workoutName})
+      : super(key: key);
 
   @override
   State<WorkoutOverviewPage> createState() => _WorkoutOverviewPageState();
@@ -72,7 +74,10 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                 exerciseId:
                                     '${response.data![0].exercises![0].exerciseId}',
                                 workoutId: widget.workoutId,
-                                day: widget.day.toString(),
+                                // day: widget.day.toString(),
+                                workoutDay: widget.workoutDay,
+                                workoutName: widget.workoutName,
+
                                 // data: response.data!,
                                 // indexId: index,
                               ));
@@ -123,12 +128,15 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                 itemBuilder: (_, index) {
                                   // log('index1 ============== $index1');
 
+                                  log('${response.data![0].exercises![index].exerciseImage}');
                                   return GestureDetector(
                                     onTap: () {
                                       Get.to(ExerciseDetailPage(
                                         exerciseId:
                                             '${response.data![0].exercises![index].exerciseId}',
                                         workoutId: widget.workoutId,
+                                        workoutDay: widget.workoutDay,
+                                        workoutName: widget.workoutName,
                                         // data: response.data!,
                                         // indexId: index,
                                       ));
@@ -164,7 +172,7 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                                         ? NetworkImage(
                                                             'https://cdn.sanity.io/images/0vv8moc6/ophtalmology/d198c3b708a35d9adcfa0435ee12fe454db49662-640x400.png/no-image-available-icon-6.jpg?w=1500&fit=max&auto=format')
                                                         : NetworkImage(
-                                                            '$baseImageUrl${response.data![0].exercises![index].exerciseImage}'),
+                                                            '${response.data![0].exercises![index].exerciseImage}'),
                                                     fit: BoxFit.fill))),
                                         SizedBox(
                                           width: 15,

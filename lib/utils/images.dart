@@ -1,6 +1,6 @@
 /// images
 
-String baseImageUrl = 'https://tcm.sataware.dev/images/';
+// String baseImageUrl = 'https://tcm.sataware.dev/images/';
 
 class AppImages {
   static const String workout1 = 'asset/images/workout_1.png';

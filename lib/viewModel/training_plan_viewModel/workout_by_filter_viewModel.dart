@@ -15,7 +15,7 @@ class WorkoutByFilterViewModel extends GetxController {
   ApiResponse get apiResponse => _apiResponse;
   Future<void> getWorkoutByFilterDetails(
       {String? goal, String? duration, String? gender}) async {
-    log(' duration ==========  $duration -- goal === $goal -- gender ======= $gender');
+    log('duration ==========  $duration -- goal === $goal -- gender ======= $gender');
     _apiResponse = ApiResponse.loading(message: 'Loading');
     // update();
     try {

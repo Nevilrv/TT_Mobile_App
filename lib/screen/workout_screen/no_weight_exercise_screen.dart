@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -5,7 +8,6 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/weighted_exercise.dart';
-import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:video_player/video_player.dart';
@@ -96,6 +98,11 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
     await initializePlayer();
   }
 
+  int counterSets = 0;
+  int counterReps = 0;
+  Duration counterTime = Duration(seconds: 0);
+  Duration timerPM = Duration(seconds: 15);
+
   @override
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
@@ -177,19 +184,218 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                       '${widget.data[0].exerciseSets} sets of ${widget.data[0].exerciseReps} reps',
                       style: FontTextStyle.kLightGray16W300Roboto,
                     ),
-                    SizedBox(
-                      child: ListView.builder(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: int.parse(
-                              widget.data[0].exerciseSets!.toString()),
-                          itemBuilder: (_, index) {
-                            return NoWeightedCounter(
-                              counter: repsCounter,
-                              repsNo: '${widget.data[0].exerciseReps}',
-                            );
-                          }),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                      child: Container(
+                        height: Get.height * .1,
+                        width: Get.width,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: ColorUtilsGradient.kGrayGradient,
+                                begin: Alignment.topCenter,
+                                end: Alignment.topCenter),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  log('minus $counterSets');
+
+                                  setState(() {
+                                    if (counterSets > 0) counterSets--;
+                                  });
+                                },
+                                child: CircleAvatar(
+                                  radius: Get.height * .03,
+                                  backgroundColor: ColorUtils.kTint,
+                                  child: Icon(Icons.remove,
+                                      color: ColorUtils.kBlack),
+                                ),
+                              ),
+                              SizedBox(width: Get.width * .08),
+                              RichText(
+                                  text: TextSpan(
+                                      text: '$counterSets\t',
+                                      style: counterSets == 0
+                                          ? FontTextStyle.kWhite24BoldRoboto
+                                              .copyWith(color: ColorUtils.kGray)
+                                          : FontTextStyle.kWhite24BoldRoboto,
+                                      children: [
+                                    TextSpan(
+                                        text: 'sets',
+                                        style: FontTextStyle.kWhite17W400Roboto)
+                                  ])),
+                              SizedBox(width: Get.width * .08),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    counterSets++;
+                                  });
+                                  log(' plus $counterSets');
+                                },
+                                child: CircleAvatar(
+                                  radius: Get.height * .03,
+                                  backgroundColor: ColorUtils.kTint,
+                                  child:
+                                      Icon(Icons.add, color: ColorUtils.kBlack),
+                                ),
+                              ),
+                            ]),
+                      ),
                     ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                      child: Container(
+                        height: Get.height * .1,
+                        width: Get.width,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: ColorUtilsGradient.kGrayGradient,
+                                begin: Alignment.topCenter,
+                                end: Alignment.topCenter),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  log('minus $counterReps');
+
+                                  setState(() {
+                                    if (counterReps > 0) counterReps--;
+                                  });
+                                },
+                                child: CircleAvatar(
+                                  radius: Get.height * .03,
+                                  backgroundColor: ColorUtils.kTint,
+                                  child: Icon(Icons.remove,
+                                      color: ColorUtils.kBlack),
+                                ),
+                              ),
+                              SizedBox(width: Get.width * .08),
+                              RichText(
+                                  text: TextSpan(
+                                      text: '$counterReps\t',
+                                      style: counterReps == 0
+                                          ? FontTextStyle.kWhite24BoldRoboto
+                                              .copyWith(color: ColorUtils.kGray)
+                                          : FontTextStyle.kWhite24BoldRoboto,
+                                      children: [
+                                    TextSpan(
+                                        text: 'reps',
+                                        style: FontTextStyle.kWhite17W400Roboto)
+                                  ])),
+                              SizedBox(width: Get.width * .08),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    counterReps++;
+                                  });
+                                  log(' plus $counterReps');
+                                },
+                                child: CircleAvatar(
+                                  radius: Get.height * .03,
+                                  backgroundColor: ColorUtils.kTint,
+                                  child:
+                                      Icon(Icons.add, color: ColorUtils.kBlack),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                      child: Container(
+                        height: Get.height * .1,
+                        width: Get.width,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: ColorUtilsGradient.kGrayGradient,
+                                begin: Alignment.topCenter,
+                                end: Alignment.topCenter),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  log('minus $counterReps');
+
+                                  setState(() {
+                                    if (counterTime > Duration(seconds: 0))
+                                      counterTime - timerPM;
+                                  });
+                                },
+                                child: CircleAvatar(
+                                  radius: Get.height * .03,
+                                  backgroundColor: ColorUtils.kTint,
+                                  child: Icon(Icons.remove,
+                                      color: ColorUtils.kBlack),
+                                ),
+                              ),
+                              SizedBox(width: Get.width * .08),
+                              RichText(
+                                  text: TextSpan(
+                                      text: '${counterTime}\t',
+                                      style: counterTime == Duration(seconds: 0)
+                                          ? FontTextStyle.kWhite24BoldRoboto
+                                              .copyWith(color: ColorUtils.kGray)
+                                          : FontTextStyle.kWhite24BoldRoboto,
+                                      children: [
+                                    TextSpan(
+                                        text: 'Time',
+                                        style: FontTextStyle.kWhite17W400Roboto)
+                                  ])),
+                              SizedBox(width: Get.width * .08),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    counterTime + timerPM;
+                                  });
+                                  log(' plus timer $counterTime');
+                                },
+                                child: CircleAvatar(
+                                  radius: Get.height * .03,
+                                  backgroundColor: ColorUtils.kTint,
+                                  child:
+                                      Icon(Icons.add, color: ColorUtils.kBlack),
+                                ),
+                              ),
+                            ]),
+                      ),
+                    ),
+                    // ListView.builder(
+                    //     physics: NeverScrollableScrollPhysics(),
+                    //     shrinkWrap: true,
+                    //     itemCount:
+                    //         int.parse(widget.data[0].exerciseSets!.toString()),
+                    //     itemBuilder: (_, index) {
+                    //       return NoWeightedCounter(
+                    //         counter: repsCounter,
+                    //         repsNo: '${widget.data[0].exerciseReps}',
+                    //       );
+                    //     }),
+                    SizedBox(height: Get.height * .02),
+
+                    commonNevigationButton(
+                        onTap: () {
+                          if ('${widget.data[0].exerciseVideo}'
+                              .contains('www.youtube.com')) {
+                            _youTubePlayerController?.pause();
+                          } else {
+                            _videoPlayerController?.pause();
+                            _chewieController?.pause();
+                          }
+                          Get.to(WeightExerciseScreen(data: widget.data));
+                          setState(() {
+                            repsCounter = 0;
+                          });
+                        },
+                        name: 'Start Exercise'),
                     SizedBox(height: Get.height * .02),
                     commonNevigationButton(
                         onTap: () {

@@ -198,7 +198,6 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                     //     child: CircularProgressIndicator(),
                                     //   );
                                     // }
-
                                     SizedBox(
                                       height: Get.height * 0.175,
                                       child: ListView.builder(
@@ -247,8 +246,8 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                               image: AssetImage(
                                                                   AppImages
                                                                       .videoThumbnail),
-                                                              fit: BoxFit
-                                                                  .fitWidth)),
+                                                              fit:
+                                                                  BoxFit.fill)),
                                                     ),
                                                   )
                                                 : SizedBox();

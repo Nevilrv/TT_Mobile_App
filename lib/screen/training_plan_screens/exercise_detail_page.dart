@@ -15,13 +15,17 @@ class ExerciseDetailPage extends StatefulWidget {
   final String? exerciseId;
   final String? day;
   final String? workoutId;
+  final String? workoutDay;
+  final String? workoutName;
 
-  ExerciseDetailPage({
-    Key? key,
-    required this.exerciseId,
-    this.workoutId,
-    this.day,
-  }) : super(key: key);
+  ExerciseDetailPage(
+      {Key? key,
+      required this.exerciseId,
+      this.workoutId,
+      this.day,
+      this.workoutDay,
+      this.workoutName})
+      : super(key: key);
 
   @override
   State<ExerciseDetailPage> createState() => _ExerciseDetailPageState();
@@ -160,6 +164,8 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                         exerciseId: response.data![0].exerciseId,
                         day: widget.day,
                         workoutId: widget.workoutId,
+                        workoutDay: widget.workoutDay,
+                        workoutName: widget.workoutName,
                       ));
                     },
                     child:
@@ -193,7 +199,8 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                                     backgroundColor: ColorUtils.kGray,
                                     bufferedColor: ColorUtils.kLightGray),
                               )
-                            : noDataLottie(),
+                            : CircularProgressIndicator(
+                                color: ColorUtils.kTint),
                       )
                     : Center(
                         child: _chewieController != null &&
@@ -202,7 +209,8 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                             ? Chewie(
                                 controller: _chewieController!,
                               )
-                            : noDataLottie(),
+                            : CircularProgressIndicator(
+                                color: ColorUtils.kTint),
                       ),
               ),
               Padding(

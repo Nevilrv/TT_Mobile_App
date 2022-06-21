@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,7 +22,15 @@ class ProgramSetupPage extends StatefulWidget {
   final String? exerciseId;
   final String? day;
   final String? workoutId;
-  ProgramSetupPage({Key? key, this.exerciseId, this.workoutId, this.day})
+  final String? workoutDay;
+  final String? workoutName;
+  ProgramSetupPage(
+      {Key? key,
+      this.exerciseId,
+      this.workoutId,
+      this.day,
+      this.workoutDay,
+      this.workoutName})
       : super(key: key);
 
   @override
@@ -64,9 +71,9 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
   void initState() {
     super.initState();
 
-    print('workout id  ------------------ ${widget.workoutId}');
-    print('exerciseId id  ------------------ ${widget.exerciseId}');
-    print('day  ------------------ ${widget.day}');
+    print('workout id ------------------ ${widget.workoutId}');
+    print('exerciseId id ------------------ ${widget.exerciseId}');
+    print('day ------------------ ${widget.day}');
 
     widget.exerciseId != null && widget.day == null
         ? _exerciseByIdViewModel.getExerciseByIdDetails(id: widget.exerciseId)
@@ -93,9 +100,35 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
   Widget build(BuildContext context) {
     return GetBuilder<DayBasedExerciseViewModel>(
       builder: (controller) {
+        if (controller.apiResponse.status == Status.LOADING) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: ColorUtils.kTint,
+            ),
+          );
+        }
+        if (controller.apiResponse.status == Status.ERROR) {
+          return Center(
+            child: noDataLottie(),
+          );
+        }
         if (controller.apiResponse.status == Status.COMPLETE) {
           return GetBuilder<ExerciseByIdViewModel>(builder: (controllerExe) {
-            print('------------- ${controller.apiResponse.status}');
+            print('------------- ${controllerExe.apiResponse.status}');
+
+            if (controllerExe.apiResponse.status == Status.LOADING) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: ColorUtils.kTint,
+                ),
+              );
+            }
+            if (controllerExe.apiResponse.status == Status.ERROR) {
+              return Center(
+                child: noDataLottie(),
+              );
+            }
+
             if (controllerExe.apiResponse.status == Status.COMPLETE) {
               ExerciseByIdResponseModel response =
                   controllerExe.apiResponse.data;
@@ -130,12 +163,12 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                               Column(
                                 children: [
                                   Text(
-                                    '${response.data![0].exerciseTitle}',
+                                    '${widget.workoutName}',
                                     style: FontTextStyle.kWhite20BoldRoboto,
                                   ),
                                   SizedBox(height: Get.height * 0.01),
                                   Text(
-                                    '${response.data![0].exerciseSets} days a week',
+                                    '${widget.workoutDay} days a week',
                                     style: FontTextStyle.kLightGray16W300Roboto,
                                   ),
                                   SizedBox(height: Get.height * 0.04),
@@ -203,7 +236,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                     '${AppText.weekDays[index]}');
                                               }
 
-                                              log('----show day list  $dayAddedList');
+                                              log('----show day list $dayAddedList');
 
                                               setState(() {});
                                             },
@@ -349,10 +382,14 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                     }
                                   },
                                   selectedDayPredicate: (day) {
+                                    log('_selectedDay --- $_selectedDay === day --- $day ');
+
                                     return isSameDay(_selectedDay, day);
                                   },
                                   onDaySelected: (selectedDay, focusedDay) {
                                     if (!isSameDay(_selectedDay, selectedDay)) {
+                                      log('selectedDay --- $selectedDay === _selectedDay $_selectedDay');
+
                                       setState(() {
                                         _selectedDay = selectedDay;
                                         _focusedDay = focusedDay;
@@ -361,6 +398,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                   },
                                   onPageChanged: (focusedDay) {
                                     _focusedDay = focusedDay;
+                                    log('focusedDay --- $focusedDay');
                                   },
                                 ),
                               ),
@@ -369,14 +407,14 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                       Divider(
                                         color: ColorUtils.kGray,
                                         thickness: 2,
-                                        height: Get.height * 0.09,
+                                        height: Get.height * .09,
                                       ),
                                       Container(
                                         margin: EdgeInsets.symmetric(
                                             vertical: Get.height * .03),
                                         alignment: Alignment.center,
                                         height: Get.height * .045,
-                                        width: Get.width * 0.27,
+                                        width: Get.width * .27,
                                         decoration: BoxDecoration(
                                             color: ColorUtils.kRed,
                                             borderRadius:
@@ -432,11 +470,11 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                               ),
                                             ),
                                           ),
-                                          SizedBox(width: Get.width * 0.05),
+                                          SizedBox(width: Get.width * .05),
                                           GestureDetector(
                                             onTap: () {
                                               Get.back();
-                                              print('Remove pressed ');
+                                              print('Remove pressed');
                                             },
                                             child: Container(
                                               alignment: Alignment.center,
@@ -486,10 +524,10 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
-                                    left: Get.width * 0.05,
-                                    right: Get.width * 0.05,
-                                    top: Get.height * 0.03,
-                                    bottom: Get.height * 0.02),
+                                    left: Get.width * .05,
+                                    right: Get.width * .05,
+                                    top: Get.height * .03,
+                                    bottom: Get.height * .02),
                                 child: GestureDetector(
                                   onTap: () {
                                     Get.to(WorkoutHomeScreen(
@@ -500,7 +538,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                   },
                                   child: Container(
                                     alignment: Alignment.center,
-                                    height: Get.height * 0.06,
+                                    height: Get.height * .06,
                                     width: Get.width,
                                     decoration: BoxDecoration(
                                         gradient: LinearGradient(
@@ -509,7 +547,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                             begin: Alignment.topCenter,
                                             end: Alignment.topCenter),
                                         borderRadius: BorderRadius.circular(
-                                            Get.height * 0.1)),
+                                            Get.height * .1)),
                                     child: Text('Start Program',
                                         style:
                                             FontTextStyle.kBlack20BoldRoboto),
@@ -522,7 +560,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                       )
                     : Center(
                         child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 10.0),
+                        padding: EdgeInsets.symmetric(horizontal: 10),
                         child: noDataLottie(),
                       )),
               );
@@ -546,16 +584,14 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                   ),
                   body: Center(
                       child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 10.0),
-                    child: CircularProgressIndicator(color: ColorUtils.kTint),
+                    padding: EdgeInsets.symmetric(horizontal: 10),
+                    child: noDataLottie(),
                   )));
             }
           });
         } else {
           return Center(
-            child: CircularProgressIndicator(
-              color: ColorUtils.kTint,
-            ),
+            child: noDataLottie(),
           );
         }
       },

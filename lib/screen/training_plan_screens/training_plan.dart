@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -42,8 +44,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
     'Strength',
     'Hypertrophy',
     'Fat Loss',
-    'sdjuvhnius',
-    'hfuhesduhf'
   ];
 
   @override
@@ -181,11 +181,11 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
         physics: NeverScrollableScrollPhysics(),
         itemCount: workoutResponse!.data!.length,
         itemBuilder: (context, index) {
-          print('data ----- ${workoutResponse.data}');
+          log('data ----- ${workoutResponse.data}');
 
           if (workoutResponse.data!.isNotEmpty &&
               workoutResponse.data != null) {
-            print('data ----- ${workoutResponse.data}');
+            log('data ----- ${workoutResponse.data}');
 
             return selectedFocus(
                 text: '${workoutResponse.data![index].workoutTitle}',
@@ -196,7 +196,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                   ));
                 });
           } else {
-            print('Data not Found');
+            log('Data not Found');
 
             return Center(
                 child: Text(
@@ -230,7 +230,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
             child: ListView.builder(
               shrinkWrap: true,
               scrollDirection: Axis.horizontal,
-              // physics: NeverScrollableScrollPhysics(),
+              physics: NeverScrollableScrollPhysics(),
               itemCount: response.data!.length,
               itemBuilder: (_, index) {
                 return GestureDetector(
@@ -241,9 +241,8 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                       _workoutByFilterViewModel.getWorkoutByFilterDetails(
                           goal: goal, duration: duration, gender: gender);
 
-                      print('focus select ---- ${response.data![index]}');
-                      print(
-                          'focus select id---- ${response.data![index].goalId}');
+                      log('focus select ---- ${response.data![index]}');
+                      log('focus select id---- ${response.data![index].goalId}');
                     });
                   },
                   child: focusSelected == index
@@ -375,7 +374,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                               setState(() {
                                 daySelected = index;
                                 duration = (daySelected! + 3).toString();
-                                print('day selected ========= $duration');
+                                log('day selected ========= $duration');
                                 _workoutByFilterViewModel
                                     .getWorkoutByFilterDetails(
                                         goal: goal,
@@ -448,7 +447,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                                         goal: goal,
                                         duration: duration,
                                         gender: gender);
-                                print('gender --------- $gender');
+                                log('gender --------- $gender');
                               });
                             },
                             child: Center(
@@ -487,7 +486,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                                         goal: goal,
                                         duration: duration,
                                         gender: gender);
-                                print('gender --------- $gender');
+                                log('gender --------- $gender');
                               });
                             },
                             child: Center(
