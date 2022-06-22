@@ -1,16 +1,12 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:image_crop/image_crop.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/edit_pass_request_model.dart';
 import 'package:tcm/model/response_model/edit_pass_response_model.dart';
-import 'package:tcm/preference_manager/prefrence_store.dart';
-import 'package:tcm/screen/home_screen.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/profile_view_screen.dart';
-import 'package:tcm/screen/reset_pw_screen.dart';
 import 'package:tcm/viewModel/edit_pass_viewModel.dart';
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
@@ -426,7 +422,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                               if (controller.apiResponse.status ==
                                   Status.COMPLETE) {
                                 EditPassResponseModel response =
-                                    _editPassViewModel.apiResponse.data;
+                                    controller.apiResponse.data;
                                 log('================$loader');
                                 setState(() {
                                   loader = false;
@@ -538,7 +534,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
 
   Widget textField(
       {TextEditingController? controller,
-      String? initailaValue,
+      String? initialValue,
       bool? readOnly,
       String? text,
       TextInputType? keyboardType}) {
@@ -553,7 +549,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
       keyboardType: keyboardType,
       readOnly: readOnly!,
       controller: controller,
-      initialValue: initailaValue,
+      initialValue: initialValue,
       decoration: InputDecoration(
         hintText: text,
         hintStyle: TextStyle(
@@ -579,109 +575,5 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
         r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
     RegExp regex = new RegExp(pattern.toString());
     return regex.hasMatch(email);
-  }
-}
-
-class ProfileSizer extends StatefulWidget {
-  final File? image;
-  final String? id;
-
-  const ProfileSizer({Key? key, this.image, this.id}) : super(key: key);
-
-  @override
-  _ProfileSizerState createState() => _ProfileSizerState();
-}
-
-class _ProfileSizerState extends State<ProfileSizer> {
-  final cropKey = GlobalKey<CropState>();
-  File? image;
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(children: [
-          SizedBox(
-            height: Get.height * 0.01,
-          ),
-          Row(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_sharp,
-                    color: ColorUtils.kTint,
-                  )),
-              Padding(
-                padding: EdgeInsets.only(left: Get.width * 0.22),
-                child: Text(
-                  'Position and Size',
-                  style: FontTextStyle.kWhite17BoldRoboto,
-                ),
-              ),
-              Spacer(),
-              Padding(
-                padding: EdgeInsets.only(top: Get.height * 0.01),
-                child: InkWell(
-                  onTap: () {},
-                  child: Text('Skip', style: FontTextStyle.kTine16W400Roboto),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Crop.file(widget.image!, key: cropKey),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-            child: GestureDetector(
-              onTap: () {
-                print('id====++${widget.id}');
-                _cropImage().then((value) => Get.off(EditPasswordPage()));
-              },
-              child: Container(
-                height: Get.height * 0.06,
-                width: Get.width * 0.9,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: ColorUtils.kTint),
-                child: Center(
-                    child: Text(
-                  'Next',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 17),
-                )),
-              ),
-            ),
-          ),
-        ]),
-      ),
-    );
-  }
-
-  Future<void> _cropImage() async {
-    final scale = cropKey.currentState!.scale;
-    final area = cropKey.currentState!.area;
-    if (area == null) {
-      // cannot crop, widget is not setup
-      return;
-    }
-    final sample = await ImageCrop.sampleImage(
-      file: widget.image!,
-      preferredSize: (2000 / scale).round(),
-    );
-
-    final file = await ImageCrop.cropImage(
-      file: sample,
-      area: area,
-    );
-    image = file;
-    sample.delete();
-    debugPrint('image======${image!.path}');
   }
 }

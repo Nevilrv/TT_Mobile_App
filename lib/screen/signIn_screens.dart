@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/sign_in_request_model.dart';
 import 'package:tcm/model/response_model/sign_in_response_model.dart';
-import 'package:tcm/preference_manager/prefrence_store.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/sign_up.dart';
 import 'package:tcm/viewModel/sign_in_viewModel.dart';

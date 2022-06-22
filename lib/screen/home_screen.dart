@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/user_detail_response_model.dart';
-import 'package:tcm/preference_manager/prefrence_store.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/habit_tracker/habit_tracker_home_screen.dart';
 import 'package:tcm/screen/profile_view_screen.dart';
 import 'package:tcm/screen/schedule_screens/my_schedule_screen.dart';

@@ -1,12 +1,12 @@
 class AppText {
   static const List<String> weekDays = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday'
   ];
 
   static const List<String> habitsTracking = [

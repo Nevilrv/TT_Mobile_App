@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tcm/preference_manager/prefrence_store.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/home_screen.dart';
 
 import '../utils/ColorUtils.dart';

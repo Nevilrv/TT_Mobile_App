@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/edit_profile_request_model.dart';
 import 'package:tcm/model/response_model/edit_profile_response_model.dart';
-import 'package:tcm/preference_manager/prefrence_store.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/edit_password.dart';
 import 'package:tcm/screen/profile_view_screen.dart';
 import 'package:tcm/utils/images.dart';

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:tcm/preference_manager/prefrence_store.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/edit_profile_page.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';

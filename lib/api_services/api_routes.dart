@@ -17,6 +17,9 @@ class ApiRoutes {
   String editPassUrl = baseUrl + "/json/data_change_password.php";
   String editProfileUrl = baseUrl + "/json/data_user_profile_update.php";
 
+  String saveWorkoutProgramUrl =
+      baseUrl + "/json/data_save_workout_exercise.php";
+
   String userDetailUrl = baseUrl + "/json/data_users.php?user_id=";
 
   static const String getCategories = baseUrl + "/json/data_categories.php";
