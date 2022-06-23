@@ -199,6 +199,7 @@ class WorkoutById {
     this.workoutVideo,
     this.goalTitle,
     this.levelTitle,
+    this.selectedDays,
     this.dayNames,
     this.daysAllData,
   });
@@ -213,6 +214,7 @@ class WorkoutById {
   dynamic workoutVideo;
   String? goalTitle;
   String? levelTitle;
+  String? selectedDays;
   List<dynamic>? dayNames;
   List<dynamic>? daysAllData;
 
@@ -227,6 +229,7 @@ class WorkoutById {
         workoutVideo: json["workout_video"],
         goalTitle: json["goal_title"],
         levelTitle: json["level_title"],
+        selectedDays: json["selected_days"],
         dayNames: json["days_all_data"] == null
             ? []
             : List<dynamic>.from(json["day_names"].map((x) => x)),
@@ -247,6 +250,7 @@ class WorkoutById {
         "workout_video": workoutVideo,
         "goal_title": goalTitle,
         "level_title": levelTitle,
+        "selected_days": selectedDays,
         "day_names": List<dynamic>.from(dayNames!.map((x) => x)),
         "days_all_data":
             List<dynamic>.from(daysAllData!.map((x) => x.toJson())),

@@ -1,7 +1,10 @@
 import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/table_calender/customization/calendar_style.dart';
 import 'package:tcm/custom_packages/table_calender/customization/days_of_week_style.dart';
@@ -81,10 +84,10 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
   @override
   void initState() {
     super.initState();
-
-    print('workout id ------------------ ${widget.workoutId}');
-    print('exerciseId id ------------------ ${widget.exerciseId}');
-    print('day ------------------ ${widget.day}');
+    //
+    // print('workout id ------------------ ${widget.workoutId}');
+    // print('exerciseId id ------------------ ${widget.exerciseId}');
+    // print('day ------------------ ${widget.day}');
 
     _workoutByIdViewModel.getWorkoutByIdDetails(id: widget.workoutId);
 
@@ -92,6 +95,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
         ? _exerciseByIdViewModel.getExerciseByIdDetails(id: widget.exerciseId)
         : callApi();
     _selectedDay = _focusedDay;
+
+    // log('DAY FROM API $dayAddedList');
   }
 
   callApi() async {
@@ -110,9 +115,95 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
   List<String> dayAddedList = [];
   List apiDayAddedList = [];
 
+  List<int> weekDay = [1, 2, 5, 6];
+
+  // week() {
+  //   DateTime startDate = DateTime.now();
+  //   DateTime endDate =
+  //       DateTime(startDate.year, startDate.month, startDate.day + 7);
+  //   List<DateTime> days = [];
+  //   DateTime tmp = DateTime(startDate.year, startDate.month, startDate.day);
+  //   while (DateTime(tmp.year, tmp.month, tmp.day) != endDate) {
+  //     if (tmp.weekday == 1) {
+  //       days.add(DateTime(tmp.year, tmp.month, tmp.day));
+  //     }
+  //     tmp = tmp.add(new Duration(days: 1));
+  //   }
+  //   log('days list --------- $days');
+  //   log('temp date -------------  $tmp');
+  // }
+  List<DateTime> defSelectedList = [];
+
+  multiSelectionDay() {
+    DateTime todayDate = DateTime.now();
+
+    // log('now time ----------- ${todayDate.weekday}');
+    // todayDate.add(Duration(days: 7, hours: 23));
+    // log('find week number ----- ${todayDate}');
+    for (int week = 1; week <= 4; week++) {
+      DateTime endDate =
+          DateTime(todayDate.year, todayDate.month, todayDate.day + 7 * week);
+      List<DateTime> days = [];
+
+      DateTime tmp = DateTime(todayDate.year, todayDate.month, todayDate.day);
+      while (DateTime(tmp.year, tmp.month, tmp.day) != endDate) {
+        for (int apiDay = 0; apiDay < weekDay.length; apiDay++) {
+          if (tmp.weekday == weekDay[apiDay]) {
+            days.add(DateTime(tmp.year, tmp.month, tmp.day));
+          }
+        }
+        tmp = tmp.add(new Duration(days: 1));
+      }
+      // log('days list --------- $days');
+      // log('temp date -------------  $tmp');
+
+      defSelectedList = days;
+      // log('find week number +++++  ----- ${todayDate}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool loader = false;
+    print(
+        '----------------- ${weekDay.reduce((curr, next) => curr < next ? curr : next)}');
+
+    multiSelectionDay();
+    // List<DateTime> defSelectedList = [
+    //   DateTime.parse("2022-06-27 00:00:00.000"),
+    //   DateTime.parse("2022-06-28 00:00:00.000"),
+    //   DateTime.parse("2022-06-24 00:00:00.000"),
+    //   DateTime.parse("2022-06-19 00:00:00.000")
+    // ];
+
+    log('defSelectedList list --------- $defSelectedList');
+
+    List finalDateSelectedList = [];
+    defSelectedList.forEach((element) {
+      final DateFormat formatter = DateFormat('yyyy-MM-dd');
+      final String formatted = formatter.format(element);
+      finalDateSelectedList.add(formatted);
+    });
+
+    String finalDateSelectedString = finalDateSelectedList.join(",");
+
+    print("final string of dates $finalDateSelectedString");
+    //
+    // WorkoutByIdResponseModel workRes = _workoutByIdViewModel.apiResponse.data;
+    //
+    // apiDayAddedList = workRes.data![0].selectedDays!.split(",");
+    // apiDayAddedList.forEach((element) {
+    //   dayAddedList.add(element);
+    // });
+    //
+    // for (int i = 0; i <= AppText.weekDays.length; i++) {
+    //   if (dayAddedList.contains('${AppText.weekDays[i]}')) {
+    //     dayAddedList.remove('${AppText.weekDays[i]}');
+    //   } else {
+    //     dayAddedList.add('${AppText.weekDays[i]}');
+    //   }
+    // }
+
     // if (_workoutByIdViewModel.apiResponse.status == Status.LOADING) {
     //   return Center(child: CircularProgressIndicator());
     // }
@@ -237,6 +328,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
     //   log('for loop show list ----- ${showList.toString()}');
     //   log('for loop show list 1  ----- ${showList1.toString()}');
     // }
+
     return GetBuilder<DayBasedExerciseViewModel>(
       builder: (controller) {
         if (controller.apiResponse.status == Status.LOADING) {
@@ -253,8 +345,6 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
         }
         if (controller.apiResponse.status == Status.COMPLETE) {
           return GetBuilder<ExerciseByIdViewModel>(builder: (controllerExe) {
-            print('------------- ${controllerExe.apiResponse.status}');
-
             if (controllerExe.apiResponse.status == Status.LOADING) {
               return Center(
                 child: CircularProgressIndicator(
@@ -271,7 +361,6 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
             if (controllerExe.apiResponse.status == Status.COMPLETE) {
               ExerciseByIdResponseModel response =
                   controllerExe.apiResponse.data;
-              print('------------- 1111 ${controllerExe.apiResponse.status}');
 
               return Scaffold(
                 backgroundColor: ColorUtils.kBlack,
@@ -295,32 +384,22 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                         builder: (controllerWork) {
                         if (controllerWork.apiResponse.status ==
                             Status.LOADING) {
-                          log('-------------Workout LOADING ${controllerWork.apiResponse.status}');
-
                           return Center(
                             child: CircularProgressIndicator(
                               color: ColorUtils.kTint,
                             ),
                           );
                         }
-                        log('-------------Workout LOADING 1111111111 ${controllerWork.apiResponse.status}');
-                        if (controllerWork.apiResponse.status == Status.ERROR) {
-                          print(
-                              '-------------Workout ERROR ${controllerWork.apiResponse.status}');
 
+                        if (controllerWork.apiResponse.status == Status.ERROR) {
                           return Center(
                             child: noDataLottie(),
                           );
                         }
                         if (controllerWork.apiResponse.status ==
                             Status.COMPLETE) {
-                          print(
-                              '-------------Workout COMPLETE ${controllerWork.apiResponse.status}');
-
                           WorkoutByIdResponseModel workResponse =
                               controllerWork.apiResponse.data;
-
-                          log('days length -------${workResponse.data![0].daysAllData![0].days.length} ');
 
                           for (int i = 0;
                               i <
@@ -332,8 +411,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                           }
 
                           String finalDayList = dayAddedList.join(",");
-                          log('finalDayList -------------- $finalDayList');
-                          log('selectedDayList -------------- ${_selectedDay.toString()}');
+                          // log('finalDayList -------------- $finalDayList');
+                          // log('selectedDayList -------------- ${_selectedDay.toString()}');
 
                           return GetBuilder<SaveWorkoutProgramViewModel>(
                             builder: (saveWorkoutController) {
@@ -388,7 +467,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                 itemCount:
                                                     AppText.weekDays.length,
                                                 itemBuilder: (_, index) {
-                                                  log('day added from api -------$dayAddedList ');
+                                                  // log('day added from api -------$dayAddedList ');
 
                                                   return InkWell(
                                                     onTap: () {
@@ -405,14 +484,14 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                             index;
                                                         showList.add(index);
                                                       }
-                                                      log('listview add list ----- ${addList.toString()}');
-                                                      log('listview show list ----- ${showList.toString()}');
+                                                      // log('listview add list ----- ${addList.toString()}');
+                                                      // log('listview show list ----- ${showList.toString()}');
 
                                                       showList = List.generate(
                                                           showList.length,
                                                           (index) => index++);
-                                                      log('DATA:-$addList');
-                                                      log('addList gen :-$showList');
+                                                      // log('DATA:-$addList');
+                                                      // log('addList gen :-$showList');
 
                                                       addList.forEach(
                                                           (key, value) {
@@ -426,7 +505,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                               startIndex + 1;
                                                         }
                                                       });
-                                                      log('----show list 1 $showList1');
+                                                      // log('----show list 1 $showList1');
 
                                                       if (dayAddedList.contains(
                                                           '${AppText.weekDays[index]}')) {
@@ -436,7 +515,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         dayAddedList.add(
                                                             '${AppText.weekDays[index]}');
                                                       }
-                                                      log('----show day list $dayAddedList');
+                                                      // log('----show day list $dayAddedList');
                                                       setState(() {});
                                                     },
                                                     child: Container(
@@ -505,10 +584,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                               ),
                                                             ),
                                                             Text(
-                                                                AppText
-                                                                    .weekDays[
-                                                                        index]
-                                                                    .capitalizeFirst!,
+                                                                AppText.weekDays[
+                                                                    index],
                                                                 style: dayAddedList.contains(
                                                                         AppText.weekDays[
                                                                             index])
@@ -535,6 +612,59 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                         color: ColorUtils.kGray,
                                         thickness: 2,
                                         height: Get.height * 0.04,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: Get.height * .02,
+                                            horizontal: Get.width * .03),
+                                        child: SfDateRangePicker(
+                                          view: DateRangePickerView.month,
+                                          // backgroundColor: Colors.white,
+                                          allowViewNavigation: false,
+                                          showNavigationArrow: true,
+                                          initialDisplayDate: _focusedDay,
+                                          todayHighlightColor: ColorUtils.kTint,
+                                          selectionColor: ColorUtils.kTint,
+
+                                          selectionMode:
+                                              DateRangePickerSelectionMode
+                                                  .multiple,
+
+                                          initialSelectedDates: defSelectedList,
+                                          onSelectionChanged:
+                                              (DateRangePickerSelectionChangedArgs
+                                                  args) {
+                                            // log('${args.value.toString().length}');
+
+                                            // for (int i = 0;
+                                            //     i <=
+                                            //         args.value
+                                            //             .toString()
+                                            //             .length;
+                                            //     i++) {}
+                                            //
+                                            log('date args ----- ${args.value.toString()}');
+                                            // DateTime date = DateTime.parse(
+                                            //     '2022-06-2 00:00:00.000');
+                                            // log('week day name ${date.weekday}');
+                                          },
+
+                                          monthViewSettings:
+                                              DateRangePickerMonthViewSettings(
+                                            firstDayOfWeek: 1,
+                                            viewHeaderStyle:
+                                                DateRangePickerViewHeaderStyle(
+                                                    textStyle: FontTextStyle
+                                                        .kWhite17W400Roboto),
+                                          ),
+
+                                          headerStyle:
+                                              DateRangePickerHeaderStyle(
+                                            textAlign: TextAlign.center,
+                                            textStyle: FontTextStyle
+                                                .kWhite20BoldRoboto,
+                                          ),
+                                        ),
                                       ),
                                       Padding(
                                         padding: EdgeInsets.symmetric(
@@ -583,6 +713,13 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                             formatButtonVisible: false,
                                             titleCentered: true,
                                           ),
+                                          rangeSelectionMode:
+                                              RangeSelectionMode.enforced,
+                                          rangeStartDay: _focusedDay,
+                                          rangeEndDay: DateTime.now(),
+                                          onRangeSelected: (start, end, idk) {
+                                            // log('range ------ start $start ==== end $end === idk $idk');
+                                          },
                                           availableGestures:
                                               AvailableGestures.horizontalSwipe,
                                           startingDayOfWeek:
@@ -766,7 +903,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                             //   workoutId: widget.workoutId,
                                             // ));
 
-                                            log('Start Program pressed');
+                                            // log('Start Program pressed');
                                             setState(() {
                                               loader = true;
                                             });
@@ -791,13 +928,13 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                               _request.selectedWeekDays =
                                                   finalDayList;
                                               _request.selectedDates =
-                                                  "2022-06-24";
+                                                  finalDateSelectedString;
 
                                               await saveWorkoutController
                                                   .saveWorkoutProgramViewModel(
                                                       _request);
 
-                                              log('=====saveWorkoutViewModel.apiResponse.status===========${saveWorkoutController.apiResponse.status}');
+                                              // log('=====saveWorkoutViewModel.apiResponse.status===========${saveWorkoutController.apiResponse.status}');
                                               if (saveWorkoutController
                                                       .apiResponse.status ==
                                                   Status.COMPLETE) {
@@ -805,7 +942,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                     saveWorkoutResponse =
                                                     saveWorkoutController
                                                         .apiResponse.data;
-                                                log('================$loader');
+                                                // log('================$loader');
                                                 setState(() {
                                                   loader = false;
                                                 });
@@ -833,7 +970,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                   setState(() {
                                                     loader = false;
                                                   });
-                                                  log("============ res null ${saveWorkoutResponse.msg}");
+                                                  // log("============ res null ${saveWorkoutResponse.msg}");
                                                   Get.showSnackbar(GetSnackBar(
                                                     message:
                                                         '${saveWorkoutResponse.msg}',

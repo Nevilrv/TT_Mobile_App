@@ -146,11 +146,9 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
 
           response.data![0].daysAllData!.forEach((element) {
             element.days.forEach((v) {
-              log('----------- $data');
               data.add(v);
             });
           });
-          log('data   ---    $data');
 
           return Scaffold(
             backgroundColor: ColorUtils.kBlack,

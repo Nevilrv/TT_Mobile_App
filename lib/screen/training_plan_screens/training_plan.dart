@@ -181,12 +181,8 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
         physics: NeverScrollableScrollPhysics(),
         itemCount: workoutResponse!.data!.length,
         itemBuilder: (context, index) {
-          log('data ----- ${workoutResponse.data}');
-
           if (workoutResponse.data!.isNotEmpty &&
               workoutResponse.data != null) {
-            log('data ----- ${workoutResponse.data}');
-
             return selectedFocus(
                 text: '${workoutResponse.data![index].workoutTitle}',
                 image: '${workoutResponse.data![index].workoutImage}',
@@ -196,8 +192,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                   ));
                 });
           } else {
-            log('Data not Found');
-
             return Center(
                 child: Text(
               'Data Not Found!',
@@ -240,9 +234,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                       goal = '${response.data![index].goalId}';
                       _workoutByFilterViewModel.getWorkoutByFilterDetails(
                           goal: goal, duration: duration, gender: gender);
-
-                      log('focus select ---- ${response.data![index]}');
-                      log('focus select id---- ${response.data![index].goalId}');
                     });
                   },
                   child: focusSelected == index
@@ -374,7 +365,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                               setState(() {
                                 daySelected = index;
                                 duration = (daySelected! + 3).toString();
-                                log('day selected ========= $duration');
+
                                 _workoutByFilterViewModel
                                     .getWorkoutByFilterDetails(
                                         goal: goal,
@@ -486,7 +477,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                                         goal: goal,
                                         duration: duration,
                                         gender: gender);
-                                log('gender --------- $gender');
                               });
                             },
                             child: Center(
