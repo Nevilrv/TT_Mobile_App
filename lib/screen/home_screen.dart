@@ -192,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 20),
                               child: Text(
-                                'Looks like you don’t have any upcoming workouts. Get started by choosing a plan.  ',
+                                'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
                                 style: FontTextStyle.kWhite16W300Roboto,
                               ),
                             ),

@@ -95,6 +95,10 @@ class FontTextStyle {
       color: ColorUtils.kTint,
       fontWeight: FontWeight.bold,
       fontSize: Get.height * .02);
+  static TextStyle kTint12BoldRoboto = TextStyle(
+      color: ColorUtils.kTint,
+      fontWeight: FontWeight.bold,
+      fontSize: Get.width * .033);
 
   static TextStyle kBlack12BoldRoboto = TextStyle(
       color: Colors.black,

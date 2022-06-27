@@ -21,4 +21,21 @@ class WorkoutByIdViewModel extends GetxController {
     }
     update();
   }
+
+  bool isCallOneTime = true;
+  List<String> dayAddedList = [];
+  setDayAddedList({required String value}) {
+    dayAddedList.add(value);
+    update();
+  }
+
+  setAndRemove({required String keyValue}) {
+    if (dayAddedList.contains(keyValue)) {
+      dayAddedList.remove(keyValue);
+    } else {
+      dayAddedList.add(keyValue);
+    }
+    print('controller call -------');
+    update();
+  }
 }

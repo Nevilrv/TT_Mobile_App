@@ -434,18 +434,6 @@
       "languageVersion": "2.12"
     },
     {
-      "name": "syncfusion_flutter_core",
-      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.4-stable/flutter/.pub-cache/hosted/pub.dartlang.org/syncfusion_flutter_core-20.1.61",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
-      "name": "syncfusion_flutter_datepicker",
-      "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.4-stable/flutter/.pub-cache/hosted/pub.dartlang.org/syncfusion_flutter_datepicker-20.1.61",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "term_glyph",
       "rootUri": "file:///D:/Software/flutter-sdk/flutter_windows_2.10.4-stable/flutter/.pub-cache/hosted/pub.dartlang.org/term_glyph-1.2.0",
       "packageUri": "lib/",
@@ -638,7 +626,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2022-06-23T12:58:57.627623Z",
+  "generated": "2022-06-25T09:46:55.191404Z",
   "generator": "pub",
   "generatorVersion": "2.16.2"
 }

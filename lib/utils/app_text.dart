@@ -34,7 +34,7 @@ class AppText {
       'You’re killing it. Great job on completing another workout! You’re that much closer to hitting your fitness goals. Keep it up!';
 
   static const String perfectDayText =
-      'You’re killing it. Today you hit all of your daily habits. Keep it up and they will soon become a permanent part of your daily routine.';
+      'You’re killing it. Today you hit all of your daily habits. Keep it up and they will soon become syncfusion_flutter_datepicker permanent part of your daily routine.';
   static const String paragraph =
       'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur';
 }

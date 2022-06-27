@@ -12,6 +12,8 @@ class ApiRoutes {
   String videoDislikeUrl = baseUrl + "/json/data_video_dislike.php";
   String videoViewsUrl = baseUrl + "/json/data_visit.php";
   String goalUrl = baseUrl + "/json/data_goals.php";
+  String workoutExerciseConflictUrl =
+      baseUrl + "/json/data_check_workout_exercise_conflict.php?date=";
 
   String experienceUrl = baseUrl + "/json/data_experience_levels.php";
   String editPassUrl = baseUrl + "/json/data_change_password.php";
