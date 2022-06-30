@@ -8,21 +8,29 @@ import 'package:tcm/repo/training_plan_repo/workout_exercise_conflict_repo.dart'
 class WorkoutExerciseConflictViewModel extends GetxController {
   String? date;
 
+  @override
+  onInit() {
+    getWorkoutExerciseConflictDetails();
+
+    super.onInit();
+  }
+
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get apiResponse => _apiResponse;
-  Future<void> getWorkoutExerciseConflictDetails({String? date}) async {
-    log('date ==========  $date');
+  Future<void> getWorkoutExerciseConflictDetails(
+      {String? date, String? userId}) async {
+    log('date ==========  $date ------------ $userId');
     _apiResponse = ApiResponse.loading(message: 'Loading');
-    // update();
+    update();
     try {
       WorkoutExerciseConflictResponseModel response =
           await WorkoutExerciseConflictRepo()
-              .workoutExerciseConflictRepo(date: date);
-      print('WorkoutByFilterResponseModel=>$response');
+              .workoutExerciseConflictRepo(date: date, userId: userId);
+      print('the response =>$response');
       _apiResponse = ApiResponse.complete(response);
     } catch (e) {
-      print("----- WorkoutByFilterResponseModel === >$e");
+      print("----- 123123123 === >$e");
       _apiResponse = ApiResponse.error(message: 'error');
     }
     update();

@@ -75,7 +75,7 @@ typedef DateRangePickerSelectionChangedCallback = void Function(
 // parameters.
 void _raiseSelectionChangedCallback(_SfDateRangePicker picker,
     {dynamic value}) {
-  picker.onSelectionChanged?.call(DateRangePickerSelectionChangedArgs(value));
+  picker.onSelectionChanged!.call(DateRangePickerSelectionChangedArgs(value));
 }
 
 // method that raises the visible dates changed call back with the given

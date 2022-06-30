@@ -17,25 +17,26 @@ class WorkoutExerciseConflictResponseModel {
 
   bool? success;
   String? msg;
-  Data? data;
+  List<Conflict>? data;
 
   factory WorkoutExerciseConflictResponseModel.fromJson(
           Map<String, dynamic> json) =>
       WorkoutExerciseConflictResponseModel(
         success: json["success"],
         msg: json["msg"],
-        data: Data.fromJson(json["data"]),
+        data:
+            List<Conflict>.from(json["data"].map((x) => Conflict.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "success": success,
         "msg": msg,
-        "data": data!.toJson(),
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
-class Data {
-  Data({
+class Conflict {
+  Conflict({
     this.userWorkoutProgramId,
     this.workoutId,
     this.workoutTitle,
@@ -45,7 +46,7 @@ class Data {
   String? workoutId;
   String? workoutTitle;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory Conflict.fromJson(Map<String, dynamic> json) => Conflict(
         userWorkoutProgramId: json["user_workout_program_id"],
         workoutId: json["workout_id"],
         workoutTitle: json["workout_title"],
