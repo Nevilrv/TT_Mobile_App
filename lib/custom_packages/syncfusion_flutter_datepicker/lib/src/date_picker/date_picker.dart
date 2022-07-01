@@ -8098,6 +8098,7 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
         },
         child: RepaintBoundary(
             child: CustomPaint(
+          // foregroundPainter: BorderPainter(),
           // Returns the header view  as a child for the picker.
           painter: _PickerHeaderPainter(
               widget.visibleDates,
@@ -8196,6 +8197,27 @@ class _PickerHeaderViewState extends State<_PickerHeaderView> {
     );
   }
 }
+
+// class BorderPainter extends CustomPainter {
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     var paint = Paint()
+//       ..color = Colors.teal
+//       ..strokeWidth = 5
+//       ..strokeCap = StrokeCap.round;
+//
+//     Offset startingPoint = Offset(0, size.height / 2);
+//     Offset endingPoint = Offset(size.width, size.height / 2);
+//
+//     canvas.drawLine(startingPoint, endingPoint, paint);
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant CustomPainter oldDelegate) {
+//     // TODO: implement shouldRepaint
+//     throw UnimplementedError();
+//   }
+// }
 
 class _PickerHeaderPainter extends CustomPainter {
   _PickerHeaderPainter(
@@ -8507,6 +8529,7 @@ class _PickerViewHeaderPainter extends CustomPainter {
             DateFormat(monthViewSettings.dayFormat, locale.toString())
                 .format(isHijri ? currentDate.toDateTime() : currentDate);
         dayText = _updateViewHeaderFormat(dayText);
+        print('daytext --------------- $dayText');
 
         if (hasToday &&
             currentDate.weekday == today.weekday &&
@@ -8527,6 +8550,7 @@ class _PickerViewHeaderPainter extends CustomPainter {
 
         _textPainter.textScaleFactor = textScaleFactor;
         _textPainter.text = dayTextSpan;
+
         _textPainter.layout(minWidth: width, maxWidth: width);
         yPosition = (viewHeaderHeight - _textPainter.height) / 2;
         _textPainter.paint(
@@ -11300,7 +11324,7 @@ class _PickerViewState extends State<_PickerView>
           left: 0,
           top: viewHeaderHeight,
           right: 0,
-          height: height * 1.2,
+          height: height,
           child: RepaintBoundary(
             child: _monthView,
           ),

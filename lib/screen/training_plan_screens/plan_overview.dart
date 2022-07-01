@@ -28,23 +28,15 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
   YoutubePlayerController? _youTubePlayerController;
 
   ChewieController? _chewieController;
-
   WorkoutByIdViewModel _workoutByIdViewModel = Get.put(WorkoutByIdViewModel());
 
   @override
   void initState() {
     super.initState();
     _workoutByIdViewModel.getWorkoutByIdDetails(id: widget.id);
+    log('id ---- ${widget.id}');
     initializePlayer();
   }
-
-  // Future<void> urlParser() async {
-  //   await _allWorkoutByIdViewModel.getWorkoutByIdDetails(id: widget.id);
-  //   AllWorkoutResponseModel response =
-  //       _allWorkoutByIdViewModel.apiResponse.data;
-  //   log('Url ========= ${response.data![0].workoutVideo}');
-  //   initializePlayer(url: '${response.data![0].workoutVideo}');
-  // }
 
   @override
   void dispose() {
@@ -99,16 +91,6 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
     }
     setState(() {});
   }
-
-  // Future<void> initializePlayer({String? url}) async {
-  //   _videoPlayerController = VideoPlayerController.network(url!);
-  //
-  //   await Future.wait([
-  //     _videoPlayerController.initialize(),
-  //   ]);
-  //   _createChewieController();
-  //   setState(() {});
-  // }
 
   void _createChewieController() {
     _chewieController = ChewieController(
