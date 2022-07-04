@@ -20,7 +20,7 @@ class AppText {
     'Journaling'
   ];
 
-  static const List<String> trackFrequency = ['Daily', 'Weekly', 'Monthly'];
+  static const List<String> trackFrequency = ['daily', 'weekly', 'monthly'];
 
   static const String warning =
       'You are already following another program on these dates. Choose below if you want to follow them both.';

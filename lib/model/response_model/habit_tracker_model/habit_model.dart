@@ -1,3 +1,7 @@
+// To parse this JSON data, do
+//
+//     final habitResponseModel = habitResponseModelFromJson(jsonString);
+
 import 'dart:convert';
 
 HabitResponseModel habitResponseModelFromJson(String str) =>
@@ -36,21 +40,29 @@ class Habit {
     this.id,
     this.name,
     this.isCustom,
+    this.userId,
+    this.userName,
   });
 
   String? id;
   String? name;
   String? isCustom;
+  String? userId;
+  String? userName;
 
   factory Habit.fromJson(Map<String, dynamic> json) => Habit(
         id: json["id"],
         name: json["name"],
         isCustom: json["is_custom"],
+        userId: json["user_id"],
+        userName: json["user_name"] == null ? null : json["user_name"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
         "is_custom": isCustom,
+        "user_id": userId,
+        "user_name": userName == null ? null : userName,
       };
 }

@@ -270,7 +270,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                     if (controller.apiResponse.status ==
                                         Status.COMPLETE) {
                                       SignInResponseModel response =
-                                          _signInViewModel.apiResponse.data;
+                                          controller.apiResponse.data;
 
                                       setState(() {
                                         loader = false;

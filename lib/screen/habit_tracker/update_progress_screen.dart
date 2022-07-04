@@ -1,16 +1,24 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/request_model/habit_tracker_request_model/habit_record_add_update_request_model.dart';
+import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_response_model.dart'
+    as gh;
 import 'package:tcm/model/response_model/habit_tracker_model/habit_model.dart';
+import 'package:tcm/model/response_model/habit_tracker_model/habit_record_add_update_response_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/habit_tracker/habit_selection_screen.dart';
 import 'package:tcm/screen/habit_tracker/perfect_day_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/get_habit_record_viewModel.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/habit_record_add_update_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
 
 class UpdateProgressScreen extends StatefulWidget {
@@ -24,14 +32,20 @@ class UpdateProgressScreen extends StatefulWidget {
 
 class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
   HabitViewModel _habitViewModel = Get.put(HabitViewModel());
+  HabitRecordAddUpdateViewModel _habitRecordAddUpdateViewModel =
+      Get.put(HabitRecordAddUpdateViewModel());
+  GetHabitRecordViewModel _getHabitRecordViewModel =
+      Get.put(GetHabitRecordViewModel());
 
   initState() {
     super.initState();
-    _habitViewModel.getHabitDetail();
+    _habitViewModel.getHabitDetail(userId: PreferenceManager.getUId());
   }
 
   int index = 0;
-  DateTime? pickedDate = DateTime.now();
+  var pickedDate = DateTime.now();
+  final DateFormat formatter = DateFormat('yyyy-MM-dd');
+  gh.GetHabitRecordResponseModel? recordResponse;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +102,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
             //     ),
             //   ),
             // ),
-            InkWell(
+            GestureDetector(
               onTap: () {
                 DatePicker.showDatePicker(context,
                     theme: DatePickerTheme(
@@ -97,13 +111,27 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                         doneStyle: FontTextStyle.kTine16W400Roboto,
                         itemStyle: FontTextStyle.kWhite16W300Roboto),
                     showTitleActions: true,
-                    minTime: DateTime(2000, 1, 1),
-                    maxTime: DateTime(2050, 12, 31), onChanged: (date) {
+                    minTime: DateTime(2019, 1, 1),
+                    maxTime: DateTime(2099, 12, 31), onChanged: (date) {
                   print('change $date');
-                }, onConfirm: (date) {
+                }, onConfirm: (date) async {
                   setState(() {
                     pickedDate = date;
                   });
+                  String pickedDateString = formatter.format(pickedDate);
+
+                  print('date $pickedDateString');
+
+                  Map<String, dynamic> body = {
+                    "user_id": PreferenceManager.getUId(),
+                    "date": pickedDateString
+                  };
+                  print('Body=$body');
+                  await _getHabitRecordViewModel.getHabitRecordViewModel(body);
+                  gh.GetHabitRecordResponseModel resp =
+                      _getHabitRecordViewModel.apiResponse.data;
+                  print('resp --------------- $resp');
+                  recordResponse = resp;
                   print('confirm $date');
                   print('pickedDate $pickedDate');
                 }, currentTime: pickedDate, locale: LocaleType.en);
@@ -198,6 +226,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                 //   log('-------------- ${controller.apiResponse.status}');
                 //
                 //   HabitResponseModel response = controller.apiResponse.data;
+
                 return SizedBox(
                   child: GridView.builder(
                       shrinkWrap: true,
@@ -224,10 +253,10 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                         // );
                         return GestureDetector(
                           onTap: () {
-                            // controller.showProgressImage();
                             controller.updateSelectedHabits(
                                 habits:
-                                    '${controller.selectedHabitList[index]}');
+                                    '${controller.selectedHabitList[index]}',
+                                id: '${controller.tmpSelectedHabitIDList[index]}');
                             controller.progressCounter(
                                 selectedHabitListLength:
                                     controller.habitUpdatesList.length,
@@ -236,7 +265,15 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                             log('${controller.selectedHabitList[index]}');
                             log('${controller.habitUpdatesList}');
                             log('------------- ${controller.habitUpdatesList.length}');
+
+                            log('------------- tmpSelectedHabitIDList ${controller.tmpHabitUpdatesList}');
+
                             setState(() {});
+
+                            controller.joinIDList(
+                                listOfId: controller.tmpHabitUpdatesList);
+                            print(
+                                " list of id string = = = = = ${controller.habitIdString}");
                           },
                           child: Container(
                             padding: EdgeInsets.symmetric(horizontal: 10),
@@ -244,6 +281,9 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                             width: Get.width * 0.45,
                             decoration: controller.habitUpdatesList.contains(
                                     '${controller.selectedHabitList[index]}')
+                                // ||
+                                //     recordResponse!.data!.habits![index].name ==
+                                //         controller.selectedHabitList[index]
                                 ? BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(Get.height * .05),
@@ -259,6 +299,10 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                     color: ColorUtils.kBlack),
                             child: controller.habitUpdatesList.contains(
                                     '${controller.selectedHabitList[index]}')
+
+                                // ||
+                                //     recordResponse!.data!.habits![index].name ==
+                                //         controller.selectedHabitList[index]
                                 ? Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -271,7 +315,12 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                             ? '${controller.selectedHabitList[index].substring(0, 15) + '..'}'
                                             : '${controller.selectedHabitList[index]}',
                                         style: controller.habitUpdatesList.contains(
-                                                '${controller.selectedHabitList[index]}')
+                                                    '${controller.selectedHabitList[index]}') ||
+                                                recordResponse!.data!
+                                                        .habits![index].name ==
+                                                    controller
+                                                            .selectedHabitList[
+                                                        index]
                                             ? FontTextStyle.kBlack20BoldRoboto
                                             : FontTextStyle.kTint20BoldRoboto,
                                       ),
@@ -339,8 +388,45 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
               ),
               child: commonNevigationButton(
                   name: 'Next',
-                  onTap: () {
-                    Get.to(PerfectDayScreen());
+                  onTap: () async {
+                    if (_habitViewModel.habitIdString!.isNotEmpty) {
+                      HabitRecordAddUpdateRequestModel _request =
+                          HabitRecordAddUpdateRequestModel();
+                      _request.userId = PreferenceManager.getUId();
+                      _request.habitIds = _habitViewModel.habitIdString;
+                      _request.date = "$pickedDate";
+
+                      await _habitRecordAddUpdateViewModel
+                          .habitRecordAddUpdateViewModel(_request);
+
+                      if (_habitRecordAddUpdateViewModel.apiResponse.status ==
+                          Status.COMPLETE) {
+                        HabitRecordAddUpdateResponseModel res =
+                            _habitRecordAddUpdateViewModel.apiResponse.data;
+
+                        Get.showSnackbar(GetSnackBar(
+                          message: '${res.msg}',
+                          duration: Duration(seconds: 2),
+                        ));
+                        print(
+                            "------------------- $_habitRecordAddUpdateViewModel");
+                        print(
+                            "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
+                        Get.to(PerfectDayScreen());
+                      } else if (_habitRecordAddUpdateViewModel
+                              .apiResponse.status ==
+                          Status.ERROR) {
+                        Get.showSnackbar(GetSnackBar(
+                          message: 'Something went wrong!!! \nPlease try again',
+                          duration: Duration(seconds: 2),
+                        ));
+                      }
+                    } else {
+                      Get.showSnackbar(GetSnackBar(
+                        message: 'Please select at least one habit',
+                        duration: Duration(seconds: 2),
+                      ));
+                    }
                   }),
             )
           ]),

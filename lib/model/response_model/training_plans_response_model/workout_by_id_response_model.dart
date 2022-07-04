@@ -280,12 +280,14 @@ class Day {
     this.favorite,
     this.day,
     this.dayName,
+    this.dayIndex,
   });
 
   List<String>? selectedExercises;
   List<dynamic>? favorite;
   String? day;
   String? dayName;
+  String? dayIndex;
 
   factory Day.fromJson(Map<String, dynamic> json) => Day(
         selectedExercises:
@@ -295,6 +297,7 @@ class Day {
             : List<dynamic>.from(json["favorite"].map((x) => x)),
         day: json["day"],
         dayName: json["day_name"],
+        dayIndex: json["day_index"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -305,5 +308,6 @@ class Day {
             : List<dynamic>.from(favorite!.map((x) => x)),
         "day": day,
         "day_name": dayName,
+        "day_index": dayIndex,
       };
 }

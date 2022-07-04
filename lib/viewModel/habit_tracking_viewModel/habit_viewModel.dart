@@ -5,23 +5,17 @@ import 'package:tcm/repo/habit_tracker_repo/habits_repo.dart';
 import 'package:tcm/utils/images.dart';
 
 class HabitViewModel extends GetxController {
-  var isAlertOpen = false;
-  int? selectedIndex = 0;
+  bool isAlertOpen = false;
+
   List selectedHabitList = [];
+  List tmpSelectedHabitIDList = [];
+  String? habitIdString;
 
   List habitUpdatesList = [];
+  List tmpHabitUpdatesList = [];
   double? percent = 0;
 
   String selectedBodyIllu = AppImages.body_illustration[0];
-
-  frequencySelect({int? value}) {
-    selectedIndex = value;
-    update();
-  }
-
-  // showProgressImage() {
-  //   update();
-  // }
 
   progressCounter({int? selectedHabitListLength, int? totalListLength}) {
     percent = 100 * selectedHabitListLength! / totalListLength!;
@@ -61,37 +55,47 @@ class HabitViewModel extends GetxController {
       selectedBodyIllu = AppImages.body_illustration[8];
       update();
     }
-    print('percent ---- ${percent}');
-    print('totalListLength ---- ${totalListLength}');
+    print('percent ---- $percent');
+    print('totalListLength ---- $totalListLength');
     update();
   }
 
-  selectedHabits({String? habits}) {
-    if (selectedHabitList.contains(habits)) {
+  selectedHabits({String? habits, String? id}) {
+    if (selectedHabitList.contains(habits) &&
+        tmpSelectedHabitIDList.contains(id)) {
       selectedHabitList.remove(habits);
+      tmpSelectedHabitIDList.remove(id);
     } else {
       selectedHabitList.add(habits);
+      tmpSelectedHabitIDList.add(id);
     }
     update();
   }
 
-  updateSelectedHabits({String? habits}) {
-    if (habitUpdatesList.contains(habits)) {
+  updateSelectedHabits({String? habits, String? id}) {
+    if (habitUpdatesList.contains(habits) && tmpHabitUpdatesList.contains(id)) {
       habitUpdatesList.remove(habits);
+      tmpHabitUpdatesList.remove(id);
     } else {
       habitUpdatesList.add(habits);
+      tmpHabitUpdatesList.add(id);
     }
     update();
   }
 
-  habitUpdates({String? habits}) {
-    if (habitUpdatesList.contains(habits)) {
-      habitUpdatesList.remove(habits);
-    } else {
-      habitUpdatesList.add(habits);
-    }
+  joinIDList({List? listOfId}) {
+    habitIdString = listOfId!.join(',');
     update();
   }
+
+  // habitUpdates({String? habits}) {
+  //   if (habitUpdatesList.contains(habits)) {
+  //     habitUpdatesList.remove(habits);
+  //   } else {
+  //     habitUpdatesList.add(habits);
+  //   }
+  //   update();
+  // }
 
   changeStatus() {
     if (isAlertOpen) {
@@ -99,18 +103,18 @@ class HabitViewModel extends GetxController {
     } else {
       isAlertOpen = true;
     }
-    update();
+    // update();
   }
 
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get apiResponse => _apiResponse;
 
-  Future<void> getHabitDetail() async {
+  Future<void> getHabitDetail({String? userId}) async {
     _apiResponse = ApiResponse.loading(message: 'Loading');
     // update();
     try {
-      HabitResponseModel response = await HabitRepo().habitRepo();
+      HabitResponseModel response = await HabitRepo().habitRepo(userId: userId);
       _apiResponse = ApiResponse.complete(response);
     } catch (error) {
       print(".........>$error");

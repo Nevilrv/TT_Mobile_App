@@ -730,6 +730,10 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                             .kLightGray16W300Roboto),
                                             monthCellStyle:
                                                 DateRangePickerMonthCellStyle(
+                                              todayCellDecoration:
+                                                  BoxDecoration(
+                                                      color:
+                                                          Colors.transparent),
                                               disabledDatesTextStyle:
                                                   FontTextStyle
                                                       .kLightGray16W300Roboto,

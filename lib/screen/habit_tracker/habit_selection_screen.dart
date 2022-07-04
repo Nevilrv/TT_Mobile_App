@@ -4,12 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/request_model/habit_tracker_request_model/custom_habit_request_model.dart';
+import 'package:tcm/model/response_model/habit_tracker_model/custom_habit_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/habit_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/habit_tracker/tracking_frequency_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/custom_habit_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
 
 class HabitSelectionScreen extends StatefulWidget {
@@ -20,10 +24,13 @@ class HabitSelectionScreen extends StatefulWidget {
 class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
   TextEditingController _alertDialogTextController = TextEditingController();
   HabitViewModel _habitViewModel = Get.put(HabitViewModel());
+  CustomHabitViewModel _customHabitViewModel = Get.put(CustomHabitViewModel());
+  // final _formKeyAddHabit = GlobalKey<FormState>();
 
   initState() {
     super.initState();
-    _habitViewModel.getHabitDetail();
+    print("uid -- ${PreferenceManager.getUId()}");
+    _habitViewModel.getHabitDetail(userId: PreferenceManager.getUId());
   }
 
   dispose() {
@@ -101,9 +108,12 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                             return GestureDetector(
                               onTap: () {
                                 controller.selectedHabits(
-                                    habits: '${response.data![index].name}');
+                                    habits: '${response.data![index].name}',
+                                    id: '${response.data![index].id}');
                                 log('${response.data![index].name}');
                                 log('${controller.selectedHabitList}');
+                                print(
+                                    '----------========= ${response.data![index].id}');
                                 // setState(() {});
                               },
                               child: Container(
@@ -163,7 +173,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            '${response.data![index].name}',
+                                            '${response.data![index].name}'
+                                                .capitalizeFirst!,
                                             style: controller.selectedHabitList
                                                     .contains(
                                                         '${response.data![index].name}')
@@ -266,14 +277,52 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                   onPressed: () {
                     _habitViewModel.changeStatus();
                     Get.back();
-                    setState(() {});
+                    _alertDialogTextController.clear();
                   }),
               CupertinoDialogAction(
                 child: Text('Save', style: FontTextStyle.kBlack24W400Roboto),
-                onPressed: () {
+                onPressed: () async {
                   _habitViewModel.changeStatus();
                   Get.back();
+
                   setState(() {});
+                  if (_alertDialogTextController.text.isNotEmpty) {
+                    CustomHabitRequestModel _request =
+                        CustomHabitRequestModel();
+                    _request.name = _alertDialogTextController.text.trim();
+                    _request.userId = PreferenceManager.getUId();
+
+                    await _customHabitViewModel.customHabitViewModel(_request);
+
+                    if (_customHabitViewModel.apiResponse.status ==
+                        Status.COMPLETE) {
+                      CustomHabitResponseModel res =
+                          _customHabitViewModel.apiResponse.data;
+
+                      Get.showSnackbar(GetSnackBar(
+                        message: '${res.msg}',
+                        duration: Duration(seconds: 2),
+                      ));
+                      print(
+                          "_customHabitViewModel.apiResponse.message  ${res.msg}");
+
+                      _habitViewModel.getHabitDetail(
+                          userId: PreferenceManager.getUId());
+                      _alertDialogTextController.clear();
+                      setState(() {});
+                    } else if (_customHabitViewModel.apiResponse.status ==
+                        Status.ERROR) {
+                      Get.showSnackbar(GetSnackBar(
+                        message: 'Something went wrong!!! \nPlease try again',
+                        duration: Duration(seconds: 2),
+                      ));
+                    }
+                  } else {
+                    Get.showSnackbar(GetSnackBar(
+                      message: 'Please Enter Habit Name',
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
                 },
               ),
             ],

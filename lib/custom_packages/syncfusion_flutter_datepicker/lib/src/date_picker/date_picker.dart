@@ -8442,9 +8442,10 @@ class _PickerViewHeaderPainter extends CustomPainter {
   /// Defines the navigation direction for [SfDateRangePicker].
   final DateRangePickerNavigationDirection navigationDirection;
   final TextPainter _textPainter = TextPainter(
-      textDirection: TextDirection.ltr,
-      textAlign: TextAlign.left,
-      textWidthBasis: TextWidthBasis.longestLine);
+    textDirection: TextDirection.ltr,
+    textAlign: TextAlign.left,
+    textWidthBasis: TextWidthBasis.longestLine,
+  );
 
   final ValueNotifier<List<dynamic>>? viewHeaderVisibleDates;
 

@@ -312,8 +312,9 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                         ));
                                       },
                                       child: exerciseDayButton(
-                                        day: '${data[index].dayName}',
-                                        exercise: '${data[index].day}',
+                                        day:
+                                            '${response.data![0].dayNames![index]}',
+                                        exercise: '${data[index].dayName}',
                                       ),
                                     );
                                   },
