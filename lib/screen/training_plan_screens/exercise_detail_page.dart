@@ -17,12 +17,14 @@ class ExerciseDetailPage extends StatefulWidget {
   final String? workoutId;
   final String? workoutDay;
   final String? workoutName;
+  final String? workoutImage;
 
   ExerciseDetailPage(
       {Key? key,
       required this.exerciseId,
       this.workoutId,
       this.day,
+      this.workoutImage,
       this.workoutDay,
       this.workoutName})
       : super(key: key);
@@ -209,10 +211,16 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                             ? Chewie(
                                 controller: _chewieController!,
                               )
-                            : CircularProgressIndicator(
-                                color: ColorUtils.kTint),
-                      ),
+                            : widget.workoutImage == null
+                                ? noDataLottie()
+                                : Image.network(
+                                    widget.workoutImage!,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return noDataLottie();
+                                    },
+                                  )),
               ),
+              SizedBox(height: 15),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 18),
                 child: Column(

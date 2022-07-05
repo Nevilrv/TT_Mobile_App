@@ -209,7 +209,15 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                 ? Chewie(
                                     controller: _chewieController!,
                                   )
-                                : noDataLottie(),
+                                :  response.data![0].workoutImage == null
+                                ? noDataLottie()
+                                : Image.network(
+                              response.data![0].workoutImage!,
+                              errorBuilder:
+                                  (context, error, stackTrace) {
+                                return noDataLottie();
+                              },
+                            )
                           ),
                   ),
                   Padding(
@@ -313,8 +321,12 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                       },
                                       child: exerciseDayButton(
                                         day:
-                                            '${response.data![0].dayNames![index]}',
-                                        exercise: '${data[index].dayName}',
+                                            '${response.data![0].dayNames![index]}'
+                                                .capitalizeFirst,
+                                        exercise: '${data[index].dayName}'
+                                            .capitalizeFirst,
+                                        weekDay: '${data[index].day}'
+                                            .capitalizeFirst,
                                       ),
                                     );
                                   },
@@ -376,7 +388,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
     );
   }
 
-  Row exerciseDayButton({String? day, String? exercise}) {
+  Row exerciseDayButton({String? day, String? exercise, String? weekDay}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -385,7 +397,10 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                 text: '$day - ',
                 style: FontTextStyle.kWhite17BoldRoboto,
                 children: [
-              TextSpan(text: exercise, style: FontTextStyle.kWhite17W400Roboto)
+              TextSpan(text: exercise, style: FontTextStyle.kWhite17W400Roboto),
+              TextSpan(
+                  text: '\t(\t$weekDay\t)',
+                  style: FontTextStyle.kWhite17W400Roboto)
             ])),
         Icon(
           Icons.arrow_forward_ios_sharp,

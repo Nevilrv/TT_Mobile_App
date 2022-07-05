@@ -77,6 +77,8 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                 // day: widget.day.toString(),
                                 workoutDay: widget.workoutDay,
                                 workoutName: widget.workoutName,
+                                workoutImage: response
+                                    .data![0].exercises![0].exerciseImage,
 
                                 // data: response.data!,
                                 // indexId: index,
@@ -137,6 +139,8 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                         workoutId: widget.workoutId,
                                         workoutDay: widget.workoutDay,
                                         workoutName: widget.workoutName,
+                                        workoutImage: response.data![0]
+                                            .exercises![index].exerciseImage,
                                         // data: response.data!,
                                         // indexId: index,
                                       ));

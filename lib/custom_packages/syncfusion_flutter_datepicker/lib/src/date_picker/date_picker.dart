@@ -8530,7 +8530,7 @@ class _PickerViewHeaderPainter extends CustomPainter {
             DateFormat(monthViewSettings.dayFormat, locale.toString())
                 .format(isHijri ? currentDate.toDateTime() : currentDate);
         dayText = _updateViewHeaderFormat(dayText);
-        print('daytext --------------- $dayText');
+        // print('daytext --------------- $dayText');
 
         if (hasToday &&
             currentDate.weekday == today.weekday &&
