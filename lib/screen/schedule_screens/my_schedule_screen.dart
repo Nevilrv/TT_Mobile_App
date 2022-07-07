@@ -357,7 +357,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
           );
         } else {
           return Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(color: ColorUtils.kTint),
           );
         }
       }),

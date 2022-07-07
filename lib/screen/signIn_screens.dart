@@ -63,6 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
           body: SingleChildScrollView(
             child: Form(
               key: _formKeyLogIn,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(

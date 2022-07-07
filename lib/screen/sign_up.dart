@@ -82,6 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               physics: BouncingScrollPhysics(),
               child: Form(
                 key: _formKeySignUp,
+                // autovalidateMode: AutovalidateMode.onUserInteraction,
                 child: Column(children: [
                   Padding(
                     padding: EdgeInsets.only(

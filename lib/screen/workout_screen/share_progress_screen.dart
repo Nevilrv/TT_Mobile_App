@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
+import 'package:tcm/screen/workout_screen/widget/share_sheet_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -26,7 +28,8 @@ class ShareProgressScreen extends StatelessWidget {
               color: ColorUtils.kTint,
             )),
         backgroundColor: ColorUtils.kBlack,
-        title: Text('Nice Work', style: FontTextStyle.kWhite16BoldRoboto),
+        title:
+            Text('TRAINING SESSION', style: FontTextStyle.kWhite16BoldRoboto),
         centerTitle: true,
       ),
       body: Padding(
@@ -44,26 +47,31 @@ class ShareProgressScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Text(
-                          'Great Workout',
+                          'COMPLETE',
                           style: FontTextStyle.kWhite24BoldRoboto.copyWith(
                             fontSize: Get.height * 0.032,
                           ),
                         ),
                         Container(
-                          height: Get.height * .35,
+                          height: Get.height * .33,
                           width: Get.width * .5,
-                          child: Image.asset(AppImages.perfectDayIllustration),
+                          child: Image.asset(
+                            AppImages.workoutProgress,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                         Text(
                           AppText.shareProgressSuccess,
-                          style: FontTextStyle.kWhite20BoldRoboto
-                              .copyWith(fontWeight: FontWeight.w500),
+                          style: FontTextStyle.kWhite20BoldRoboto.copyWith(
+                              fontWeight: FontWeight.w500,
+                              fontSize: Get.height * .022),
                           maxLines: 4,
                           textAlign: TextAlign.center,
                         ),
                         Text(
-                          AppText.shareYourSuccess,
-                          style: FontTextStyle.kWhite24BoldRoboto,
+                          '',
+                          style: FontTextStyle.kWhite24BoldRoboto
+                              .copyWith(fontSize: Get.height * 0.023),
                           maxLines: 4,
                           textAlign: TextAlign.center,
                         ),
@@ -72,7 +80,9 @@ class ShareProgressScreen extends StatelessWidget {
                           child: commonNevigationButton(
                               name: 'Share',
                               onTap: () {
-                                shareBottomSheet();
+                                Get.to(ShareSheetScreen(),
+                                    transition: Transition.downToUp);
+                                // shareBottomSheet();
                               }),
                         ),
                       ]),

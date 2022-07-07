@@ -47,6 +47,24 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
   final DateFormat formatter = DateFormat('yyyy-MM-dd');
   gh.GetHabitRecordResponseModel? recordResponse;
 
+  // DateTime defDate = DateTime.now();
+  // DateTime? userSelectedDate;
+  // int dateCounter = 0;
+  //
+  // dateIncrement({int? counter}) {
+  //   userSelectedDate =
+  //       DateTime(defDate.year, defDate.month, defDate.day + counter!);
+  //
+  //   print('------------- +++ date $userSelectedDate');
+  // }
+  //
+  // dateDecrement({int? counter}) {
+  //   userSelectedDate =
+  //       DateTime(defDate.year, defDate.month, defDate.day + counter!);
+  //
+  //   print('------------- --- date $userSelectedDate');
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,6 +74,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
         leading: IconButton(
             onPressed: () {
               Get.back();
+              _habitViewModel.userSelectedDate = DateTime.now();
             },
             icon: Icon(
               Icons.arrow_back_ios_sharp,
@@ -80,8 +99,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
         child: Padding(
           padding: EdgeInsets.symmetric(
               horizontal: Get.width * 0.06, vertical: Get.height * 0.015),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          child: Column(children: [
             // TableCalendar(
             //   focusedDay: DateTime.now(),
             //   firstDay: DateTime.utc(2021, 05, 1),
@@ -102,60 +120,83 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
             //     ),
             //   ),
             // ),
-            GestureDetector(
-              onTap: () {
-                DatePicker.showDatePicker(context,
-                    theme: DatePickerTheme(
-                        backgroundColor: ColorUtils.kBlack,
-                        cancelStyle: FontTextStyle.kTine16W400Roboto,
-                        doneStyle: FontTextStyle.kTine16W400Roboto,
-                        itemStyle: FontTextStyle.kWhite16W300Roboto),
-                    showTitleActions: true,
-                    minTime: DateTime(2019, 1, 1),
-                    maxTime: DateTime(2099, 12, 31), onChanged: (date) {
-                  print('change $date');
-                }, onConfirm: (date) async {
-                  setState(() {
-                    pickedDate = date;
-                  });
-                  String pickedDateString = formatter.format(pickedDate);
-
-                  print('date $pickedDateString');
-
-                  Map<String, dynamic> body = {
-                    "user_id": PreferenceManager.getUId(),
-                    "date": pickedDateString
-                  };
-                  print('Body=$body');
-                  await _getHabitRecordViewModel.getHabitRecordViewModel(body);
-                  gh.GetHabitRecordResponseModel resp =
-                      _getHabitRecordViewModel.apiResponse.data;
-                  print('resp --------------- $resp');
-                  recordResponse = resp;
-                  print('confirm $date');
-                  print('pickedDate $pickedDate');
-                }, currentTime: pickedDate, locale: LocaleType.en);
-              },
-              child: Row(
+            GetBuilder<HabitViewModel>(builder: (controller) {
+              return Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.arrow_back_ios_sharp,
-                    color: ColorUtils.kTint,
-                    size: Get.height * .025,
+                  InkWell(
+                    onTap: () {
+                      controller.dateDecrement();
+                      print(
+                          'date counter ----------------- ${controller.userSelectedDate}');
+                    },
+                    child: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                      size: Get.height * .03,
+                    ),
                   ),
                   SizedBox(width: Get.height * .04),
-                  Text('${Jiffy(pickedDate).format('EEEE, MMMM do')}',
-                      style: FontTextStyle.kWhite20BoldRoboto),
+                  InkWell(
+                    onTap: () {
+                      DatePicker.showDatePicker(context,
+                          theme: DatePickerTheme(
+                              backgroundColor: ColorUtils.kBlack,
+                              cancelStyle: FontTextStyle.kTine16W400Roboto,
+                              doneStyle: FontTextStyle.kTine16W400Roboto,
+                              itemStyle: FontTextStyle.kWhite16W300Roboto),
+                          showTitleActions: true,
+                          minTime: DateTime(2019, 1, 1),
+                          maxTime: DateTime(2099, 12, 31), onChanged: (date) {
+                        controller.userSelectedDate = date;
+                        print('change $date');
+                      }, onConfirm: (date) async {
+                        setState(() {});
+                        controller.userSelectedDate = date;
+
+                        String pickedDateString =
+                            formatter.format(controller.userSelectedDate!);
+
+                        print('date $pickedDateString');
+
+                        Map<String, dynamic> body = {
+                          "user_id": PreferenceManager.getUId(),
+                          "date": pickedDateString
+                        };
+                        print('Body=$body');
+                        await _getHabitRecordViewModel
+                            .getHabitRecordViewModel(body);
+                        gh.GetHabitRecordResponseModel resp =
+                            _getHabitRecordViewModel.apiResponse.data;
+                        print('resp --------------- $resp');
+                        recordResponse = resp;
+                        print('confirm $date');
+                        print('pickedDate ${controller.userSelectedDate}');
+                      },
+                          currentTime: controller.userSelectedDate,
+                          locale: LocaleType.en);
+                    },
+                    child: Text(
+                        '${Jiffy(controller.userSelectedDate).format('EEEE, MMMM do')}',
+                        style: FontTextStyle.kWhite20BoldRoboto),
+                  ),
                   SizedBox(width: Get.height * .04),
-                  Icon(
-                    Icons.arrow_forward_ios_sharp,
-                    color: ColorUtils.kTint,
-                    size: Get.height * .025,
+                  InkWell(
+                    onTap: () {
+                      controller.dateIncrement();
+                      print(
+                          'date counter ----------------- ${controller.userSelectedDate}');
+                    },
+                    child: Icon(
+                      Icons.arrow_forward_ios_sharp,
+                      color: ColorUtils.kTint,
+                      size: Get.height * .03,
+                    ),
                   ),
                 ],
-              ),
-            ),
+              );
+            }),
+
             SizedBox(height: Get.height * .04),
             GetBuilder<HabitViewModel>(
               builder: (controller) {
@@ -173,13 +214,13 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                         padding: EdgeInsets.zero,
                         barRadius: Radius.circular(Get.height * .05),
                         animation: true,
-                        percent: _habitViewModel.percent! / 100,
+                        percent: controller.percent! / 100,
                         progressColor: ColorUtils.kTint,
                         backgroundColor: ColorUtils.kBlack,
                       ),
                     ),
                     Text(
-                      '${_habitViewModel.percent!.toInt()} %',
+                      '${controller.habitUpdatesList.length}/${controller.selectedHabitList.length}',
                       style: FontTextStyle.kWhite20BoldRoboto,
                     ),
                   ],
@@ -313,7 +354,9 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                                     .length >
                                                 15
                                             ? '${controller.selectedHabitList[index].substring(0, 15) + '..'}'
-                                            : '${controller.selectedHabitList[index]}',
+                                                .capitalizeFirst!
+                                            : '${controller.selectedHabitList[index]}'
+                                                .capitalizeFirst!,
                                         style: controller.habitUpdatesList.contains(
                                                     '${controller.selectedHabitList[index]}') ||
                                                 recordResponse!.data!
@@ -342,7 +385,9 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                                     .length >
                                                 15
                                             ? '${controller.selectedHabitList[index].substring(0, 15) + '..'}'
-                                            : '${controller.selectedHabitList[index]}',
+                                                .capitalizeFirst!
+                                            : '${controller.selectedHabitList[index]}'
+                                                .capitalizeFirst!,
                                         style: controller.habitUpdatesList.contains(
                                                 '${controller.selectedHabitList[index]}')
                                             ? FontTextStyle.kBlack20BoldRoboto
@@ -387,7 +432,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                 horizontal: Get.width * .03,
               ),
               child: commonNevigationButton(
-                  name: 'Next',
+                  name: 'COMPLETE!',
                   onTap: () async {
                     if (_habitViewModel.habitIdString!.isNotEmpty) {
                       HabitRecordAddUpdateRequestModel _request =

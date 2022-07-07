@@ -60,10 +60,9 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                 GetBuilder<UserHabitTrackStatusViewModel>(
                   builder: (controller) {
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'CHOOSE HABIT TO TRACK',
+                          'WHAT KIND OF HABITS WOULD YOU LIKE TO SET?',
                           style: FontTextStyle.kWhite17BoldRoboto,
                         ),
                         Divider(

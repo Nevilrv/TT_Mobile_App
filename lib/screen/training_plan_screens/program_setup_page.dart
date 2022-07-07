@@ -394,6 +394,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                         _workoutByIdViewModel
                             .dateRangePickerController.selectedDates!
                             .clear();
+                        _workoutByIdViewModel.changeConflict(false);
                       },
                       icon: Icon(
                         Icons.arrow_back_ios_sharp,
@@ -544,7 +545,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         AppText.weekDays.length,
                                                     itemBuilder: (_, index) {
                                                       return InkWell(
-                                                        onTap: () {
+                                                        onTap: () async {
                                                           setState(() {
                                                             _workoutByIdViewModel
                                                                 .setDayAddedList(
@@ -572,7 +573,49 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                             setNumber();
                                                             log('DATA>>>>>$data');
                                                           });
+                                                          await _workoutExerciseConflictViewModel
+                                                              .getWorkoutExerciseConflictDetails(
+                                                                  date:
+                                                                      dateString(),
+                                                                  userId: PreferenceManager
+                                                                      .getUId());
+                                                          if (_workoutExerciseConflictViewModel
+                                                                  .apiResponse
+                                                                  .status ==
+                                                              Status.COMPLETE) {
+                                                            WorkoutExerciseConflictResponseModel
+                                                                resConflict =
+                                                                _workoutExerciseConflictViewModel
+                                                                    .apiResponse
+                                                                    .data;
 
+                                                            if (resConflict
+                                                                        .data !=
+                                                                    [] &&
+                                                                resConflict
+                                                                        .msg ==
+                                                                    "You are already following another program on these dates. Choose below if you want to follow them both.") {
+                                                              conflictWorkoutList =
+                                                                  resConflict
+                                                                      .data!;
+                                                              warningmsg =
+                                                                  '${resConflict.msg}';
+
+                                                              print(
+                                                                  '-------------- msg${resConflict.msg}');
+
+                                                              print(
+                                                                  'conflict called on week days');
+
+                                                              controllerWork
+                                                                  .changeConflict(
+                                                                      true);
+                                                            } else {
+                                                              controllerWork
+                                                                  .changeConflict(
+                                                                      false);
+                                                            }
+                                                          }
                                                           print(
                                                               '------------- days 123 ${_workoutByIdViewModel.defSelectedList}');
 
@@ -623,9 +666,9 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                         alignment:
                                                                             Alignment.center,
                                                                         height: Get.height *
-                                                                            0.05,
+                                                                            .05,
                                                                         width: Get.height *
-                                                                            0.05,
+                                                                            .05,
                                                                         decoration: BoxDecoration(
                                                                             color:
                                                                                 ColorUtils.kBlack,
@@ -749,7 +792,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         .defSelectedList,
                                                 onSelectionChanged:
                                                     (DateRangePickerSelectionChangedArgs
-                                                        args) {
+                                                        args) async {
                                                   days = args.value;
                                                   dateByUser = days.last;
                                                   multiSelectionDay(
@@ -759,6 +802,43 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                       .setDateController(
                                                           controllerWork
                                                               .defSelectedList);
+                                                  await _workoutExerciseConflictViewModel
+                                                      .getWorkoutExerciseConflictDetails(
+                                                          date: dateString(),
+                                                          userId:
+                                                              PreferenceManager
+                                                                  .getUId());
+                                                  if (_workoutExerciseConflictViewModel
+                                                          .apiResponse.status ==
+                                                      Status.COMPLETE) {
+                                                    WorkoutExerciseConflictResponseModel
+                                                        resConflict =
+                                                        _workoutExerciseConflictViewModel
+                                                            .apiResponse.data;
+
+                                                    if (resConflict.data !=
+                                                            [] &&
+                                                        resConflict.msg ==
+                                                            "You are already following another program on these dates. Choose below if you want to follow them both.") {
+                                                      conflictWorkoutList =
+                                                          resConflict.data!;
+                                                      warningmsg =
+                                                          '${resConflict.msg}';
+
+                                                      print(
+                                                          '-------------- msg${resConflict.msg}');
+
+                                                      print(
+                                                          'conflict called on week days');
+
+                                                      controllerWork
+                                                          .changeConflict(true);
+                                                    } else {
+                                                      controllerWork
+                                                          .changeConflict(
+                                                              false);
+                                                    }
+                                                  }
                                                 },
                                                 monthViewSettings:
                                                     DateRangePickerMonthViewSettings(
@@ -1083,28 +1163,34 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                   .success ==
                                                               false &&
                                                           saveWorkoutResponse
-                                                                  .msg !=
-                                                              null) {
+                                                                  .msg ==
+                                                              "This Workout with Same exercise already exists") {
                                                         print(
                                                             'success true msg ==== ${resConflict.msg}');
-                                                        controllerWork
-                                                            .changeConflict(
-                                                                true);
+
                                                         print(
                                                             'isConflict status true  ==== ${controllerWork.isConflict}');
+
+                                                        // conflictWorkoutList =
+                                                        //     resConflict.data!;
+
                                                         print(
-                                                            'length  ==== ${resConflict.data!.length}');
-                                                        conflictWorkoutList =
-                                                            resConflict.data!;
+                                                            'the data of conflict ${saveWorkoutResponse.msg}');
                                                         warningmsg =
-                                                            '${resConflict.msg}';
+                                                            '${saveWorkoutResponse.msg}';
+
+                                                        print(
+                                                            'warningmsg  ==== ${warningmsg}');
                                                         Get.showSnackbar(
                                                             GetSnackBar(
                                                           message:
-                                                              '${resConflict.msg}',
+                                                              '$warningmsg',
                                                           duration: Duration(
                                                               seconds: 2),
                                                         ));
+                                                        controllerWork
+                                                            .changeConflict(
+                                                                true);
                                                       }
                                                     } else if (saveWorkoutController
                                                             .apiResponse

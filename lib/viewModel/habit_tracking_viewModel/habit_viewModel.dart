@@ -5,8 +5,6 @@ import 'package:tcm/repo/habit_tracker_repo/habits_repo.dart';
 import 'package:tcm/utils/images.dart';
 
 class HabitViewModel extends GetxController {
-  bool isAlertOpen = false;
-
   List selectedHabitList = [];
   List tmpSelectedHabitIDList = [];
   String? habitIdString;
@@ -16,6 +14,9 @@ class HabitViewModel extends GetxController {
   double? percent = 0;
 
   String selectedBodyIllu = AppImages.body_illustration[0];
+
+  DateTime defDate = DateTime.now();
+  DateTime? userSelectedDate = DateTime.now();
 
   progressCounter({int? selectedHabitListLength, int? totalListLength}) {
     percent = 100 * selectedHabitListLength! / totalListLength!;
@@ -88,22 +89,18 @@ class HabitViewModel extends GetxController {
     update();
   }
 
-  // habitUpdates({String? habits}) {
-  //   if (habitUpdatesList.contains(habits)) {
-  //     habitUpdatesList.remove(habits);
-  //   } else {
-  //     habitUpdatesList.add(habits);
-  //   }
-  //   update();
-  // }
+  dateIncrement() {
+    userSelectedDate = DateTime(userSelectedDate!.year, userSelectedDate!.month,
+        userSelectedDate!.day + 1);
+    print('------------- +++ date $userSelectedDate');
+    update();
+  }
 
-  changeStatus() {
-    if (isAlertOpen) {
-      isAlertOpen = false;
-    } else {
-      isAlertOpen = true;
-    }
-    // update();
+  dateDecrement() {
+    userSelectedDate = DateTime(userSelectedDate!.year, userSelectedDate!.month,
+        userSelectedDate!.day - 1);
+    print('------------- --- date $userSelectedDate');
+    update();
   }
 
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');

@@ -37,16 +37,31 @@ class HabitTrackerHomeScreen extends StatelessWidget {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Image.asset(
-                      AppImages.habitTrackerIllustration,
-                      height: Get.height * .3,
-                      width: Get.height * .3,
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        AppImages.habitTrackerHome,
+                        height: Get.height * .3,
+                        width: Get.height * .45,
+                      ),
                     ),
-                    SizedBox(height: Get.height * .04),
-                    Text(
-                      AppText.paragraph,
-                      maxLines: 4,
-                      style: FontTextStyle.kWhite16BoldRoboto,
+                    SizedBox(height: Get.height * .07),
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                          text: AppText.habitTrackerHome1,
+                          style: FontTextStyle.kWhite16W300Roboto.copyWith(
+                            fontSize: Get.height * 0.02,
+                          ),
+                          children: [
+                            TextSpan(
+                                text: '\tHabit Tracker!\t',
+                                style: FontTextStyle.kWhite16BoldRoboto),
+                            TextSpan(
+                                text: AppText.habitTrackerHome2,
+                                style: FontTextStyle.kWhite16W300Roboto
+                                    .copyWith(fontSize: Get.height * 0.02))
+                          ]),
                     )
                   ]),
             ),
@@ -54,7 +69,7 @@ class HabitTrackerHomeScreen extends StatelessWidget {
                 onTap: () {
                   Get.to(HabitSelectionScreen());
                 },
-                name: 'Get Started')
+                name: 'Get Started!')
           ],
         ),
       ),

@@ -87,6 +87,10 @@ class FontTextStyle {
       color: Colors.black,
       fontWeight: FontWeight.w400,
       fontSize: Get.height * 0.024);
+  static TextStyle kTint24W400Roboto = TextStyle(
+      color: ColorUtils.kTint,
+      fontWeight: FontWeight.w400,
+      fontSize: Get.height * 0.024);
   static TextStyle kBlack18w600Roboto = TextStyle(
       color: Colors.black,
       fontWeight: FontWeight.w600,

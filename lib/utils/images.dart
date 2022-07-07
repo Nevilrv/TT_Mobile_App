@@ -8,10 +8,10 @@ class AppImages {
   static const String gym = 'asset/images/gym.png';
   static const String chestIllustration = 'asset/images/chest_illustration.png';
   static const String videoThumbnail = 'asset/images/video_thumbnail.png';
-  static const String habitTrackerIllustration =
-      'asset/images/habit_tracker_illustration.png';
+  static const String habitTrackerHome = 'asset/images/habit_tracker_home.jpg';
   static const String perfectDayIllustration =
       'asset/images/perfect_day_illustration.png';
+  static const String workoutProgress = 'asset/images/workout_progress.png';
   static const String training = 'asset/images/training.png';
   static const String pick = 'asset/images/pick.png';
   static const List<String> body_illustration = [
@@ -31,6 +31,14 @@ class AppImages {
 /// icons
 
 class AppIcons {
+  static const String twitter1 = "asset/images/twitter1.png";
+  static const String instagram1 = "asset/images/instagram1.png";
+  static const String facebook1 = 'asset/images/facebook1.png';
+  static const String whatsapp = 'asset/images/whatsapp.png';
+  static const String checked = 'asset/icons/checked.png';
+
+  static const String sms = "asset/images/sms.png";
+  static const String more = "asset/images/more.png";
   static const String calender = 'asset/icons/calender.png';
   static const String dumbell = "asset/icons/dumbell.png";
   static const String forum = "asset/icons/forum.png";

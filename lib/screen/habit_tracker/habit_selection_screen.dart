@@ -11,7 +11,6 @@ import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/habit_tracker/tracking_frequency_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
-import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/custom_habit_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
@@ -63,12 +62,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
           padding: EdgeInsets.symmetric(
               horizontal: Get.width * 0.06, vertical: Get.height * 0.025),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _habitViewModel.isAlertOpen == true
-                  ? Text(AppText.paragraph,
-                      style: FontTextStyle.kWhite17BoldRoboto, maxLines: 4)
-                  : SizedBox(),
               SizedBox(height: Get.height * .03),
               Text(
                 'CHOOSE HABIT TO TRACK',
@@ -198,11 +192,10 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
               Center(
                 child: GestureDetector(
                   onTap: () {
-                    if (_habitViewModel.isAlertOpen == false) {
-                      _customHabitAlertDialog();
-                      _habitViewModel.changeStatus();
-                      setState(() {});
-                    }
+                    _customHabitAlertDialog();
+
+                    setState(() {});
+                    // }
                   },
                   child: Container(
                     height: Get.height * 0.065,
@@ -257,73 +250,111 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
     showCupertinoDialog(
         context: context,
         builder: (_) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            backgroundColor: ColorUtils.kBlack,
+            actionsOverflowDirection: VerticalDirection.down,
             title: Column(children: [
-              Text('Custom Habit'),
+              Text('Custom Habit', style: TextStyle(color: ColorUtils.kTint)),
+              SizedBox(height: 10),
               Text(
-                'Enter the name of your custom habit',
-                style: FontTextStyle.kBlack16W300Roboto,
+                'Enter the name of your custom habit that you want to track',
+                style: FontTextStyle.kTine16W400Roboto,
               ),
-              SizedBox(height: 25)
             ]),
             content: CupertinoTextField(
               placeholder: 'Habit name',
+              placeholderStyle: TextStyle(color: ColorUtils.kHintTextGray),
               controller: _alertDialogTextController,
+              cursorColor: ColorUtils.kTint,
+              style: TextStyle(color: ColorUtils.kWhite),
+              decoration: BoxDecoration(
+                  color: ColorUtils.kBlack,
+                  border: Border.all(color: ColorUtils.kTint),
+                  borderRadius: BorderRadius.circular(5)),
             ),
+            elevation: 10,
             actions: [
-              CupertinoDialogAction(
-                  child:
-                      Text('Cancel', style: FontTextStyle.kBlack24W400Roboto),
-                  onPressed: () {
-                    _habitViewModel.changeStatus();
-                    Get.back();
-                    _alertDialogTextController.clear();
-                  }),
-              CupertinoDialogAction(
-                child: Text('Save', style: FontTextStyle.kBlack24W400Roboto),
-                onPressed: () async {
-                  _habitViewModel.changeStatus();
-                  Get.back();
-
-                  setState(() {});
-                  if (_alertDialogTextController.text.isNotEmpty) {
-                    CustomHabitRequestModel _request =
-                        CustomHabitRequestModel();
-                    _request.name = _alertDialogTextController.text.trim();
-                    _request.userId = PreferenceManager.getUId();
-
-                    await _customHabitViewModel.customHabitViewModel(_request);
-
-                    if (_customHabitViewModel.apiResponse.status ==
-                        Status.COMPLETE) {
-                      CustomHabitResponseModel res =
-                          _customHabitViewModel.apiResponse.data;
-
-                      Get.showSnackbar(GetSnackBar(
-                        message: '${res.msg}',
-                        duration: Duration(seconds: 2),
-                      ));
-                      print(
-                          "_customHabitViewModel.apiResponse.message  ${res.msg}");
-
-                      _habitViewModel.getHabitDetail(
-                          userId: PreferenceManager.getUId());
-                      _alertDialogTextController.clear();
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return ColorUtils.kTint.withOpacity(0.2);
+                            return null;
+                          },
+                        ),
+                      ),
+                      child: Text('Cancel',
+                          style: FontTextStyle.kTint24W400Roboto),
+                      onPressed: () {
+                        Get.back();
+                        _alertDialogTextController.clear();
+                      }),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.pressed))
+                            return ColorUtils.kTint.withOpacity(0.2);
+                          return null;
+                        },
+                      ),
+                    ),
+                    child: Text('Save',
+                        style: FontTextStyle.kTint24W400Roboto
+                            .copyWith(fontWeight: FontWeight.bold)),
+                    onPressed: () async {
+                      Get.back();
                       setState(() {});
-                    } else if (_customHabitViewModel.apiResponse.status ==
-                        Status.ERROR) {
-                      Get.showSnackbar(GetSnackBar(
-                        message: 'Something went wrong!!! \nPlease try again',
-                        duration: Duration(seconds: 2),
-                      ));
-                    }
-                  } else {
-                    Get.showSnackbar(GetSnackBar(
-                      message: 'Please Enter Habit Name',
-                      duration: Duration(seconds: 2),
-                    ));
-                  }
-                },
+                      if (_alertDialogTextController.text.isNotEmpty) {
+                        CustomHabitRequestModel _request =
+                            CustomHabitRequestModel();
+                        _request.name = _alertDialogTextController.text.trim();
+                        _request.userId = PreferenceManager.getUId();
+
+                        await _customHabitViewModel
+                            .customHabitViewModel(_request);
+
+                        if (_customHabitViewModel.apiResponse.status ==
+                            Status.COMPLETE) {
+                          CustomHabitResponseModel res =
+                              _customHabitViewModel.apiResponse.data;
+
+                          Get.showSnackbar(GetSnackBar(
+                            message: '${res.msg}',
+                            duration: Duration(seconds: 2),
+                          ));
+                          print(
+                              "_customHabitViewModel.apiResponse.message  ${res.msg}");
+
+                          _habitViewModel.getHabitDetail(
+                              userId: PreferenceManager.getUId());
+                          _alertDialogTextController.clear();
+                          setState(() {});
+                        } else if (_customHabitViewModel.apiResponse.status ==
+                            Status.ERROR) {
+                          Get.showSnackbar(GetSnackBar(
+                            message:
+                                'Something went wrong!!! \nPlease try again',
+                            duration: Duration(seconds: 2),
+                          ));
+                        }
+                      } else {
+                        Get.showSnackbar(GetSnackBar(
+                          message: 'Please Enter Habit Name',
+                          duration: Duration(seconds: 2),
+                        ));
+                      }
+                    },
+                  ),
+                ],
               ),
             ],
           );
