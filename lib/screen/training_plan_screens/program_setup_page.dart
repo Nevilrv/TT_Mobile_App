@@ -930,6 +930,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                         Get.to(
                                                                             WorkoutHomeScreen(
                                                                           data:
+                                                                              workResponse.data!,
+                                                                          exeData:
                                                                               response.data!,
                                                                           workoutId:
                                                                               widget.workoutId,
@@ -1093,7 +1095,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         date: dateString(),
                                                         userId:
                                                             PreferenceManager
-                                                                .getUId());
+                                                                .getUId(),
+                                                        isLoading: true);
                                                 if (_workoutExerciseConflictViewModel
                                                         .apiResponse.status ==
                                                     Status.COMPLETE) {
@@ -1116,9 +1119,9 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                     _request.workoutId =
                                                         workResponse
                                                             .data![0].workoutId;
-                                                    _request.exerciseId =
-                                                        response.data![0]
-                                                            .exerciseId;
+                                                    // _request.exerciseId =
+                                                    //     response.data![0]
+                                                    //         .exerciseId;
                                                     _request.startDate =
                                                         startDate(controllerWork
                                                             .defSelectedList);
@@ -1155,7 +1158,10 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         ));
                                                         Get.to(
                                                             WorkoutHomeScreen(
-                                                          data: response.data!,
+                                                          data: workResponse
+                                                              .data!,
+                                                          exeData:
+                                                              response.data!,
                                                           workoutId:
                                                               widget.workoutId,
                                                         ));
@@ -1175,22 +1181,26 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         //     resConflict.data!;
 
                                                         print(
-                                                            'the data of conflict ${saveWorkoutResponse.msg}');
+                                                            'the data of conflict ${saveWorkoutResponse.data}');
+
+                                                        print(
+                                                            'warningmsg ==== ${warningmsg}');
                                                         warningmsg =
                                                             '${saveWorkoutResponse.msg}';
 
-                                                        print(
-                                                            'warningmsg  ==== ${warningmsg}');
                                                         Get.showSnackbar(
                                                             GetSnackBar(
                                                           message:
                                                               '$warningmsg',
                                                           duration: Duration(
                                                               seconds: 2),
+                                                          backgroundColor:
+                                                              ColorUtils.kRed,
                                                         ));
-                                                        controllerWork
-                                                            .changeConflict(
-                                                                true);
+
+                                                        // controllerWork
+                                                        //     .changeConflict(
+                                                        //         true);
                                                       }
                                                     } else if (saveWorkoutController
                                                             .apiResponse

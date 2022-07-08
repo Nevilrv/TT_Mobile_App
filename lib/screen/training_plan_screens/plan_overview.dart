@@ -209,16 +209,15 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                 ? Chewie(
                                     controller: _chewieController!,
                                   )
-                                :  response.data![0].workoutImage == null
-                                ? noDataLottie()
-                                : Image.network(
-                              response.data![0].workoutImage!,
-                              errorBuilder:
-                                  (context, error, stackTrace) {
-                                return noDataLottie();
-                              },
-                            )
-                          ),
+                                : response.data![0].workoutImage == null
+                                    ? noDataLottie()
+                                    : Image.network(
+                                        response.data![0].workoutImage!,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return noDataLottie();
+                                        },
+                                      )),
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 18),
@@ -399,7 +398,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                 children: [
               TextSpan(text: exercise, style: FontTextStyle.kWhite17W400Roboto),
               TextSpan(
-                  text: '\t(\t$weekDay\t)',
+                  text: ' ( $weekDay )',
                   style: FontTextStyle.kWhite17W400Roboto)
             ])),
         Icon(

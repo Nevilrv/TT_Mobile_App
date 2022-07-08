@@ -341,12 +341,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ),
                             isEmailEmpty
-                                ? Text('\t\t\tPlease enter your email',
+                                ? Text('   Please enter your email',
                                     style: TextStyle(
                                         fontSize: 12, color: ColorUtils.kRed))
                                 : SizedBox(),
                             isNotValidEmail
-                                ? Text('\t\t\tPlease enter valid Email',
+                                ? Text('   Please enter valid Email',
                                     style: TextStyle(
                                         fontSize: 12, color: ColorUtils.kRed))
                                 : SizedBox(),
@@ -514,12 +514,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               ),
                             ),
                             isUserNameEmpty
-                                ? Text('\t\t\tPlease enter your Username',
+                                ? Text('   Please enter your Username',
                                     style: TextStyle(
                                         fontSize: 12, color: ColorUtils.kRed))
                                 : SizedBox(),
                             isNotValidUserName
-                                ? Text('\t\t\tPlease enter valid Username',
+                                ? Text('   Please enter valid Username',
                                     style: TextStyle(
                                         fontSize: 12, color: ColorUtils.kRed))
                                 : SizedBox(),
@@ -633,12 +633,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   return null;
                                 }),
                             isPassEmpty
-                                ? Text('\t\t\tPlease enter your Password',
+                                ? Text('   Please enter your Password',
                                     style: TextStyle(
                                         fontSize: 12, color: ColorUtils.kRed))
                                 : SizedBox(),
                             isNotValidPass
-                                ? Text('\t\t\tPlease enter valid Password',
+                                ? Text('   Please enter valid Password',
                                     style: TextStyle(
                                         fontSize: 12, color: ColorUtils.kRed))
                                 : SizedBox(),
@@ -879,14 +879,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     // ),
                                     // isEmpty
                                     //     ? Text(
-                                    //         '\t\t\tPlease enter your weight',
+                                    //         '   Please enter your weight',
                                     //         style: TextStyle(
                                     //             fontSize: 12,
                                     //             color: ColorUtils.kRed))
                                     //     : SizedBox(),
                                     // isNotNumeric
                                     //     ? Text(
-                                    //         '\t\t\tPlease enter valid weight',
+                                    //         '   Please enter valid weight',
                                     //         style: TextStyle(
                                     //             fontSize: 12,
                                     //             color: ColorUtils.kRed))

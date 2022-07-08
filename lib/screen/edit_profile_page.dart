@@ -350,7 +350,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                           isNotValidEmail
-                              ? Text('\t\t\tPlease enter valid Email',
+                              ? Text('   Please enter valid Email',
                                   style: TextStyle(
                                       fontSize: 12, color: ColorUtils.kRed))
                               : SizedBox(),
@@ -476,7 +476,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                             ),
                           ),
                           isNotValidUserName
-                              ? Text('\t\t\tPlease enter valid Username',
+                              ? Text('   Please enter valid Username',
                                   style: TextStyle(
                                       fontSize: 12, color: ColorUtils.kRed))
                               : SizedBox(),

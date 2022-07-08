@@ -33,7 +33,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
     super.initState();
     _goalViewModel.goals();
     _workoutByFilterViewModel.getWorkoutByFilterDetails(
-        goal: goal, duration: duration, gender: gender);
+        isLoding: true, goal: goal, duration: duration, gender: gender);
   }
 
   bool? switchSelected = false;

@@ -232,7 +232,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                     //           SizedBox(width: Get.width * .08),
                     //           RichText(
                     //               text: TextSpan(
-                    //                   text: '$counterSets\t',
+                    //                   text: '$counterSets ',
                     //                   style: counterSets == 0
                     //                       ? FontTextStyle.kWhite24BoldRoboto
                     //                           .copyWith(color: ColorUtils.kGray)
@@ -293,7 +293,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                               SizedBox(width: Get.width * .08),
                               RichText(
                                   text: TextSpan(
-                                      text: '$counterReps\t',
+                                      text: '$counterReps ',
                                       style: counterReps == 0
                                           ? FontTextStyle.kWhite24BoldRoboto
                                               .copyWith(color: ColorUtils.kGray)
@@ -357,7 +357,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                     //           RichText(
                     //               text: TextSpan(
                     //                   text:
-                    //                       '${timeCounter(counterTime: counterTime)}\t',
+                    //                       '${timeCounter(counterTime: counterTime)} ',
                     //                   style: counterTime == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
                     //                   children: [
                     //                 TextSpan(

@@ -172,13 +172,13 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                   }),
                               isCurrentPassEmpty
                                   ? Text(
-                                      '\t\t\tPlease enter your Current Password',
+                                      '   Please enter your Current Password',
                                       style: TextStyle(
                                           fontSize: 12, color: ColorUtils.kRed))
                                   : SizedBox(),
                               isCurrentNotValidPass
                                   ? Text(
-                                      '\t\t\tPlease enter valid Current Password',
+                                      '   Please enter valid Current Password',
                                       style: TextStyle(
                                           fontSize: 12, color: ColorUtils.kRed))
                                   : SizedBox(),
@@ -277,13 +277,12 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                     return null;
                                   }),
                               isNewPassEmpty
-                                  ? Text('\t\t\tPlease enter your New Password',
+                                  ? Text('   Please enter your New Password',
                                       style: TextStyle(
                                           fontSize: 12, color: ColorUtils.kRed))
                                   : SizedBox(),
                               isNewPassNotValid
-                                  ? Text(
-                                      '\t\t\tPlease enter valid New Password',
+                                  ? Text('   Please enter valid New Password',
                                       style: TextStyle(
                                           fontSize: 12, color: ColorUtils.kRed))
                                   : SizedBox(),
@@ -383,13 +382,13 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                   }),
                               isConfirmPassEmpty
                                   ? Text(
-                                      '\t\t\tPlease enter your Confirm New Password',
+                                      '   Please enter your Confirm New Password',
                                       style: TextStyle(
                                           fontSize: 12, color: ColorUtils.kRed))
                                   : SizedBox(),
                               isConfirmPassNotValid
                                   ? Text(
-                                      '\t\t\tPlease enter valid Confirm New Password',
+                                      '   Please enter valid Confirm New Password',
                                       style: TextStyle(
                                           fontSize: 12, color: ColorUtils.kRed))
                                   : SizedBox(),

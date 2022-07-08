@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/screen/workout_screen/time_based_exercise_screen.dart';
@@ -10,15 +11,19 @@ import 'package:tcm/utils/images.dart';
 
 // ignore: must_be_immutable
 class WorkoutHomeScreen extends StatelessWidget {
-  List<ExerciseById> data;
+  List<ExerciseById> exeData;
+  List<WorkoutById> data;
   final String? workoutId;
 
-  WorkoutHomeScreen({Key? key, required this.data, this.workoutId})
+  WorkoutHomeScreen(
+      {Key? key, required this.data, this.workoutId, required this.exeData})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-    if (data.isNotEmpty) {
-      String exerciseInstructions = '${data[0].exerciseInstructions}';
+    print('is data comming ????? ${data[0].workoutTitle}');
+
+    if (exeData.isNotEmpty) {
+      String exerciseInstructions = '${exeData[0].exerciseInstructions}';
       List<String> splitHTMLInstruction = exerciseInstructions.split('</li>');
       List<String> finalHTMLInstruction = [];
       splitHTMLInstruction.forEach((element) {
@@ -26,7 +31,7 @@ class WorkoutHomeScreen extends StatelessWidget {
             .add(element.replaceAll('<ol>', '').replaceAll('</ol>', ''));
       });
 
-      String exerciseTips = '${data[0].exerciseTips}';
+      String exerciseTips = '${exeData[0].exerciseTips}';
       List<String> splitHTMLTips = exerciseTips.split('</li>');
       List<String> finalHTMLTips = [];
       splitHTMLTips.forEach((element) {
@@ -60,22 +65,17 @@ class WorkoutHomeScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Text(
-                    '${data[0].exerciseTitle}',
+                    '${data[0].workoutTitle}',
                     style: FontTextStyle.kWhite20BoldRoboto,
                   ),
                   SizedBox(height: Get.height * .02),
-                  ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: finalHTMLInstruction.length - 1,
-                      itemBuilder: (_, index) =>
-                          htmlToTextGrey(data: finalHTMLInstruction[index])),
-                  // Text(
-                  //   '${data[0].exerciseInstructions}',
-                  //   style: FontTextStyle.kLightGray18W300Roboto,
-                  //   maxLines: 3,
-                  //   textAlign: TextAlign.center,
-                  // ),
+                  // ListView.builder(
+                  //     physics: NeverScrollableScrollPhysics(),
+                  //     shrinkWrap: true,
+                  //     itemCount: finalHTMLInstruction.length - 1,
+                  //     itemBuilder: (_, index) =>
+                  //         ),
+                  htmlToTextGrey(data: finalHTMLInstruction[1]),
                   SizedBox(height: Get.height * .03),
                   commonNavigationButtonWithIcon(
                       onTap: () {
@@ -86,7 +86,7 @@ class WorkoutHomeScreen extends StatelessWidget {
                       iconColor: ColorUtils.kBlack),
                   SizedBox(height: Get.height * .03),
                   Container(
-                    height: Get.height * .4,
+                    // height: Get.height * .4,
                     width: Get.width * .9,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
@@ -95,83 +95,107 @@ class WorkoutHomeScreen extends StatelessWidget {
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter)),
                     child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CircleAvatar(
-                                  radius: Get.height * .02,
-                                  backgroundColor: Colors.transparent,
-                                  backgroundImage:
-                                      AssetImage(AppIcons.kettle_bell)),
-                              SizedBox(width: Get.width * .03),
-                              Text('Equipment needed',
-                                  style: FontTextStyle.kWhite20BoldRoboto)
-                            ],
-                          ),
-                          ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: 1,
-                              itemBuilder: (_, index) {
-                                return Align(
-                                  alignment: Alignment.center,
-                                  child: RichText(
-                                      text: TextSpan(
-                                          text: '●\t',
-                                          style: FontTextStyle
-                                              .kLightGray16W300Roboto,
-                                          children: [
-                                        TextSpan(
-                                            text: '${data[0].equipmentTitle}',
-                                            style: FontTextStyle
-                                                .kWhite17BoldRoboto)
-                                      ])),
-                                );
-                              }),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10, right: 10),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: Get.width * .475,
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                CircleAvatar(
-                                    radius: Get.height * .02,
-                                    backgroundColor: Colors.transparent,
-                                    backgroundImage:
-                                        AssetImage(AppIcons.clock)),
-                                SizedBox(width: Get.width * .03),
-                                Flexible(
-                                  child: Text(
-                                    '${data[0].exerciseRest}\trest  between sets',
-                                    style: FontTextStyle.kWhite20BoldRoboto,
+                                SizedBox(height: Get.height * .05),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                        radius: Get.height * .02,
+                                        backgroundColor: Colors.transparent,
+                                        backgroundImage:
+                                            AssetImage(AppIcons.kettle_bell)),
+                                    SizedBox(width: Get.width * .03),
+                                    Text('Equipment needed',
+                                        style: FontTextStyle.kWhite20BoldRoboto)
+                                  ],
+                                ),
+                                SizedBox(height: Get.height * .05),
+                                Container(
+                                  // color: Colors.teal,
+                                  width: Get.width * .4,
+                                  alignment: Alignment.centerLeft,
+                                  child: ListView.separated(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount:
+                                          data[0].availableEquipments!.length,
+                                      separatorBuilder: (_, index) {
+                                        return SizedBox(
+                                            height: Get.height * .008);
+                                      },
+                                      itemBuilder: (_, index) {
+                                        return Row(
+                                          children: [
+                                            SizedBox(width: Get.width * .075),
+                                            RichText(
+                                                text: TextSpan(
+                                                    text: '● ',
+                                                    style: FontTextStyle
+                                                        .kLightGray16W300Roboto,
+                                                    children: [
+                                                  TextSpan(
+                                                      text:
+                                                          '${data[0].availableEquipments![index]}',
+                                                      style: FontTextStyle
+                                                          .kWhite17BoldRoboto)
+                                                ])),
+                                          ],
+                                        );
+                                      }),
+                                ),
+                                SizedBox(height: Get.height * .05),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CircleAvatar(
+                                          radius: Get.height * .02,
+                                          backgroundColor: Colors.transparent,
+                                          backgroundImage:
+                                              AssetImage(AppIcons.clock)),
+                                      SizedBox(width: Get.width * .03),
+                                      Expanded(
+                                        child: Text(
+                                          '${exeData[0].exerciseRest} rest between sets',
+                                          style:
+                                              FontTextStyle.kWhite20BoldRoboto,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ]),
+                                SizedBox(height: Get.height * .05),
+                              ]),
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(height: Get.height * .03),
-                  ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: finalHTMLTips.length - 1,
-                      itemBuilder: (_, index) =>
-                          htmlToTextGrey(data: finalHTMLTips[index])),
-                  // Text(
-                  //   '${data[0].exerciseTips}',
-                  //   style: FontTextStyle.kLightGray18W300Roboto,
-                  //   maxLines: 3,
-                  //   textAlign: TextAlign.center,
-                  // ),
+                  // ListView.builder(
+                  //     physics: NeverScrollableScrollPhysics(),
+                  //     shrinkWrap: true,
+                  //     itemCount: finalHTMLTips.length - 1,
+                  //     itemBuilder: (_, index) =>
+                  //         ),
+                  htmlToTextGrey(data: finalHTMLTips[1]),
                   SizedBox(height: Get.height * .03),
                   commonNevigationButton(
                       name: 'Begin Warm-Up',
                       onTap: () {
                         Get.to(TimeBasedExesiceScreen(
-                          data: data,
+                          data: exeData,
                         ));
                       })
                 ]),

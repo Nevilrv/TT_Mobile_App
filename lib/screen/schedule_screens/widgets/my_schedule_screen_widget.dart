@@ -57,7 +57,7 @@ Padding listViewTab({
                           ),
                           subtitle: Text(
                             '${getEventForDay[index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
-                                "\t-\t" +
+                                " - " +
                                 ' ${getEventForDay[index].programData![0].exerciseTitle} ',
                             style: FontTextStyle.kLightGray16W300Roboto,
                           ),

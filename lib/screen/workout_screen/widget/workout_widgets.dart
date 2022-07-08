@@ -46,7 +46,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
           SizedBox(width: Get.width * .08),
           RichText(
               text: TextSpan(
-                  text: '${widget.counter}\t',
+                  text: '${widget.counter} ',
                   style: widget.counter == 0
                       ? FontTextStyle.kWhite24BoldRoboto
                           .copyWith(color: ColorUtils.kGray)
@@ -76,7 +76,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
           ),
           RichText(
               text: TextSpan(
-                  text: '340\t',
+                  text: '340 ',
                   style: widget.counter == 0
                       ? FontTextStyle.kWhite24BoldRoboto
                           .copyWith(color: ColorUtils.kGray)
@@ -135,7 +135,7 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
           SizedBox(width: Get.width * .08),
           RichText(
               text: TextSpan(
-                  text: '${widget.counter}\t',
+                  text: '${widget.counter} ',
                   style: widget.counter == 0
                       ? FontTextStyle.kWhite24BoldRoboto
                           .copyWith(color: ColorUtils.kGray)

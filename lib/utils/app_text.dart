@@ -41,5 +41,5 @@ class AppText {
 
   static const String habitTrackerHome1 = 'Welcome to The Tailored Trainer';
   static const String habitTrackerHome2 =
-      'With this, you can create daily, weekly, or monthly habits to track in order to develop better consistency, create more accountability, and ultimately achieve your goals with a more sustainable approach';
+      'With this, you can create daily\nweekly, or monthly habits to track in order\nto develop better consistency, create\nmore accountability, and ultimately\nachieve your goals with a more\nsustainable approach';
 }

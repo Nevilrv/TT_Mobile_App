@@ -37,13 +37,16 @@ class HabitTrackerHomeScreen extends StatelessWidget {
               child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        AppImages.habitTrackerHome,
-                        height: Get.height * .3,
-                        width: Get.height * .45,
-                      ),
+                    Container(
+                      height: Get.height * .3,
+                      width: Get.height * .45,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                              image: AssetImage(
+                                AppImages.habitTrackerHome,
+                              ),
+                              fit: BoxFit.fitHeight)),
                     ),
                     SizedBox(height: Get.height * .07),
                     RichText(
@@ -55,12 +58,12 @@ class HabitTrackerHomeScreen extends StatelessWidget {
                           ),
                           children: [
                             TextSpan(
-                                text: '\tHabit Tracker!\t',
+                                text: ' Habit\nTracker! ',
                                 style: FontTextStyle.kWhite16BoldRoboto),
                             TextSpan(
                                 text: AppText.habitTrackerHome2,
                                 style: FontTextStyle.kWhite16W300Roboto
-                                    .copyWith(fontSize: Get.height * 0.02))
+                                    .copyWith(fontSize: Get.height * .02))
                           ]),
                     )
                   ]),
