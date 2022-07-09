@@ -313,7 +313,7 @@ class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
                                           'response.data!.id!=========== ${response.data!.id!}');
                                       print(
                                           'EMAIL ${PreferenceManager.getEmail()}');
-                                      Get.off(HomeScreen(
+                                      Get.offAll(HomeScreen(
                                         id: PreferenceManager.getUId(),
                                       ));
                                     } else {

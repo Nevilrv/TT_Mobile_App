@@ -131,35 +131,42 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
             Container(
               height: Get.height / 2.75,
               width: Get.width,
-              child:
-                  '${widget.data[0].exerciseVideo}'.contains('www.youtube.com')
-                      ? Center(
-                          child: _youTubePlayerController != null ||
-                                  _youTubePlayerController != ''
-                              ? YoutubePlayer(
-                                  controller: _youTubePlayerController!,
-                                  showVideoProgressIndicator: true,
-                                  bufferIndicator: CircularProgressIndicator(
-                                      color: ColorUtils.kTint),
-                                  controlsTimeOut: Duration(hours: 2),
-                                  aspectRatio: 16 / 9,
-                                  progressColors: ProgressBarColors(
-                                      handleColor: ColorUtils.kRed,
-                                      playedColor: ColorUtils.kRed,
-                                      backgroundColor: ColorUtils.kGray,
-                                      bufferedColor: ColorUtils.kLightGray),
-                                )
-                              : noDataLottie(),
-                        )
-                      : Center(
-                          child: _chewieController != null &&
-                                  _chewieController!
-                                      .videoPlayerController.value.isInitialized
-                              ? Chewie(
-                                  controller: _chewieController!,
-                                )
-                              : noDataLottie(),
-                        ),
+              child: '${widget.data[0].exerciseVideo}'
+                      .contains('www.youtube.com')
+                  ? Center(
+                      child: _youTubePlayerController != null ||
+                              _youTubePlayerController != ''
+                          ? YoutubePlayer(
+                              controller: _youTubePlayerController!,
+                              showVideoProgressIndicator: true,
+                              bufferIndicator: CircularProgressIndicator(
+                                  color: ColorUtils.kTint),
+                              controlsTimeOut: Duration(hours: 2),
+                              aspectRatio: 16 / 9,
+                              progressColors: ProgressBarColors(
+                                  handleColor: ColorUtils.kRed,
+                                  playedColor: ColorUtils.kRed,
+                                  backgroundColor: ColorUtils.kGray,
+                                  bufferedColor: ColorUtils.kLightGray),
+                            )
+                          : noDataLottie(),
+                    )
+                  : Center(
+                      child: _chewieController != null &&
+                              _chewieController!
+                                  .videoPlayerController.value.isInitialized
+                          ? Chewie(
+                              controller: _chewieController!,
+                            )
+                          : widget.data[0].exerciseImage == null
+                              ? noDataLottie()
+                              : Image.network(
+                                  "https://tcm.sataware.dev/images/" +
+                                      widget.data[0].exerciseImage!,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return noDataLottie();
+                                  },
+                                )),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -208,7 +215,8 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                           },
                           itemBuilder: (_, index) {
                             return WeightedCounter(
-                              counter: repsCounter,
+                              counter:
+                                  int.parse('${widget.data[0].exerciseReps}'),
                               repsNo: '${widget.data[0].exerciseReps}',
                             );
                           }),

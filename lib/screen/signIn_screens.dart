@@ -63,7 +63,7 @@ class _SignInScreenState extends State<SignInScreen> {
           body: SingleChildScrollView(
             child: Form(
               key: _formKeyLogIn,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
+              // autovalidateMode: AutovalidateMode.onUserInteraction,
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Column(
@@ -309,7 +309,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                           duration: Duration(seconds: 2),
                                         ));
 
-                                        Get.off(HomeScreen(
+                                        Get.offAll(HomeScreen(
                                           id: response.data![0].id!,
                                         ));
                                       } else if (response.msg == null ||

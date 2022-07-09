@@ -38,6 +38,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   @override
   void initState() {
     super.initState();
+    _customizedExerciseViewModel.counterReps =
+        int.parse('${widget.data[0].exerciseReps}');
     initializePlayer();
   }
 
@@ -105,7 +107,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   }
 
   int counterSets = 0;
-  int counterReps = 0;
+  // int counterReps = 0;
   int counterTime = 0;
 
   String timeCounter({int? counterTime}) {
@@ -119,7 +121,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
-      // log('final time ======== ${formatTime[1]} : ${formatTime[2]}');
       bool loader = false;
       return Scaffold(
         backgroundColor: ColorUtils.kBlack,
@@ -136,16 +137,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
           backgroundColor: ColorUtils.kBlack,
           title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
           centerTitle: true,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Get.offAll(HomeScreen());
-                },
-                child: Text(
-                  'Quit',
-                  style: FontTextStyle.kTine16W400Roboto,
-                ))
-          ],
         ),
         body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -154,35 +145,42 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
             Container(
               height: Get.height / 2.75,
               width: Get.width,
-              child:
-                  '${widget.data[0].exerciseVideo}'.contains('www.youtube.com')
-                      ? Center(
-                          child: _youTubePlayerController != null ||
-                                  _youTubePlayerController != ''
-                              ? YoutubePlayer(
-                                  controller: _youTubePlayerController!,
-                                  showVideoProgressIndicator: true,
-                                  bufferIndicator: CircularProgressIndicator(
-                                      color: ColorUtils.kTint),
-                                  controlsTimeOut: Duration(hours: 2),
-                                  aspectRatio: 16 / 9,
-                                  progressColors: ProgressBarColors(
-                                      handleColor: ColorUtils.kRed,
-                                      playedColor: ColorUtils.kRed,
-                                      backgroundColor: ColorUtils.kGray,
-                                      bufferedColor: ColorUtils.kLightGray),
-                                )
-                              : noDataLottie(),
-                        )
-                      : Center(
-                          child: _chewieController != null &&
-                                  _chewieController!
-                                      .videoPlayerController.value.isInitialized
-                              ? Chewie(
-                                  controller: _chewieController!,
-                                )
-                              : noDataLottie(),
-                        ),
+              child: '${widget.data[0].exerciseVideo}'
+                      .contains('www.youtube.com')
+                  ? Center(
+                      child: _youTubePlayerController != null ||
+                              _youTubePlayerController != ''
+                          ? YoutubePlayer(
+                              controller: _youTubePlayerController!,
+                              showVideoProgressIndicator: true,
+                              bufferIndicator: CircularProgressIndicator(
+                                  color: ColorUtils.kTint),
+                              controlsTimeOut: Duration(hours: 2),
+                              aspectRatio: 16 / 9,
+                              progressColors: ProgressBarColors(
+                                  handleColor: ColorUtils.kRed,
+                                  playedColor: ColorUtils.kRed,
+                                  backgroundColor: ColorUtils.kGray,
+                                  bufferedColor: ColorUtils.kLightGray),
+                            )
+                          : noDataLottie(),
+                    )
+                  : Center(
+                      child: _chewieController != null &&
+                              _chewieController!
+                                  .videoPlayerController.value.isInitialized
+                          ? Chewie(
+                              controller: _chewieController!,
+                            )
+                          : widget.data[0].exerciseImage == null
+                              ? noDataLottie()
+                              : Image.network(
+                                  "https://tcm.sataware.dev/images/" +
+                                      widget.data[0].exerciseImage!,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return noDataLottie();
+                                  },
+                                )),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -260,67 +258,68 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                     //         ]),
                     //   ),
                     // ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                      child: Container(
-                        height: Get.height * .1,
-                        width: Get.width,
-                        decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                                colors: ColorUtilsGradient.kGrayGradient,
-                                begin: Alignment.topCenter,
-                                end: Alignment.topCenter),
-                            borderRadius: BorderRadius.circular(6)),
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  log('minus $counterReps');
+                    GetBuilder<SaveUserCustomizedExerciseViewModel>(
+                        builder: (controller) {
+                      return Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                        child: Container(
+                          height: Get.height * .1,
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  colors: ColorUtilsGradient.kGrayGradient,
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.topCenter),
+                              borderRadius: BorderRadius.circular(6)),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    controller.counterMinus();
+                                    print('minus ${controller.counterReps}');
+                                  },
+                                  child: CircleAvatar(
+                                    radius: Get.height * .03,
+                                    backgroundColor: ColorUtils.kTint,
+                                    child: Icon(Icons.remove,
+                                        color: ColorUtils.kBlack),
+                                  ),
+                                ),
+                                SizedBox(width: Get.width * .08),
+                                RichText(
+                                    text: TextSpan(
+                                        text: '${controller.counterReps} ',
+                                        style: controller.counterReps == 0
+                                            ? FontTextStyle.kWhite24BoldRoboto
+                                                .copyWith(
+                                                    color: ColorUtils.kGray)
+                                            : FontTextStyle.kWhite24BoldRoboto,
+                                        children: [
+                                      TextSpan(
+                                          text: 'reps',
+                                          style:
+                                              FontTextStyle.kWhite17W400Roboto)
+                                    ])),
+                                SizedBox(width: Get.width * .08),
+                                InkWell(
+                                  onTap: () {
+                                    controller.counterPlus();
+                                    print('plus ${controller.counterReps}');
+                                  },
+                                  child: CircleAvatar(
+                                    radius: Get.height * .03,
+                                    backgroundColor: ColorUtils.kTint,
+                                    child: Icon(Icons.add,
+                                        color: ColorUtils.kBlack),
+                                  ),
+                                ),
+                              ]),
+                        ),
+                      );
+                    }),
 
-                                  setState(() {
-                                    if (counterReps > 0) counterReps--;
-                                  });
-                                },
-                                child: CircleAvatar(
-                                  radius: Get.height * .03,
-                                  backgroundColor: ColorUtils.kTint,
-                                  child: Icon(Icons.remove,
-                                      color: ColorUtils.kBlack),
-                                ),
-                              ),
-                              SizedBox(width: Get.width * .08),
-                              RichText(
-                                  text: TextSpan(
-                                      text: '$counterReps ',
-                                      style: counterReps == 0
-                                          ? FontTextStyle.kWhite24BoldRoboto
-                                              .copyWith(color: ColorUtils.kGray)
-                                          : FontTextStyle.kWhite24BoldRoboto,
-                                      children: [
-                                    TextSpan(
-                                        text: 'reps',
-                                        style: FontTextStyle.kWhite17W400Roboto)
-                                  ])),
-                              SizedBox(width: Get.width * .08),
-                              InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    counterReps++;
-                                  });
-                                  log('plus $counterReps');
-                                },
-                                child: CircleAvatar(
-                                  radius: Get.height * .03,
-                                  backgroundColor: ColorUtils.kTint,
-                                  child:
-                                      Icon(Icons.add, color: ColorUtils.kBlack),
-                                ),
-                              ),
-                            ]),
-                      ),
-                    ),
                     // Padding(
                     //   padding:
                     //       EdgeInsets.symmetric(vertical: Get.height * 0.01),
@@ -414,17 +413,23 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                                   print('loader ----------- $loader');
 
                                   print(
-                                      'counter out ----------------- $counterReps');
-                                  if (counterReps <= 0) {
+                                      'counter out ----------------- $_customizedExerciseViewModel.counterReps');
+                                  if (_customizedExerciseViewModel
+                                          .counterReps <=
+                                      0) {
                                     Get.showSnackbar(GetSnackBar(
                                       message: 'Please set reps more than 0',
                                       duration: Duration(seconds: 2),
                                     ));
                                   }
 
-                                  if (counterReps != 0 && counterReps > 0) {
+                                  if (_customizedExerciseViewModel
+                                              .counterReps !=
+                                          0 &&
+                                      _customizedExerciseViewModel.counterReps >
+                                          0) {
                                     print(
-                                        'counter ----------------- $counterReps');
+                                        'counter ----------------- $_customizedExerciseViewModel.counterReps');
                                     SaveUserCustomizedExerciseRequestModel
                                         _request =
                                         SaveUserCustomizedExerciseRequestModel();
@@ -432,7 +437,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                                         PreferenceManager.getUId();
                                     _request.exerciseId =
                                         widget.data[0].exerciseId;
-                                    _request.reps = '$counterReps';
+                                    _request.reps =
+                                        '${_customizedExerciseViewModel.counterReps}';
                                     _request.isCompleted = '1';
 
                                     await controllerSave
@@ -461,7 +467,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                                         Get.to(WeightExerciseScreen(
                                             data: widget.data));
                                         setState(() {
-                                          counterReps = 0;
+                                          _customizedExerciseViewModel
+                                              .counterReps = 0;
                                         });
                                         Get.showSnackbar(GetSnackBar(
                                           message: '${responseSave.msg}',
@@ -510,7 +517,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                           Get.to(WeightExerciseScreen(data: widget.data));
 
                           setState(() {
-                            counterReps = 0;
+                            _customizedExerciseViewModel.counterReps = 0;
                           });
                         },
                         name: 'Next exercise')

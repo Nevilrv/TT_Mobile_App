@@ -76,7 +76,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     setState(() {
       _image = File(pickedFile!.path);
-
       if (_image != null) {}
     });
   }

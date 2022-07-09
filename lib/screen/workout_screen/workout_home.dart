@@ -23,7 +23,7 @@ class WorkoutHomeScreen extends StatelessWidget {
     print('is data comming ????? ${data[0].workoutTitle}');
 
     if (exeData.isNotEmpty) {
-      String exerciseInstructions = '${exeData[0].exerciseInstructions}';
+      String exerciseInstructions = '${data[0].workoutDescription}';
       List<String> splitHTMLInstruction = exerciseInstructions.split('</li>');
       List<String> finalHTMLInstruction = [];
       splitHTMLInstruction.forEach((element) {
@@ -69,13 +69,12 @@ class WorkoutHomeScreen extends StatelessWidget {
                     style: FontTextStyle.kWhite20BoldRoboto,
                   ),
                   SizedBox(height: Get.height * .02),
-                  // ListView.builder(
-                  //     physics: NeverScrollableScrollPhysics(),
-                  //     shrinkWrap: true,
-                  //     itemCount: finalHTMLInstruction.length - 1,
-                  //     itemBuilder: (_, index) =>
-                  //         ),
-                  htmlToTextGrey(data: finalHTMLInstruction[1]),
+                  ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: finalHTMLInstruction.length - 1,
+                      itemBuilder: (_, index) =>
+                          htmlToTextGrey(data: finalHTMLInstruction[index])),
                   SizedBox(height: Get.height * .03),
                   commonNavigationButtonWithIcon(
                       onTap: () {
@@ -189,7 +188,7 @@ class WorkoutHomeScreen extends StatelessWidget {
                   //     itemCount: finalHTMLTips.length - 1,
                   //     itemBuilder: (_, index) =>
                   //         ),
-                  htmlToTextGrey(data: finalHTMLTips[1]),
+                  // htmlToTextGrey(data: finalHTMLTips[1]),
                   SizedBox(height: Get.height * .03),
                   commonNevigationButton(
                       name: 'Begin Warm-Up',

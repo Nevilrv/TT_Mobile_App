@@ -8,6 +8,7 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/no_weight_exercise_screen.dart';
+import 'package:tcm/screen/workout_screen/weighted_exercise.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:video_player/video_player.dart';
@@ -111,6 +112,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
       timeDuration();
+      print('----------------- ${widget.data[0].exerciseImage}');
       return Scaffold(
         backgroundColor: ColorUtils.kBlack,
         appBar: AppBar(
@@ -144,35 +146,40 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
             Container(
               height: Get.height / 2.75,
               width: Get.width,
-              child:
-                  '${widget.data[0].exerciseVideo}'.contains('www.youtube.com')
-                      ? Center(
-                          child: _youTubePlayerController != null ||
-                                  _youTubePlayerController != ''
-                              ? YoutubePlayer(
-                                  controller: _youTubePlayerController!,
-                                  showVideoProgressIndicator: true,
-                                  bufferIndicator: CircularProgressIndicator(
-                                      color: ColorUtils.kTint),
-                                  controlsTimeOut: Duration(hours: 2),
-                                  aspectRatio: 16 / 9,
-                                  progressColors: ProgressBarColors(
-                                      handleColor: ColorUtils.kRed,
-                                      playedColor: ColorUtils.kRed,
-                                      backgroundColor: ColorUtils.kGray,
-                                      bufferedColor: ColorUtils.kLightGray),
-                                )
-                              : noDataLottie(),
-                        )
-                      : Center(
-                          child: _chewieController != null &&
-                                  _chewieController!
-                                      .videoPlayerController.value.isInitialized
-                              ? Chewie(
-                                  controller: _chewieController!,
-                                )
-                              : noDataLottie(),
-                        ),
+              child: '${widget.data[0].exerciseVideo}'
+                      .contains('www.youtube.com')
+                  ? Center(
+                      child: _youTubePlayerController == null
+                          ? CircularProgressIndicator(color: ColorUtils.kTint)
+                          : YoutubePlayer(
+                              controller: _youTubePlayerController!,
+                              showVideoProgressIndicator: true,
+                              bufferIndicator: CircularProgressIndicator(
+                                  color: ColorUtils.kTint),
+                              controlsTimeOut: Duration(hours: 2),
+                              aspectRatio: 16 / 9,
+                              progressColors: ProgressBarColors(
+                                  handleColor: ColorUtils.kRed,
+                                  playedColor: ColorUtils.kRed,
+                                  backgroundColor: ColorUtils.kGray,
+                                  bufferedColor: ColorUtils.kLightGray),
+                            ))
+                  : Center(
+                      child: _chewieController != null &&
+                              _chewieController!
+                                  .videoPlayerController.value.isInitialized
+                          ? Chewie(
+                              controller: _chewieController!,
+                            )
+                          : widget.data[0].exerciseImage == null
+                              ? noDataLottie()
+                              : Image.network(
+                                  "https://tcm.sataware.dev/images/" +
+                                      widget.data[0].exerciseImage!,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return noDataLottie();
+                                  },
+                                )),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
@@ -180,14 +187,35 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '${widget.data[0].exerciseTitle}',
-                      style: FontTextStyle.kWhite24BoldRoboto,
-                    ),
-                    SizedBox(height: Get.height * .005),
-                    Text(
-                      '${widget.data[0].exerciseRest} seconds each side',
-                      style: FontTextStyle.kLightGray16W300Roboto,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${widget.data[0].exerciseTitle}',
+                              style: FontTextStyle.kWhite24BoldRoboto,
+                            ),
+                            SizedBox(height: Get.height * .005),
+                            Text(
+                              '${widget.data[0].exerciseRest} seconds each side',
+                              style: FontTextStyle.kLightGray16W300Roboto,
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                            onTap: () {
+                              Get.to(NoWeightExerciseScreen(
+                                data: widget.data,
+                              ));
+                            },
+                            child: Text(
+                              'Edit',
+                              style: FontTextStyle.kTine16W400Roboto,
+                            ))
+                      ],
                     ),
                     SizedBox(height: Get.height * .04),
                     Center(
@@ -268,7 +296,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                             _chewieController?.pause();
                           }
 
-                          Get.to(NoWeightExerciseScreen(
+                          Get.to(WeightExerciseScreen(
                             data: widget.data,
                           ));
                         },

@@ -36,6 +36,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
               setState(() {
                 if (widget.counter > 0) widget.counter--;
               });
+              print('minus ${widget.counter}');
             },
             child: CircleAvatar(
               radius: Get.height * .03,
@@ -60,6 +61,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
               setState(() {
                 if (widget.counter < repsCounter) widget.counter++;
               });
+              print('plus ${widget.counter}');
             },
             child: CircleAvatar(
               radius: Get.height * .03,
@@ -74,16 +76,42 @@ class _WeightedCounterState extends State<WeightedCounter> {
             indent: Get.height * .015,
             endIndent: Get.height * .015,
           ),
-          RichText(
-              text: TextSpan(
-                  text: '340 ',
-                  style: widget.counter == 0
-                      ? FontTextStyle.kWhite24BoldRoboto
-                          .copyWith(color: ColorUtils.kGray)
-                      : FontTextStyle.kWhite24BoldRoboto,
-                  children: [
-                TextSpan(text: 'lbs', style: FontTextStyle.kWhite17W400Roboto)
-              ])),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(height: 10),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 40,
+                    child: TextField(
+                      style: widget.counter == 0
+                          ? FontTextStyle.kWhite24BoldRoboto
+                              .copyWith(color: ColorUtils.kGray)
+                          : FontTextStyle.kWhite24BoldRoboto,
+                      keyboardType: TextInputType.number,
+                      maxLength: 3,
+                      cursorColor: ColorUtils.kTint,
+                      decoration: InputDecoration(
+                          hintText: "0",
+                          counterText: '',
+                          semanticCounterText: '',
+                          hintStyle: FontTextStyle.kWhite24BoldRoboto
+                              .copyWith(color: ColorUtils.kGray),
+                          enabledBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.transparent)),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.transparent))),
+                    ),
+                  ),
+                  Text('lbs', style: FontTextStyle.kWhite17W400Roboto),
+                ],
+              ),
+              SizedBox(),
+            ],
+          ),
         ]),
       ),
     );
