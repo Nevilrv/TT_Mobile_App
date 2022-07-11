@@ -2,11 +2,15 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/request_model/training_plan_request_model/check_workout_program_request_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/check_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/training_plan_screens/program_setup_page.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/training_plan_viewModel/check_workout_program_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -39,6 +43,8 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
   ChewieController? _chewieController;
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
+  CheckWorkoutProgramViewModel _checkWorkoutProgramViewModel =
+      Get.put(CheckWorkoutProgramViewModel());
 
   @override
   void initState() {
@@ -153,22 +159,52 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                 child: Padding(
                   padding: EdgeInsets.only(right: 18),
                   child: InkWell(
-                    onTap: () {
-                      if ('${response.data![0].exerciseVideo}'
-                          .contains('www.youtube.com')) {
-                        _youTubePlayerController?.pause();
-                      } else {
-                        _videoPlayerController?.pause();
-                        _chewieController?.pause();
-                      }
+                    onTap: () async {
+                      if (controller.apiResponse.status == Status.COMPLETE) {
+                        CheckWorkoutProgramRequestModel _request =
+                            CheckWorkoutProgramRequestModel();
+                        _request.workoutId = widget.workoutId;
+                        _request.userId = PreferenceManager.getUId();
 
-                      Get.to(ProgramSetupPage(
-                        exerciseId: response.data![0].exerciseId,
-                        day: widget.day,
-                        workoutId: widget.workoutId,
-                        workoutDay: widget.workoutDay,
-                        workoutName: widget.workoutName,
-                      ));
+                        await _checkWorkoutProgramViewModel
+                            .checkWorkoutProgramViewModel(_request);
+
+                        if (_checkWorkoutProgramViewModel.apiResponse.status ==
+                            Status.COMPLETE) {
+                          CheckWorkoutProgramResponseModel checkResponse =
+                              _checkWorkoutProgramViewModel.apiResponse.data;
+
+                          if (checkResponse.success == true) {
+                            if ('${response.data![0].exerciseVideo}'
+                                .contains('www.youtube.com')) {
+                              _youTubePlayerController?.pause();
+                            } else {
+                              _videoPlayerController?.pause();
+                              _chewieController?.pause();
+                            }
+                            Get.to(ProgramSetupPage(
+                              exerciseId: response.data![0].exerciseId,
+                              day: widget.day,
+                              workoutId: widget.workoutId,
+                              workoutDay: widget.workoutDay,
+                              workoutName: widget.workoutName,
+                            ));
+                          } else if (checkResponse.success == false) {
+                            Get.showSnackbar(GetSnackBar(
+                              message: '${checkResponse.msg}',
+                              duration: Duration(seconds: 2),
+                              backgroundColor: ColorUtils.kRed,
+                            ));
+                          }
+                        } else if (_checkWorkoutProgramViewModel
+                                .apiResponse.status ==
+                            Status.ERROR) {
+                          Text(
+                            'Something went wrong',
+                            style: FontTextStyle.kWhite16W300Roboto,
+                          );
+                        }
+                      }
                     },
                     child:
                         Text('Start', style: FontTextStyle.kTine16W400Roboto),

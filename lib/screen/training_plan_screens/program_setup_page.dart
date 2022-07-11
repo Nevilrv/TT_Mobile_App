@@ -89,6 +89,33 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
     }
   }
 
+  conflictApi() async {
+    await _workoutExerciseConflictViewModel.getWorkoutExerciseConflictDetails(
+        date: dateString(), userId: PreferenceManager.getUId());
+    if (_workoutExerciseConflictViewModel.apiResponse.status ==
+        Status.COMPLETE) {
+      WorkoutExerciseConflictResponseModel resConflict =
+          _workoutExerciseConflictViewModel.apiResponse.data;
+
+      if (resConflict.data != [] &&
+          resConflict.msg ==
+              "You are already following another program on these dates. Choose below if you want to follow them both.") {
+        conflictWorkoutList = resConflict.data!;
+        warningmsg = '${resConflict.msg}';
+
+        print('-------------- msg${resConflict.msg}');
+
+        print('conflict called on week days');
+        print('conflict called -=--=-=-=-=-=-=-=-=-=-=-==--=-=');
+
+        _workoutByIdViewModel.changeConflict(true);
+      } else {
+        _workoutByIdViewModel.changeConflict(false);
+        print('conflict else part called -=--=-=-=-=-=-=-=-=-=-=-==--=-=');
+      }
+    }
+  }
+
   int getHashCode(DateTime key) {
     return key.day * 1000000 + key.month * 10000 + key.year;
   }
@@ -189,6 +216,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
         }
         log('days list --------- $days');
         _workoutByIdViewModel.listUpdate(value: days);
+        conflictApi();
       }
     }
   }
@@ -1143,9 +1171,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                       _request.workoutId =
                                                           workResponse.data![0]
                                                               .workoutId;
-                                                      // _request.exerciseId =
-                                                      //     response.data![0]
-                                                      //         .exerciseId;
+                                                      _request.exerciseId = "0";
                                                       _request.startDate =
                                                           startDate(controllerWork
                                                               .defSelectedList);

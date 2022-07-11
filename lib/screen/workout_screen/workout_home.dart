@@ -97,24 +97,34 @@ class WorkoutHomeScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(
-                          width: Get.width * .475,
+                          // color: Colors.pink,
+                          width: Get.width * .525,
                           child: Column(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SizedBox(height: Get.height * .05),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CircleAvatar(
-                                        radius: Get.height * .02,
-                                        backgroundColor: Colors.transparent,
-                                        backgroundImage:
-                                            AssetImage(AppIcons.kettle_bell)),
-                                    SizedBox(width: Get.width * .03),
-                                    Text('Equipment needed',
-                                        style: FontTextStyle.kWhite20BoldRoboto)
-                                  ],
+                                Padding(
+                                  padding: EdgeInsets.only(left: 10, right: 10),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                          radius: Get.height * .02,
+                                          backgroundColor: Colors.transparent,
+                                          backgroundImage:
+                                              AssetImage(AppIcons.kettle_bell)),
+                                      SizedBox(width: Get.width * .03),
+                                      Expanded(
+                                        child: Text('Equipment needed',
+                                            style: FontTextStyle
+                                                .kWhite20BoldRoboto),
+                                      )
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(height: Get.height * .05),
                                 Container(
@@ -157,7 +167,7 @@ class WorkoutHomeScreen extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                        CrossAxisAlignment.center,
                                     children: [
                                       CircleAvatar(
                                           radius: Get.height * .02,

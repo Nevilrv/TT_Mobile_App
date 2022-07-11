@@ -27,79 +27,57 @@ Padding listViewTab({
           physics: BouncingScrollPhysics(),
           itemCount: getEventForDay.length,
           itemBuilder: (_, index) {
-            print('========= $index');
-
-            return Padding(
-              padding: EdgeInsets.only(bottom: Get.height * .03),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${Jiffy(getEventForDay[index].date).format('EEEE, MMMM do')}',
-                    style: FontTextStyle.kWhite16BoldRoboto,
-                  ),
-                  Divider(
-                    color: ColorUtils.kTint,
-                    height: Get.height * .03,
-                    thickness: 1.5,
-                  ),
-                  ListView.builder(
-                      itemCount: getEventForDay[index].programData!.length,
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (_, index1) {
-                        return ListTile(
-                          title: Text(
-                            getEventForDay[index]
-                                .programData![index1]
-                                .workoutTitle,
-                            style: FontTextStyle.kWhite17BoldRoboto,
-                          ),
-                          subtitle: Text(
-                            '${getEventForDay[index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
-                                " - " +
-                                ' ${getEventForDay[index].programData![0].exerciseTitle} ',
-                            style: FontTextStyle.kLightGray16W300Roboto,
-                          ),
-                          trailing: InkWell(
-                            onTap: () {
-                              openBottomSheet(event: getEventForDay[index]);
-                            },
-                            child: Icon(
-                              Icons.more_horiz_sharp,
-                              color: ColorUtils.kTint,
+            if (getEventForDay[index].programData!.isNotEmpty ||
+                getEventForDay[index].programData! == []) {
+              return Padding(
+                padding: EdgeInsets.only(bottom: Get.height * .03),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${Jiffy(getEventForDay[index].date).format('EEEE, MMMM do')}',
+                      style: FontTextStyle.kWhite16BoldRoboto,
+                    ),
+                    Divider(
+                      color: ColorUtils.kTint,
+                      height: Get.height * .03,
+                      thickness: 1.5,
+                    ),
+                    ListView.builder(
+                        itemCount: getEventForDay[index].programData!.length,
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (_, index1) {
+                          return ListTile(
+                            title: Text(
+                              getEventForDay[index]
+                                  .programData![index1]
+                                  .workoutTitle,
+                              style: FontTextStyle.kWhite17BoldRoboto,
                             ),
-                          ),
-                        );
-                      }),
-                  // ListView(
-                  //   physics: NeverScrollableScrollPhysics(),
-                  //   shrinkWrap: true,
-                  //   children: getEventForDay(selectedDay!)
-                  //       .map((event) => ListTile(
-                  //             title: Text(
-                  //               event['title'].toString(),
-                  //               style: FontTextStyle.kWhite17BoldRoboto,
-                  //             ),
-                  //             subtitle: Text(
-                  //               event['subtitle'].toString(),
-                  //               style: FontTextStyle.kLightGray16W300Roboto,
-                  //             ),
-                  //             trailing: InkWell(
-                  //               onTap: () {
-                  //                 openBottomSheet(event);
-                  //               },
-                  //               child: Icon(
-                  //                 Icons.more_horiz_sharp,
-                  //                 color: ColorUtils.kTint,
-                  //               ),
-                  //             ),
-                  //           ))
-                  //       .toList(),
-                  // ),
-                ],
-              ),
-            );
+                            subtitle: Text(
+                              '${getEventForDay[index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
+                                  " - " +
+                                  ' ${getEventForDay[index].programData![0].exerciseTitle} ',
+                              style: FontTextStyle.kLightGray16W300Roboto,
+                            ),
+                            trailing: InkWell(
+                              onTap: () {
+                                openBottomSheet(event: getEventForDay[index]);
+                              },
+                              child: Icon(
+                                Icons.more_horiz_sharp,
+                                color: ColorUtils.kTint,
+                              ),
+                            ),
+                          );
+                        }),
+                  ],
+                ),
+              );
+            } else {
+              return SizedBox();
+            }
           }),
     ),
   );
