@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/request_model/habit_tracker_request_model/add_user_habit_id_request_model.dart';
 import 'package:tcm/model/request_model/habit_tracker_request_model/custom_habit_request_model.dart';
+import 'package:tcm/model/response_model/habit_tracker_model/add_user_habit_id_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/custom_habit_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/habit_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
@@ -12,6 +14,7 @@ import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/habit_tracker/tracking_frequency_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/add_user_habit_id_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/custom_habit_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
 
@@ -25,6 +28,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
   HabitViewModel _habitViewModel = Get.put(HabitViewModel());
   CustomHabitViewModel _customHabitViewModel = Get.put(CustomHabitViewModel());
   // final _formKeyAddHabit = GlobalKey<FormState>();
+  AddUserHabitIdViewModel _addUserHabitIdViewModel =
+      Get.put(AddUserHabitIdViewModel());
 
   initState() {
     super.initState();
@@ -37,6 +42,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
   }
 
   int habitIndex = 0;
+  List habitId = [];
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +107,13 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           itemBuilder: (_, index) {
                             return GestureDetector(
                               onTap: () {
+                                if (habitId
+                                    .contains('${response.data![index].id}')) {
+                                  habitId.remove('${response.data![index].id}');
+                                } else {
+                                  habitId.add('${response.data![index].id}');
+                                }
+
                                 controller.selectedHabits(
                                     habits: '${response.data![index].name}',
                                     id: '${response.data![index].id}');
@@ -109,6 +122,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                 print(
                                     '----------========= ${response.data![index].id}');
                                 // setState(() {});
+                                print(
+                                    'list of habit id ---------------- ${habitId}');
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
@@ -227,10 +242,41 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
               ),
               SizedBox(height: Get.height * .08),
               commonNevigationButton(
-                  onTap: () {
+                  onTap: () async {
                     if (_habitViewModel.selectedHabitList.isNotEmpty) {
-                      HabitResponseModel res = _habitViewModel.apiResponse.data;
-                      Get.to(TrackingFrequencyScreen(data: res.data));
+                      AddUserHabitIdRequestModel _request =
+                          AddUserHabitIdRequestModel();
+
+                      _request.userId = PreferenceManager.getUId();
+                      _request.habitIds = listOfHabitId();
+
+                      await _addUserHabitIdViewModel
+                          .addUserHabitIdViewModel(_request);
+
+                      if (_addUserHabitIdViewModel.apiResponse.status ==
+                          Status.COMPLETE) {
+                        AddUserHabitIdResponseModel res =
+                            _addUserHabitIdViewModel.apiResponse.data;
+
+                        Get.showSnackbar(GetSnackBar(
+                          message: '${res.msg}',
+                          duration: Duration(seconds: 2),
+                        ));
+
+                        print("------------------- ${listOfHabitId()}");
+                        print(
+                            "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
+
+                        HabitResponseModel resp =
+                            _habitViewModel.apiResponse.data;
+                        Get.to(TrackingFrequencyScreen(data: resp.data));
+                      } else if (_addUserHabitIdViewModel.apiResponse.status ==
+                          Status.ERROR) {
+                        Get.showSnackbar(GetSnackBar(
+                          message: 'Something went wrong!!! \nPlease try again',
+                          duration: Duration(seconds: 2),
+                        ));
+                      }
                     } else {
                       Get.showSnackbar(GetSnackBar(
                         message: 'Please select at least one habit',
@@ -244,6 +290,12 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
         ),
       ),
     );
+  }
+
+  listOfHabitId() {
+    String idList = habitId.join(",");
+    print("------------------ ${idList}");
+    return idList;
   }
 
   _customHabitAlertDialog() {

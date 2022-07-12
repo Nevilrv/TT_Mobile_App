@@ -83,7 +83,7 @@ Padding listViewTab({
   );
 }
 
-Tab tabbarCommonTab({IconData? icon, String? tabName}) {
+Tab tabBarCommonTab({IconData? icon, String? tabName}) {
   return Tab(
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,

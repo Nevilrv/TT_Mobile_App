@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
 import 'package:tcm/custom_packages/table_calender/shared/utils.dart';
@@ -67,6 +68,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     super.dispose();
   }
 
+  DateTime selectedDay = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     final _events = LinkedHashMap<DateTime, List>(
@@ -132,10 +135,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                               borderRadius:
                                   BorderRadius.circular(Get.height * .05)),
                           tabs: [
-                            tabbarCommonTab(
+                            tabBarCommonTab(
                                 icon: Icons.calendar_today_outlined,
                                 tabName: 'Calendar'),
-                            tabbarCommonTab(
+                            tabBarCommonTab(
                                 icon: Icons.list_sharp, tabName: 'List View'),
                           ]),
                     ),
@@ -237,13 +240,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                   child: SfDateRangePicker(
                                     view: DateRangePickerView.month,
                                     showNavigationArrow: true,
-
                                     // enablePastDates: false,
                                     // controller: controllerWork
                                     //     .dateRangePickerController,
-                                    initialDisplayDate: DateTime.now(),
-                                    initialSelectedDate: DateTime.now(),
-
+                                    initialDisplayDate: selectedDay,
+                                    initialSelectedDate: selectedDay,
                                     todayHighlightColor: ColorUtils.kTint,
                                     selectionRadius: 17,
                                     selectionColor: ColorUtils.kTint,
@@ -274,18 +275,14 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     selectionMode:
                                         DateRangePickerSelectionMode.single,
 
-                                    // onSelectionChanged:
-                                    //     (DateRangePickerSelectionChangedArgs
-                                    // args) {
-                                    //   days = args.value;
-                                    //   dateByUser = days.last;
-                                    //   multiSelectionDay(
-                                    //       userSelectedDate:
-                                    //       dateByUser!);
-                                    //   controllerWork.setDateController(
-                                    //       controllerWork
-                                    //           .defSelectedList);
-                                    // },
+                                    onSelectionChanged:
+                                        (DateRangePickerSelectionChangedArgs
+                                            args) {
+                                      selectedDay = args.value;
+                                      print(
+                                          'selectedDay ------------- ${selectedDay}');
+                                      setState(() {});
+                                    },
                                     monthViewSettings:
                                         DateRangePickerMonthViewSettings(
                                       firstDayOfWeek: 1,
@@ -313,35 +310,64 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                 thickness: 1.5,
                                 height: Get.height * 0.04,
                               ),
-                              ListView(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                children: _getEventForDay(_selectedDay!)
-                                    .map((event) => ListTile(
-                                          title: Text(
-                                            event['title'].toString(),
-                                            style: FontTextStyle
-                                                .kWhite17BoldRoboto,
-                                          ),
-                                          subtitle: Text(
-                                            event['subtitle'].toString(),
-                                            style: FontTextStyle
-                                                .kLightGray16W300Roboto,
-                                          ),
-                                          trailing: InkWell(
-                                            onTap: () {
-                                              openBottomSheet(
-                                                  event: scheduleResponse
-                                                      .data![0]);
-                                            },
-                                            child: Icon(
-                                              Icons.more_horiz_sharp,
-                                              color: ColorUtils.kTint,
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                              ),
+                              ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: scheduleResponse.data!.length,
+                                  itemBuilder: (_, index) {
+                                    List<String> finalDate =
+                                        selectedDay.toString().split(" ");
+
+                                    print("-=-=-==-=-=-= ${finalDate[0]}");
+
+                                    if (scheduleResponse.data![index].date ==
+                                        finalDate[0]) {
+                                      return Padding(
+                                        padding: EdgeInsets.only(
+                                            bottom: Get.height * .03),
+                                        child: ListView.builder(
+                                            itemCount: scheduleResponse
+                                                .data![index]
+                                                .programData!
+                                                .length,
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemBuilder: (_, index1) {
+                                              return ListTile(
+                                                title: Text(
+                                                  scheduleResponse
+                                                      .data![index]
+                                                      .programData![index1]
+                                                      .workoutTitle,
+                                                  style: FontTextStyle
+                                                      .kWhite17BoldRoboto,
+                                                ),
+                                                subtitle: Text(
+                                                  '${scheduleResponse.data![index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
+                                                      " - " +
+                                                      ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
+                                                  style: FontTextStyle
+                                                      .kLightGray16W300Roboto,
+                                                ),
+                                                trailing: InkWell(
+                                                  onTap: () {
+                                                    openBottomSheet(
+                                                        event: scheduleResponse
+                                                            .data![index]);
+                                                  },
+                                                  child: Icon(
+                                                    Icons.more_horiz_sharp,
+                                                    color: ColorUtils.kTint,
+                                                  ),
+                                                ),
+                                              );
+                                            }),
+                                      );
+                                    } else {
+                                      return SizedBox();
+                                    }
+                                  }),
                             ],
                           ),
                         ),
