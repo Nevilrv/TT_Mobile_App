@@ -5,11 +5,9 @@ import 'package:tcm/repo/habit_tracker_repo/habits_repo.dart';
 import 'package:tcm/utils/images.dart';
 
 class HabitViewModel extends GetxController {
-  List selectedHabitList = [];
-  List tmpSelectedHabitIDList = [];
+  List firstSelectedHabitList = [];
   String? habitIdString;
 
-  List habitUpdatesList = [];
   List tmpHabitUpdatesList = [];
   double? percent = 0;
 
@@ -20,9 +18,11 @@ class HabitViewModel extends GetxController {
 
   progressCounter({int? selectedHabitListLength, int? totalListLength}) {
     percent = 100 * selectedHabitListLength! / totalListLength!;
+
     if (percent == 0) {
       print('percent ======= $percent');
       return selectedBodyIllu = AppImages.body_illustration[0];
+      update();
     } else if (percent! <= 12.5) {
       print('percent ======= $percent');
       selectedBodyIllu = AppImages.body_illustration[1];
@@ -61,24 +61,19 @@ class HabitViewModel extends GetxController {
     update();
   }
 
-  selectedHabits({String? habits, String? id}) {
-    if (selectedHabitList.contains(habits) &&
-        tmpSelectedHabitIDList.contains(id)) {
-      selectedHabitList.remove(habits);
-      tmpSelectedHabitIDList.remove(id);
+  firstSelectedHabits({String? id}) {
+    if (firstSelectedHabitList.contains(id)) {
+      firstSelectedHabitList.remove(id);
     } else {
-      selectedHabitList.add(habits);
-      tmpSelectedHabitIDList.add(id);
+      firstSelectedHabitList.add(id);
     }
     update();
   }
 
-  updateSelectedHabits({String? habits, String? id}) {
-    if (habitUpdatesList.contains(habits) && tmpHabitUpdatesList.contains(id)) {
-      habitUpdatesList.remove(habits);
+  updateSelectedHabits({String? id}) {
+    if (tmpHabitUpdatesList.contains(id)) {
       tmpHabitUpdatesList.remove(id);
     } else {
-      habitUpdatesList.add(habits);
       tmpHabitUpdatesList.add(id);
     }
     update();

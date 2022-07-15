@@ -42,7 +42,8 @@ class ApiRoutes {
   String customHabitUrl = baseUrl + "/json/data_habits_add.php";
   String userHabitTrackUrl = baseUrl + "/json/data_habit_user.php";
   String habitRecordAddUpdateUrl = baseUrl + "/json/data_habit_record.php";
-  String getHabitRecordurl = baseUrl + "/json/data_habit_record_get_date.php";
+  String getHabitRecordDateUrl =
+      baseUrl + "/json/data_habit_record_get_date.php";
   String allWorkoutsUrl =
       baseUrl + "/json/data_workouts.php?goal=&level=&workout=";
 

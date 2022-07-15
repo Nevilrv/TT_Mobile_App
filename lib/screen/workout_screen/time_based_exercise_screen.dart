@@ -34,7 +34,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
 
   VideoPlayerController? _videoPlayerController;
   YoutubePlayerController? _youTubePlayerController;
-
+  int totalRound = 0;
   ChewieController? _chewieController;
 
   @override
@@ -205,16 +205,34 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                             ),
                           ],
                         ),
-                        InkWell(
-                            onTap: () {
-                              Get.to(NoWeightExerciseScreen(
-                                data: widget.data,
-                              ));
-                            },
-                            child: Text(
-                              'Edit',
-                              style: FontTextStyle.kTine16W400Roboto,
-                            ))
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            InkWell(
+                                onTap: () {
+                                  Get.to(WeightExerciseScreen(
+                                    data: widget.data,
+                                  ));
+                                  // Get.to(NoWeightExerciseScreen(
+                                  //   data: widget.data,
+                                  // ));
+                                },
+                                child: Text(
+                                  'Edit',
+                                  style: FontTextStyle.kTine16W400Roboto,
+                                )),
+                            SizedBox(height: Get.height * .015),
+                            totalRound == 0
+                                ? Text(
+                                    'Sets ${widget.data[0].exerciseSets} ',
+                                    style: FontTextStyle.kLightGray16W300Roboto,
+                                  )
+                                : Text(
+                                    'Sets $totalRound/${widget.data[0].exerciseSets} ',
+                                    style: FontTextStyle.kLightGray16W300Roboto,
+                                  ),
+                          ],
+                        )
                       ],
                     ),
                     SizedBox(height: Get.height * .04),
@@ -236,6 +254,20 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                         progressTextCountDirection: _progressTextCountDirection,
                         progressTextStyle: FontTextStyle.kWhite24BoldRoboto,
                         strokeWidth: 15,
+                        onStart: () {
+                          setState(() {
+                            totalRound = totalRound + 1;
+                          });
+                        },
+                        onEnd: () {
+                          if (totalRound !=
+                              int.parse(
+                                  widget.data[0].exerciseSets.toString())) {
+                            _timerController!.reset();
+                          } else {
+                            _timerController!.stop();
+                          }
+                        },
                       ),
                     )),
                     SizedBox(height: Get.height * .04),
@@ -245,7 +277,15 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                         GestureDetector(
                           onTap: () {
                             print('Start Pressed');
-                            _timerController!.start();
+                            if (totalRound !=
+                                int.parse(
+                                    widget.data[0].exerciseSets.toString())) {
+                              _timerController!.start();
+
+                              print('totalRound-------> ${totalRound}');
+                            }
+
+                            // print(widget.data[0].exerciseSets.runtimeType);
                           },
                           child: Container(
                             alignment: Alignment.center,
@@ -267,6 +307,10 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                         GestureDetector(
                           onTap: () {
                             print('Reset pressed ');
+                            setState(() {
+                              totalRound = 0;
+                            });
+
                             _timerController!.reset();
                           },
                           child: Container(
@@ -295,10 +339,12 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                             _videoPlayerController?.pause();
                             _chewieController?.pause();
                           }
-
-                          Get.to(WeightExerciseScreen(
+                          Get.to(NoWeightExerciseScreen(
                             data: widget.data,
                           ));
+                          // Get.to(WeightExerciseScreen(
+                          //   data: widget.data,
+                          // ));
                         },
                         name: 'Next exercise')
                   ]),

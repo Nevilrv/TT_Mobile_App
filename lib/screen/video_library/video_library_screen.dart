@@ -235,19 +235,29 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                           Get.height * 0.175,
                                                       width: Get.height * 0.125,
                                                       decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                              color: ColorUtils
-                                                                  .kTint,
-                                                              width: 1),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(15),
-                                                          image: DecorationImage(
-                                                              image: AssetImage(
-                                                                  AppImages
-                                                                      .videoThumbnail),
-                                                              fit:
-                                                                  BoxFit.fill)),
+                                                        border: Border.all(
+                                                            color: ColorUtils
+                                                                .kTint,
+                                                            width: 1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                      ),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                        child: Center(
+                                                          child: Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(15.0),
+                                                            child: Image.asset(
+                                                              AppImages.logo,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
                                                   )
                                                 : SizedBox();

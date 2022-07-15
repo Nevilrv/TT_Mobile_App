@@ -1,10 +1,10 @@
-class GetHabitRecordRequestModel {
+class GetHabitRecordDateRequestModel {
   String? userId;
   String? date;
 
-  GetHabitRecordRequestModel({this.userId, this.date});
+  GetHabitRecordDateRequestModel({this.userId, this.date});
 
-  GetHabitRecordRequestModel.fromJson(Map<String, dynamic> json) {
+  GetHabitRecordDateRequestModel.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
     date = json['date'];
   }

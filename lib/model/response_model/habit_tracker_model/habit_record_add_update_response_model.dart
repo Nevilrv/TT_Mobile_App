@@ -21,19 +21,40 @@ class HabitRecordAddUpdateResponseModel {
 
   bool? success;
   String? msg;
-  List<dynamic>? data;
+  List<HabitUpdate>? data;
 
   factory HabitRecordAddUpdateResponseModel.fromJson(
           Map<String, dynamic> json) =>
       HabitRecordAddUpdateResponseModel(
         success: json["success"],
         msg: json["msg"],
-        data: List<dynamic>.from(json["data"].map((x) => x)),
+        data: List<HabitUpdate>.from(
+            json["data"].map((x) => HabitUpdate.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "success": success,
         "msg": msg,
-        "data": List<dynamic>.from(data!.map((x) => x)),
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+      };
+}
+
+class HabitUpdate {
+  HabitUpdate({
+    this.habitId,
+    this.completed,
+  });
+
+  String? habitId;
+  String? completed;
+
+  factory HabitUpdate.fromJson(Map<String, dynamic> json) => HabitUpdate(
+        habitId: json["habit_id"],
+        completed: json["completed"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "habit_id": habitId,
+        "completed": completed,
       };
 }

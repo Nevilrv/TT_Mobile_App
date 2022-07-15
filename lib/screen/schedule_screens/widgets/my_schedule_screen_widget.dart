@@ -105,119 +105,117 @@ Tab tabBarCommonTab({IconData? icon, String? tabName}) {
 
 void openBottomSheet({Schedule? event}) {
   Get.bottomSheet(
-    Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        height: Get.height * .5,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            SizedBox(height: Get.width * .1),
-            Center(
-              child: Text('${event!.programData![0].workoutTitle}',
-                  style: FontTextStyle.kLightGray22BoldRoboto,
-                  textAlign: TextAlign.center),
-            ),
-            Divider(
-              color: ColorUtils.kGray,
-            ),
-            TextButton(
-                onPressed: () {},
-                child: Text(
-                  'View Workout',
-                  style: FontTextStyle.kBlue22W500Roboto,
-                )),
-            Divider(
-              color: ColorUtils.kGray,
-            ),
-            TextButton(
-                onPressed: () {},
-                child: Text(
-                  'Edit Workout',
-                  style: FontTextStyle.kBlue22W500Roboto,
-                )),
-            Divider(
-              color: ColorUtils.kGray,
-            ),
-            TextButton(
-                onPressed: () async {
-                  RemoveWorkoutProgramRequestModel _request =
-                      RemoveWorkoutProgramRequestModel();
-                  _request.userWorkoutProgramId = '${event.userProgramId}';
-                  await _removeWorkoutProgramViewModel
-                      .removeWorkoutProgramViewModel(_request);
+    Container(
+      padding: const EdgeInsets.all(8),
+      height: Get.height * .5,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(9.5), color: ColorUtils.kBlack),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          SizedBox(height: Get.width * .1),
+          Center(
+            child: Text('${event!.programData![0].workoutTitle}',
+                style: FontTextStyle.kWhite20BoldRoboto
+                    .copyWith(fontSize: Get.height * .024),
+                textAlign: TextAlign.center),
+          ),
+          Divider(
+            color: ColorUtils.kTint,
+          ),
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                'View Workout',
+                style: FontTextStyle.kTint24W400Roboto,
+              )),
+          Divider(
+            color: ColorUtils.kTint,
+          ),
+          TextButton(
+              onPressed: () {},
+              child: Text(
+                'Edit Workout',
+                style: FontTextStyle.kTint24W400Roboto,
+              )),
+          Divider(
+            color: ColorUtils.kTint,
+          ),
+          TextButton(
+              onPressed: () async {
+                RemoveWorkoutProgramRequestModel _request =
+                    RemoveWorkoutProgramRequestModel();
+                _request.userWorkoutProgramId = '${event.userProgramId}';
+                await _removeWorkoutProgramViewModel
+                    .removeWorkoutProgramViewModel(_request);
 
-                  print('goes');
-                  Get.back();
+                print('goes');
+                Get.back();
 
-                  if (_removeWorkoutProgramViewModel.apiResponse.status ==
-                      Status.COMPLETE) {
-                    print(
-                        '${_removeWorkoutProgramViewModel.apiResponse.status}');
+                if (_removeWorkoutProgramViewModel.apiResponse.status ==
+                    Status.COMPLETE) {
+                  print('${_removeWorkoutProgramViewModel.apiResponse.status}');
 
-                    RemoveWorkoutProgramResponseModel removeWorkoutResponse =
-                        _removeWorkoutProgramViewModel.apiResponse.data;
-                    if (removeWorkoutResponse.success == true &&
-                        removeWorkoutResponse.msg != null) {
-                      print('${removeWorkoutResponse.msg}');
-
-                      Get.showSnackbar(GetSnackBar(
-                        message: '${removeWorkoutResponse.msg}',
-                        duration: Duration(seconds: 2),
-                      ));
-                    } else if (removeWorkoutResponse.success == true &&
-                        removeWorkoutResponse.msg == null) {
-                      Get.showSnackbar(GetSnackBar(
-                        message: '${removeWorkoutResponse.msg}',
-                        duration: Duration(seconds: 2),
-                      ));
-                      print('${removeWorkoutResponse.msg}');
-                    }
-                  } else if (_removeWorkoutProgramViewModel
-                          .apiResponse.status ==
-                      Status.ERROR) {
-                    print(
-                        '${_removeWorkoutProgramViewModel.apiResponse.status}');
+                  RemoveWorkoutProgramResponseModel removeWorkoutResponse =
+                      _removeWorkoutProgramViewModel.apiResponse.data;
+                  if (removeWorkoutResponse.success == true &&
+                      removeWorkoutResponse.msg != null) {
+                    print('${removeWorkoutResponse.msg}');
 
                     Get.showSnackbar(GetSnackBar(
-                      message: 'Something went wrong!!!',
+                      message: '${removeWorkoutResponse.msg}',
                       duration: Duration(seconds: 2),
                     ));
+                  } else if (removeWorkoutResponse.success == true &&
+                      removeWorkoutResponse.msg == null) {
+                    Get.showSnackbar(GetSnackBar(
+                      message: '${removeWorkoutResponse.msg}',
+                      duration: Duration(seconds: 2),
+                    ));
+                    print('${removeWorkoutResponse.msg}');
                   }
-                  _scheduleByDateViewModel.getScheduleByDateDetails(
-                      userId: PreferenceManager.getUId());
-                },
-                style: ButtonStyle(
-                    overlayColor: MaterialStateColor.resolveWith(
-                        (states) => ColorUtils.kRed.withOpacity(.1))),
-                child: Text(
-                  'Delete Workout',
-                  style: FontTextStyle.kBlue22W500Roboto
-                      .copyWith(color: ColorUtils.kRed),
-                )),
-            InkWell(
-              onTap: () {
-                print('Cancel');
+                } else if (_removeWorkoutProgramViewModel.apiResponse.status ==
+                    Status.ERROR) {
+                  print('${_removeWorkoutProgramViewModel.apiResponse.status}');
 
-                Get.back();
+                  Get.showSnackbar(GetSnackBar(
+                    message: 'Something went wrong!!!',
+                    duration: Duration(seconds: 2),
+                  ));
+                }
+                _scheduleByDateViewModel.getScheduleByDateDetails(
+                    userId: PreferenceManager.getUId());
               },
-              child: Container(
-                alignment: Alignment.center,
-                height: Get.height * .075,
-                width: Get.width,
-                decoration: BoxDecoration(
-                  color: ColorUtils.kWhite,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Text(
-                  'Cancel',
-                  style: FontTextStyle.kBlue22W500Roboto
-                      .copyWith(fontWeight: FontWeight.bold),
-                ),
+              style: ButtonStyle(
+                  overlayColor: MaterialStateColor.resolveWith(
+                      (states) => ColorUtils.kRed.withOpacity(.1))),
+              child: Text(
+                'Delete Workout',
+                style: FontTextStyle.kTint24W400Roboto.copyWith(
+                    color: ColorUtils.kRed, fontWeight: FontWeight.w600),
+              )),
+          InkWell(
+            onTap: () {
+              print('Cancel');
+
+              Get.back();
+            },
+            child: Container(
+              alignment: Alignment.center,
+              height: Get.height * .075,
+              width: Get.width,
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(10),
               ),
-            )
-          ],
-        ),
+              child: Text(
+                'Cancel',
+                style: FontTextStyle.kTint24W400Roboto
+                    .copyWith(fontWeight: FontWeight.bold),
+              ),
+            ),
+          )
+        ],
       ),
     ),
     backgroundColor: ColorUtils.kBottomSheetGray,

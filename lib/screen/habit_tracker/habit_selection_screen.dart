@@ -114,24 +114,24 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                   habitId.add('${response.data![index].id}');
                                 }
 
-                                controller.selectedHabits(
-                                    habits: '${response.data![index].name}',
+                                controller.firstSelectedHabits(
                                     id: '${response.data![index].id}');
-                                log('${response.data![index].name}');
-                                log('${controller.selectedHabitList}');
+                                // log('${response.data![index].name}');
+                                // log('${controller.selectedHabitList}');
                                 print(
                                     '----------========= ${response.data![index].id}');
                                 // setState(() {});
                                 print(
-                                    'list of habit id ---------------- ${habitId}');
+                                    'list of habit id ---------------- $habitId');
+                                print(
+                                    "abc ------------------- ${listOfHabitId()}");
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
-                                height: Get.height * 0.065,
-                                width: Get.width * 0.45,
-                                decoration: controller.selectedHabitList
-                                        .contains(
-                                            '${response.data![index].name}')
+                                height: Get.height * .065,
+                                width: Get.width * .45,
+                                decoration: habitId
+                                        .contains('${response.data![index].id}')
                                     ? BoxDecoration(
                                         borderRadius: BorderRadius.circular(
                                             Get.height * .05),
@@ -146,8 +146,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                         border:
                                             Border.all(color: ColorUtils.kTint),
                                         color: ColorUtils.kBlack),
-                                child: controller.selectedHabitList.contains(
-                                        '${response.data![index].name}')
+                                child: habitId
+                                        .contains('${response.data![index].id}')
                                     ? Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -159,9 +159,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                                     10
                                                 ? '${response.data![index].name!.substring(0, 10) + '..'}'
                                                 : '${response.data![index].name}',
-                                            style: controller.selectedHabitList
-                                                    .contains(
-                                                        '${response.data![index].name}')
+                                            style: habitId.contains(
+                                                    '${response.data![index].id}')
                                                 ? FontTextStyle
                                                     .kBlack20BoldRoboto
                                                 : FontTextStyle
@@ -184,9 +183,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                           Text(
                                             '${response.data![index].name}'
                                                 .capitalizeFirst!,
-                                            style: controller.selectedHabitList
-                                                    .contains(
-                                                        '${response.data![index].name}')
+                                            style: habitId.contains(
+                                                    '${response.data![index].id}')
                                                 ? FontTextStyle
                                                     .kBlack20BoldRoboto
                                                 : FontTextStyle
@@ -243,7 +241,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
               SizedBox(height: Get.height * .08),
               commonNevigationButton(
                   onTap: () async {
-                    if (_habitViewModel.selectedHabitList.isNotEmpty) {
+                    if (_habitViewModel.firstSelectedHabitList.isNotEmpty) {
                       AddUserHabitIdRequestModel _request =
                           AddUserHabitIdRequestModel();
 
@@ -294,7 +292,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
 
   listOfHabitId() {
     String idList = habitId.join(",");
-    print("------------------ ${idList}");
+    print("inside ------------------ $idList");
     return idList;
   }
 

@@ -606,26 +606,59 @@ class _HomeScreenState extends State<HomeScreen> {
     showCupertinoDialog(
         context: context,
         builder: (_) {
-          return CupertinoAlertDialog(
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            backgroundColor: ColorUtils.kBlack,
+            actionsOverflowDirection: VerticalDirection.down,
             title: Column(children: [
               Text('Logout',
-                  style: FontTextStyle.kBlack24W400Roboto
-                      .copyWith(fontWeight: FontWeight.bold)),
+                  style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                      fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
+              SizedBox(height: 20),
               Text(
                 'Are you sure you want to log out?',
-                style: FontTextStyle.kBlack16W300Roboto,
+                style: FontTextStyle.kBlack16W300Roboto
+                    .copyWith(color: ColorUtils.kTint),
               ),
             ]),
             actions: [
-              CupertinoDialogAction(
-                  child:
-                      Text('Cancel', style: FontTextStyle.kBlack24W400Roboto),
-                  onPressed: onTapCancel),
-              CupertinoDialogAction(
-                child: Text('Log Out',
-                    style: FontTextStyle.kBlack24W400Roboto.copyWith(
-                        color: ColorUtils.kRed, fontWeight: FontWeight.bold)),
-                onPressed: onTapLogOut,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return ColorUtils.kTint.withOpacity(0.2);
+                            return null;
+                          },
+                        ),
+                      ),
+                      child: Text('Cancel',
+                          style: FontTextStyle.kBlack24W400Roboto
+                              .copyWith(color: ColorUtils.kTint)),
+                      onPressed: onTapCancel),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.pressed))
+                            return ColorUtils.kRed.withOpacity(0.2);
+                          return null;
+                        },
+                      ),
+                    ),
+                    child: Text('Log Out',
+                        style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                            color: ColorUtils.kRed,
+                            fontWeight: FontWeight.bold)),
+                    onPressed: onTapLogOut,
+                  ),
+                ],
               ),
             ],
           );

@@ -308,7 +308,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                               Divider(
                                 color: ColorUtils.kTint,
                                 thickness: 1.5,
-                                height: Get.height * 0.04,
+                                height: Get.height * .04,
                               ),
                               ListView.builder(
                                   physics: BouncingScrollPhysics(),
@@ -318,52 +318,51 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     List<String> finalDate =
                                         selectedDay.toString().split(" ");
 
-                                    print("-=-=-==-=-=-= ${finalDate[0]}");
+                                    print(" -=-=-==-=-=-= ${finalDate[0]}");
+                                    print(
+                                        'date from api ${scheduleResponse.data![index].date}');
+
+                                    print(
+                                        "condition =========${scheduleResponse.data![index].date == finalDate[0]} ");
 
                                     if (scheduleResponse.data![index].date ==
                                         finalDate[0]) {
-                                      return Padding(
-                                        padding: EdgeInsets.only(
-                                            bottom: Get.height * .03),
-                                        child: ListView.builder(
-                                            itemCount: scheduleResponse
-                                                .data![index]
-                                                .programData!
-                                                .length,
-                                            shrinkWrap: true,
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            itemBuilder: (_, index1) {
-                                              return ListTile(
-                                                title: Text(
-                                                  scheduleResponse
-                                                      .data![index]
-                                                      .programData![index1]
-                                                      .workoutTitle,
-                                                  style: FontTextStyle
-                                                      .kWhite17BoldRoboto,
+                                      return ListView.builder(
+                                          itemCount: scheduleResponse
+                                              .data![index].programData!.length,
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemBuilder: (_, index1) {
+                                            return ListTile(
+                                              title: Text(
+                                                scheduleResponse
+                                                    .data![index]
+                                                    .programData![index1]
+                                                    .workoutTitle,
+                                                style: FontTextStyle
+                                                    .kWhite17BoldRoboto,
+                                              ),
+                                              subtitle: Text(
+                                                '${scheduleResponse.data![index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
+                                                    " - " +
+                                                    ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
+                                                style: FontTextStyle
+                                                    .kLightGray16W300Roboto,
+                                              ),
+                                              trailing: InkWell(
+                                                onTap: () {
+                                                  openBottomSheet(
+                                                      event: scheduleResponse
+                                                          .data![index]);
+                                                },
+                                                child: Icon(
+                                                  Icons.more_horiz_sharp,
+                                                  color: ColorUtils.kTint,
                                                 ),
-                                                subtitle: Text(
-                                                  '${scheduleResponse.data![index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
-                                                      " - " +
-                                                      ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
-                                                  style: FontTextStyle
-                                                      .kLightGray16W300Roboto,
-                                                ),
-                                                trailing: InkWell(
-                                                  onTap: () {
-                                                    openBottomSheet(
-                                                        event: scheduleResponse
-                                                            .data![index]);
-                                                  },
-                                                  child: Icon(
-                                                    Icons.more_horiz_sharp,
-                                                    color: ColorUtils.kTint,
-                                                  ),
-                                                ),
-                                              );
-                                            }),
-                                      );
+                                              ),
+                                            );
+                                          });
                                     } else {
                                       return SizedBox();
                                     }

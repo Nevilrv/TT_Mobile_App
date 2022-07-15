@@ -141,23 +141,28 @@ class WorkoutHomeScreen extends StatelessWidget {
                                             height: Get.height * .008);
                                       },
                                       itemBuilder: (_, index) {
-                                        return Row(
-                                          children: [
-                                            SizedBox(width: Get.width * .075),
-                                            RichText(
-                                                text: TextSpan(
-                                                    text: '● ',
-                                                    style: FontTextStyle
-                                                        .kLightGray16W300Roboto,
-                                                    children: [
-                                                  TextSpan(
-                                                      text:
-                                                          '${data[0].availableEquipments![index]}',
+                                        if ('${data[0].availableEquipments![index]}' !=
+                                            "No Equipment") {
+                                          return Row(
+                                            children: [
+                                              SizedBox(width: Get.width * .075),
+                                              RichText(
+                                                  text: TextSpan(
+                                                      text: '● ',
                                                       style: FontTextStyle
-                                                          .kWhite17BoldRoboto)
-                                                ])),
-                                          ],
-                                        );
+                                                          .kLightGray16W300Roboto,
+                                                      children: [
+                                                    TextSpan(
+                                                        text:
+                                                            '${data[0].availableEquipments![index]}',
+                                                        style: FontTextStyle
+                                                            .kWhite17BoldRoboto)
+                                                  ])),
+                                            ],
+                                          );
+                                        } else {
+                                          return SizedBox();
+                                        }
                                       }),
                                 ),
                                 SizedBox(height: Get.height * .05),
