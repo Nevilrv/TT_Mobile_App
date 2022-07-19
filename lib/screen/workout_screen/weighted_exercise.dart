@@ -1,13 +1,18 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/request_model/training_plan_request_model/save_user_customized_exercise_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
 import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -24,6 +29,8 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
   VideoPlayerController? _videoPlayerController;
   YoutubePlayerController? _youTubePlayerController;
   ChewieController? _chewieController;
+  SaveUserCustomizedExerciseViewModel _customizedExerciseViewModel =
+      Get.put(SaveUserCustomizedExerciseViewModel());
 
   @override
   void initState() {
@@ -98,6 +105,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
   @override
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
+      bool loader = false;
       return Scaffold(
         backgroundColor: ColorUtils.kBlack,
         appBar: AppBar(
@@ -113,16 +121,6 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
           backgroundColor: ColorUtils.kBlack,
           title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
           centerTitle: true,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Get.offAll(HomeScreen());
-                },
-                child: Text(
-                  'Quit',
-                  style: FontTextStyle.kTine16W400Roboto,
-                ))
-          ],
         ),
         body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -222,22 +220,22 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                           }),
                     ),
                     SizedBox(height: Get.height * .02),
-                    commonNevigationButton(
-                        onTap: () {
-                          if ('${widget.data[0].exerciseVideo}'
-                              .contains('www.youtube.com')) {
-                            _youTubePlayerController?.pause();
-                          } else {
-                            _videoPlayerController?.pause();
-                            _chewieController?.pause();
-                          }
-
-                          Get.to(ShareProgressScreen());
-                          setState(() {
-                            repsCounter = 0;
-                          });
-                        },
-                        name: 'Finish and Log Workout')
+                    GetBuilder<SaveUserCustomizedExerciseViewModel>(
+                      builder: (controllerSave) {
+                        return loader == true
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                color: ColorUtils.kTint,
+                              ))
+                            : commonNavigationButton(
+                                onTap: () async {
+                                  print('Save Exercise pressed!!!');
+                                  Get.back();
+                                },
+                                name: 'Save Exercise');
+                      },
+                    ),
+                    SizedBox(height: Get.height * .04)
                   ]),
             ),
           ]),

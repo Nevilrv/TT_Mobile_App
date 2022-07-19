@@ -240,67 +240,8 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                   Text('${widget.data[widget.id].videoTitle}',
                       style: FontTextStyle.kWhite17BoldRoboto),
                   SizedBox(height: Get.height * 0.008),
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Text(
-                  //       '${widget.data[widget.id].videoVisits} views . 3 days ago',
-                  //       style: FontTextStyle.kLightGray16W300Roboto,
-                  //     ),
-                  //     SizedBox(
-                  //       width: Get.width * .3,
-                  //       child: Row(
-                  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  //         children: [
-                  //           Row(
-                  //             children: [
-                  //               InkWell(
-                  //                   onTap: () {
-                  //                     print(
-                  //                         "video id--${widget.data[widget.id].videoId}");
-                  //                     likeVideo(
-                  //                         id: '${widget.data[widget.id].videoId}');
-                  //
-                  //                     _allVideoViewModel.getVideoDetails();
-                  //                   },
-                  //                   child: Image.asset(AppIcons.like)),
-                  //               SizedBox(width: Get.width * .01),
-                  //               Text(
-                  //                 '${widget.data[widget.id].videoLike}',
-                  //                 style: FontTextStyle.kWhite16BoldRoboto,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //           Row(
-                  //             children: [
-                  //               InkWell(
-                  //                   onTap: () {
-                  //                     print(
-                  //                         "id:${widget.data[widget.id].videoId}");
-                  //                     dislikeVideo(
-                  //                         id: '${widget.data[widget.id].videoId}');
-                  //                     _allVideoViewModel.getVideoDetails();
-                  //                   },
-                  //                   child: Image.asset(AppIcons.disLike)),
-                  //               SizedBox(width: Get.width * .01),
-                  //               Text(
-                  //                 '${widget.data[widget.id].videoDislike}',
-                  //                 style: FontTextStyle.kWhite16BoldRoboto,
-                  //               )
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     )
-                  //   ],
-                  // ),
                   SizedBox(height: Get.height * 0.02),
                   htmlToText(data: widget.data[widget.id].videoDescription),
-                  // Text(
-                  //   '${widget.data[widget.id].videoDescription}',
-                  //   style: FontTextStyle.kWhite16W300Roboto,
-                  //   maxLines: 2,
-                  // ),
                   SizedBox(height: Get.height * 0.03),
                   Text(
                     'RELATED VIDEOS',
@@ -319,7 +260,6 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                         itemBuilder: (_, index) {
                           return GestureDetector(
                             onTap: () {
-                              // Get.to(WatchVideoScreen());
                               print("button pressed ");
                             },
                             child: Row(
@@ -330,14 +270,14 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                     margin:
                                         EdgeInsets.only(top: Get.height * .02),
                                     height: Get.height * 0.1,
+                                    width: Get.height * 0.1,
                                     decoration: BoxDecoration(
                                         border: Border.all(
                                             color: ColorUtils.kTint, width: 1),
                                         borderRadius: BorderRadius.circular(15),
                                         image: DecorationImage(
-                                            image: AssetImage(
-                                                AppImages.videoThumbnail),
-                                            fit: BoxFit.fill)),
+                                            image: AssetImage(AppImages.logo),
+                                            scale: 2.5)),
                                   ),
                                 ),
                                 SizedBox(width: Get.height * .03),

@@ -23,6 +23,7 @@ class ApiRoutes {
       baseUrl + "/json/data_remove_existed_workout_program.php";
 
   String experienceUrl = baseUrl + "/json/data_experience_levels.php";
+
   String editPassUrl = baseUrl + "/json/data_change_password.php";
   String editProfileUrl = baseUrl + "/json/data_user_profile_update.php";
 
@@ -53,4 +54,10 @@ class ApiRoutes {
 
   String workoutByFilterUrl = baseUrl + "/json/data_workout_filter.php?goal=";
   String workoutByID = baseUrl + "/json/data_single_workout.php?workout_id=";
+  String addForumUrl = baseUrl + "/json/data_create_forum.php";
+  String getTagsUrl = baseUrl + "/json/data_tags.php";
+  String getAllForumsUrl = baseUrl + "/json/data_forums.php";
+  String getAllCommentsUrl =
+      baseUrl + "/json/data_forum_all_comments.php?post_id=";
+  String addCommentUrl = baseUrl + "/json/data_forum_comments.php";
 }

@@ -101,7 +101,7 @@ class PerfectDayScreen extends StatelessWidget {
           ),
           SizedBox(
             width: Get.width * .5,
-            child: commonNevigationButton(
+            child: commonNavigationButton(
                 name: 'Share',
                 onTap: () {
                   Get.to(HabitProgressShare(), transition: Transition.downToUp);
@@ -109,7 +109,7 @@ class PerfectDayScreen extends StatelessWidget {
                 }),
           ),
           SizedBox(height: Get.height * .04),
-          commonNevigationButton(
+          commonNavigationButton(
               name: 'Next',
               onTap: () {
                 Get.off(HomeScreen());

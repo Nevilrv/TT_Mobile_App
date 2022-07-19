@@ -99,6 +99,10 @@ class FontTextStyle {
       color: ColorUtils.kTint,
       fontWeight: FontWeight.bold,
       fontSize: Get.height * .02);
+  static TextStyle kTint16BoldRoboto = TextStyle(
+      color: ColorUtils.kTint,
+      fontWeight: FontWeight.bold,
+      fontSize: Get.height * 0.018);
   static TextStyle kTint12BoldRoboto = TextStyle(
       color: ColorUtils.kTint,
       fontWeight: FontWeight.bold,
@@ -138,4 +142,14 @@ class FontTextStyle {
       fontSize: Get.height * 0.02,
       fontWeight: FontWeight.bold,
       fontFamily: 'Roboto');
+
+  static TextStyle kBlack10BoldRoboto = TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.bold,
+      fontSize: Get.height * .016);
+
+  static TextStyle kTint10BoldRoboto = TextStyle(
+      color: ColorUtils.kTint,
+      fontWeight: FontWeight.bold,
+      fontSize: Get.height * .016);
 }

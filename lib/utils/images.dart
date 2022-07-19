@@ -6,6 +6,13 @@ class AppImages {
   static const String workout1 = 'asset/images/workout_1.png';
   static const String logo = 'asset/images/logo.png';
   static const String gym = 'asset/images/gym.png';
+  static const String arrowUp = 'asset/images/arrowUp.png';
+  static const String arrowUpBorder = 'asset/images/arrowUpBorder.png';
+  static const String arrowDownBorder = 'asset/images/arrowDownBorder.png';
+  static const String arrowDown = 'asset/images/arrowDown.png';
+  static const String comment = 'asset/images/comment.png';
+  static const String share = 'asset/images/share.png';
+  static const String filter = 'asset/images/filter.png';
   static const String chestIllustration = 'asset/images/chest_illustration.png';
   static const String videoThumbnail = 'asset/images/video_thumbnail.png';
   static const String habitTrackerHome = 'asset/images/habit_tracker_home.jpg';

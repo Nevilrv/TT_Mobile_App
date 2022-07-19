@@ -35,26 +35,6 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
     _allVideoViewModel.dispose();
   }
 
-  // _launchURL() async {
-  //   if (Platform.isIOS) {
-  //     if (await canLaunch(_url)) {
-  //       await launch(_url, forceSafariVC: false);
-  //     } else {
-  //       if (await canLaunch(_url)) {
-  //         await launch(_url);
-  //       } else {
-  //         throw 'Could not launch $_url';
-  //       }
-  //     }
-  //   } else {
-  //     if (await canLaunch(_url)) {
-  //       await launch(_url);
-  //     } else {
-  //       throw 'Could not launch $_url';
-  //     }
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,22 +52,6 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
         backgroundColor: ColorUtils.kBlack,
         title: Text('Video Library', style: FontTextStyle.kWhite16BoldRoboto),
         centerTitle: true,
-        // actions: [
-        //   Padding(
-        //     padding: EdgeInsets.symmetric(horizontal: Get.height * .02),
-        //     child: IconButton(
-        //       onPressed: () {
-        //         // _launchURL();
-        //       },
-        //       icon: Image.asset(
-        //         AppIcons.youtube,
-        //         height: Get.height * 0.035,
-        //         width: Get.height * 0.035,
-        //         fit: BoxFit.contain,
-        //       ),
-        //     ),
-        //   ),
-        // ],
       ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -186,18 +150,6 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                       height: Get.height * .03,
                                       thickness: 1.5,
                                     ),
-                                    // print('----------video list view-----------');
-                                    // if (responseVideo.data![index].categoryId ==
-                                    //     catResponse.data![index].categoryId) {
-                                    //   print('compare title ---------');
-                                    //
-                                    // } else {
-                                    //   print('else part of title ---------');
-                                    //
-                                    //   return Center(
-                                    //     child: CircularProgressIndicator(),
-                                    //   );
-                                    // }
                                     SizedBox(
                                       height: Get.height * 0.175,
                                       child: ListView.builder(
@@ -263,30 +215,6 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                 : SizedBox();
                                           }),
                                     )
-                                    // GetBuilder<AllVideoViewModel>(
-                                    //     builder: (videoController) {
-                                    //       if (videoController.apiResponse.status ==
-                                    //           Status.LOADING) {
-                                    //         return Center(
-                                    //           child: CircularProgressIndicator(
-                                    //               color: ColorUtils.kTint),
-                                    //         );
-                                    //       }
-                                    //
-                                    //       AllVideoResponseModel responseVideo =
-                                    //           videoController.apiResponse.data;
-                                    //       if (videoController.apiResponse.status ==
-                                    //           Status.COMPLETE) {
-                                    //
-                                    //       } else {
-                                    //         print('teal container');
-                                    //         return Container(
-                                    //           color: Colors.teal,
-                                    //           height: 120,
-                                    //           width: 120,
-                                    //         );
-                                    //       }
-                                    //     }),
                                   ],
                                 );
                               });

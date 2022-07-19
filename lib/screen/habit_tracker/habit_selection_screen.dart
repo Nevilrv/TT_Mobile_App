@@ -8,6 +8,7 @@ import 'package:tcm/model/request_model/habit_tracker_request_model/add_user_hab
 import 'package:tcm/model/request_model/habit_tracker_request_model/custom_habit_request_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/add_user_habit_id_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/custom_habit_response_model.dart';
+import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/habit_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
@@ -19,6 +20,10 @@ import 'package:tcm/viewModel/habit_tracking_viewModel/custom_habit_viewModel.da
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
 
 class HabitSelectionScreen extends StatefulWidget {
+  List? oldHabitsId = [];
+
+  HabitSelectionScreen({Key? key, this.oldHabitsId}) : super(key: key);
+
   @override
   State<HabitSelectionScreen> createState() => _HabitSelectionScreenState();
 }
@@ -30,19 +35,45 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
   // final _formKeyAddHabit = GlobalKey<FormState>();
   AddUserHabitIdViewModel _addUserHabitIdViewModel =
       Get.put(AddUserHabitIdViewModel());
+  int habitIndex = 0;
+  List habitId = [];
 
   initState() {
     super.initState();
     print("uid -- ${PreferenceManager.getUId()}");
-    _habitViewModel.getHabitDetail(userId: PreferenceManager.getUId());
+    oldId();
   }
 
   dispose() {
     super.dispose();
   }
 
-  int habitIndex = 0;
-  List habitId = [];
+  oldId() async {
+    await _habitViewModel.getHabitDetail(userId: PreferenceManager.getUId());
+
+    if (_habitViewModel.apiResponse.status == Status.LOADING) {
+      Center(
+        child: CircularProgressIndicator(color: ColorUtils.kTint),
+      );
+    }
+
+    if (_habitViewModel.apiResponse.status == Status.COMPLETE) {
+      HabitResponseModel checkResp = _habitViewModel.apiResponse.data;
+
+      print("complete called from old id ");
+
+      for (int i = 0; i < checkResp.data!.length; i++) {
+        if (widget.oldHabitsId!.contains(checkResp.data![i].id)) {
+          if (habitId.contains(checkResp.data![i].id)) {
+          } else {
+            habitId.add(checkResp.data![i].id);
+          }
+        }
+      }
+
+      print("habit id from old id =============== $habitId");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +97,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
         physics: BouncingScrollPhysics(),
         child: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: Get.width * 0.06, vertical: Get.height * 0.025),
+              horizontal: Get.width * 0.04, vertical: Get.height * 0.025),
           child: Column(
             children: [
               SizedBox(height: Get.height * .03),
@@ -101,8 +132,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,
-                                  childAspectRatio: 2 / 0.55,
-                                  crossAxisSpacing: Get.height * .04,
+                                  childAspectRatio: 2 / 0.52,
+                                  crossAxisSpacing: Get.height * .02,
                                   mainAxisSpacing: Get.height * .025),
                           itemBuilder: (_, index) {
                             return GestureDetector(
@@ -129,7 +160,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
                                 height: Get.height * .065,
-                                width: Get.width * .45,
+                                width: Get.width * .5,
                                 decoration: habitId
                                         .contains('${response.data![index].id}')
                                     ? BoxDecoration(
@@ -155,16 +186,18 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                           SizedBox(height: 17, width: 17),
                                           Text(
                                             '${response.data![index].name}'
-                                                        .length >=
-                                                    10
-                                                ? '${response.data![index].name!.substring(0, 10) + '..'}'
-                                                : '${response.data![index].name}',
+                                                        .length >
+                                                    20
+                                                ? '${response.data![index].name!.substring(0, 19) + '..'}'
+                                                    .capitalizeFirst!
+                                                : '${response.data![index].name}'
+                                                    .capitalizeFirst!,
                                             style: habitId.contains(
                                                     '${response.data![index].id}')
                                                 ? FontTextStyle
-                                                    .kBlack20BoldRoboto
+                                                    .kBlack10BoldRoboto
                                                 : FontTextStyle
-                                                    .kTint20BoldRoboto,
+                                                    .kTint10BoldRoboto,
                                           ),
                                           CircleAvatar(
                                               radius: 9,
@@ -182,13 +215,18 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                         children: [
                                           Text(
                                             '${response.data![index].name}'
-                                                .capitalizeFirst!,
+                                                        .length >
+                                                    24
+                                                ? '${response.data![index].name!.substring(0, 23) + '..'}'
+                                                    .capitalizeFirst!
+                                                : '${response.data![index].name}'
+                                                    .capitalizeFirst!,
                                             style: habitId.contains(
                                                     '${response.data![index].id}')
                                                 ? FontTextStyle
-                                                    .kBlack20BoldRoboto
+                                                    .kBlack10BoldRoboto
                                                 : FontTextStyle
-                                                    .kTint20BoldRoboto,
+                                                    .kTint10BoldRoboto,
                                           ),
                                         ],
                                       ),
@@ -232,14 +270,15 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                             )),
                         SizedBox(width: Get.width * .025),
                         Text('Add Custom Habit',
-                            style: FontTextStyle.kBlack22BoldRoboto),
+                            style: FontTextStyle.kBlack22BoldRoboto
+                                .copyWith(fontSize: Get.height * 0.022)),
                       ],
                     ),
                   ),
                 ),
               ),
               SizedBox(height: Get.height * .08),
-              commonNevigationButton(
+              commonNavigationButton(
                   onTap: () async {
                     if (_habitViewModel.firstSelectedHabitList.isNotEmpty) {
                       AddUserHabitIdRequestModel _request =
@@ -260,11 +299,9 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           message: '${res.msg}',
                           duration: Duration(seconds: 2),
                         ));
-
                         print("------------------- ${listOfHabitId()}");
                         print(
                             "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
-
                         HabitResponseModel resp =
                             _habitViewModel.apiResponse.data;
                         Get.to(TrackingFrequencyScreen(data: resp.data));

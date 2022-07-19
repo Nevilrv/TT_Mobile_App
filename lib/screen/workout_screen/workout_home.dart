@@ -205,7 +205,7 @@ class WorkoutHomeScreen extends StatelessWidget {
                   //         ),
                   // htmlToTextGrey(data: finalHTMLTips[1]),
                   SizedBox(height: Get.height * .03),
-                  commonNevigationButton(
+                  commonNavigationButton(
                       name: 'Begin Warm-Up',
                       onTap: () {
                         Get.to(TimeBasedExesiceScreen(

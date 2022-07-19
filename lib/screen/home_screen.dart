@@ -15,9 +15,15 @@ import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/home_viewModel.dart';
 import 'package:tcm/viewModel/sign_in_viewModel.dart';
 import 'package:tcm/viewModel/user_detail_viewModel.dart';
+import '../model/request_model/habit_tracker_request_model/get_habit_record_date_request_model.dart';
+import '../model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
+import '../viewModel/habit_tracking_viewModel/get_habit_record_viewModel.dart';
 import 'edit_profile_page.dart';
+import 'forum/forum_screen.dart';
+import 'habit_tracker/habit_selection_screen.dart';
+import 'habit_tracker/update_progress_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? id;
@@ -38,6 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
         id: widget.id ?? PreferenceManager.getUId());
     _homeViewModel.initialized;
     _signInViewModel.initialized;
+    dateApiCall();
   }
 
   void dispose() {
@@ -46,6 +53,29 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   bool selected = false;
+  GetHabitRecordDateResponseModel? response;
+  GetHabitRecordDateViewModel _getHabitRecordDateViewModel =
+      Get.put(GetHabitRecordDateViewModel());
+
+  List tmpDateList = [];
+  String? finalDate;
+  DateTime today = DateTime.now();
+  dateApiCall() async {
+    tmpDateList = today.toString().split(" ");
+    finalDate = tmpDateList[0];
+
+    GetHabitRecordDateRequestModel _request = GetHabitRecordDateRequestModel();
+
+    _request.userId = PreferenceManager.getUId();
+    _request.date = finalDate;
+    await _getHabitRecordDateViewModel.getHabitRecordDateViewModel(
+        isLoding: true, model: _request);
+    GetHabitRecordDateResponseModel resp =
+        _getHabitRecordDateViewModel.apiResponse.data;
+
+    response = resp;
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -242,12 +272,27 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   image: 'asset/images/videos.png',
                   text: 'Video Library'),
-              category(image: 'asset/images/forums.png', text: 'The Forums'),
+              category(
+                  image: 'asset/images/forums.png',
+                  text: 'The Forums',
+                  onTap: () {
+                    Get.to(ForumScreen());
+                  }),
               category(
                   image: 'asset/images/habit.png',
                   text: 'Habit Tracker',
                   onTap: () {
-                    Get.to(HabitTrackerHomeScreen());
+                    if (response!.data![0].habitId == "" ||
+                        response!.data![0].habitId!.isEmpty &&
+                            response!.data![0].habitName == null ||
+                        response!.data![0].habitName!.isEmpty &&
+                            response!.data![0].completed == "" ||
+                        response!.data![0].completed!.isEmpty ||
+                        response!.data![0].completed! == "false") {
+                      Get.to(HabitTrackerHomeScreen());
+                    } else {
+                      Get.to(UpdateProgressScreen());
+                    }
                   })
             ]),
           ),
@@ -469,7 +514,13 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             height: Get.height * .03,
           ),
-          bild(image: AppIcons.forum, text: 'The Forums'),
+          bild(
+            image: AppIcons.forum,
+            text: 'The Forums',
+            onTap: () {
+              Get.to(ForumScreen());
+            },
+          ),
           SizedBox(
             height: Get.height * .03,
           ),
@@ -477,7 +528,17 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.journal,
               text: 'Habit Tracker',
               onTap: () {
-                Get.to(HabitTrackerHomeScreen());
+                if (response!.data![0].habitId == "" ||
+                    response!.data![0].habitId!.isEmpty &&
+                        response!.data![0].habitName == null ||
+                    response!.data![0].habitName!.isEmpty &&
+                        response!.data![0].completed == "" ||
+                    response!.data![0].completed!.isEmpty ||
+                    response!.data![0].completed! == "false") {
+                  Get.to(HabitTrackerHomeScreen());
+                } else {
+                  Get.to(UpdateProgressScreen());
+                }
               }),
           SizedBox(
             height: Get.height * .03,

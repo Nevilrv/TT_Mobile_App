@@ -17,8 +17,6 @@ class WeightedCounter extends StatefulWidget {
 class _WeightedCounterState extends State<WeightedCounter> {
   @override
   Widget build(BuildContext context) {
-    int repsCounter = int.parse(widget.repsNo.toString());
-
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: Container(
@@ -59,7 +57,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
           InkWell(
             onTap: () {
               setState(() {
-                if (widget.counter < repsCounter) widget.counter++;
+                widget.counter++;
               });
               print('plus ${widget.counter}');
             },

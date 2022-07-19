@@ -9,8 +9,8 @@ import 'package:tcm/repo/training_plan_repo/save_user_customized_exercise_repo.d
 class SaveUserCustomizedExerciseViewModel extends GetxController {
   int counterReps = 0;
 
-  counterPlus() {
-    counterReps++;
+  counterPlus({int? totCount}) {
+    if (counterReps < totCount!) counterReps++;
     update();
   }
 

@@ -77,7 +77,7 @@ class ShareProgressScreen extends StatelessWidget {
                         ),
                         SizedBox(
                           width: Get.width * .5,
-                          child: commonNevigationButton(
+                          child: commonNavigationButton(
                               name: 'Share',
                               onTap: () {
                                 Get.to(ShareSheetScreen(),
@@ -88,7 +88,7 @@ class ShareProgressScreen extends StatelessWidget {
                       ]),
                 ),
               ),
-              commonNevigationButton(
+              commonNavigationButton(
                   name: 'Next',
                   onTap: () {
                     Get.offAll(HomeScreen());

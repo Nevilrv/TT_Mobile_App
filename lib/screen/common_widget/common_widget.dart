@@ -6,7 +6,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 
-Padding commonNevigationButton({Function()? onTap, String? name}) {
+Padding commonNavigationButton({Function()? onTap, String? name}) {
   return Padding(
     padding: EdgeInsets.symmetric(horizontal: Get.height * .02),
     child: GestureDetector(

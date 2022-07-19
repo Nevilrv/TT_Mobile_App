@@ -10,7 +10,6 @@ import 'package:tcm/screen/habit_tracker/update_progress_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/user_habit_track_status_viewModel.dart';
 
 class TrackingFrequencyScreen extends StatefulWidget {
@@ -162,7 +161,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                     );
                   },
                 ),
-                commonNevigationButton(
+                commonNavigationButton(
                     onTap: () async {
                       if (_habitTrackStatusViewModel
                           .selectedStatus.isNotEmpty) {
@@ -189,9 +188,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                               "------------------- ${_habitTrackStatusViewModel.selectedStatus}");
                           print(
                               "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
-                          Get.to(UpdateProgressScreen(
-                            data: widget.data,
-                          ));
+                          Get.to(UpdateProgressScreen());
                         } else if (_habitTrackStatusViewModel
                                 .apiResponse.status ==
                             Status.ERROR) {

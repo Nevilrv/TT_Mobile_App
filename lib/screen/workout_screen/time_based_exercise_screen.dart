@@ -330,7 +330,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                       ],
                     ),
                     SizedBox(height: Get.height * .04),
-                    commonNevigationButton(
+                    commonNavigationButton(
                         onTap: () {
                           if ('${widget.data[0].exerciseVideo}'
                               .contains('www.youtube.com')) {

@@ -22,20 +22,15 @@ class VideoSingleCatScreen extends StatefulWidget {
 
 class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
   AllVideoViewModel _allVideoViewModel = Get.put(AllVideoViewModel());
-  // AllCategoriesViewModel _allCategoriesViewModel =
-  //     Get.put(AllCategoriesViewModel());
-  // final String _url = 'https://www.youtube.com/';
 
   void initState() {
     super.initState();
-    // _allVideoViewModel.getVideoDetails();
-    // _allCategoriesViewModel.getCategoriesDetails();
+
     _allVideoViewModel.getVideoDetails();
   }
 
   void dispose() {
     super.dispose();
-    // _allVideoViewModel.dispose();
   }
 
   @override
@@ -56,22 +51,6 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
         title:
             Text(widget.videoCatName!, style: FontTextStyle.kWhite16BoldRoboto),
         centerTitle: true,
-        // actions: [
-        //   Padding(
-        //     padding: EdgeInsets.symmetric(horizontal: Get.height * .02),
-        //     child: IconButton(
-        //       onPressed: () {
-        //         // _launchURL();
-        //       },
-        //       icon: Image.asset(
-        //         AppIcons.youtube,
-        //         height: Get.height * 0.035,
-        //         width: Get.height * 0.035,
-        //         fit: BoxFit.contain,
-        //       ),
-        //     ),
-        //   ),
-        // ],
       ),
       body: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
@@ -120,18 +99,6 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                           height: Get.height * .03,
                           thickness: 1.5,
                         ),
-                        // print('----------video list view-----------');
-                        // if (responseVideo.data![index].categoryId ==
-                        //     catResponse.data![index].categoryId) {
-                        //   print('compare title ---------');
-                        //
-                        // } else {
-                        //   print('else part of title ---------');
-                        //
-                        //   return Center(
-                        //     child: CircularProgressIndicator(),
-                        //   );
-                        // }
 
                         ListView.builder(
                             shrinkWrap: true,
@@ -166,9 +133,8 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                                                       BorderRadius.circular(15),
                                                   image: DecorationImage(
                                                       image: AssetImage(
-                                                          AppImages
-                                                              .videoThumbnail),
-                                                      fit: BoxFit.fill)),
+                                                          AppImages.logo),
+                                                      scale: 2.5)),
                                             ),
                                           ),
                                           SizedBox(width: Get.height * .015),
