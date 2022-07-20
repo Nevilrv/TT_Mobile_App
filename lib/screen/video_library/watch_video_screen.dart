@@ -239,10 +239,10 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                 children: [
                   Text('${widget.data[widget.id].videoTitle}',
                       style: FontTextStyle.kWhite17BoldRoboto),
-                  SizedBox(height: Get.height * 0.008),
-                  SizedBox(height: Get.height * 0.02),
+                  SizedBox(height: Get.height * .008),
+                  SizedBox(height: Get.height * .02),
                   htmlToText(data: widget.data[widget.id].videoDescription),
-                  SizedBox(height: Get.height * 0.03),
+                  SizedBox(height: Get.height * .03),
                   Text(
                     'RELATED VIDEOS',
                     style: FontTextStyle.kWhite16BoldRoboto,
@@ -284,7 +284,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                 Expanded(
                                   flex: 4,
                                   child: SizedBox(
-                                    height: Get.height * 0.1,
+                                    height: Get.height * .1,
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceEvenly,

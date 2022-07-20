@@ -1,10 +1,8 @@
 import 'dart:collection';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
-import 'package:tcm/custom_packages/table_calender/shared/utils.dart';
 import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/schedule_screens/widgets/my_schedule_screen_widget.dart';
@@ -73,7 +71,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
   @override
   Widget build(BuildContext context) {
     final _events = LinkedHashMap<DateTime, List>(
-      equals: isSameDay,
       hashCode: getHashCode,
     )..addAll(_eventsList);
 

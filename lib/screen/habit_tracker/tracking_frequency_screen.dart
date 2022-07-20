@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
 import 'package:tcm/model/request_model/habit_tracker_request_model/user_habit_tracker_status_request_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/habit_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/user_habit_tracker_status_response_model.dart';
@@ -26,9 +27,57 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
   UserHabitTrackStatusViewModel _habitTrackStatusViewModel =
       Get.put(UserHabitTrackStatusViewModel());
 
+  DateRangePickerController dateRangePickerController =
+      DateRangePickerController();
+
   void initState() {
     super.initState();
     _habitTrackStatusViewModel.initialized;
+  }
+
+  List<DateTime>? days = [];
+  List<DateTime>? weekList = [];
+
+  DateTime selectedDate = DateTime.now();
+
+  weekSelection() {
+    for (int j = 0; j < days!.length; j++) {
+      for (int i = 0; i < 7; i++) {
+        DateTime weekDates = DateTime(
+            selectedDate.year, selectedDate.month, selectedDate.day + i);
+        print('weekDates $weekDates');
+
+        if (weekList!.contains(weekDates)) {
+        } else {
+          weekList!.add(weekDates);
+        }
+      }
+    }
+    days!.clear();
+
+    dateRangePickerController.selectedDates!.addAll(weekList!);
+
+    print('weekList $weekList');
+  }
+
+  monthSelection() {
+    for (int j = 0; j < days!.length; j++) {
+      for (int i = 0; i < 31; i++) {
+        DateTime weekDates = DateTime(
+            selectedDate.year, selectedDate.month, selectedDate.day + i);
+        print('weekDates $weekDates');
+
+        if (weekList!.contains(weekDates)) {
+        } else {
+          weekList!.add(weekDates);
+        }
+      }
+    }
+    days!.clear();
+
+    dateRangePickerController.selectedDates!.addAll(weekList!);
+
+    print('weekList $weekList');
   }
 
   @override
@@ -55,7 +104,6 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(),
                 GetBuilder<UserHabitTrackStatusViewModel>(
                   builder: (controller) {
                     return Column(
@@ -69,7 +117,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                           color: ColorUtils.kTint,
                           thickness: 1.5,
                         ),
-                        SizedBox(height: Get.height * .035),
+                        // SizedBox(height: Get.height * .01),
                         ListView.builder(
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
@@ -156,6 +204,62 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                               ),
                             );
                           },
+                        ),
+                        SizedBox(
+                          height: Get.height * .42,
+                          child: SfDateRangePicker(
+                            view: DateRangePickerView.month,
+                            showNavigationArrow: true,
+                            enablePastDates: false,
+                            controller: dateRangePickerController,
+                            selectionMode:
+                                DateRangePickerSelectionMode.multiple,
+                            initialDisplayDate: DateTime.now(),
+                            todayHighlightColor: ColorUtils.kTint,
+                            selectionRadius: 17,
+                            selectionColor: ColorUtils.kTint,
+                            minDate: DateTime.utc(2019, 01, 01),
+                            maxDate: DateTime.utc(2099, 12, 31),
+                            selectionTextStyle:
+                                FontTextStyle.kBlack18w600Roboto,
+                            enableMultiView: false,
+                            yearCellStyle: DateRangePickerYearCellStyle(
+                                textStyle: FontTextStyle.kWhite17W400Roboto,
+                                todayTextStyle:
+                                    FontTextStyle.kWhite17W400Roboto,
+                                disabledDatesTextStyle:
+                                    FontTextStyle.kLightGray16W300Roboto),
+                            monthCellStyle: DateRangePickerMonthCellStyle(
+                              // todayCellDecoration:
+                              //     BoxDecoration(color: Colors.transparent),
+                              disabledDatesTextStyle:
+                                  FontTextStyle.kLightGray16W300Roboto,
+                              textStyle: FontTextStyle.kWhite17W400Roboto,
+                              todayTextStyle: FontTextStyle.kWhite17W400Roboto,
+                            ),
+                            // initialSelectedDates:
+                            // controllerWork
+                            //     .defSelectedList,
+                            onSelectionChanged:
+                                (DateRangePickerSelectionChangedArgs args) {
+                              print("args ---------- ${args.value}");
+                              days = args.value;
+                              selectedDate = days!.last;
+                              monthSelection();
+                              dateRangePickerController.selectedDates!
+                                  .addAll(weekList!);
+                            },
+                            monthViewSettings: DateRangePickerMonthViewSettings(
+                              firstDayOfWeek: 1,
+                              dayFormat: 'EEE',
+                              viewHeaderStyle: DateRangePickerViewHeaderStyle(
+                                  textStyle: FontTextStyle.kWhite17W400Roboto),
+                            ),
+                            headerStyle: DateRangePickerHeaderStyle(
+                              textAlign: TextAlign.center,
+                              textStyle: FontTextStyle.kWhite20BoldRoboto,
+                            ),
+                          ),
                         ),
                       ],
                     );
