@@ -74,9 +74,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
       }
     }
     days!.clear();
-
     dateRangePickerController.selectedDates!.addAll(weekList!);
-
     print('weekList $weekList');
   }
 
@@ -100,7 +98,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
       ),
       body: Padding(
           padding: EdgeInsets.symmetric(
-              horizontal: Get.width * 0.06, vertical: Get.height * 0.025),
+              horizontal: Get.width * .06, vertical: Get.height * .025),
           child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
