@@ -158,7 +158,8 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                     "abc ------------------- ${listOfHabitId()}");
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 10),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.height * .01),
                                 height: Get.height * .065,
                                 width: Get.width * .5,
                                 decoration: habitId
@@ -183,12 +184,14 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          SizedBox(height: 17, width: 17),
+                                          SizedBox(
+                                              height: 17,
+                                              width: Get.height * .01),
                                           Text(
                                             '${response.data![index].name}'
                                                         .length >
-                                                    20
-                                                ? '${response.data![index].name!.substring(0, 19) + '..'}'
+                                                    18
+                                                ? '${response.data![index].name!.substring(0, 17) + '..'}'
                                                     .capitalizeFirst!
                                                 : '${response.data![index].name}'
                                                     .capitalizeFirst!,

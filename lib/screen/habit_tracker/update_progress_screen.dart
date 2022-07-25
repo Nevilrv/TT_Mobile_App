@@ -71,7 +71,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
     print("date init ---------------- $finalDate");
     _request.date = finalDate;
     await _getHabitRecordDateViewModel.getHabitRecordDateViewModel(
-        isLoding: true, model: _request);
+        isLoading: true, model: _request);
     gh.GetHabitRecordDateResponseModel resp1 =
         _getHabitRecordDateViewModel.apiResponse.data;
 

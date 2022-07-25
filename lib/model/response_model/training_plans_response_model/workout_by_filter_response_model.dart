@@ -37,17 +37,17 @@ class WorkoutByFilterResponseModel {
 }
 
 class WorkoutByFilter {
-  WorkoutByFilter({
-    this.workoutId,
-    this.workoutTitle,
-    this.workoutDescription,
-    this.workoutGoal,
-    this.workoutLevel,
-    this.workoutDuration,
-    this.workoutImage,
-    this.goalTitle,
-    this.levelTitle,
-  });
+  WorkoutByFilter(
+      {this.workoutId,
+      this.workoutTitle,
+      this.workoutDescription,
+      this.workoutGoal,
+      this.workoutLevel,
+      this.workoutDuration,
+      this.workoutImage,
+      this.goalTitle,
+      this.levelTitle,
+      this.scheduled});
 
   String? workoutId;
   String? workoutTitle;
@@ -58,6 +58,7 @@ class WorkoutByFilter {
   String? workoutImage;
   String? goalTitle;
   String? levelTitle;
+  dynamic scheduled;
 
   factory WorkoutByFilter.fromJson(Map<String, dynamic> json) =>
       WorkoutByFilter(
@@ -70,6 +71,7 @@ class WorkoutByFilter {
         workoutImage: json["workout_image"],
         goalTitle: json["goal_title"],
         levelTitle: json["level_title"],
+        scheduled: json["scheduled"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -82,5 +84,6 @@ class WorkoutByFilter {
         "workout_image": workoutImage,
         "goal_title": goalTitle,
         "level_title": levelTitle,
+        "scheduled": scheduled,
       };
 }

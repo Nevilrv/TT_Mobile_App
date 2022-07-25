@@ -3,12 +3,15 @@ import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/forum_request_model/add_forum_request_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/add_forum_response_model.dart';
+import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_tags_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/forum_viewModel/tags_viewModel.dart';
 
+import '../../model/request_model/forum_request_model/search_forum_request_model.dart';
+import '../../viewModel/forum_viewModel/add_forum_viewmodel.dart';
 import '../../viewModel/forum_viewModel/forum_viewmodel.dart';
 
 class AddForumScreen extends StatefulWidget {
@@ -22,6 +25,8 @@ class _AddForumScreenState extends State<AddForumScreen> {
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
   GetTagsViewModel getTagsViewModel = Get.put(GetTagsViewModel());
+
+  AddForumViewModel addForumViewModel = Get.put(AddForumViewModel());
   ForumViewModel forumViewModel = Get.find();
   @override
   void initState() {
@@ -201,8 +206,8 @@ class _AddForumScreenState extends State<AddForumScreen> {
                           SizedBox(
                             height: Get.height * 0.1,
                           ),
-                          GetBuilder<ForumViewModel>(
-                            builder: (forumViewModel) {
+                          GetBuilder<AddForumViewModel>(
+                            builder: (addForumViewModel) {
                               return GestureDetector(
                                 onTap: () async {
                                   if (title.text.isEmpty) {
@@ -236,13 +241,13 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                     model.tagId = controller.selectTagId;
                                     model.title = title.text;
                                     model.description = description.text;
-                                    await forumViewModel
+                                    await addForumViewModel
                                         .addForumViewModel(model);
-                                    if (forumViewModel
+                                    if (addForumViewModel
                                             .addForumApiResponse.status ==
                                         Status.COMPLETE) {
                                       AddForumResponseModel responseModel =
-                                          forumViewModel
+                                          addForumViewModel
                                               .addForumApiResponse.data;
                                       if (responseModel.success == true) {
                                         Get.showSnackbar(GetSnackBar(
@@ -255,9 +260,28 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                         ));
                                         Future.delayed(Duration(seconds: 2),
                                             () async {
+                                          forumViewModel.selectedMenu =
+                                              'All Posts'.obs;
                                           Navigator.pop(context);
+                                          SearchForumRequestModel model =
+                                              SearchForumRequestModel();
+                                          model.title = '';
+                                          model.userId =
+                                              PreferenceManager.getUId();
+
                                           await forumViewModel
-                                              .getAllForumsViewModel();
+                                              .searchForumViewModel(model);
+                                          if (forumViewModel
+                                                  .searchApiResponse.status ==
+                                              Status.COMPLETE) {
+                                            GetAllForumsResponseModel response =
+                                                forumViewModel
+                                                    .searchApiResponse.data;
+
+                                            forumViewModel
+                                                .setLikeDisLike(response.data!);
+                                          }
+
                                           controller.setSelectTagId('');
 
                                           title.clear();
@@ -300,9 +324,10 @@ class _AddForumScreenState extends State<AddForumScreen> {
               ),
             ),
           ),
-          GetBuilder<ForumViewModel>(
-            builder: (forumViewModel) {
-              if (forumViewModel.addForumApiResponse.status == Status.LOADING) {
+          GetBuilder<AddForumViewModel>(
+            builder: (addForumViewModel) {
+              if (addForumViewModel.addForumApiResponse.status ==
+                  Status.LOADING) {
                 return Container(
                     color: Colors.white10,
                     child: Center(

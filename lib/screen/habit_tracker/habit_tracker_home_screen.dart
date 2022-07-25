@@ -40,7 +40,7 @@ class _HabitTrackerHomeScreenState extends State<HabitTrackerHomeScreen> {
     _request.userId = PreferenceManager.getUId();
     _request.date = finalDate;
     await _getHabitRecordDateViewModel.getHabitRecordDateViewModel(
-        isLoding: true, model: _request);
+        isLoading: true, model: _request);
     GetHabitRecordDateResponseModel resp =
         _getHabitRecordDateViewModel.apiResponse.data;
 

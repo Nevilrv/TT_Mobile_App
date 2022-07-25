@@ -461,6 +461,10 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                               Status.COMPLETE) {
                             WorkoutByIdResponseModel workResponse =
                                 controllerWork.apiResponse.data;
+
+                            List daysPerWeekCount =
+                                workResponse.data![0].selectedDays!.split(",");
+
                             String finalDayString =
                                 controllerWork.dayAddedList.join(",");
                             print(
@@ -545,7 +549,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                 SizedBox(
                                                     height: Get.height * 0.01),
                                                 Text(
-                                                  '${workResponse.data![0].workoutDuration} days a week',
+                                                  '${daysPerWeekCount.length} days a week',
                                                   style: FontTextStyle
                                                       .kLightGray16W300Roboto,
                                                 ),
@@ -1122,163 +1126,194 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                   bottom: Get.height * .02),
                                               child: GestureDetector(
                                                 onTap: () async {
-                                                  await _workoutExerciseConflictViewModel
-                                                      .getWorkoutExerciseConflictDetails(
-                                                          date: dateString(),
-                                                          userId:
-                                                              PreferenceManager
-                                                                  .getUId(),
-                                                          isLoading: true);
-                                                  if (_workoutExerciseConflictViewModel
-                                                          .apiResponse.status ==
-                                                      Status.COMPLETE) {
-                                                    WorkoutExerciseConflictResponseModel
-                                                        resConflict =
-                                                        _workoutExerciseConflictViewModel
-                                                            .apiResponse.data;
-                                                    print(
-                                                        'START-------------- msg${resConflict.msg}');
 
-                                                    if (resConflict.data ==
-                                                            [] ||
-                                                        resConflict.msg !=
-                                                            "No Conflicts available") {
-                                                      conflictWorkoutList =
-                                                          resConflict.data!;
-                                                      warningmsg =
-                                                          '${resConflict.msg}';
-
+                                                  {
+                                                    await _workoutExerciseConflictViewModel
+                                                        .getWorkoutExerciseConflictDetails(
+                                                        date: dateString(),
+                                                        userId:
+                                                        PreferenceManager
+                                                            .getUId(),
+                                                        isLoading: true);
+                                                    if (_workoutExerciseConflictViewModel
+                                                        .apiResponse
+                                                        .status ==
+                                                        Status.COMPLETE) {
+                                                      WorkoutExerciseConflictResponseModel
+                                                      resConflict =
+                                                          _workoutExerciseConflictViewModel
+                                                              .apiResponse.data;
                                                       print(
-                                                          ' -------------- msg ${resConflict.msg}');
+                                                          'START-------------- msg${resConflict.msg}');
 
-                                                      print(
-                                                          'conflict called on week days');
+                                                      if (resConflict.data ==
+                                                          [] ||
+                                                          resConflict.msg !=
+                                                              "No Conflicts available") {
+                                                        conflictWorkoutList =
+                                                        resConflict.data!;
+                                                        warningmsg =
+                                                        '${resConflict.msg}';
 
-                                                      controllerWork
-                                                          .changeConflict(true);
-                                                    } else {
-                                                      controllerWork
-                                                          .changeConflict(
-                                                              false);
-                                                      if (controllerWork
-                                                                  .apiResponse
-                                                                  .status !=
-                                                              Status.LOADING ||
-                                                          controllerWork
-                                                                  .apiResponse
-                                                                  .status !=
-                                                              Status.ERROR) {
-                                                        SaveWorkoutProgramRequestModel
-                                                            _request =
-                                                            SaveWorkoutProgramRequestModel();
-                                                        _request.userId =
-                                                            PreferenceManager
-                                                                .getUId();
-                                                        _request.workoutId =
-                                                            workResponse
-                                                                .data![0]
-                                                                .workoutId;
-                                                        _request.exerciseId =
-                                                            "0";
-                                                        _request.startDate =
-                                                            startDate(controllerWork
-                                                                .defSelectedList);
-                                                        _request.endDate =
-                                                            endDate(controllerWork
-                                                                .defSelectedList);
-                                                        _request.selectedWeekDays =
-                                                            finalDayString;
-                                                        _request.selectedDates =
-                                                            dateString();
-                                                        await saveWorkoutController
-                                                            .saveWorkoutProgramViewModel(
-                                                                _request);
-                                                        if (saveWorkoutController
-                                                                .apiResponse
-                                                                .status ==
-                                                            Status.COMPLETE) {
-                                                          SaveWorkoutProgramResponseModel
-                                                              saveWorkoutResponse =
-                                                              saveWorkoutController
-                                                                  .apiResponse
-                                                                  .data;
-                                                          if (saveWorkoutResponse
-                                                                      .success ==
-                                                                  true &&
-                                                              saveWorkoutResponse
-                                                                      .msg !=
-                                                                  null) {
-                                                            Get.showSnackbar(
-                                                                GetSnackBar(
+                                                        print(
+                                                            ' -------------- msg ${resConflict.msg}');
+
+                                                        print(
+                                                            'conflict called on week days');
+
+                                                        controllerWork
+                                                            .changeConflict(
+                                                            true);
+                                                        Get.showSnackbar(
+                                                            GetSnackBar(
                                                               message:
-                                                                  '${saveWorkoutResponse.msg}',
+                                                              '${resConflict.msg}',
                                                               duration:
-                                                                  Duration(
-                                                                      seconds:
-                                                                          2),
+                                                              Duration(
+                                                                  seconds:
+                                                                  1),
                                                             ));
-                                                            Get.to(
-                                                                WorkoutHomeScreen(
-                                                              data: workResponse
-                                                                  .data!,
-                                                              exeData: response
-                                                                  .data!,
-                                                              workoutId: widget
-                                                                  .workoutId,
-                                                            ));
-                                                          }
-                                                          // else if (saveWorkoutResponse
-                                                          //             .success ==
-                                                          //         false &&
-                                                          //     saveWorkoutResponse
-                                                          //             .msg ==
-                                                          //         "This Workout with Same exercise already exists") {
-                                                          //   print(
-                                                          //       'success true msg ==== ${resConflict.msg}');
-                                                          //
-                                                          //   print(
-                                                          //       'isConflict status true  ==== ${controllerWork.isConflict}');
-                                                          //
-                                                          //   conflictWorkoutList =
-                                                          //       resConflict.data!;
-                                                          //
-                                                          //   print(
-                                                          //       'the data of conflict ${saveWorkoutResponse.data}');
-                                                          //
-                                                          //   print(
-                                                          //       'warningmsg ==== ${warningmsg}');
-                                                          //   warningmsg =
-                                                          //       '${saveWorkoutResponse.msg}';
-                                                          //
-                                                          //   Get.showSnackbar(
-                                                          //       GetSnackBar(
-                                                          //     message:
-                                                          //         '$warningmsg',
-                                                          //     duration: Duration(
-                                                          //         seconds: 2),
-                                                          //     backgroundColor:
-                                                          //         ColorUtils.kRed,
-                                                          //   ));
-                                                          //
-                                                          //   // controllerWork
-                                                          //   //     .changeConflict(
-                                                          //   //         true);
-                                                          // }
-                                                        } else if (saveWorkoutController
-                                                                .apiResponse
-                                                                .status ==
-                                                            Status.ERROR) {
-                                                          Get.showSnackbar(
-                                                              GetSnackBar(
-                                                            message:
-                                                                'Something went wrong!!!',
-                                                            duration: Duration(
-                                                                seconds: 2),
-                                                          ));
-                                                        }
+
+
+
+                                                      } else {
+                                                        _confirmationAlertDialog(
+                                                            onTapCancel: () {
+                                                              Get.back();
+                                                            }, onTapConfirmation:
+                                                            () async{
+                                                  controllerWork
+                                                      .changeConflict(
+                                                  false);
+                                                  if (controllerWork
+                                                      .apiResponse
+                                                      .status !=
+                                                  Status
+                                                      .LOADING ||
+                                                  controllerWork
+                                                      .apiResponse
+                                                      .status !=
+                                                  Status.ERROR) {
+                                                  SaveWorkoutProgramRequestModel
+                                                  _request =
+                                                  SaveWorkoutProgramRequestModel();
+                                                  _request.userId =
+                                                  PreferenceManager
+                                                      .getUId();
+                                                  _request.workoutId =
+                                                  workResponse
+                                                      .data![0]
+                                                      .workoutId;
+                                                  _request.exerciseId =
+                                                  "0";
+                                                  _request.startDate =
+                                                  startDate(
+                                                  controllerWork
+                                                      .defSelectedList);
+                                                  _request.endDate =
+                                                  endDate(controllerWork
+                                                      .defSelectedList);
+                                                  _request.selectedWeekDays =
+                                                  finalDayString;
+                                                  _request.selectedDates =
+                                                  dateString();
+                                                  await saveWorkoutController
+                                                      .saveWorkoutProgramViewModel(
+                                                  _request);
+                                                  if (saveWorkoutController
+                                                      .apiResponse
+                                                      .status ==
+                                                  Status.COMPLETE) {
+                                                  SaveWorkoutProgramResponseModel
+                                                  saveWorkoutResponse =
+                                                  saveWorkoutController
+                                                      .apiResponse
+                                                      .data;
+                                                  if (saveWorkoutResponse
+                                                      .success ==
+                                                  true &&
+                                                  saveWorkoutResponse
+                                                      .msg !=
+                                                  null) {
+                                                  Get.showSnackbar(
+                                                  GetSnackBar(
+                                                  message:
+                                                  '${saveWorkoutResponse.msg}',
+                                                  duration:
+                                                  Duration(
+                                                  seconds:
+                                                  2),
+                                                  ));
+                                                  Get.to(
+                                                  WorkoutHomeScreen(
+                                                  data:
+                                                  workResponse
+                                                      .data!,
+                                                  exeData:
+                                                  response
+                                                      .data!,
+                                                  workoutId: widget
+                                                      .workoutId,
+                                                  ));
+                                                  }
+                                                  // else if (saveWorkoutResponse
+                                                  //             .success ==
+                                                  //         false &&
+                                                  //     saveWorkoutResponse
+                                                  //             .msg ==
+                                                  //         "This Workout with Same exercise already exists") {
+                                                  //   print(
+                                                  //       'success true msg ==== ${resConflict.msg}');
+                                                  //
+                                                  //   print(
+                                                  //       'isConflict status true  ==== ${controllerWork.isConflict}');
+                                                  //
+                                                  //   conflictWorkoutList =
+                                                  //       resConflict.data!;
+                                                  //
+                                                  //   print(
+                                                  //       'the data of conflict ${saveWorkoutResponse.data}');
+                                                  //
+                                                  //   print(
+                                                  //       'warningmsg ==== ${warningmsg}');
+                                                  //   warningmsg =
+                                                  //       '${saveWorkoutResponse.msg}';
+                                                  //
+                                                  //   Get.showSnackbar(
+                                                  //       GetSnackBar(
+                                                  //     message:
+                                                  //         '$warningmsg',
+                                                  //     duration: Duration(
+                                                  //         seconds: 2),
+                                                  //     backgroundColor:
+                                                  //         ColorUtils.kRed,
+                                                  //   ));
+                                                  //
+                                                  //   // controllerWork
+                                                  //   //     .changeConflict(
+                                                  //   //         true);
+                                                  // }
+                                                  } else if (saveWorkoutController
+                                                      .apiResponse
+                                                      .status ==
+                                                  Status.ERROR) {
+                                                  Get.showSnackbar(
+                                                  GetSnackBar(
+                                                  message:
+                                                  'Something went wrong!!!',
+                                                  duration:
+                                                  Duration(
+                                                  seconds:
+                                                  2),
+                                                  ));
+                                                  }
+                                                  }
+                                                  });
                                                       }
                                                     }
                                                   }
+
+
                                                 },
                                                 child: Container(
                                                   alignment: Alignment.center,
@@ -1392,5 +1427,69 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
         },
       ),
     );
+  }
+
+  _confirmationAlertDialog(
+      {Function()? onTapCancel, Function()? onTapConfirmation}) {
+    showCupertinoDialog(
+        context: context,
+        builder: (_) {
+          return AlertDialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+            backgroundColor: ColorUtils.kBlack,
+            actionsOverflowDirection: VerticalDirection.down,
+            title: Column(children: [
+              Text('Please Confirm',
+                  style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                      fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
+              SizedBox(height: 20),
+              Text(
+                'Are you sure you want to save this Workout Program!',
+                textAlign: TextAlign.center,
+                style: FontTextStyle.kBlack16W300Roboto
+                    .copyWith(color: ColorUtils.kTint),
+              ),
+            ]),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return ColorUtils.kTint.withOpacity(0.2);
+                            return null;
+                          },
+                        ),
+                      ),
+                      child: Text('Cancel',
+                          style: FontTextStyle.kBlack24W400Roboto
+                              .copyWith(color: ColorUtils.kTint)),
+                      onPressed: onTapCancel),
+                  TextButton(
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.resolveWith<Color?>(
+                        (Set<MaterialState> states) {
+                          if (states.contains(MaterialState.pressed))
+                            return ColorUtils.kTint.withOpacity(0.2);
+                          return null;
+                        },
+                      ),
+                    ),
+                    child: Text('Save',
+                        style: FontTextStyle.kTint24W400Roboto
+                            .copyWith(fontWeight: FontWeight.bold)),
+                    onPressed: onTapConfirmation,
+                  ),
+                ],
+              ),
+            ],
+          );
+        });
   }
 }

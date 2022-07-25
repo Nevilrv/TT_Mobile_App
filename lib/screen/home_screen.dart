@@ -69,7 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _request.userId = PreferenceManager.getUId();
     _request.date = finalDate;
     await _getHabitRecordDateViewModel.getHabitRecordDateViewModel(
-        isLoding: true, model: _request);
+        isLoading: true, model: _request);
     GetHabitRecordDateResponseModel resp =
         _getHabitRecordDateViewModel.apiResponse.data;
 
@@ -92,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
           centerTitle: true,
           title: Image.asset(
             'asset/images/logoSmall.png',
-            height: Get.height * 0.033,
+            height: Get.height * .033,
             fit: BoxFit.cover,
           ),
           // actions: [
@@ -282,13 +282,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   image: 'asset/images/habit.png',
                   text: 'Habit Tracker',
                   onTap: () {
+                    print(
+                        "if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
                     if (response!.data![0].habitId == "" ||
                         response!.data![0].habitId!.isEmpty &&
                             response!.data![0].habitName == null ||
                         response!.data![0].habitName!.isEmpty &&
                             response!.data![0].completed == "" ||
-                        response!.data![0].completed!.isEmpty ||
-                        response!.data![0].completed! == "false") {
+                        response!.data![0].completed!.isEmpty &&
+                            response!.data![0].completed == "false") {
                       Get.to(HabitTrackerHomeScreen());
                     } else {
                       Get.to(UpdateProgressScreen());
@@ -533,8 +535,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         response!.data![0].habitName == null ||
                     response!.data![0].habitName!.isEmpty &&
                         response!.data![0].completed == "" ||
-                    response!.data![0].completed!.isEmpty ||
-                    response!.data![0].completed! == "false") {
+                    response!.data![0].completed!.isEmpty &&
+                        response!.data![0].completed! == "false") {
                   Get.to(HabitTrackerHomeScreen());
                 } else {
                   Get.to(UpdateProgressScreen());

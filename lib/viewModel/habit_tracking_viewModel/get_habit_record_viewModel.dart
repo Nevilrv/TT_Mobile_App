@@ -11,11 +11,11 @@ class GetHabitRecordDateViewModel extends GetxController {
   ApiResponse get apiResponse => _apiResponse;
   late GetHabitRecordDateResponseModel response;
   Future<void> getHabitRecordDateViewModel(
-      {GetHabitRecordDateRequestModel? model, bool isLoding = false}) async {
-    if (isLoding) {
+      {GetHabitRecordDateRequestModel? model, bool isLoading = false}) async {
+    if (isLoading) {
       _apiResponse = ApiResponse.loading(message: 'Loading');
     }
-    update();
+    // update();
     print("model ---------- ${jsonEncode(model!.toJson())}");
 
     try {

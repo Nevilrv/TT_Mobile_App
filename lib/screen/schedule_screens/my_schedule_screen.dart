@@ -6,6 +6,7 @@ import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker
 import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/schedule_screens/widgets/my_schedule_screen_widget.dart';
+import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -238,8 +239,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     view: DateRangePickerView.month,
                                     showNavigationArrow: true,
                                     // enablePastDates: false,
-                                    // controller: controllerWork
-                                    //     .dateRangePickerController,
+                                    controller:
+                                        controller.dateRangePickerController,
                                     initialDisplayDate: selectedDay,
                                     initialSelectedDate: selectedDay,
                                     todayHighlightColor: ColorUtils.kTint,
@@ -307,6 +308,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                 thickness: 1.5,
                                 height: Get.height * .04,
                               ),
+
                               ListView.builder(
                                   physics: BouncingScrollPhysics(),
                                   shrinkWrap: true,
@@ -336,12 +338,12 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                 scheduleResponse
                                                     .data![index]
                                                     .programData![index1]
-                                                    .workoutTitle,
+                                                    .workoutTitle!,
                                                 style: FontTextStyle
                                                     .kWhite17BoldRoboto,
                                               ),
                                               subtitle: Text(
-                                                '${scheduleResponse.data![index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
+                                                '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
                                                     " - " +
                                                     ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
                                                 style: FontTextStyle
@@ -351,7 +353,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                 onTap: () {
                                                   openBottomSheet(
                                                       event: scheduleResponse
-                                                          .data![index]);
+                                                          .data![index],
+                                                      onPressed: () {
+                                                        Get.to(PlanOverviewScreen(
+                                                            id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                      });
                                                 },
                                                 child: Icon(
                                                   Icons.more_horiz_sharp,

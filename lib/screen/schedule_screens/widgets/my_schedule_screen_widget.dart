@@ -6,6 +6,7 @@ import 'package:tcm/model/request_model/training_plan_request_model/remove_worko
 import 'package:tcm/model/response_model/training_plans_response_model/remove_workout_program_response_model.dart';
 import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
+import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/schedule_viewModel/schedule_by_date_viewModel.dart';
@@ -52,18 +53,23 @@ Padding listViewTab({
                             title: Text(
                               getEventForDay[index]
                                   .programData![index1]
-                                  .workoutTitle,
+                                  .workoutTitle!,
                               style: FontTextStyle.kWhite17BoldRoboto,
                             ),
                             subtitle: Text(
-                              '${getEventForDay[index].programData![0].workoutDurationData![0]['days'][0]['day_name']}' +
+                              '${getEventForDay[index].programData![0].exerciseTitle}' +
                                   " - " +
                                   ' ${getEventForDay[index].programData![0].exerciseTitle} ',
                               style: FontTextStyle.kLightGray16W300Roboto,
                             ),
                             trailing: InkWell(
                               onTap: () {
-                                openBottomSheet(event: getEventForDay[index]);
+                                openBottomSheet(
+                                    event: getEventForDay[index],
+                                    onPressed: () {
+                                      Get.to(PlanOverviewScreen(
+                                          id: "${getEventForDay[index].programData![0].workoutId}"));
+                                    });
                               },
                               child: Icon(
                                 Icons.more_horiz_sharp,
@@ -103,7 +109,7 @@ Tab tabBarCommonTab({IconData? icon, String? tabName}) {
   );
 }
 
-void openBottomSheet({Schedule? event}) {
+void openBottomSheet({Schedule? event, Function()? onPressed}) {
   Get.bottomSheet(
     Container(
       padding: const EdgeInsets.all(8),
@@ -124,7 +130,7 @@ void openBottomSheet({Schedule? event}) {
             color: ColorUtils.kTint,
           ),
           TextButton(
-              onPressed: () {},
+              onPressed: onPressed,
               child: Text(
                 'View Workout',
                 style: FontTextStyle.kTint24W400Roboto,

@@ -91,7 +91,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                       maxLength: 3,
                       cursorColor: ColorUtils.kTint,
                       decoration: InputDecoration(
-                          hintText: "0",
+                          hintText: '0',
                           counterText: '',
                           semanticCounterText: '',
                           hintStyle: FontTextStyle.kWhite24BoldRoboto

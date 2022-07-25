@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -200,7 +199,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                             ),
                             SizedBox(height: Get.height * .005),
                             Text(
-                              '${widget.data[0].exerciseRest} seconds each side',
+                              '${widget.data[0].exerciseTime} seconds for each set',
                               style: FontTextStyle.kLightGray16W300Roboto,
                             ),
                           ],
@@ -242,7 +241,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                       width: Get.height * .2,
                       margin: EdgeInsets.symmetric(vertical: 10),
                       child: SimpleTimer(
-                        duration: Duration(seconds: timeDuration() ?? 30),
+                        duration: Duration(seconds: timeDuration()),
                         controller: _timerController,
                         timerStyle: _timerStyle,
                         progressTextFormatter: (format) {
@@ -362,22 +361,18 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
   }
 
   timeDuration() {
-    String time = '${widget.data[0].exerciseRest}';
+    String time = '${widget.data[0].exerciseTime}';
     List<String> splittedTime = time.split(' ');
 
-    log('${splittedTime.first}');
+    log('------------- ${splittedTime.first}');
     int? timer;
-    if (splittedTime.first == '1') {
-      timer = 60;
-      log('$timer');
+    if (splittedTime.first.length == 1) {
+      timer = int.parse(splittedTime.first) * 60;
+      log(' ----------  timer $timer');
       return timer;
-    } else if (splittedTime.first == '45') {
-      timer = 45;
-      log('$timer');
-      return timer;
-    } else if (splittedTime.first == '30') {
-      timer = 30;
-      log('$timer');
+    } else if (splittedTime.first.length >= 2) {
+      timer = int.parse(splittedTime.first);
+      log('timer -==-=-=-=-=-= $timer');
       return timer;
     }
   }

@@ -27,9 +27,6 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
   UserHabitTrackStatusViewModel _habitTrackStatusViewModel =
       Get.put(UserHabitTrackStatusViewModel());
 
-  DateRangePickerController dateRangePickerController =
-      DateRangePickerController();
-
   void initState() {
     super.initState();
     _habitTrackStatusViewModel.initialized;
@@ -40,8 +37,9 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
 
   DateTime selectedDate = DateTime.now();
 
-  weekSelection() {
-    for (int j = 0; j < days!.length; j++) {
+  weekSelection({List? selectedDayList}) {
+    for (int j = 0; j < selectedDayList!.length; j++) {
+      selectedDate = selectedDayList[j];
       for (int i = 0; i < 7; i++) {
         DateTime weekDates = DateTime(
             selectedDate.year, selectedDate.month, selectedDate.day + i);
@@ -55,14 +53,16 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
     }
     days!.clear();
 
-    dateRangePickerController.selectedDates!.addAll(weekList!);
+    _habitTrackStatusViewModel.dateRangePickerController.selectedDates!
+        .addAll(weekList!);
 
     print('weekList $weekList');
   }
 
-  monthSelection() {
+  monthSelection({List? selectedDayList}) {
     for (int j = 0; j < days!.length; j++) {
-      for (int i = 0; i < 31; i++) {
+      selectedDate = selectedDayList![j];
+      for (int i = 0; i < 30; i++) {
         DateTime weekDates = DateTime(
             selectedDate.year, selectedDate.month, selectedDate.day + i);
         print('weekDates $weekDates');
@@ -74,7 +74,8 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
       }
     }
     days!.clear();
-    dateRangePickerController.selectedDates!.addAll(weekList!);
+    _habitTrackStatusViewModel.dateRangePickerController.selectedDates!
+        .addAll(weekList!);
     print('weekList $weekList');
   }
 
@@ -120,7 +121,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: AppText.trackFrequency.length,
-                          itemBuilder: (BuildContext context, int index) {
+                          itemBuilder: (_, index) {
                             return Padding(
                               padding: EdgeInsets.symmetric(
                                   horizontal: Get.width * .06,
@@ -130,6 +131,8 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                   controller.frequencySelect(value: index);
                                   controller.selectedStatus =
                                       AppText.trackFrequency[index];
+
+                                  setState(() {});
                                   print(
                                       "frequency ------------------ ${AppText.trackFrequency[index]}");
                                 },
@@ -163,16 +166,15 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                               children: [
                                                 SizedBox(width: 20, height: 20),
                                                 Text(
-                                                  '${AppText.trackFrequency[index]}'
-                                                      .capitalizeFirst!,
-                                                  style: index ==
-                                                          controller
-                                                              .selectedIndex
-                                                      ? FontTextStyle
-                                                          .kBlack20BoldRoboto
-                                                      : FontTextStyle
-                                                          .kTint20BoldRoboto,
-                                                ),
+                                                    '${AppText.trackFrequency[index]}'
+                                                        .capitalizeFirst!,
+                                                    style: index ==
+                                                            controller
+                                                                .selectedIndex
+                                                        ? FontTextStyle
+                                                            .kBlack20BoldRoboto
+                                                        : FontTextStyle
+                                                            .kTint20BoldRoboto),
                                                 CircleAvatar(
                                                     radius: 10,
                                                     backgroundColor:
@@ -209,7 +211,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                             view: DateRangePickerView.month,
                             showNavigationArrow: true,
                             enablePastDates: false,
-                            controller: dateRangePickerController,
+                            controller: controller.dateRangePickerController,
                             selectionMode:
                                 DateRangePickerSelectionMode.multiple,
                             initialDisplayDate: DateTime.now(),
@@ -240,12 +242,27 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                             //     .defSelectedList,
                             onSelectionChanged:
                                 (DateRangePickerSelectionChangedArgs args) {
+                              weekList!.clear();
                               print("args ---------- ${args.value}");
+
                               days = args.value;
-                              selectedDate = days!.last;
-                              monthSelection();
-                              dateRangePickerController.selectedDates!
-                                  .addAll(weekList!);
+
+                              if (controller.selectedIndex == 0) {
+                                weekList = days;
+                                controller.setDateController(
+                                    controller.defSelectedList);
+                                print("week list daily == $weekList");
+                              } else if (controller.selectedIndex == 1) {
+                                weekSelection(selectedDayList: days);
+                                controller.setDateController(
+                                    controller.defSelectedList);
+                                print("week list weekly == $weekList");
+                              } else if (controller.selectedIndex == 2) {
+                                monthSelection(selectedDayList: days);
+                                controller.setDateController(
+                                    controller.defSelectedList);
+                                print("week list monthly == $weekList");
+                              }
                             },
                             monthViewSettings: DateRangePickerMonthViewSettings(
                               firstDayOfWeek: 1,

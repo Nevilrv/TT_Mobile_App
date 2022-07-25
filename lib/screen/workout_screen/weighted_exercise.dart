@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -102,10 +104,25 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
     await initializePlayer();
   }
 
+  int counterReps = 0;
+
+  counterPlus() {
+    setState(() {
+      counterReps++;
+    });
+  }
+
+  counterMinus() {
+    setState(() {
+      if (counterReps > 0) counterReps--;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
       bool loader = false;
+
       return Scaffold(
         backgroundColor: ColorUtils.kBlack,
         appBar: AppBar(
@@ -190,35 +207,151 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      child: ListView.separated(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: int.parse(
-                              widget.data[0].exerciseSets!.toString()),
-                          separatorBuilder: (_, index) {
-                            return Container(
-                                margin: EdgeInsets.symmetric(
-                                    vertical: Get.height * .007),
-                                alignment: Alignment.center,
-                                width: Get.width,
-                                height: Get.height * 0.035,
-                                decoration: BoxDecoration(
-                                    color: ColorUtils.kSaperatedGray,
-                                    borderRadius: BorderRadius.circular(6)),
-                                child: Text(
-                                  '${widget.data[0].exerciseRest} second rest',
-                                  style: FontTextStyle.kWhite17W400Roboto,
-                                ));
-                          },
-                          itemBuilder: (_, index) {
-                            return WeightedCounter(
-                              counter:
-                                  int.parse('${widget.data[0].exerciseReps}'),
-                              repsNo: '${widget.data[0].exerciseReps}',
-                            );
-                          }),
-                    ),
+                    Column(children: [
+                      // WeightedCounter(
+                      //   counter: int.parse('${widget.data[0].exerciseReps}'),
+                      //   repsNo: '${widget.data[0].exerciseReps}',
+                      // ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                        child: Container(
+                          height: Get.height * .1,
+                          width: Get.width,
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  colors: ColorUtilsGradient.kGrayGradient,
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.topCenter),
+                              borderRadius: BorderRadius.circular(6)),
+                          child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                InkWell(
+                                  onTap: () {
+                                    counterMinus();
+                                    log('minus ${counterReps}');
+                                  },
+                                  child: CircleAvatar(
+                                    radius: Get.height * .03,
+                                    backgroundColor: ColorUtils.kTint,
+                                    child: Icon(Icons.remove,
+                                        color: ColorUtils.kBlack),
+                                  ),
+                                ),
+                                SizedBox(width: Get.width * .08),
+                                RichText(
+                                    text: TextSpan(
+                                        text: '${counterReps} ',
+                                        style: counterReps == 0
+                                            ? FontTextStyle.kWhite24BoldRoboto
+                                                .copyWith(
+                                                    color: ColorUtils.kGray)
+                                            : FontTextStyle.kWhite24BoldRoboto,
+                                        children: [
+                                      TextSpan(
+                                          text: 'reps',
+                                          style:
+                                              FontTextStyle.kWhite17W400Roboto)
+                                    ])),
+                                SizedBox(width: Get.width * .08),
+                                InkWell(
+                                  onTap: () {
+                                    counterPlus();
+                                    log('plus ${counterReps}');
+                                  },
+                                  child: CircleAvatar(
+                                    radius: Get.height * .03,
+                                    backgroundColor: ColorUtils.kTint,
+                                    child: Icon(Icons.add,
+                                        color: ColorUtils.kBlack),
+                                  ),
+                                ),
+                                VerticalDivider(
+                                  width: Get.width * .08,
+                                  thickness: 1.25,
+                                  color: ColorUtils.kGray,
+                                  indent: Get.height * .015,
+                                  endIndent: Get.height * .015,
+                                ),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 40,
+                                          child: TextField(
+                                            style: counterReps == 0
+                                                ? FontTextStyle
+                                                    .kWhite24BoldRoboto
+                                                    .copyWith(
+                                                        color: ColorUtils.kGray)
+                                                : FontTextStyle
+                                                    .kWhite24BoldRoboto,
+                                            keyboardType: TextInputType.number,
+                                            maxLength: 3,
+                                            cursorColor: ColorUtils.kTint,
+                                            decoration: InputDecoration(
+                                                hintText: '0',
+                                                counterText: '',
+                                                semanticCounterText: '',
+                                                hintStyle: FontTextStyle
+                                                    .kWhite24BoldRoboto
+                                                    .copyWith(
+                                                        color: ColorUtils
+                                                            .kGray),
+                                                enabledBorder:
+                                                    UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: Colors
+                                                                .transparent)),
+                                                focusedBorder:
+                                                    UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color: Colors
+                                                                .transparent))),
+                                          ),
+                                        ),
+                                        Text('lbs',
+                                            style: FontTextStyle
+                                                .kWhite17W400Roboto),
+                                      ],
+                                    ),
+                                    SizedBox(),
+                                  ],
+                                ),
+                              ]),
+                        ),
+                      ),
+                      Container(
+                          margin:
+                              EdgeInsets.symmetric(vertical: Get.height * .007),
+                          alignment: Alignment.center,
+                          width: Get.width,
+                          height: Get.height * .035,
+                          decoration: BoxDecoration(
+                              color: ColorUtils.kSaperatedGray,
+                              borderRadius: BorderRadius.circular(6)),
+                          child: Text(
+                            '${widget.data[0].exerciseRest} second rest',
+                            style: FontTextStyle.kWhite17W400Roboto,
+                          ))
+                    ]),
+                    // SizedBox(
+                    //   child: ListView.separated(
+                    //       physics: NeverScrollableScrollPhysics(),
+                    //       shrinkWrap: true,
+                    //       itemCount: int.parse(
+                    //           widget.data[0].exerciseSets!.toString()),
+                    //       separatorBuilder: (_, index) {
+                    //         return ;
+                    //       },
+                    //       itemBuilder: (_, index) {
+                    //         return ;
+                    //       }),
+                    // ),
                     SizedBox(height: Get.height * .02),
                     GetBuilder<SaveUserCustomizedExerciseViewModel>(
                       builder: (controllerSave) {
@@ -230,7 +363,91 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                             : commonNavigationButton(
                                 onTap: () async {
                                   print('Save Exercise pressed!!!');
-                                  Get.back();
+
+                                  setState(() {
+                                    loader = true;
+                                  });
+
+                                  print('loader ----------- $loader');
+
+                                  print(
+                                      'counter out ----------------- ${counterReps}');
+                                  if (counterReps <= 0) {
+                                    Get.showSnackbar(GetSnackBar(
+                                      message: 'Please set reps more than 0',
+                                      duration: Duration(seconds: 2),
+                                    ));
+                                  }
+
+                                  if (counterReps != 0 && counterReps > 0) {
+                                    print(
+                                        'counter ----------------- $counterReps');
+                                    SaveUserCustomizedExerciseRequestModel
+                                        _request =
+                                        SaveUserCustomizedExerciseRequestModel();
+                                    _request.userId =
+                                        PreferenceManager.getUId();
+                                    _request.exerciseId =
+                                        widget.data[0].exerciseId;
+                                    _request.reps = '$counterReps';
+                                    _request.isCompleted = '1';
+
+                                    await controllerSave
+                                        .saveUserCustomizedExerciseViewModel(
+                                            _request);
+
+                                    if (controllerSave.apiResponse.status ==
+                                        Status.COMPLETE) {
+                                      SaveUserCustomizedExerciseResponseModel
+                                          responseSave =
+                                          controllerSave.apiResponse.data;
+
+                                      setState(() {
+                                        loader = false;
+                                      });
+                                      if (responseSave.success == true &&
+                                          responseSave.data != null) {
+                                        if ('${widget.data[0].exerciseVideo}'
+                                            .contains('www.youtube.com')) {
+                                          _youTubePlayerController?.pause();
+                                        } else {
+                                          _videoPlayerController?.pause();
+                                          _chewieController?.pause();
+                                        }
+
+                                        Get.back();
+                                        setState(() {
+                                          counterReps = 0;
+                                        });
+                                        Get.showSnackbar(GetSnackBar(
+                                          message: '${responseSave.msg}',
+                                          duration: Duration(seconds: 2),
+                                        ));
+                                      } else if (responseSave.msg == null ||
+                                          responseSave.msg == "" &&
+                                              responseSave.data == null ||
+                                          responseSave.data == "") {
+                                        setState(() {
+                                          loader = false;
+                                        });
+                                        Get.showSnackbar(GetSnackBar(
+                                          message: '${responseSave.msg}',
+                                          duration: Duration(seconds: 2),
+                                        ));
+                                      }
+                                    } else if (controllerSave
+                                            .apiResponse.status ==
+                                        Status.ERROR) {
+                                      setState(() {
+                                        loader = false;
+                                      });
+                                      Get.showSnackbar(GetSnackBar(
+                                        message:
+                                            'Something went wrong !!! please try again !!!',
+                                        duration: Duration(seconds: 2),
+                                      ));
+                                    }
+                                  }
                                 },
                                 name: 'Save Exercise');
                       },

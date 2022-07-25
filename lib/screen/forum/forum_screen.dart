@@ -1,10 +1,19 @@
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:share_plus/share_plus.dart';
+
 import 'package:social_share/social_share.dart';
+import 'package:tcm/model/request_model/forum_request_model/dislike_forum_request_model.dart';
+import 'package:tcm/model/request_model/forum_request_model/like_forum_request_model.dart';
+import 'package:tcm/model/request_model/forum_request_model/search_forum_request_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
-import 'package:tcm/screen/forum/forum_detail_screen.dart';
+
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
 
@@ -19,17 +28,25 @@ class ForumScreen extends StatefulWidget {
   _ForumScreenState createState() => _ForumScreenState();
 }
 
-enum Menu { HotPosts, PopularPosts }
+enum Menu { HotPosts, PopularPosts, All }
+enum Options { report, delete }
 
 class _ForumScreenState extends State<ForumScreen> {
-  String _selectedMenu = '';
+  String _selectedOptions = '';
 
   ForumViewModel forumViewModel = Get.put(ForumViewModel());
+  GetAllForumsResponseModel response = GetAllForumsResponseModel();
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    forumViewModel.getAllForumsViewModel();
+    forumViewModel.selectedMenu = 'All Posts'.obs;
+    SearchForumRequestModel model = SearchForumRequestModel();
+    model.title = '';
+    model.userId = PreferenceManager.getUId();
+
+    forumViewModel.searchForumViewModel(model);
+    // forumViewModel.getAllForumsViewModel();
   }
 
   @override
@@ -51,6 +68,7 @@ class _ForumScreenState extends State<ForumScreen> {
         centerTitle: true,
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.symmetric(
@@ -63,6 +81,14 @@ class _ForumScreenState extends State<ForumScreen> {
               width: Get.width,
               child: TextField(
                   style: FontTextStyle.kWhite16W300Roboto,
+                  onChanged: (value) async {
+                    forumViewModel.setAllPost(value);
+                    SearchForumRequestModel model = SearchForumRequestModel();
+                    model.title = value;
+                    model.userId = PreferenceManager.getUId();
+
+                    await forumViewModel.searchForumViewModel(model);
+                  },
                   decoration: InputDecoration(
                       hintText: 'Search',
                       hintStyle: FontTextStyle.kLightGray16W300Roboto,
@@ -82,10 +108,30 @@ class _ForumScreenState extends State<ForumScreen> {
                             width: Get.height * 0.03,
                           ),
                           // Callback that sets the selected popup menu item.
-                          onSelected: (Menu item) {
-                            setState(() {
-                              _selectedMenu = item.name;
-                            });
+                          onSelected: (Menu item) async {
+                            if (item.name == 'HotPosts') {
+                              forumViewModel.selectedMenu = 'Hot Posts'.obs;
+                              // forumViewModel.setSelectedMenu('Hot Posts');
+
+                              await forumViewModel.getAllForumsViewModel(
+                                  filter: 'hot');
+                            } else if (item.name == 'PopularPosts') {
+                              forumViewModel.selectedMenu = 'Popular Posts'.obs;
+                              // forumViewModel.setSelectedMenu('Popular Posts');
+
+                              await forumViewModel.getAllForumsViewModel(
+                                  filter: 'popular');
+                            } else if (item.name == 'All') {
+                              forumViewModel.selectedMenu = 'All Posts'.obs;
+                              // forumViewModel.setSelectedMenu('All Posts');
+
+                              SearchForumRequestModel model =
+                                  SearchForumRequestModel();
+                              model.title = '';
+                              model.userId = PreferenceManager.getUId();
+
+                              await forumViewModel.searchForumViewModel(model);
+                            }
                           },
                           itemBuilder: (BuildContext context) =>
                               <PopupMenuEntry<Menu>>[
@@ -103,6 +149,13 @@ class _ForumScreenState extends State<ForumScreen> {
                                     style: FontTextStyle.kWhite16W300Roboto,
                                   ),
                                 ),
+                                PopupMenuItem<Menu>(
+                                  value: Menu.All,
+                                  child: Text(
+                                    'All Posts',
+                                    style: FontTextStyle.kWhite16W300Roboto,
+                                  ),
+                                ),
                               ]))),
             ),
           ),
@@ -111,30 +164,67 @@ class _ForumScreenState extends State<ForumScreen> {
             height: Get.height * .03,
             thickness: 1,
           ),
+          Obx(() {
+            return Padding(
+              padding: EdgeInsets.only(left: Get.height * 0.02),
+              child: Text(
+                '${forumViewModel.selectedMenu} : ',
+                style: FontTextStyle.kWhite17W400Roboto,
+              ),
+            );
+          }),
           GetBuilder<ForumViewModel>(
             builder: (controller) {
-              if (controller.getAllForumsApiResponse.status == Status.LOADING) {
-                return Center(
-                    child: Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: CircularProgressIndicator(
-                    color: ColorUtils.kTint,
-                  ),
-                ));
-              }
-              if (controller.getAllForumsApiResponse.status == Status.ERROR) {
-                return Center(
-                    child: Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text(
-                    'Server Error',
-                    style: FontTextStyle.kTine16W400Roboto,
-                  ),
-                ));
+              // print('_selectedMenu  ${controller.selectedMenu}');
+              if (forumViewModel.selectedMenu.value == 'All Posts') {
+                if (controller.searchApiResponse.status == Status.LOADING) {
+                  return Center(
+                      child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: CircularProgressIndicator(
+                      color: ColorUtils.kTint,
+                    ),
+                  ));
+                }
+                if (controller.searchApiResponse.status == Status.ERROR) {
+                  return Center(
+                      child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      'Server Error',
+                      style: FontTextStyle.kTine16W400Roboto,
+                    ),
+                  ));
+                }
+
+                response = controller.searchApiResponse.data;
+                controller.setLikeDisLike(response.data!);
+              } else {
+                if (controller.getAllForumsApiResponse.status ==
+                    Status.LOADING) {
+                  return Center(
+                      child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: CircularProgressIndicator(
+                      color: ColorUtils.kTint,
+                    ),
+                  ));
+                }
+                if (controller.getAllForumsApiResponse.status == Status.ERROR) {
+                  return Center(
+                      child: Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(
+                      'Server Error',
+                      style: FontTextStyle.kTine16W400Roboto,
+                    ),
+                  ));
+                }
+
+                response = controller.getAllForumsApiResponse.data;
+                controller.setLikeDisLike(response.data!);
               }
 
-              GetAllForumsResponseModel response =
-                  controller.getAllForumsApiResponse.data;
               if (response.data!.isEmpty) {
                 return Center(
                     child: Padding(
@@ -154,33 +244,43 @@ class _ForumScreenState extends State<ForumScreen> {
                     scrollDirection: Axis.vertical,
                     itemCount: response.data!.length,
                     itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          Container(
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                                color:
-                                    ColorUtils.kSaperatedGray.withOpacity(0.4),
-                                borderRadius: BorderRadius.circular(7)),
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: Get.height * 0.013,
-                                  vertical: Get.height * 0.013),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  boxHeader(response: response, index: index),
-                                  SizedBox(height: Get.height * 0.02),
-                                  boxBody(response: response, index: index),
-                                  SizedBox(height: Get.height * 0.02),
-                                  boxFooter(response: response, index: index),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: Get.height * 0.02),
-                        ],
-                      );
+                      return response.data![index].postId == null
+                          ? SizedBox()
+                          : Column(
+                              children: [
+                                Container(
+                                  width: Get.width,
+                                  decoration: BoxDecoration(
+                                      color: ColorUtils.kSaperatedGray
+                                          .withOpacity(0.4),
+                                      borderRadius: BorderRadius.circular(7)),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Get.height * 0.013,
+                                        vertical: Get.height * 0.013),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        boxHeader(
+                                            response: response,
+                                            index: index,
+                                            controller: controller),
+                                        SizedBox(height: Get.height * 0.01),
+                                        boxBody(
+                                            response: response, index: index),
+                                        SizedBox(height: Get.height * 0.02),
+                                        boxFooter(
+                                            response: response,
+                                            index: index,
+                                            controller: controller),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: Get.height * 0.02),
+                              ],
+                            );
                     },
                   ),
                 ),
@@ -191,6 +291,8 @@ class _ForumScreenState extends State<ForumScreen> {
       ),
       floatingActionButton: GestureDetector(
         onTap: () {
+          forumViewModel.selectedMenu = 'All Posts'.obs;
+
           Get.to(AddForumScreen());
         },
         child: CircleAvatar(
@@ -206,12 +308,17 @@ class _ForumScreenState extends State<ForumScreen> {
     );
   }
 
-  Widget boxBody({GetAllForumsResponseModel? response, int? index}) {
+  Widget boxBody(
+      {GetAllForumsResponseModel? response,
+      int? index,
+      ForumViewModel? forumViewModel}) {
     return GestureDetector(
       onTap: () {
-        Get.to(ForumDetailScreen(
-          response: response!.data![index!],
-        ));
+        // Get.to(ForumDetailScreen(
+        //   response: response!.data![index!],
+        //   forumViewModel: forumViewModel,
+        //   index: index,
+        // ));
       },
       child: Container(
         color: Colors.transparent,
@@ -241,11 +348,15 @@ class _ForumScreenState extends State<ForumScreen> {
             SizedBox(
               height: Get.height * 0.01,
             ),
-            Text(
+            ExpandableText(
               '${response.data![index].postDescription}',
-              maxLines: 5,
-              overflow: TextOverflow.ellipsis,
               style: FontTextStyle.kLightGray16W300Roboto,
+              expandText: 'Show more',
+              collapseText: 'Show less',
+              maxLines: 5,
+              animation: true,
+              animationCurve: Curves.bounceIn,
+              linkColor: ColorUtils.kTint,
             ),
           ],
         ),
@@ -253,62 +364,166 @@ class _ForumScreenState extends State<ForumScreen> {
     );
   }
 
-  Row boxHeader({GetAllForumsResponseModel? response, int? index}) {
-    return Row(
+  Widget boxHeader(
+      {GetAllForumsResponseModel? response,
+      int? index,
+      ForumViewModel? controller}) {
+    return Stack(
       children: [
-        Container(
-          height: Get.height * 0.06,
-          width: Get.height * 0.06,
-          decoration: BoxDecoration(
-              color: ColorUtils.kBlack,
-              shape: BoxShape.circle,
-              border: Border.all(color: ColorUtils.kTint),
-              image: DecorationImage(
-                  image: NetworkImage(
-                      'https://static.toiimg.com/photo/msid-92046640/92046640.jpg'),
-                  fit: BoxFit.cover)),
-        ),
-        SizedBox(
-          width: Get.width * 0.03,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        Row(
           children: [
-            Text(
-              'Amit Shah ',
-              style: FontTextStyle.kWhite17W400Roboto,
+            GestureDetector(
+              onTap: () {
+                Get.dialog(Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                          height: Get.height * 0.3,
+                          width: Get.height * 0.3,
+                          decoration: BoxDecoration(
+                              color: ColorUtils.kBlack,
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                  image: response!.data![index!].profilePic ==
+                                          ''
+                                      ? NetworkImage(
+                                          'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
+                                        )
+                                      : NetworkImage(
+                                          response.data![index].profilePic!),
+                                  fit: BoxFit.cover))),
+                      SizedBox(
+                        height: Get.height * 0.02,
+                      ),
+                      Material(
+                        color: Colors.transparent,
+                        child: Text(
+                          '${response.data![index].userName} ',
+                          style: FontTextStyle.kWhite20BoldRoboto,
+                        ),
+                      ),
+                    ],
+                  ),
+                ));
+              },
+              child: Container(
+                height: Get.height * 0.06,
+                width: Get.height * 0.06,
+                decoration: BoxDecoration(
+                    color: ColorUtils.kBlack,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: ColorUtils.kTint),
+                    image: DecorationImage(
+                        image: response!.data![index!].profilePic == ''
+                            ? NetworkImage(
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
+                              )
+                            : NetworkImage(response.data![index].profilePic!),
+                        fit: BoxFit.cover)),
+              ),
             ),
             SizedBox(
-              height: Get.height * 0.002,
+              width: Get.width * 0.03,
             ),
-            Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Posted By Amit Shah',
-                  style: FontTextStyle.kLightGray16W300Roboto
-                      .copyWith(fontSize: Get.height * 0.015),
+                  '${response.data![index].userName} ',
+                  style: FontTextStyle.kWhite17W400Roboto,
                 ),
                 SizedBox(
-                  width: Get.width * 0.02,
+                  height: Get.height * 0.005,
                 ),
-                Icon(
-                  Icons.circle,
-                  size: Get.height * 0.007,
-                  color: ColorUtils.kLightGray,
+                Row(
+                  children: [
+                    Icon(
+                      Icons.circle,
+                      size: Get.height * 0.007,
+                      color: ColorUtils.kLightGray,
+                    ),
+                    SizedBox(
+                      width: Get.width * 0.02,
+                    ),
+                    response.data![index].postDate!.isEmpty
+                        ? SizedBox()
+                        : Text(
+                            '${response.data![index].postDate} ',
+                            style: FontTextStyle.kLightGray16W300Roboto
+                                .copyWith(fontSize: Get.height * 0.018),
+                          ),
+                  ],
                 ),
-                SizedBox(
-                  width: Get.width * 0.01,
-                ),
-                response!.data![index!].postDate!.isEmpty
-                    ? SizedBox()
-                    : Text(
-                        '${response.data![index].postDate} ',
-                        style: FontTextStyle.kLightGray16W300Roboto
-                            .copyWith(fontSize: Get.height * 0.018),
-                      ),
               ],
-            ),
+            )
           ],
+        ),
+        Positioned(
+          top: -10,
+          right: -10,
+          child: PopupMenuButton<Options>(
+              color: ColorUtils.kBlack,
+              icon: Icon(
+                Icons.more_vert,
+                color: ColorUtils.kTint,
+                size: Get.height * 0.025,
+              ),
+              // Callback that sets the selected popup menu item.
+              onSelected: (Options item) async {
+                setState(() {
+                  _selectedOptions = item.name;
+                });
+                if (_selectedOptions == 'report') {
+                } else {
+                  await forumViewModel
+                      .deleteForumViewModel(response.data![index].postId!)
+                      .then((value) async {
+                    Get.showSnackbar(GetSnackBar(
+                      duration: Duration(seconds: 2),
+                      messageText: Text(
+                        'Post deleted successfully....',
+                        style: FontTextStyle.kTine17BoldRoboto,
+                      ),
+                    ));
+                    SearchForumRequestModel model = SearchForumRequestModel();
+                    model.title = controller!.allPost;
+                    model.userId = PreferenceManager.getUId();
+
+                    if (forumViewModel.selectedMenu.value == 'All Posts') {
+                      await forumViewModel.searchForumViewModel(model);
+                    } else if (forumViewModel.selectedMenu.value ==
+                        'Hot Posts') {
+                      await forumViewModel.getAllForumsViewModel(filter: 'hot');
+                    } else if (forumViewModel.selectedMenu.value ==
+                        'Popular Posts') {
+                      await forumViewModel.getAllForumsViewModel(
+                          filter: 'popular');
+                    }
+                  });
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<Options>>[
+                    PopupMenuItem<Options>(
+                      value: Options.report,
+                      child: Text(
+                        'Report',
+                        style: FontTextStyle.kWhite16W300Roboto,
+                      ),
+                    ),
+                    response.data![index].userId == PreferenceManager.getUId()
+                        ? PopupMenuItem<Options>(
+                            value: Options.delete,
+                            child: Text(
+                              'Delete',
+                              style: FontTextStyle.kWhite16W300Roboto,
+                            ),
+                          )
+                        : PopupMenuItem(
+                            height: 0,
+                            child: SizedBox(),
+                          ),
+                  ]),
         )
       ],
     );
@@ -316,7 +531,10 @@ class _ForumScreenState extends State<ForumScreen> {
 
   bool isLike = false;
   bool isUnLike = false;
-  Padding boxFooter({GetAllForumsResponseModel? response, int? index}) {
+  Padding boxFooter(
+      {GetAllForumsResponseModel? response,
+      int? index,
+      ForumViewModel? controller}) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Get.height * 0.005),
       child: Row(
@@ -325,12 +543,65 @@ class _ForumScreenState extends State<ForumScreen> {
           Row(
             children: [
               GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isLike = !isLike;
-                  });
+                onTap: () async {
+                  if (controller!.likeDisLike[index!].userLiked == 0) {
+                    controller.likeDisLike[index].userLiked = 1;
+                    controller.likeDisLike[index].userDisLiked = 0;
+                    controller.likeDisLike[index].totalLike =
+                        controller.likeDisLike[index].totalLike! + 1;
+                    LikeForumRequestModel model = LikeForumRequestModel();
+                    model.postId = response!.data![index].postId;
+                    model.userId = PreferenceManager.getUId();
+                    model.like = '1';
+                    model.disLike = '0';
+                    await controller.likeForumViewModel(model);
+                    // if (controller.likeForumApiResponse.status ==
+                    //     Status.COMPLETE) {
+                    //   SearchForumRequestModel model = SearchForumRequestModel();
+                    //   print('controller.allPost ${controller.allPost}');
+                    //   model.title = controller.allPost;
+                    //   model.userId = PreferenceManager.getUId();
+                    //   //
+                    //   // await controller.searchForumViewModel(model);
+                    //   // if (controller.addForumApiResponse.status ==
+                    //   //     Status.COMPLETE) {
+                    //   //   GetAllForumsResponseModel response =
+                    //   //       controller.searchApiResponse.data;
+                    //   //   controller.setLikeDisLike(response.data!);
+                    //   // }
+                    // } else {
+                    //   print('please try again');
+                    // }
+                  } else if (controller.likeDisLike[index].userLiked == 1) {
+                    controller.likeDisLike[index].userLiked = 0;
+                    controller.likeDisLike[index].totalLike =
+                        controller.likeDisLike[index].totalLike! - 1;
+                    LikeForumRequestModel model = LikeForumRequestModel();
+                    model.postId = response!.data![index].postId;
+                    model.userId = PreferenceManager.getUId();
+                    model.like = '0';
+                    model.disLike = '0';
+                    await controller.likeForumViewModel(model);
+                    // if (controller.likeForumApiResponse.status ==
+                    //     Status.COMPLETE) {
+                    //   SearchForumRequestModel model = SearchForumRequestModel();
+                    //   print('controller.allPost ${controller.allPost}');
+                    //   model.title = controller.allPost;
+                    //   model.userId = PreferenceManager.getUId();
+                    //
+                    //   // await controller.searchForumViewModel(model);
+                    //   // if (controller.addForumApiResponse.status ==
+                    //   //     Status.COMPLETE) {
+                    //   //   GetAllForumsResponseModel response =
+                    //   //       controller.searchApiResponse.data;
+                    //   //   controller.setLikeDisLike(response.data!);
+                    //   // }
+                    // } else {
+                    //   print('please try again');
+                    // }
+                  }
                 },
-                child: isLike == false
+                child: controller!.likeDisLike[index!].userLiked == 0
                     ? Image.asset(
                         AppImages.arrowUpBorder,
                         color: ColorUtils.kTint,
@@ -347,22 +618,63 @@ class _ForumScreenState extends State<ForumScreen> {
               SizedBox(
                 width: Get.width * 0.02,
               ),
-              Text(
-                '2.3k',
-                style: FontTextStyle.kWhite17W400Roboto.copyWith(
-                  fontSize: Get.height * 0.0185,
-                ),
-              ),
+              controller.likeDisLike[index].totalLike.toString().length <= 3
+                  ? Text(
+                      '${controller.likeDisLike[index].totalLike}',
+                      style: FontTextStyle.kWhite17W400Roboto.copyWith(
+                        fontSize: Get.height * 0.0185,
+                      ),
+                    )
+                  : Text(
+                      '${NumberFormat.compactCurrency(
+                        decimalDigits: 2,
+                        symbol:
+                            '', // if you want to add currency symbol then pass that in this else leave it empty.
+                      ).format(controller.likeDisLike[index].totalLike)}',
+                      style: FontTextStyle.kWhite17W400Roboto.copyWith(
+                        fontSize: Get.height * 0.0185,
+                      ),
+                    ),
               SizedBox(
                 width: Get.width * 0.02,
               ),
               GestureDetector(
-                onTap: () {
-                  setState(() {
-                    isUnLike = !isUnLike;
-                  });
+                onTap: () async {
+                  if (response!.data![index].userDisLiked == 0) {
+                    if (controller.likeDisLike[index].userLiked == 0) {
+                      controller.likeDisLike[index].userDisLiked = 1;
+                      DisLikeForumRequestModel model =
+                          DisLikeForumRequestModel();
+                      model.postId = response.data![index].postId;
+                      model.userId = PreferenceManager.getUId();
+                      model.like = '0';
+                      model.disLike = '1';
+                      await controller.disLikeForumViewModel(model);
+                    } else {
+                      controller.likeDisLike[index].userDisLiked = 1;
+                      controller.likeDisLike[index].totalLike =
+                          controller.likeDisLike[index].totalLike! - 1;
+                      controller.likeDisLike[index].userLiked = 0;
+                      DisLikeForumRequestModel model =
+                          DisLikeForumRequestModel();
+                      model.postId = response.data![index].postId;
+                      model.userId = PreferenceManager.getUId();
+                      model.like = '0';
+                      model.disLike = '1';
+                      await controller.disLikeForumViewModel(model);
+                    }
+                  } else if (response.data![index].userDisLiked == 1) {
+                    controller.likeDisLike[index].userDisLiked = 0;
+
+                    DisLikeForumRequestModel model = DisLikeForumRequestModel();
+                    model.postId = response.data![index].postId;
+                    model.userId = PreferenceManager.getUId();
+                    model.like = '0';
+                    model.disLike = '0';
+                    await controller.disLikeForumViewModel(model);
+                  } else {}
                 },
-                child: isUnLike == false
+                child: response!.data![index].userDisLiked == 0
                     ? Image.asset(
                         AppImages.arrowDownBorder,
                         color: ColorUtils.kTint,
@@ -380,9 +692,6 @@ class _ForumScreenState extends State<ForumScreen> {
           ),
           GestureDetector(
             onTap: () async {
-              await forumViewModel.getAllCommentsViewModel(
-                postId: response!.data![index!].postId,
-              );
               Get.to(CommentScreen(
                 postId: response.data![index].postId,
               ));
@@ -408,12 +717,9 @@ class _ForumScreenState extends State<ForumScreen> {
             ),
           ),
           GestureDetector(
-            onTap: () {
-              SocialShare.shareOptions(
-                "5 Ways to Torch Your Core in Every Workout \n At the core of every movement is just that: your core. And while lots of times &ldquo;core&rdquo; and &ldquo;abs&rdquo; become synonymous, it&rsquo;s not 100% correct to use them interchangeably. Your rectus abdominus, transverse abdominus and obliques do comprise your midsection, but those aren&rsquo;t the only muscles involved. Your back, hips and glutes also provide that stable base you need for stepping forward and backward, jumping side-to-side or turning all about. So to get a serious core workout you need to work them all.</p><p>&ldquo;Core strength and stability not only enhances physical and athletic performance, but also helps maintain and correct posture and form, and prevent injury,&rdquo; says Andia Winslow, a Daily Burn Audio Workouts trainer. &ldquo;Those who have an awareness of their core and ability to engage it properly also have enhanced proprioception &mdash; or a sense of the positions of their extremities, without actually seeing them.&rdquo;",
-              ).then((data) {
-                print(data);
-              });
+            onTap: () async {
+              Share.share(response.data![index].postTitle!,
+                  subject: response.data![index].postDescription!);
             },
             child: Row(
               children: [

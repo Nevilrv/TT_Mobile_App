@@ -138,6 +138,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
             });
           });
 
+          List daysPerWeek = response.data![0].selectedDays!.split(",");
+
           return Scaffold(
             backgroundColor: ColorUtils.kBlack,
             appBar: AppBar(
@@ -285,14 +287,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                   Image.asset(AppIcons.clock,
                                       height: 15, width: 15),
                                   SizedBox(width: 5),
-                                  response.data![0].daysAllData!.isEmpty
-                                      ? Text('0 x PER WEEK',
-                                          style:
-                                              FontTextStyle.kWhite16BoldRoboto)
-                                      : Text(
-                                          '${response.data![0].daysAllData![0].days!.length} x PER WEEK',
-                                          style:
-                                              FontTextStyle.kWhite16BoldRoboto),
+                                  Text('${daysPerWeek.length} x PER WEEK',
+                                      style: FontTextStyle.kWhite16BoldRoboto),
                                 ],
                               ),
                               Row(

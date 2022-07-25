@@ -5,6 +5,7 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
+import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
@@ -265,66 +266,81 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                     // ),
                     GetBuilder<SaveUserCustomizedExerciseViewModel>(
                         builder: (controller) {
-                      return Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                        child: Container(
-                          height: Get.height * .1,
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: ColorUtilsGradient.kGrayGradient,
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.topCenter),
-                              borderRadius: BorderRadius.circular(6)),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    controller.counterMinus();
-                                    print('minus ${controller.counterReps}');
-                                  },
-                                  child: CircleAvatar(
-                                    radius: Get.height * .03,
-                                    backgroundColor: ColorUtils.kTint,
-                                    child: Icon(Icons.remove,
-                                        color: ColorUtils.kBlack),
-                                  ),
-                                ),
-                                SizedBox(width: Get.width * .08),
-                                RichText(
-                                    text: TextSpan(
-                                        text: '${controller.counterReps} ',
-                                        style: controller.counterReps == 0
-                                            ? FontTextStyle.kWhite24BoldRoboto
-                                                .copyWith(
-                                                    color: ColorUtils.kGray)
-                                            : FontTextStyle.kWhite24BoldRoboto,
-                                        children: [
-                                      TextSpan(
-                                          text: 'reps',
-                                          style:
-                                              FontTextStyle.kWhite17W400Roboto)
-                                    ])),
-                                SizedBox(width: Get.width * .08),
-                                InkWell(
-                                  onTap: () {
-                                    controller.counterPlus(
-                                        totCount: int.parse(
-                                            '${widget.data[0].exerciseReps}'));
-                                    print('plus ${controller.counterReps}');
-                                  },
-                                  child: CircleAvatar(
-                                    radius: Get.height * .03,
-                                    backgroundColor: ColorUtils.kTint,
-                                    child: Icon(Icons.add,
-                                        color: ColorUtils.kBlack),
-                                  ),
-                                ),
-                              ]),
-                        ),
+                      return SizedBox(
+                        child: ListView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: int.parse(
+                                widget.data[0].exerciseSets!.toString()),
+                            itemBuilder: (_, index) {
+                              return NoWeightedCounter(
+                                counter:
+                                    int.parse('${widget.data[0].exerciseReps}'),
+                                repsNo: '${widget.data[0].exerciseReps}',
+                              );
+                            }),
                       );
+
+                      // return Padding(
+                      //   padding:
+                      //       EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                      //   child: Container(
+                      //     height: Get.height * .1,
+                      //     width: Get.width,
+                      //     decoration: BoxDecoration(
+                      //         gradient: LinearGradient(
+                      //             colors: ColorUtilsGradient.kGrayGradient,
+                      //             begin: Alignment.topCenter,
+                      //             end: Alignment.topCenter),
+                      //         borderRadius: BorderRadius.circular(6)),
+                      //     child: Row(
+                      //         mainAxisAlignment: MainAxisAlignment.center,
+                      //         children: [
+                      //           InkWell(
+                      //             onTap: () {
+                      //               controller.counterMinus();
+                      //               print('minus ${controller.counterReps}');
+                      //             },
+                      //             child: CircleAvatar(
+                      //               radius: Get.height * .03,
+                      //               backgroundColor: ColorUtils.kTint,
+                      //               child: Icon(Icons.remove,
+                      //                   color: ColorUtils.kBlack),
+                      //             ),
+                      //           ),
+                      //           SizedBox(width: Get.width * .08),
+                      //           RichText(
+                      //               text: TextSpan(
+                      //                   text: '${controller.counterReps} ',
+                      //                   style: controller.counterReps == 0
+                      //                       ? FontTextStyle.kWhite24BoldRoboto
+                      //                           .copyWith(
+                      //                               color: ColorUtils.kGray)
+                      //                       : FontTextStyle.kWhite24BoldRoboto,
+                      //                   children: [
+                      //                 TextSpan(
+                      //                     text: 'reps',
+                      //                     style:
+                      //                         FontTextStyle.kWhite17W400Roboto)
+                      //               ])),
+                      //           SizedBox(width: Get.width * .08),
+                      //           InkWell(
+                      //             onTap: () {
+                      //               controller.counterPlus(
+                      //                   totCount: int.parse(
+                      //                       '${widget.data[0].exerciseReps}'));
+                      //               print('plus ${controller.counterReps}');
+                      //             },
+                      //             child: CircleAvatar(
+                      //               radius: Get.height * .03,
+                      //               backgroundColor: ColorUtils.kTint,
+                      //               child: Icon(Icons.add,
+                      //                   color: ColorUtils.kBlack),
+                      //             ),
+                      //           ),
+                      //         ]),
+                      //   ),
+                      // );
                     }),
 
                     // Padding(
