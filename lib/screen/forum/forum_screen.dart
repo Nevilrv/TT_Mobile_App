@@ -81,6 +81,14 @@ class _ForumScreenState extends State<ForumScreen> {
               width: Get.width,
               child: TextField(
                   style: FontTextStyle.kWhite16W300Roboto,
+                  onTap: () async {
+                    forumViewModel.selectedMenu = 'All Posts'.obs;
+                    SearchForumRequestModel model1 = SearchForumRequestModel();
+                    model1.title = '';
+                    model1.userId = PreferenceManager.getUId();
+
+                    await forumViewModel.searchForumViewModel(model1);
+                  },
                   onChanged: (value) async {
                     forumViewModel.setAllPost(value);
                     SearchForumRequestModel model = SearchForumRequestModel();
@@ -326,13 +334,18 @@ class _ForumScreenState extends State<ForumScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '#${response!.data![index!].tagTitle}',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: FontTextStyle.kTine17BoldRoboto.copyWith(
-                fontSize: Get.height * 0.0185,
-              ),
+            Wrap(
+              direction: Axis.horizontal,
+              children: List.generate(response!.data![index!].tagTitle!.length,
+                  (index1) {
+                return Text(
+                  '#${response.data![index].tagTitle![index1]} ',
+                  overflow: TextOverflow.ellipsis,
+                  style: FontTextStyle.kTine17BoldRoboto.copyWith(
+                    fontSize: Get.height * 0.0185,
+                  ),
+                );
+              }),
             ),
             SizedBox(
               height: Get.height * 0.01,
@@ -399,7 +412,7 @@ class _ForumScreenState extends State<ForumScreen> {
                       Material(
                         color: Colors.transparent,
                         child: Text(
-                          '${response.data![index].userName} ',
+                          '${response.data![index].username} ',
                           style: FontTextStyle.kWhite20BoldRoboto,
                         ),
                       ),
@@ -430,7 +443,7 @@ class _ForumScreenState extends State<ForumScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${response.data![index].userName} ',
+                  '${response.data![index].username} ',
                   style: FontTextStyle.kWhite17W400Roboto,
                 ),
                 SizedBox(
@@ -546,9 +559,9 @@ class _ForumScreenState extends State<ForumScreen> {
                 onTap: () async {
                   if (controller!.likeDisLike[index!].userLiked == 0) {
                     controller.likeDisLike[index].userLiked = 1;
-                    controller.likeDisLike[index].userDisLiked = 0;
-                    controller.likeDisLike[index].totalLike =
-                        controller.likeDisLike[index].totalLike! + 1;
+                    controller.likeDisLike[index].userDisliked = 0;
+                    controller.likeDisLike[index].totalLikes =
+                        controller.likeDisLike[index].totalLikes! + 1;
                     LikeForumRequestModel model = LikeForumRequestModel();
                     model.postId = response!.data![index].postId;
                     model.userId = PreferenceManager.getUId();
@@ -574,8 +587,8 @@ class _ForumScreenState extends State<ForumScreen> {
                     // }
                   } else if (controller.likeDisLike[index].userLiked == 1) {
                     controller.likeDisLike[index].userLiked = 0;
-                    controller.likeDisLike[index].totalLike =
-                        controller.likeDisLike[index].totalLike! - 1;
+                    controller.likeDisLike[index].totalLikes =
+                        controller.likeDisLike[index].totalLikes! - 1;
                     LikeForumRequestModel model = LikeForumRequestModel();
                     model.postId = response!.data![index].postId;
                     model.userId = PreferenceManager.getUId();
@@ -618,9 +631,9 @@ class _ForumScreenState extends State<ForumScreen> {
               SizedBox(
                 width: Get.width * 0.02,
               ),
-              controller.likeDisLike[index].totalLike.toString().length <= 3
+              controller.likeDisLike[index].totalLikes.toString().length <= 3
                   ? Text(
-                      '${controller.likeDisLike[index].totalLike}',
+                      '${controller.likeDisLike[index].totalLikes}',
                       style: FontTextStyle.kWhite17W400Roboto.copyWith(
                         fontSize: Get.height * 0.0185,
                       ),
@@ -630,7 +643,7 @@ class _ForumScreenState extends State<ForumScreen> {
                         decimalDigits: 2,
                         symbol:
                             '', // if you want to add currency symbol then pass that in this else leave it empty.
-                      ).format(controller.likeDisLike[index].totalLike)}',
+                      ).format(controller.likeDisLike[index].totalLikes)}',
                       style: FontTextStyle.kWhite17W400Roboto.copyWith(
                         fontSize: Get.height * 0.0185,
                       ),
@@ -640,9 +653,9 @@ class _ForumScreenState extends State<ForumScreen> {
               ),
               GestureDetector(
                 onTap: () async {
-                  if (response!.data![index].userDisLiked == 0) {
+                  if (response!.data![index].userDisliked == 0) {
                     if (controller.likeDisLike[index].userLiked == 0) {
-                      controller.likeDisLike[index].userDisLiked = 1;
+                      controller.likeDisLike[index].userDisliked = 1;
                       DisLikeForumRequestModel model =
                           DisLikeForumRequestModel();
                       model.postId = response.data![index].postId;
@@ -651,9 +664,9 @@ class _ForumScreenState extends State<ForumScreen> {
                       model.disLike = '1';
                       await controller.disLikeForumViewModel(model);
                     } else {
-                      controller.likeDisLike[index].userDisLiked = 1;
-                      controller.likeDisLike[index].totalLike =
-                          controller.likeDisLike[index].totalLike! - 1;
+                      controller.likeDisLike[index].userDisliked = 1;
+                      controller.likeDisLike[index].totalLikes =
+                          controller.likeDisLike[index].totalLikes! - 1;
                       controller.likeDisLike[index].userLiked = 0;
                       DisLikeForumRequestModel model =
                           DisLikeForumRequestModel();
@@ -663,8 +676,8 @@ class _ForumScreenState extends State<ForumScreen> {
                       model.disLike = '1';
                       await controller.disLikeForumViewModel(model);
                     }
-                  } else if (response.data![index].userDisLiked == 1) {
-                    controller.likeDisLike[index].userDisLiked = 0;
+                  } else if (response.data![index].userDisliked == 1) {
+                    controller.likeDisLike[index].userDisliked = 0;
 
                     DisLikeForumRequestModel model = DisLikeForumRequestModel();
                     model.postId = response.data![index].postId;
@@ -674,7 +687,7 @@ class _ForumScreenState extends State<ForumScreen> {
                     await controller.disLikeForumViewModel(model);
                   } else {}
                 },
-                child: response!.data![index].userDisLiked == 0
+                child: response!.data![index].userDisliked == 0
                     ? Image.asset(
                         AppImages.arrowDownBorder,
                         color: ColorUtils.kTint,
@@ -707,12 +720,24 @@ class _ForumScreenState extends State<ForumScreen> {
                 SizedBox(
                   width: Get.width * 0.02,
                 ),
-                Text(
-                  '2.3k',
-                  style: FontTextStyle.kWhite17W400Roboto.copyWith(
-                    fontSize: Get.height * 0.0185,
-                  ),
-                ),
+                controller.likeDisLike[index].totalComments.toString().length <=
+                        3
+                    ? Text(
+                        '${controller.likeDisLike[index].totalComments}',
+                        style: FontTextStyle.kWhite17W400Roboto.copyWith(
+                          fontSize: Get.height * 0.0185,
+                        ),
+                      )
+                    : Text(
+                        '${NumberFormat.compactCurrency(
+                          decimalDigits: 2,
+                          symbol:
+                              '', // if you want to add currency symbol then pass that in this else leave it empty.
+                        ).format(controller.likeDisLike[index].totalComments)}',
+                        style: FontTextStyle.kWhite17W400Roboto.copyWith(
+                          fontSize: Get.height * 0.0185,
+                        ),
+                      ),
               ],
             ),
           ),

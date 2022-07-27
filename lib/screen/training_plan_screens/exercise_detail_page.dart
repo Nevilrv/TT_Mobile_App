@@ -186,7 +186,6 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                               exerciseId: response.data![0].exerciseId,
                               day: widget.day,
                               workoutId: widget.workoutId,
-                              workoutDay: widget.workoutDay,
                               workoutName: widget.workoutName,
                             ));
                           } else if (checkResponse.success == false) {

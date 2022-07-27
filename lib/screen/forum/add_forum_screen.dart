@@ -1,4 +1,9 @@
+import 'dart:convert';
+import 'dart:ui';
+
+import 'package:auto_size_text_field/auto_size_text_field.dart';
 import 'package:flutter/material.dart';
+
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/forum_request_model/add_forum_request_model.dart';
@@ -24,18 +29,26 @@ class AddForumScreen extends StatefulWidget {
 class _AddForumScreenState extends State<AddForumScreen> {
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
+  TextEditingController tag = TextEditingController();
   GetTagsViewModel getTagsViewModel = Get.put(GetTagsViewModel());
 
   AddForumViewModel addForumViewModel = Get.put(AddForumViewModel());
   ForumViewModel forumViewModel = Get.find();
+  var keybardHeight = 0.0;
+  List data = [];
   @override
   void initState() {
     // TODO: implement initState
-    getTagsViewModel.getTagsViewModel();
+    getTagsViewModel.getTagsViewModel(title: '');
   }
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      keybardHeight = MediaQuery.of(context).viewInsets.bottom;
+    });
+    print(
+        'MediaQuery.of(context).viewInsets.bottom ${MediaQuery.of(context).viewInsets.bottom}');
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
       appBar: AppBar(
@@ -128,81 +141,362 @@ class _AddForumScreenState extends State<AddForumScreen> {
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  Text(
-                    'Select Tags : ',
-                    style: FontTextStyle.kGreyBoldRoboto,
+                  GestureDetector(
+                    onTap: () async {
+                      await getTagsViewModel.getTagsViewModel(title: '');
+                      tag.clear();
+                      FocusNode inputNode = FocusNode();
+                      void data() {
+                        FocusScope.of(context).requestFocus(inputNode);
+                      }
+
+                      Get.dialog(
+                        Container(
+                          child: Material(
+                            color: Colors.transparent,
+                            textStyle:
+                                TextStyle(decoration: TextDecoration.none),
+                            child:
+                                StatefulBuilder(builder: (context, setState) {
+                              setState(() {
+                                keybardHeight =
+                                    MediaQuery.of(context).viewInsets.bottom;
+                              });
+                              return GetBuilder<GetTagsViewModel>(
+                                builder: (controller) {
+                                  if (controller.getTagsApiResponse.status ==
+                                      Status.LOADING) {
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        color: ColorUtils.kTint,
+                                      ),
+                                    );
+                                  }
+                                  GetTagsResponseModel response =
+                                      controller.getTagsApiResponse.data;
+                                  return Column(
+                                    children: [
+                                      SizedBox(
+                                        height: Get.height * 0.04,
+                                      ),
+                                      Row(
+                                        children: [
+                                          IconButton(
+                                              onPressed: () async {
+                                                Get.back();
+                                                tag.clear();
+                                                controller.setSelectTagId('');
+                                                controller
+                                                    .setSelectedTagTitle('');
+                                              },
+                                              icon: Icon(
+                                                Icons.clear,
+                                                color: Colors.white,
+                                              )),
+                                          Spacer(),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              controller.valueFinal.add({
+                                                'id': controller.selectTagId,
+                                                'title':
+                                                    controller.selectedTagTitle
+                                              });
+
+                                              final jsonList = controller
+                                                  .valueFinal
+                                                  .map((item) =>
+                                                      jsonEncode(item))
+                                                  .toList();
+
+                                              // using toSet - toList strategy
+                                              final uniqueJsonList =
+                                                  jsonList.toSet().toList();
+
+                                              // convert each item back to the original form using JSON decoding
+                                              final result = uniqueJsonList
+                                                  .map((item) =>
+                                                      jsonDecode(item))
+                                                  .toList();
+
+                                              controller.setValueFinal(result);
+                                              Get.back();
+
+                                              controller.setSelectTagId('');
+                                              controller
+                                                  .setSelectedTagTitle('');
+                                              print(
+                                                  "resultresultresultresultresult ${result}");
+                                              print(
+                                                  "controller.selectedTags ${controller.valueFinal}");
+                                            },
+                                            child: Text(
+                                              'Done',
+                                              style: FontTextStyle
+                                                  .kWhite20BoldRoboto,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * 0.04,
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: Get.height * 0.04,
+                                      ),
+                                      AutoSizeTextField(
+                                        onChanged: (String val) async {
+                                          print('val $val');
+                                          await getTagsViewModel
+                                              .getTagsViewModel(title: val);
+                                        },
+                                        fullwidth: false,
+                                        onSubmitted: (val) {
+                                          controller.valueFinal.add({
+                                            'id': controller.selectTagId,
+                                            'title': controller.selectedTagTitle
+                                          });
+
+                                          final jsonList = controller.valueFinal
+                                              .map((item) => jsonEncode(item))
+                                              .toList();
+
+                                          // using toSet - toList strategy
+                                          final uniqueJsonList =
+                                              jsonList.toSet().toList();
+
+                                          // convert each item back to the original form using JSON decoding
+                                          final result = uniqueJsonList
+                                              .map((item) => jsonDecode(item))
+                                              .toList();
+
+                                          controller.setValueFinal(result);
+                                          Get.back();
+
+                                          controller.setSelectTagId('');
+                                          controller.setSelectedTagTitle('');
+                                        },
+                                        minWidth: Get.height * 0.153,
+                                        minFontSize: 20,
+                                        wrapWords: true,
+                                        stepGranularity: 2,
+                                        showCursor: false,
+                                        autofocus: true,
+                                        controller: tag,
+                                        focusNode: inputNode,
+                                        maxLines: 1,
+                                        onTap: () {
+                                          print('hello...');
+                                        },
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w500,
+                                            color: ColorUtils.kTint,
+                                            fontSize: Get.height * .05,
+                                            decoration: TextDecoration.none,
+                                            decorationColor:
+                                                Colors.white.withOpacity(0.01)),
+                                        decoration: InputDecoration(
+                                            isDense: true,
+                                            prefixText: '#',
+                                            prefixStyle: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorUtils.kTint,
+                                              fontSize: Get.height * .05,
+                                            ),
+                                            hintText: 'TAG',
+                                            hintStyle: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: ColorUtils.kTint,
+                                              fontSize: Get.height * .05,
+                                            ),
+                                            fillColor: Colors.white,
+                                            filled: true,
+                                            contentPadding:
+                                                EdgeInsets.symmetric(
+                                                    vertical:
+                                                        Get.height * 0.007,
+                                                    horizontal:
+                                                        Get.height * 0.01),
+                                            border: InputBorder.none,
+                                            focusedBorder: InputBorder.none,
+                                            enabledBorder: InputBorder.none),
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        width: Get.width,
+                                        height: Get.height * 0.05,
+                                        child: ListView.builder(
+                                          padding: EdgeInsets.only(
+                                              right: 15, left: 15),
+                                          shrinkWrap: true,
+                                          physics: BouncingScrollPhysics(),
+                                          itemCount: response.data!.length,
+                                          scrollDirection: Axis.horizontal,
+                                          itemBuilder: (context, index) {
+                                            return Row(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    controller.setSelectTagId(
+                                                        response.data![index].id
+                                                            .toString());
+                                                    controller
+                                                        .setSelectedTagTitle(
+                                                            response
+                                                                .data![index]
+                                                                .title
+                                                                .toString());
+
+                                                    setState(() {
+                                                      tag.text = response
+                                                          .data![index]
+                                                          .title!
+                                                          .capitalize
+                                                          .toString();
+                                                    });
+                                                    tag.selection = TextSelection
+                                                        .fromPosition(
+                                                            TextPosition(
+                                                                offset: tag.text
+                                                                    .length));
+                                                  },
+                                                  child: Container(
+                                                    height: Get.height * 0.05,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        color:
+                                                            ColorUtils.kBlack,
+                                                        border: Border.all(
+                                                            color: ColorUtils
+                                                                .kTint)),
+                                                    child: Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                              horizontal:
+                                                                  Get.height *
+                                                                      0.02),
+                                                      child: Center(
+                                                        child: Text(
+                                                          '#${response.data![index].title}',
+                                                          style: FontTextStyle
+                                                              .kTine16W400Roboto,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                  width: Get.width * 0.03,
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 20,
+                                      ),
+                                      SizedBox(
+                                        height: keybardHeight,
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }),
+                          ),
+                        ),
+                        barrierColor: Colors.black.withOpacity(0.8),
+                      );
+                    },
+                    child: Container(
+                      height: Get.height * 0.05,
+                      width: Get.width * 0.365,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: ColorUtils.kTint,
+                          border: Border.all(color: ColorUtils.kTint)),
+                      child: Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: Get.height * 0.02),
+                        child: Center(
+                          child: Text(
+                            'SELECT TAG',
+                            style: FontTextStyle.kBlack16BoldRoboto,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   SizedBox(
-                    height: Get.height * 0.012,
+                    height: Get.height * 0.02,
                   ),
                   GetBuilder<GetTagsViewModel>(
                     builder: (controller) {
-                      if (controller.getTagsApiResponse.status ==
-                          Status.LOADING) {
-                        return Center(
-                          child: CircularProgressIndicator(
-                            color: ColorUtils.kTint,
-                          ),
-                        );
-                      }
-                      GetTagsResponseModel response =
-                          controller.getTagsApiResponse.data;
-                      return Column(
-                        children: [
-                          Container(
-                            width: Get.width,
-                            height: Get.height * 0.05,
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: response.data!.length,
-                              scrollDirection: Axis.horizontal,
-                              itemBuilder: (context, index) {
-                                return Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        controller.setSelectTagId(response
-                                            .data![index].tagId
-                                            .toString());
-                                      },
-                                      child: Container(
-                                        height: Get.height * 0.05,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: controller.selectTagId ==
-                                                    response.data![index].tagId
-                                                ? ColorUtils.kTint
-                                                    .withOpacity(0.8)
-                                                : ColorUtils.kBlack,
-                                            border: Border.all(
-                                                color: ColorUtils.kTint)),
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: Get.height * 0.02),
-                                          child: Center(
-                                            child: Text(
-                                              '#${response.data![index].tagTitle!}',
-                                              style: controller.selectTagId ==
-                                                      response
-                                                          .data![index].tagId
-                                                  ? FontTextStyle
-                                                      .kBlack16BoldRoboto
-                                                  : FontTextStyle
-                                                      .kTine16W400Roboto,
+                      data.clear();
+                      print(
+                          'controller.valueFinal.length ${controller.valueFinal.length}');
+
+                      controller.valueFinal.forEach((element) {
+                        print(element['id']);
+                        data.add(element['id']);
+                      });
+                      print('DATA data>>>>. ${data}');
+                      return SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        physics: BouncingScrollPhysics(),
+                        child: Row(
+                          children: List.generate(
+                              controller.valueFinal.length,
+                              (index1) => Padding(
+                                    padding: EdgeInsets.only(right: 10),
+                                    child: Container(
+                                      height: Get.height * 0.05,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: ColorUtils.kTint)),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.height * 0.02),
+                                        child: Row(
+                                          children: [
+                                            Text(
+                                              '${controller.valueFinal[index1]['title']}',
+                                              style: FontTextStyle
+                                                  .kTint20BoldRoboto,
                                             ),
-                                          ),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                controller.valueFinal
+                                                    .removeAt(index1);
+                                                setState(() {});
+                                                print(
+                                                    'controller.valueFinal ${controller.valueFinal}');
+                                              },
+                                              child: Icon(
+                                                Icons.cancel,
+                                                color: ColorUtils.kTint,
+                                              ),
+                                            )
+                                          ],
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: Get.width * 0.03,
-                                    )
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
+                                  )),
+                        ),
+                      );
+                    },
+                  ),
+                  GetBuilder<GetTagsViewModel>(
+                    builder: (controller) {
+                      return Column(
+                        children: [
                           SizedBox(
                             height: Get.height * 0.1,
                           ),
@@ -226,7 +520,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                         style: FontTextStyle.kTine17BoldRoboto,
                                       ),
                                     ));
-                                  } else if (controller.selectTagId == '') {
+                                  } else if (data.isEmpty) {
                                     Get.showSnackbar(GetSnackBar(
                                       duration: Duration(seconds: 2),
                                       messageText: Text(
@@ -235,10 +529,16 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                       ),
                                     ));
                                   } else {
+                                    String data3 = '';
+                                    var data1 = data.toString();
+
+                                    var data2 =
+                                        data1.substring(1, data1.length - 1);
+                                    print('data1  ${data2}');
                                     AddForumRequestModel model =
                                         AddForumRequestModel();
                                     model.userId = PreferenceManager.getUId();
-                                    model.tagId = controller.selectTagId;
+                                    model.tagId = data2;
                                     model.title = title.text;
                                     model.description = description.text;
                                     await addForumViewModel

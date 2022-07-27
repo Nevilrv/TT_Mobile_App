@@ -7,6 +7,7 @@ import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 
+import '../../model/request_model/forum_request_model/search_forum_request_model.dart';
 import '../../viewModel/forum_viewModel/all_comment_viewmodel.dart';
 import '../../viewModel/forum_viewModel/forum_viewmodel.dart';
 
@@ -51,7 +52,19 @@ class _CommentScreenState extends State<CommentScreen> {
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-            onPressed: () {
+            onPressed: () async {
+              if (forumViewModel.selectedMenu == 'All Posts') {
+                SearchForumRequestModel model = SearchForumRequestModel();
+                model.title = '';
+                model.userId = PreferenceManager.getUId();
+
+                await forumViewModel.searchForumViewModel(model);
+              } else if (forumViewModel.selectedMenu == 'Popular Posts') {
+                await forumViewModel.getAllForumsViewModel(filter: 'popular');
+              } else if (forumViewModel.selectedMenu == 'Hot Posts') {
+                await forumViewModel.getAllForumsViewModel(filter: 'hot');
+              }
+
               Get.back();
             },
             icon: Icon(

@@ -11,7 +11,10 @@ class ScheduleByDateViewModel extends GetxController {
   DateRangePickerController dateRangePickerController =
       DateRangePickerController();
 
-  allDates({String? date}) {}
+  allDates({List<DateTime>? date}) {
+    dateRangePickerController.selectedDates?.addAll(date!);
+    update();
+  }
 
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 

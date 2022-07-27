@@ -188,8 +188,6 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                               Get.to(ProgramSetupPage(
                                 workoutId: '${response.data![0].workoutId}',
                                 day: '1',
-                                workoutDay:
-                                    '${response.data![0].workoutDuration}',
                                 workoutName:
                                     '${response.data![0].workoutTitle}',
                               ));
@@ -400,8 +398,6 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                   Get.to(ProgramSetupPage(
                                     workoutId: '${response.data![0].workoutId}',
                                     day: '1',
-                                    workoutDay:
-                                        '${response.data![0].workoutDuration}',
                                     workoutName:
                                         '${response.data![0].workoutTitle}',
                                   ));

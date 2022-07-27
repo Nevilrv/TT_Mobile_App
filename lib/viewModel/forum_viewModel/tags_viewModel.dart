@@ -21,14 +21,31 @@ class GetTagsViewModel extends GetxController {
     update();
   }
 
-  late GetTagsResponseModel response;
-  Future<void> getTagsViewModel() async {
-    _getTagsApiResponse = ApiResponse.loading(message: 'Loading');
+  String _selectedTagTitle = '';
+
+  String get selectedTagTitle => _selectedTagTitle;
+
+  void setSelectedTagTitle(String value) {
+    _selectedTagTitle = value;
     update();
+  }
+
+  List valueFinal = [];
+  void setValueFinal(var value) {
+    valueFinal = value;
+    update();
+  }
+
+  late GetTagsResponseModel response;
+  Future<void> getTagsViewModel({String? title}) async {
+    if (_getTagsApiResponse.status == Status.INITIAL) {
+      _getTagsApiResponse = ApiResponse.loading(message: 'Loading');
+      update();
+    }
 
     try {
       print('==_getTagsApiResponse=>');
-      response = await GetTagsRepo().getTagsRepo();
+      response = await GetTagsRepo().getTagsRepo(title: title);
       print('==_getTagsApiResponse=>$response');
 
       _getTagsApiResponse = ApiResponse.complete(response);

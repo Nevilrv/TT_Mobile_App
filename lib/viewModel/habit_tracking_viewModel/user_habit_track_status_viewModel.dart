@@ -8,6 +8,7 @@ import 'package:tcm/repo/habit_tracker_repo/user_habit_track_status_repo.dart';
 
 class UserHabitTrackStatusViewModel extends GetxController {
   int? selectedIndex = 0;
+  // bool isFrequencyChange = false;
 
   List<DateTime> defSelectedList = [];
   DateRangePickerController dateRangePickerController =
@@ -17,6 +18,14 @@ class UserHabitTrackStatusViewModel extends GetxController {
     dateRangePickerController.selectedDates!.addAll(date!);
     update();
   }
+
+  // frequencyNotifier({bool? isChange, List? args}) {
+  //   if (isChange == true) {
+  //     args!.clear();
+  //     isFrequencyChange = false;
+  //   }
+  //   update();
+  // }
 
   frequencySelect({int? value}) {
     selectedIndex = value;

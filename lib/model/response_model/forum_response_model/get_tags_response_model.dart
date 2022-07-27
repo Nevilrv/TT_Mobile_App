@@ -23,38 +23,34 @@ class GetTagsResponseModel {
 
   factory GetTagsResponseModel.fromJson(Map<String, dynamic> json) =>
       GetTagsResponseModel(
-        success: json["success"] == null ? null : json["success"],
-        msg: json["msg"] == null ? null : json["msg"],
-        data: json["data"] == null
-            ? null
-            : List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        success: json["success"],
+        msg: json["msg"],
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "success": success == null ? null : success,
-        "msg": msg == null ? null : msg,
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "success": success,
+        "msg": msg,
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
 class Datum {
   Datum({
-    this.tagId,
-    this.tagTitle,
+    this.id,
+    this.title,
   });
 
-  String? tagId;
-  String? tagTitle;
+  String? id;
+  String? title;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
-        tagId: json["tag_id"] == null ? null : json["tag_id"],
-        tagTitle: json["tag_title"] == null ? null : json["tag_title"],
+        id: json["id"],
+        title: json["title"],
       );
 
   Map<String, dynamic> toJson() => {
-        "tag_id": tagId == null ? null : tagId,
-        "tag_title": tagTitle == null ? null : tagTitle,
+        "id": id,
+        "title": title,
       };
 }

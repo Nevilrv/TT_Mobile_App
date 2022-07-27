@@ -34,6 +34,7 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
 
   List<DateTime>? days = [];
   List<DateTime>? weekList = [];
+  bool isFrequencyChange = false;
 
   DateTime selectedDate = DateTime.now();
 
@@ -131,6 +132,11 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                   controller.frequencySelect(value: index);
                                   controller.selectedStatus =
                                       AppText.trackFrequency[index];
+
+                                  isFrequencyChange = true;
+
+                                  print(
+                                      "isFrequencyChange on button ---------- $isFrequencyChange");
 
                                   setState(() {});
                                   print(
@@ -243,7 +249,20 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                             onSelectionChanged:
                                 (DateRangePickerSelectionChangedArgs args) {
                               weekList!.clear();
+
                               print("args ---------- ${args.value}");
+                              // args.value.clear();
+                              // print("args 222 ---------- ${args.value}");
+                              print(
+                                  " current frequency of args ---------- $isFrequencyChange");
+
+                              // if (isFrequencyChange == true) {
+                              //   args.value.clear();
+                              //   isFrequencyChange = false;
+                              //   setState(() {});
+                              //   print(
+                              //       "isFrequencyChange ---------- $isFrequencyChange");
+                              // }
 
                               days = args.value;
 

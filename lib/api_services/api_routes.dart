@@ -61,6 +61,7 @@ class ApiRoutes {
       baseUrl + "/json/data_forum_all_comments.php?post_id=";
   String addCommentUrl = baseUrl + "/json/data_forum_comments.php";
   String searchUrl = baseUrl + "/json/data_search_forums.php";
+  String searchTagUrl = baseUrl + "/json/data_search_tags.php";
   String deleteForum = baseUrl + "/json/data_delete_forum.php";
   String deleteComment = baseUrl + "/json/data_delete_comment.php";
   String likeForum = baseUrl + "/json/data_forum_like_dislike.php";

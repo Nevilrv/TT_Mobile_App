@@ -4132,7 +4132,7 @@ class DateRangePickerViewChangedArgs {
 @immutable
 class DateRangePickerSelectionChangedArgs {
   /// Creates details for [DateRangePickerSelectionChangedCallback].
-  const DateRangePickerSelectionChangedArgs(this.value);
+  DateRangePickerSelectionChangedArgs(this.value);
 
   /// The changed selected dates or ranges value.
   ///
@@ -4148,7 +4148,7 @@ class DateRangePickerSelectionChangedArgs {
   /// The argument value will return the changed ranges as
   /// [List<PickerDateRange] when the widget [DateRangePickerSelectionMode] set
   /// as multi range.
-  final dynamic value;
+  List<DateTime> value;
 }
 
 /// Defines a range of dates, covers the dates in between the given [startDate]

@@ -200,35 +200,38 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                                         '${response.data![0].exercises![index].exerciseSets} sets : ',
                                                         style: FontTextStyle
                                                             .kLightGray16W300Roboto),
-                                                    ListView.separated(
-                                                        itemCount: int.parse(
-                                                                    '${response.data![0].exercises![index].exerciseSets!}') >=
-                                                                7
-                                                            ? 7
-                                                            : int.parse(
-                                                                '${response.data![0].exercises![index].exerciseSets!}'),
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        physics:
-                                                            NeverScrollableScrollPhysics(),
-                                                        shrinkWrap: true,
-                                                        separatorBuilder:
-                                                            (_, index1) {
-                                                          return Text(
-                                                            ',',
-                                                            style: FontTextStyle
-                                                                .kLightGray16W300Roboto,
-                                                          );
-                                                        },
-                                                        itemBuilder:
-                                                            (_, index1) {
-                                                          // log('length --==--==--==${response.data![0].exercises![index].exerciseSets!}');
-                                                          // log('test--==--==--==${response.data![0].exercises![index].exerciseReps}');
-                                                          return Text(
-                                                              '${response.data![0].exercises![index].exerciseReps}',
+                                                    Container(
+                                                      width: Get.width * 0.3,
+                                                      child: ListView.separated(
+                                                          itemCount: int.parse(
+                                                                      '${response.data![0].exercises![index].exerciseSets!}') >=
+                                                                  7
+                                                              ? 7
+                                                              : int.parse(
+                                                                  '${response.data![0].exercises![index].exerciseSets!}'),
+                                                          scrollDirection: Axis
+                                                              .horizontal,
+                                                          physics:
+                                                              NeverScrollableScrollPhysics(),
+                                                          shrinkWrap: true,
+                                                          separatorBuilder:
+                                                              (_, index1) {
+                                                            return Text(
+                                                              ',',
                                                               style: FontTextStyle
-                                                                  .kLightGray16W300Roboto);
-                                                        }),
+                                                                  .kLightGray16W300Roboto,
+                                                            );
+                                                          },
+                                                          itemBuilder:
+                                                              (_, index1) {
+                                                            // log('length --==--==--==${response.data![0].exercises![index].exerciseSets!}');
+                                                            // log('test--==--==--==${response.data![0].exercises![index].exerciseReps}');
+                                                            return Text(
+                                                                '${response.data![0].exercises![index].exerciseReps}',
+                                                                style: FontTextStyle
+                                                                    .kLightGray16W300Roboto);
+                                                          }),
+                                                    ),
                                                     int.parse('${response.data![0].exercises![index].exerciseSets!}') >
                                                             7
                                                         ? Text(' ..',

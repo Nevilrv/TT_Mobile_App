@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +6,6 @@ import 'package:tcm/model/request_model/habit_tracker_request_model/add_user_hab
 import 'package:tcm/model/request_model/habit_tracker_request_model/custom_habit_request_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/add_user_habit_id_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/custom_habit_response_model.dart';
-import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/habit_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
@@ -37,6 +34,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
       Get.put(AddUserHabitIdViewModel());
   int habitIndex = 0;
   List habitId = [];
+  String? idList;
 
   initState() {
     super.initState();
@@ -50,18 +48,13 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
 
   oldId() async {
     await _habitViewModel.getHabitDetail(userId: PreferenceManager.getUId());
-
     if (_habitViewModel.apiResponse.status == Status.LOADING) {
       Center(
         child: CircularProgressIndicator(color: ColorUtils.kTint),
       );
     }
-
     if (_habitViewModel.apiResponse.status == Status.COMPLETE) {
       HabitResponseModel checkResp = _habitViewModel.apiResponse.data;
-
-      print("complete called from old id ");
-
       for (int i = 0; i < checkResp.data!.length; i++) {
         if (widget.oldHabitsId!.contains(checkResp.data![i].id)) {
           if (habitId.contains(checkResp.data![i].id)) {
@@ -70,13 +63,21 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
           }
         }
       }
-
-      print("habit id from old id =============== $habitId");
+      // print("habit id from old id =============== $habitId");
+      listOfHabitId();
     }
+  }
+
+  listOfHabitId() {
+    idList = habitId.join(",");
+    // print("inside ------------------ $idList");
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    listOfHabitId();
+    // print("habit id list 1111111 ------------------ $idList");
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
       appBar: AppBar(
@@ -149,13 +150,13 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                     id: '${response.data![index].id}');
                                 // log('${response.data![index].name}');
                                 // log('${controller.selectedHabitList}');
-                                print(
-                                    '----------========= ${response.data![index].id}');
-                                // setState(() {});
-                                print(
-                                    'list of habit id ---------------- $habitId');
-                                print(
-                                    "abc ------------------- ${listOfHabitId()}");
+                                // print(
+                                //     '----------========= ${response.data![index].id}');
+                                // // setState(() {});
+                                // print(
+                                //     'list of habit id ---------------- $habitId');
+                                // print(
+                                //     "abc ------------------- ${listOfHabitId()}");
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -283,12 +284,12 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
               SizedBox(height: Get.height * .08),
               commonNavigationButton(
                   onTap: () async {
-                    if (_habitViewModel.firstSelectedHabitList.isNotEmpty) {
+                    if (idList!.isNotEmpty) {
                       AddUserHabitIdRequestModel _request =
                           AddUserHabitIdRequestModel();
 
                       _request.userId = PreferenceManager.getUId();
-                      _request.habitIds = listOfHabitId();
+                      _request.habitIds = idList;
 
                       await _addUserHabitIdViewModel
                           .addUserHabitIdViewModel(_request);
@@ -302,7 +303,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           message: '${res.msg}',
                           duration: Duration(seconds: 2),
                         ));
-                        print("------------------- ${listOfHabitId()}");
+                        // print("------------------- ${listOfHabitId()}");
                         print(
                             "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
                         HabitResponseModel resp =
@@ -328,12 +329,6 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
         ),
       ),
     );
-  }
-
-  listOfHabitId() {
-    String idList = habitId.join(",");
-    print("inside ------------------ $idList");
-    return idList;
   }
 
   _customHabitAlertDialog() {
@@ -423,7 +418,6 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           ));
                           print(
                               "_customHabitViewModel.apiResponse.message  ${res.msg}");
-
                           _habitViewModel.getHabitDetail(
                               userId: PreferenceManager.getUId());
                           _alertDialogTextController.clear();

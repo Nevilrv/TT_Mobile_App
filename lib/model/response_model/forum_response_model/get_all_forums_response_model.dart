@@ -23,40 +23,38 @@ class GetAllForumsResponseModel {
 
   factory GetAllForumsResponseModel.fromJson(Map<String, dynamic> json) =>
       GetAllForumsResponseModel(
-        success: json["success"] == null ? null : json["success"],
-        msg: json["msg"] == null ? null : json["msg"],
-        data: json["data"] == null
-            ? null
-            : List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        success: json["success"],
+        msg: json["msg"],
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "success": success == null ? null : success,
-        "msg": msg == null ? null : msg,
-        "data": data == null
-            ? null
-            : List<dynamic>.from(data!.map((x) => x.toJson())),
+        "success": success,
+        "msg": msg,
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
 class Datum {
-  Datum(
-      {this.postId,
-      this.postTitle,
-      this.postDescription,
-      this.postTag,
-      this.postFeatured,
-      this.published,
-      this.postDate,
-      this.postImage,
-      this.tagTitle,
-      this.userId,
-      this.userName,
-      this.profilePic,
-      this.totalDislike,
-      this.totalLike,
-      this.userLiked,
-      this.userDisLiked});
+  Datum({
+    this.postId,
+    this.postTitle,
+    this.postDescription,
+    this.postTag,
+    this.postFeatured,
+    this.published,
+    this.postDate,
+    this.postImage,
+    this.tagTitle,
+    this.userId,
+    this.username,
+    this.profilePic,
+    this.totalLikes,
+    this.totalDislikes,
+    this.userLiked,
+    this.userDisliked,
+    this.totalComments,
+  });
 
   String? postId;
   String? postTitle;
@@ -66,14 +64,15 @@ class Datum {
   DateTime? published;
   String? postDate;
   String? postImage;
-  String? tagTitle;
+  List<String>? tagTitle;
   String? userId;
-  String? userName;
+  String? username;
   String? profilePic;
-  int? totalLike;
-  int? totalDislike;
+  int? totalLikes;
+  int? totalDislikes;
   int? userLiked;
-  int? userDisLiked;
+  int? userDisliked;
+  int? totalComments;
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
         postId: json["post_id"] == null ? null : json["post_id"],
@@ -88,16 +87,20 @@ class Datum {
             : DateTime.parse(json["published"]),
         postDate: json["post_date"] == null ? null : json["post_date"],
         postImage: json["post_image"] == null ? null : json["post_image"],
-        tagTitle: json["tag_title"] == null ? null : json["tag_title"],
+        tagTitle: json["tag_title"] == null
+            ? null
+            : List<String>.from(json["tag_title"].map((x) => x)),
         userId: json["user_id"] == null ? null : json["user_id"],
-        userName: json["username"] == null ? null : json["username"],
+        username: json["username"] == null ? null : json["username"],
         profilePic: json["profile_pic"] == null ? null : json["profile_pic"],
-        totalLike: json["total_likes"] == null ? null : json["total_likes"],
-        totalDislike:
+        totalLikes: json["total_likes"] == null ? null : json["total_likes"],
+        totalDislikes:
             json["total_dislikes"] == null ? null : json["total_dislikes"],
         userLiked: json["user_liked"] == null ? null : json["user_liked"],
-        userDisLiked:
+        userDisliked:
             json["user_disliked"] == null ? null : json["user_disliked"],
+        totalComments:
+            json["total_comments"] == null ? null : json["total_comments"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -109,13 +112,16 @@ class Datum {
         "published": published == null ? null : published!.toIso8601String(),
         "post_date": postDate == null ? null : postDate,
         "post_image": postImage == null ? null : postImage,
-        "tag_title": tagTitle == null ? null : tagTitle,
+        "tag_title": tagTitle == null
+            ? null
+            : List<dynamic>.from(tagTitle!.map((x) => x)),
         "user_id": userId == null ? null : userId,
-        "username": userName == null ? null : userName,
+        "username": username == null ? null : username,
         "profile_pic": profilePic == null ? null : profilePic,
-        "total_likes": totalLike == null ? null : totalLike,
-        "total_dislikes": totalDislike == null ? null : totalDislike,
+        "total_likes": totalLikes == null ? null : totalLikes,
+        "total_dislikes": totalDislikes == null ? null : totalDislikes,
         "user_liked": userLiked == null ? null : userLiked,
-        "user_disliked": userDisLiked == null ? null : userDisLiked,
+        "user_disliked": userDisliked == null ? null : userDisliked,
+        "total_comments": totalComments == null ? null : totalComments,
       };
 }

@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
@@ -7,6 +8,7 @@ import 'package:tcm/model/schedule_response_model/schedule_by_date_response_mode
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/schedule_screens/widgets/my_schedule_screen_widget.dart';
 import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
+import 'package:tcm/screen/training_plan_screens/program_setup_page.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -19,18 +21,7 @@ class MyScheduleScreen extends StatefulWidget {
 
 class _MyScheduleScreenState extends State<MyScheduleScreen>
     with AutomaticKeepAliveClientMixin<MyScheduleScreen> {
-  bool? switchSelected = false;
   var tabs = ['Calender', 'List View'];
-  int? focusSelected = 0;
-
-  DateTime _focusedDay = DateTime.now();
-
-  DateTime? _selectedDay;
-  Map<DateTime, List> _eventsList = {};
-
-  int getHashCode(DateTime key) {
-    return key.day * 1000000 + key.month * 10000 + key.year;
-  }
 
   @override
   bool get wantKeepAlive => true;
@@ -43,23 +34,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     super.initState();
     _scheduleByDateViewModel.getScheduleByDateDetails(
         userId: PreferenceManager.getUId());
-
-    _selectedDay = _focusedDay;
-
-    _eventsList = {
-      DateTime.now(): [
-        {
-          'title': 'Chest and Back Blast',
-          'subtitle': 'Day 1 - Chest and Traps'
-        },
-        {'title': 'Legs', 'subtitle': ' Day 2 - Legs'},
-        {
-          'title': 'Biceps and Shoulder',
-          'subtitle': 'Day 3 - Biceps and Shoulder'
-        },
-        {'title': 'Killer Core', 'subtitle': 'Day 4 - Killer Core'}
-      ],
-    };
   }
 
   @override
@@ -67,18 +41,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     super.dispose();
   }
 
-  DateTime selectedDay = DateTime.now();
-
   @override
   Widget build(BuildContext context) {
-    final _events = LinkedHashMap<DateTime, List>(
-      hashCode: getHashCode,
-    )..addAll(_eventsList);
-
-    List _getEventForDay(DateTime day) {
-      return _events[day] ?? [];
-    }
-
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
       appBar: AppBar(
@@ -99,6 +63,17 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
         if (controller.apiResponse.status == Status.COMPLETE) {
           ScheduleByDateResponseModel scheduleResponse =
               controller.apiResponse.data;
+
+          for (int i = 0; i < scheduleResponse.data!.length; i++) {
+            if (controller.dayList.contains(
+                DateTime.parse('${scheduleResponse.data![i].date}'))) {
+            } else {
+              controller.dayList
+                  .add(DateTime.parse('${scheduleResponse.data![i].date}'));
+            }
+
+            controller.allDates(date: controller.dayList);
+          }
 
           return DefaultTabController(
             length: 2,
@@ -241,8 +216,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     // enablePastDates: false,
                                     controller:
                                         controller.dateRangePickerController,
-                                    initialDisplayDate: selectedDay,
-                                    initialSelectedDate: selectedDay,
+                                    initialDisplayDate:
+                                        controller.dayList.isNotEmpty
+                                            ? controller.dayList.first
+                                            : DateTime.now(),
                                     todayHighlightColor: ColorUtils.kTint,
                                     selectionRadius: 17,
                                     selectionColor: ColorUtils.kTint,
@@ -250,6 +227,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     maxDate: DateTime.utc(2099, 12, 31),
                                     selectionTextStyle:
                                         FontTextStyle.kBlack18w600Roboto,
+
                                     enableMultiView: false,
                                     yearCellStyle: DateRangePickerYearCellStyle(
                                         textStyle:
@@ -260,25 +238,25 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                             .kLightGray16W300Roboto),
                                     monthCellStyle:
                                         DateRangePickerMonthCellStyle(
-                                      // todayCellDecoration:
-                                      //     BoxDecoration(color: Colors.transparent),
+                                      todayCellDecoration: BoxDecoration(
+                                          color: Colors.transparent),
                                       disabledDatesTextStyle:
                                           FontTextStyle.kLightGray16W300Roboto,
                                       textStyle:
                                           FontTextStyle.kWhite17W400Roboto,
-
                                       todayTextStyle:
                                           FontTextStyle.kWhite17W400Roboto,
                                     ),
                                     selectionMode:
-                                        DateRangePickerSelectionMode.single,
+                                        DateRangePickerSelectionMode.multiple,
+                                    initialSelectedDates: controller.dayList,
 
                                     onSelectionChanged:
                                         (DateRangePickerSelectionChangedArgs
                                             args) {
-                                      selectedDay = args.value;
-                                      print(
-                                          'selectedDay ------------- ${selectedDay}');
+                                      controller.dateRangePickerController
+                                          .selectedDates = controller.dayList;
+                                      args.value.clear();
                                       setState(() {});
                                     },
                                     monthViewSettings:
@@ -298,7 +276,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                   ),
                                 ),
                               ),
-                              SizedBox(height: Get.width * 0.04),
+                              SizedBox(height: Get.width * .04),
                               Text(
                                 AppText.scheduleWorkout,
                                 style: FontTextStyle.kWhite18BoldRoboto,
@@ -308,67 +286,88 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                 thickness: 1.5,
                                 height: Get.height * .04,
                               ),
-
                               ListView.builder(
                                   physics: BouncingScrollPhysics(),
                                   shrinkWrap: true,
                                   itemCount: scheduleResponse.data!.length,
                                   itemBuilder: (_, index) {
-                                    List<String> finalDate =
-                                        selectedDay.toString().split(" ");
-
-                                    print(" -=-=-==-=-=-= ${finalDate[0]}");
-                                    print(
-                                        'date from api ${scheduleResponse.data![index].date}');
-
-                                    print(
-                                        "condition =========${scheduleResponse.data![index].date == finalDate[0]} ");
-
-                                    if (scheduleResponse.data![index].date ==
-                                        finalDate[0]) {
-                                      return ListView.builder(
-                                          itemCount: scheduleResponse
-                                              .data![index].programData!.length,
-                                          shrinkWrap: true,
-                                          physics:
-                                              NeverScrollableScrollPhysics(),
-                                          itemBuilder: (_, index1) {
-                                            return ListTile(
-                                              title: Text(
-                                                scheduleResponse
-                                                    .data![index]
-                                                    .programData![index1]
-                                                    .workoutTitle!,
-                                                style: FontTextStyle
-                                                    .kWhite17BoldRoboto,
+                                    // List<String> finalDate =
+                                    //     selectedDay.toString().split(" ");
+                                    // print(" -=-=-==-=-=-= ${finalDate[0]}");
+                                    // print(
+                                    //     'date from api ${scheduleResponse.data![index].date}');
+                                    // print(
+                                    //     "condition =========${scheduleResponse.data![index].date == finalDate[0]} ");
+                                    // if (scheduleResponse.data![index].date ==
+                                    //     finalDate[0]) {
+                                    return ListView.builder(
+                                        itemCount: scheduleResponse
+                                            .data![index].programData!.length,
+                                        shrinkWrap: true,
+                                        physics: NeverScrollableScrollPhysics(),
+                                        itemBuilder: (_, index1) {
+                                          return ListTile(
+                                            title: Text(
+                                              scheduleResponse
+                                                  .data![index]
+                                                  .programData![index1]
+                                                  .workoutTitle!,
+                                              style: FontTextStyle
+                                                  .kWhite17BoldRoboto,
+                                            ),
+                                            subtitle: Text(
+                                              '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
+                                                  " - " +
+                                                  ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
+                                              style: FontTextStyle
+                                                  .kLightGray16W300Roboto,
+                                            ),
+                                            trailing: InkWell(
+                                              onTap: () {
+                                                openBottomSheet(
+                                                    context: context,
+                                                    event: scheduleResponse
+                                                        .data![index],
+                                                    onPressedView: () {
+                                                      Get.to(PlanOverviewScreen(
+                                                          id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                    },
+                                                    onPressedEdit: () {
+                                                      Get.to(ProgramSetupPage(
+                                                        day: '1',
+                                                        workoutName:
+                                                            scheduleResponse
+                                                                .data![index]
+                                                                .programData![0]
+                                                                .workoutTitle,
+                                                        workoutId:
+                                                            scheduleResponse
+                                                                .data![index]
+                                                                .programData![0]
+                                                                .workoutId,
+                                                        exerciseId:
+                                                            scheduleResponse
+                                                                .data![index]
+                                                                .programData![0]
+                                                                .exerciseId,
+                                                        programData:
+                                                            scheduleResponse
+                                                                .data![index]
+                                                                .programData,
+                                                        isEdit: true,
+                                                      ));
+                                                    });
+                                              },
+                                              child: Icon(
+                                                Icons.more_horiz_sharp,
+                                                color: ColorUtils.kTint,
                                               ),
-                                              subtitle: Text(
-                                                '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
-                                                    " - " +
-                                                    ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
-                                                style: FontTextStyle
-                                                    .kLightGray16W300Roboto,
-                                              ),
-                                              trailing: InkWell(
-                                                onTap: () {
-                                                  openBottomSheet(
-                                                      event: scheduleResponse
-                                                          .data![index],
-                                                      onPressed: () {
-                                                        Get.to(PlanOverviewScreen(
-                                                            id: "${scheduleResponse.data![index].programData![0].workoutId}"));
-                                                      });
-                                                },
-                                                child: Icon(
-                                                  Icons.more_horiz_sharp,
-                                                  color: ColorUtils.kTint,
-                                                ),
-                                              ),
-                                            );
-                                          });
-                                    } else {
-                                      return SizedBox();
-                                    }
+                                            ),
+                                          );
+                                        });
+                                    // } else {
+                                    //   return SizedBox();
+                                    // }
                                   }),
                             ],
                           ),
@@ -376,7 +375,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                       ),
                       listViewTab(
                           getEventForDay: scheduleResponse.data!,
-                          selectedDay: _selectedDay)
+                          context: context,
+                          scheduleResponse: scheduleResponse)
                     ]),
                   ),
                 ],
