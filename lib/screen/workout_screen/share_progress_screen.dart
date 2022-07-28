@@ -9,9 +9,12 @@ import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/workout_viewModel/share_viewModel.dart';
+import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 
 class ShareProgressScreen extends StatelessWidget {
   ShareViewModel _shareViewModel = Get.put(ShareViewModel());
+  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
+      Get.put(WorkoutBaseExerciseViewModel());
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +25,7 @@ class ShareProgressScreen extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               Get.back();
+              _workoutBaseExerciseViewModel.exeIdCounter = -1;
             },
             icon: Icon(
               Icons.arrow_back_ios_sharp,
@@ -92,6 +96,7 @@ class ShareProgressScreen extends StatelessWidget {
                   name: 'Next',
                   onTap: () {
                     Get.offAll(HomeScreen());
+                    _workoutBaseExerciseViewModel.exeIdCounter = -1;
                   })
             ]),
       ),

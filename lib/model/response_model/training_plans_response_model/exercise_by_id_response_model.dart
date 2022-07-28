@@ -45,6 +45,7 @@ class ExerciseById {
     this.exerciseRest,
     this.exerciseEquipment,
     this.exerciseLevel,
+    this.exerciseType,
     this.exerciseWeight,
     this.exerciseTime,
     this.exerciseDistance,
@@ -68,6 +69,7 @@ class ExerciseById {
   String? exerciseRest;
   String? exerciseEquipment;
   String? exerciseLevel;
+  String? exerciseType;
   String? exerciseWeight;
   String? exerciseTime;
   String? exerciseDistance;
@@ -91,6 +93,7 @@ class ExerciseById {
         exerciseRest: json["exercise_rest"],
         exerciseEquipment: json["exercise_equipment"],
         exerciseLevel: json["exercise_level"],
+        exerciseType: json["exercise_type"],
         exerciseWeight: json["exercise_weight"],
         exerciseTime: json["exercise_time"],
         exerciseDistance: json["exercise_distance"],
@@ -115,6 +118,7 @@ class ExerciseById {
         "exercise_rest": exerciseRest,
         "exercise_equipment": exerciseEquipment,
         "exercise_level": exerciseLevel,
+        "exercise_type": exerciseType,
         "exercise_weight": exerciseWeight,
         "exercise_time": exerciseTime,
         "exercise_distance": exerciseDistance,

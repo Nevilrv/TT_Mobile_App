@@ -8,9 +8,8 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/no_weight_exercise_screen.dart';
-import 'package:tcm/screen/workout_screen/no_weight_exercise_screen_one.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
-import 'package:tcm/screen/workout_screen/time_based_exercise_screen_one.dart';
+import 'package:tcm/screen/workout_screen/time_based_exercise_screen.dart';
 import 'package:tcm/screen/workout_screen/weighted_exercise.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -19,16 +18,17 @@ import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-class TimeBasedExesiceScreen extends StatefulWidget {
+class TimeBasedExesiceScreenOne extends StatefulWidget {
   List<ExerciseById> data;
 
-  TimeBasedExesiceScreen({Key? key, required this.data}) : super(key: key);
+  TimeBasedExesiceScreenOne({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<TimeBasedExesiceScreen> createState() => _TimeBasedExesiceScreenState();
+  State<TimeBasedExesiceScreenOne> createState() =>
+      _TimeBasedExesiceScreenOneState();
 }
 
-class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
+class _TimeBasedExesiceScreenOneState extends State<TimeBasedExesiceScreenOne>
     with SingleTickerProviderStateMixin {
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
@@ -127,7 +127,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
     if (widget.data.isNotEmpty) {
       timeDuration();
       print('----------------- ${widget.data[0].exerciseImage}');
-      return GetBuilder<ExerciseByIdViewModel>(builder: (context) {
+      return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
         if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
           ExerciseByIdResponseModel responseExe =
               _exerciseByIdViewModel.apiResponse.data;
@@ -387,7 +387,7 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                                         _videoPlayerController?.pause();
                                         _chewieController?.pause();
                                       }
-                                      Get.off(NoWeightExerciseScreenOne(
+                                      Get.off(NoWeightExerciseScreen(
                                         data: responseExe.data!,
                                       ));
                                     } else if ("${responseExe.data![0].exerciseType}" ==
@@ -399,12 +399,11 @@ class _TimeBasedExesiceScreenState extends State<TimeBasedExesiceScreen>
                                         _videoPlayerController?.pause();
                                         _chewieController?.pause();
                                       }
-                                      Get.off(TimeBasedExesiceScreenOne(
+                                      Get.off(TimeBasedExesiceScreen(
                                         data: responseExe.data!,
                                       ));
                                     }
                                   }
-
                                   if (_workoutBaseExerciseViewModel
                                           .exeIdCounter ==
                                       _workoutBaseExerciseViewModel

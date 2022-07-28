@@ -48,9 +48,9 @@ class PerfectDayScreen extends StatelessWidget {
         child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
           Padding(
             padding: EdgeInsets.only(
-                right: Get.width * 0.06,
-                left: Get.width * 0.06,
-                bottom: Get.height * 0.015),
+                right: Get.width * .06,
+                left: Get.width * .06,
+                bottom: Get.height * .015),
             child: SizedBox(
               height: Get.height * .65,
               child: Column(

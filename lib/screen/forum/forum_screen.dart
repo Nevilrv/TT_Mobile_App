@@ -33,7 +33,6 @@ enum Options { report, delete }
 
 class _ForumScreenState extends State<ForumScreen> {
   String _selectedOptions = '';
-
   ForumViewModel forumViewModel = Get.put(ForumViewModel());
   GetAllForumsResponseModel response = GetAllForumsResponseModel();
   @override
@@ -44,7 +43,6 @@ class _ForumScreenState extends State<ForumScreen> {
     SearchForumRequestModel model = SearchForumRequestModel();
     model.title = '';
     model.userId = PreferenceManager.getUId();
-
     forumViewModel.searchForumViewModel(model);
     // forumViewModel.getAllForumsViewModel();
   }

@@ -5,10 +5,9 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
-import 'package:tcm/screen/workout_screen/no_weight_exercise_screen_one.dart';
+import 'package:tcm/screen/workout_screen/no_weight_exercise_screen.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
 import 'package:tcm/screen/workout_screen/time_based_exercise_screen.dart';
-import 'package:tcm/screen/workout_screen/time_based_exercise_screen_one.dart';
 import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -19,16 +18,17 @@ import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 // ignore: must_be_immutable
-class NoWeightExerciseScreen extends StatefulWidget {
+class NoWeightExerciseScreenOne extends StatefulWidget {
   List<ExerciseById> data;
 
-  NoWeightExerciseScreen({Key? key, required this.data}) : super(key: key);
+  NoWeightExerciseScreenOne({Key? key, required this.data}) : super(key: key);
 
   @override
-  State<NoWeightExerciseScreen> createState() => _NoWeightExerciseScreenState();
+  State<NoWeightExerciseScreenOne> createState() =>
+      _NoWeightExerciseScreenOneState();
 }
 
-class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
+class _NoWeightExerciseScreenOneState extends State<NoWeightExerciseScreenOne> {
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
 
@@ -585,7 +585,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                                         _videoPlayerController?.pause();
                                         _chewieController?.pause();
                                       }
-                                      Get.off(NoWeightExerciseScreenOne(
+                                      Get.off(NoWeightExerciseScreen(
                                         data: responseExe.data!,
                                       ));
                                     } else if ("${responseExe.data![0].exerciseType}" ==
@@ -597,17 +597,20 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                                         _videoPlayerController?.pause();
                                         _chewieController?.pause();
                                       }
-                                      Get.off(TimeBasedExesiceScreenOne(
+                                      Get.off(TimeBasedExesiceScreen(
                                         data: responseExe.data!,
                                       ));
                                     }
                                   }
+
                                   if (_workoutBaseExerciseViewModel
                                           .exeIdCounter ==
                                       _workoutBaseExerciseViewModel
                                           .exerciseId.length) {
                                     Get.to(ShareProgressScreen());
                                   }
+
+                                  // Get.to(ShareProgressScreen());
 
                                   setState(() {
                                     _customizedExerciseViewModel.counterReps =
