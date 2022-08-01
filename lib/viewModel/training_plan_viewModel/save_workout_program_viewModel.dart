@@ -13,7 +13,7 @@ class SaveWorkoutProgramViewModel extends GetxController {
   Future<void> saveWorkoutProgramViewModel(
       SaveWorkoutProgramRequestModel model) async {
     _apiResponse = ApiResponse.loading(message: 'Loading');
-    // update();
+    update();
     print("model ---------- ${jsonEncode(model.toJson())}");
     try {
       print('==SaveWorkoutProgram=>');

@@ -73,14 +73,8 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
               ? Chewie(
                   controller: chewieController!,
                 )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(color: ColorUtils.kTint),
-                    SizedBox(height: 20),
-                    Text('Loading'),
-                  ],
-                ),
+              : Center(
+                  child: CircularProgressIndicator(color: ColorUtils.kTint)),
         ),
       ),
     );

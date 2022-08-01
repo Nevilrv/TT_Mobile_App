@@ -7,6 +7,7 @@ class SaveWorkoutProgramRequestModel {
   String? startDate;
   String? endDate;
   String? selectedDates;
+  String? workoutProgramId;
   // List<String>? selectedDates;
 
   SaveWorkoutProgramRequestModel(
@@ -16,7 +17,8 @@ class SaveWorkoutProgramRequestModel {
       this.selectedWeekDays,
       this.startDate,
       this.endDate,
-      this.selectedDates});
+      this.selectedDates,
+      this.workoutProgramId});
 
   SaveWorkoutProgramRequestModel.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'];
@@ -27,6 +29,7 @@ class SaveWorkoutProgramRequestModel {
     startDate = json['start_date'];
     endDate = json['end_date'];
     selectedDates = json['selected_dates'];
+    workoutProgramId = json['workout_program_id'] ?? '';
     // selectedDates = json['selected_dates'].cast<String>();
   }
 
@@ -39,6 +42,7 @@ class SaveWorkoutProgramRequestModel {
     data['start_date'] = this.startDate;
     data['end_date'] = this.endDate;
     data['selected_dates'] = this.selectedDates;
+    data['workout_program_id'] = this.workoutProgramId ?? '';
     return data;
   }
 }

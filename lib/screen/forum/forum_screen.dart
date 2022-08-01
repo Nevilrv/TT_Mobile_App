@@ -486,6 +486,8 @@ class _ForumScreenState extends State<ForumScreen> {
                   _selectedOptions = item.name;
                 });
                 if (_selectedOptions == 'report') {
+                  await forumViewModel
+                      .reportForumViewModel(response.data![index].postId!);
                 } else {
                   await forumViewModel
                       .deleteForumViewModel(response.data![index].postId!)

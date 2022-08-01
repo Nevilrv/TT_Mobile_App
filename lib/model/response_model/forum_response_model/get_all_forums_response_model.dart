@@ -63,7 +63,8 @@ class Datum {
   String? postFeatured;
   DateTime? published;
   String? postDate;
-  String? postImage;
+
+  List<String>? postImage;
   List<String>? tagTitle;
   String? userId;
   String? username;
@@ -86,7 +87,9 @@ class Datum {
             ? null
             : DateTime.parse(json["published"]),
         postDate: json["post_date"] == null ? null : json["post_date"],
-        postImage: json["post_image"] == null ? null : json["post_image"],
+        postImage: json["post_image"] == ""
+            ? null
+            : List<String>.from(json["post_image"].map((x) => x)),
         tagTitle: json["tag_title"] == null
             ? null
             : List<String>.from(json["tag_title"].map((x) => x)),
@@ -111,7 +114,9 @@ class Datum {
         "post_featured": postFeatured == null ? null : postFeatured,
         "published": published == null ? null : published!.toIso8601String(),
         "post_date": postDate == null ? null : postDate,
-        "post_image": postImage == null ? null : postImage,
+        "post_image": postImage == ""
+            ? null
+            : List<dynamic>.from(postImage!.map((x) => x)),
         "tag_title": tagTitle == null
             ? null
             : List<dynamic>.from(tagTitle!.map((x) => x)),

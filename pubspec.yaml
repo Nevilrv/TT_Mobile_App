@@ -55,7 +55,10 @@ dependencies:
   file_picker: ^4.6.1
   video_thumbnail: ^0.5.2
   dotted_border: ^2.0.0+1
-#  syncfusion_flutter_datepicker: ^20.1.61
+  video_compress: ^3.1.0
+  flutter_video_info: ^1.2.0
+
+    #  syncfusion_flutter_datepicker: ^20.1.61
 
 
 

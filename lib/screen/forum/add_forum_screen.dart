@@ -1,26 +1,29 @@
 import 'dart:convert';
+import 'dart:developer' as d;
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
-
+import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:auto_size_text_field/auto_size_text_field.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:dio/dio.dart' as dio;
 import 'package:path_provider/path_provider.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/forum_request_model/add_forum_request_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/add_forum_response_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_tags_response_model.dart';
+import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/forum/video_preview_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/forum_viewModel/tags_viewModel.dart';
+import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 import 'package:video_thumbnail/video_thumbnail.dart';
 
@@ -48,7 +51,10 @@ class _AddForumScreenState extends State<AddForumScreen> {
   List data = [];
   List<Map<String, dynamic>> filesAll = [];
   List<File> files = [];
-  VideoPlayerController? _controller;
+  MediaInfo? mediaInfo;
+  FlutterVideoInfo videoInfo = FlutterVideoInfo();
+  bool isLongVideo = false;
+  bool isStartCompressing = false;
   @override
   void initState() {
     // TODO: implement initState
@@ -69,6 +75,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
         leading: IconButton(
             onPressed: () {
               Get.back();
+              VideoCompress.cancelCompression();
             },
             icon: Icon(
               Icons.arrow_back_ios_sharp,
@@ -157,210 +164,273 @@ class _AddForumScreenState extends State<AddForumScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         filesAll.length >= 5
                             ? SizedBox()
-                            : GestureDetector(
-                                onTap: () async {
-                                  FilePickerResult? result =
-                                      await FilePicker.platform.pickFiles(
-                                          type: FileType.custom,
-                                          allowedExtensions: [
-                                        'jpg',
-                                        'mp4',
-                                        'png',
-                                        'mov'
-                                      ]);
+                            : Padding(
+                                padding:
+                                    EdgeInsets.only(top: Get.height * 0.007),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    FilePickerResult? result =
+                                        await FilePicker.platform.pickFiles(
+                                            type: FileType.custom,
+                                            allowCompression: true,
+                                            allowedExtensions: [
+                                          'jpg',
+                                          'mp4',
+                                          'png',
+                                          'mov'
+                                        ]);
 
-                                  if (result != null) {
-                                    files = result.paths
-                                        .map((path) => File(path!))
-                                        .toList();
+                                    if (result != null) {
+                                      files = result.paths
+                                          .map((path) => File(path!))
+                                          .toList();
 
-                                    files.forEach((element) async {
-                                      setState(() {});
-                                      if (element.path.isVideoFileName) {
-                                        final uint8list =
-                                            await VideoThumbnail.thumbnailData(
-                                          video: element.path,
-                                          imageFormat: ImageFormat.JPEG,
-                                          maxHeight: 250,
-                                          maxWidth: 250,
-                                          quality: 50,
-                                        );
-                                        Uint8List imageInUnit8List =
-                                            uint8list!; // store unit8List image here ;
-                                        final tempDir =
-                                            await getTemporaryDirectory();
-                                        File file = await File(
-                                                '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png')
-                                            .create();
-                                        file.writeAsBytesSync(imageInUnit8List);
-                                        setState(() {
-                                          filesAll.add({
-                                            'type': 'mp4',
-                                            'file': element,
-                                            'thumbnail': file
+                                      files.forEach((element) async {
+                                        setState(() {});
+                                        if (element.path.isVideoFileName) {
+                                          final uint8list = await VideoThumbnail
+                                              .thumbnailData(
+                                            video: element.path,
+                                            imageFormat: ImageFormat.JPEG,
+                                            maxHeight: 250,
+                                            maxWidth: 250,
+                                            quality: 50,
+                                          );
+                                          Uint8List imageInUnit8List =
+                                              uint8list!; // store unit8List image here ;
+                                          final tempDir =
+                                              await getTemporaryDirectory();
+                                          File file = await File(
+                                                  '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png')
+                                              .create();
+                                          file.writeAsBytesSync(
+                                              imageInUnit8List);
+
+                                          var a = await videoInfo
+                                              .getVideoInfo(element.path);
+
+                                          setState(() {
+                                            filesAll.add({
+                                              'type': 'mp4',
+                                              'file': element,
+                                              'thumbnail': file,
+                                              'size': a!.filesize,
+                                              'duration': a.duration,
+                                            });
                                           });
-                                        });
-                                      } else {
-                                        filesAll.add({
-                                          'type': 'image',
-                                          'file': element,
-                                          'thumbnail': element
-                                        });
-                                      }
-                                      print(
-                                          'filesAll filesAll?????? ${filesAll}');
-                                    });
+                                        } else {
+                                          filesAll.add({
+                                            'type': 'image',
+                                            'file': element,
+                                            'thumbnail': element,
+                                            'size': 0,
+                                            'duration': 0,
+                                          });
+                                        }
+                                        // 2,400,000
+                                        print(
+                                            'filesAll filesAll?????? ${filesAll}');
+                                      });
 
-                                    print('files >>>>${files}');
-                                  } else {
-                                    // User canceled the picker
-                                  }
-                                },
-                                child: DottedBorder(
-                                  borderType: BorderType.RRect,
-                                  color: ColorUtils.kTint,
-                                  radius: Radius.circular(10),
-                                  child: Container(
-                                    height: Get.height * 0.115,
-                                    width: Get.height * 0.115,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Get.height * 0.02),
-                                      child: Center(
-                                        child: Icon(
-                                          Icons.add,
-                                          color: ColorUtils.kTint,
-                                          size: Get.height * 0.05,
+                                      print('files >>>>${files}');
+                                    } else {
+                                      // User canceled the picker
+                                    }
+                                  },
+                                  child: DottedBorder(
+                                    borderType: BorderType.RRect,
+                                    color: ColorUtils.kTint,
+                                    radius: Radius.circular(10),
+                                    child: Container(
+                                      height: Get.height * 0.115,
+                                      width: Get.height * 0.115,
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.height * 0.02),
+                                        child: Center(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                Icons.add,
+                                                color: ColorUtils.kTint,
+                                                size: Get.height * 0.05,
+                                              ),
+                                              Text(
+                                                'UPLOAD',
+                                                style: FontTextStyle
+                                                    .kTine17BoldRoboto,
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
-                        Row(
-                          children: List.generate(filesAll.length, (index) {
-                            if (filesAll[index]['type'] == 'image') {
-                              print('hello....1');
-                              return Padding(
-                                padding: EdgeInsets.all(Get.height * 0.007),
-                                child: Stack(
-                                  overflow: Overflow.visible,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Get.to(ImagePreviewScreen(
-                                          image: filesAll[index]['file'],
-                                        ));
-                                      },
-                                      child: Container(
-                                        height: Get.height * 0.12,
-                                        width: Get.height * 0.12,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: ColorUtils.kTint)),
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: Image.file(
-                                              filesAll[index]['file'],
-                                              fit: BoxFit.cover,
-                                            )),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: -Get.height * 0.007,
-                                      right: -Get.height * 0.007,
-                                      child: GestureDetector(
+                        Container(
+                          height: Get.height * 0.15,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: List.generate(filesAll.length, (index) {
+                              if (filesAll[index]['type'] == 'image') {
+                                print('hello....1');
+                                return Padding(
+                                  padding: EdgeInsets.all(Get.height * 0.007),
+                                  child: Stack(
+                                    overflow: Overflow.visible,
+                                    children: [
+                                      GestureDetector(
                                         onTap: () {
-                                          setState(() {
-                                            print('filesAll  ${filesAll}');
-                                            filesAll.removeAt(index);
-                                          });
+                                          Get.to(ImagePreviewScreen(
+                                            image: filesAll[index]['file'],
+                                          ));
                                         },
-                                        child: CircleAvatar(
-                                            radius: Get.height * 0.013,
-                                            backgroundColor: ColorUtils.kTint,
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.clear,
-                                              size: Get.height * 0.02,
-                                              color: ColorUtils.kBlack,
-                                            ))),
+                                        child: Container(
+                                          height: Get.height * 0.12,
+                                          width: Get.height * 0.12,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                  color: ColorUtils.kTint)),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.file(
+                                                filesAll[index]['file'],
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            } else {
-                              print('hello....2');
+                                      Positioned(
+                                        top: -Get.height * 0.007,
+                                        right: -Get.height * 0.007,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              print('filesAll  ${filesAll}');
+                                              filesAll.removeAt(index);
+                                            });
+                                          },
+                                          child: CircleAvatar(
+                                              radius: Get.height * 0.013,
+                                              backgroundColor: ColorUtils.kTint,
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.clear,
+                                                size: Get.height * 0.02,
+                                                color: ColorUtils.kBlack,
+                                              ))),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                filesAll.forEach((element) {
+                                  if (filesAll[index]['duration'] <=
+                                      2400000.0) {
+                                    setState(() {
+                                      isLongVideo = false;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      isLongVideo = true;
+                                    });
+                                  }
+                                  print('ELEMENT>>>>>>>  $element');
+                                });
+                                print(
+                                    'hello....2  ${filesAll[index]['duration']}');
 
-                              return Padding(
-                                padding: EdgeInsets.all(Get.height * 0.007),
-                                child: Stack(
-                                  overflow: Overflow.visible,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Get.to(VideoPreviewScreen(
-                                          video: filesAll[index]['file'],
-                                        ));
-                                      },
-                                      child: Container(
-                                        height: Get.height * 0.12,
-                                        width: Get.height * 0.12,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: ColorUtils.kTint)),
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            child: Image.file(
-                                              filesAll[index]['thumbnail'],
-                                              fit: BoxFit.cover,
-                                            )),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      top: -Get.height * 0.007,
-                                      right: -Get.height * 0.007,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            print('filesAll  ${filesAll}');
-                                            filesAll.removeAt(index);
-                                          });
+                                return Padding(
+                                  padding: EdgeInsets.all(Get.height * 0.007),
+                                  child: Stack(
+                                    overflow: Overflow.visible,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () async {
+                                          Get.to(VideoPreviewScreen(
+                                            video: filesAll[index]['file'],
+                                          ));
                                         },
-                                        child: CircleAvatar(
-                                            radius: Get.height * 0.013,
-                                            backgroundColor: ColorUtils.kTint,
-                                            child: Center(
-                                                child: Icon(
-                                              Icons.clear,
-                                              size: Get.height * 0.02,
-                                              color: ColorUtils.kBlack,
-                                            ))),
+                                        child: Container(
+                                          height: Get.height * 0.12,
+                                          width: Get.height * 0.12,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: (filesAll[index]
+                                                          ['duration'] <=
+                                                      2400000.0)
+                                                  ? Border.all(
+                                                      color: ColorUtils.kTint)
+                                                  : Border.all(
+                                                      color: ColorUtils.kRed)),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.file(
+                                                filesAll[index]['thumbnail'],
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
                                       ),
-                                    ),
-                                    Positioned(
-                                      bottom: 5,
-                                      right: 5,
-                                      child: Icon(
-                                        Icons.videocam,
-                                        color: ColorUtils.kWhite,
+                                      (filesAll[index]['duration'] <= 2400000.0)
+                                          ? SizedBox()
+                                          : Positioned(
+                                              bottom: -15,
+                                              left: 0,
+                                              child: Text(
+                                                'Too large....',
+                                                style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontSize:
+                                                        Get.height * 0.016),
+                                              ),
+                                            ),
+                                      Positioned(
+                                        top: -Get.height * 0.007,
+                                        right: -Get.height * 0.007,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              print('filesAll  ${filesAll}');
+                                              filesAll.removeAt(index);
+                                            });
+                                          },
+                                          child: CircleAvatar(
+                                              radius: Get.height * 0.013,
+                                              backgroundColor: ColorUtils.kTint,
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.clear,
+                                                size: Get.height * 0.02,
+                                                color: ColorUtils.kBlack,
+                                              ))),
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                          }),
+                                      Positioned(
+                                        bottom: 5,
+                                        right: 5,
+                                        child: Icon(
+                                          Icons.videocam,
+                                          color: ColorUtils.kWhite,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              }
+                            }),
+                          ),
                         ),
                       ],
                     ),
@@ -411,7 +481,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                           IconButton(
                                               onPressed: () async {
                                                 Get.back();
-                                                tag.clear();
+
                                                 controller.setSelectTagId('');
                                                 controller
                                                     .setSelectedTagTitle('');
@@ -427,7 +497,6 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                                 if (controller
                                                     .selectedTagTitle.isEmpty) {
                                                   Navigator.pop(context);
-                                                  tag.clear();
 
                                                   controller.setSelectTagId('');
                                                   controller
@@ -459,7 +528,6 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                                   controller
                                                       .setValueFinal(result);
                                                   Navigator.pop(context);
-                                                  tag.clear();
 
                                                   controller.setSelectTagId('');
                                                   controller
@@ -499,7 +567,6 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                             if (controller
                                                 .selectedTagTitle.isEmpty) {
                                               Navigator.pop(context);
-                                              tag.clear();
 
                                               controller.setSelectTagId('');
                                               controller
@@ -529,7 +596,6 @@ class _AddForumScreenState extends State<AddForumScreen> {
 
                                               controller.setValueFinal(result);
                                               Navigator.pop(context);
-                                              tag.clear();
 
                                               controller.setSelectTagId('');
                                               controller
@@ -773,101 +839,161 @@ class _AddForumScreenState extends State<AddForumScreen> {
                             builder: (addForumViewModel) {
                               return GestureDetector(
                                 onTap: () async {
-                                  if (title.text.isEmpty) {
-                                    Get.showSnackbar(GetSnackBar(
-                                      duration: Duration(seconds: 2),
-                                      messageText: Text(
-                                        'Please add title......',
-                                        style: FontTextStyle.kTine17BoldRoboto,
-                                      ),
-                                    ));
-                                  } else if (description.text.isEmpty) {
-                                    Get.showSnackbar(GetSnackBar(
-                                      duration: Duration(seconds: 2),
-                                      messageText: Text(
-                                        'Please add description......',
-                                        style: FontTextStyle.kTine17BoldRoboto,
-                                      ),
-                                    ));
-                                  } else if (data.isEmpty) {
-                                    Get.showSnackbar(GetSnackBar(
-                                      duration: Duration(seconds: 2),
-                                      messageText: Text(
-                                        'Please elect tag......',
-                                        style: FontTextStyle.kTine17BoldRoboto,
-                                      ),
-                                    ));
-                                  } else {
-                                    String data3 = '';
-                                    var data1 = data.toString();
+                                  // if (title.text.isEmpty) {
+                                  //   Get.showSnackbar(GetSnackBar(
+                                  //     duration: Duration(seconds: 2),
+                                  //     messageText: Text(
+                                  //       'Please add title......',
+                                  //       style: FontTextStyle.kTine17BoldRoboto,
+                                  //     ),
+                                  //   ));
+                                  // } else if (description.text.isEmpty) {
+                                  //   Get.showSnackbar(GetSnackBar(
+                                  //     duration: Duration(seconds: 2),
+                                  //     messageText: Text(
+                                  //       'Please add description......',
+                                  //       style: FontTextStyle.kTine17BoldRoboto,
+                                  //     ),
+                                  //   ));
+                                  // } else if (isLongVideo == true) {
+                                  //   Get.showSnackbar(GetSnackBar(
+                                  //     duration: Duration(seconds: 2),
+                                  //     messageText: Text(
+                                  //       'Please select less than 40 min video',
+                                  //       style: FontTextStyle.kTine17BoldRoboto,
+                                  //     ),
+                                  //   ));
+                                  // } else if (data.isEmpty) {
+                                  //   Get.showSnackbar(GetSnackBar(
+                                  //     duration: Duration(seconds: 2),
+                                  //     messageText: Text(
+                                  //       'Please select tag......',
+                                  //       style: FontTextStyle.kTine17BoldRoboto,
+                                  //     ),
+                                  //   ));
+                                  // } else {
 
-                                    var data2 =
-                                        data1.substring(1, data1.length - 1);
-                                    print('data1  ${data2}');
-                                    AddForumRequestModel model =
-                                        AddForumRequestModel();
-                                    model.userId = PreferenceManager.getUId();
-                                    model.tagId = data2;
-                                    model.title = title.text;
-                                    model.description = description.text;
-                                    await addForumViewModel
-                                        .addForumViewModel(model);
-                                    if (addForumViewModel
-                                            .addForumApiResponse.status ==
-                                        Status.COMPLETE) {
-                                      AddForumResponseModel responseModel =
-                                          addForumViewModel
-                                              .addForumApiResponse.data;
-                                      if (responseModel.success == true) {
-                                        Get.showSnackbar(GetSnackBar(
-                                          duration: Duration(seconds: 2),
-                                          messageText: Text(
-                                            'Post created successfully....',
-                                            style:
-                                                FontTextStyle.kTine17BoldRoboto,
-                                          ),
-                                        ));
-                                        Future.delayed(Duration(seconds: 2),
-                                            () async {
-                                          forumViewModel.selectedMenu =
-                                              'All Posts'.obs;
-                                          Navigator.pop(context);
-                                          SearchForumRequestModel model =
-                                              SearchForumRequestModel();
-                                          model.title = '';
-                                          model.userId =
-                                              PreferenceManager.getUId();
+                                  for (int i = 0; i < filesAll.length; i++) {
+                                    d.log('${filesAll}');
+                                    if (filesAll[i]['type'] == 'mp4') {
+                                      setState(() {
+                                        isStartCompressing = true;
+                                      });
+                                      d.log('element>>>>>>....${filesAll[i]}');
+                                      mediaInfo =
+                                          await VideoCompress.compressVideo(
+                                        filesAll[i]['file'].path,
+                                        quality: VideoQuality.LowQuality,
+                                        deleteOrigin: false,
+                                      );
+                                      filesAll[i]['file'] = mediaInfo!.path!;
 
-                                          await forumViewModel
-                                              .searchForumViewModel(model);
-                                          if (forumViewModel
-                                                  .searchApiResponse.status ==
-                                              Status.COMPLETE) {
-                                            GetAllForumsResponseModel response =
-                                                forumViewModel
-                                                    .searchApiResponse.data;
+                                      print(mediaInfo!.filesize);
+                                    }
 
-                                            forumViewModel
-                                                .setLikeDisLike(response.data!);
-                                          }
+                                    if (filesAll[i] == filesAll.last) {
+                                      d.log('filesAll??????>>>>>${filesAll}');
+                                      d.log('>>>>>>>>>>>>>>>>>>>>>>>>???');
+                                      d.log('finish.....>>>>>');
+                                      setState(() {
+                                        isStartCompressing = false;
+                                      });
+                                      var data1 = data.toString();
 
-                                          controller.setSelectTagId('');
+                                      var data2 =
+                                          data1.substring(1, data1.length - 1);
+                                      print('data1  ${data2}');
+                                      AddForumRequestModel model =
+                                          AddForumRequestModel();
+                                      model.userId = PreferenceManager.getUId();
+                                      model.tagId = data2;
+                                      model.title = title.text;
+                                      model.description = description.text;
 
-                                          title.clear();
-                                          description.clear();
-                                        });
-                                      } else {
-                                        Get.showSnackbar(GetSnackBar(
-                                          duration: Duration(seconds: 2),
-                                          messageText: Text(
-                                            'Post not created',
-                                            style:
-                                                FontTextStyle.kTine17BoldRoboto,
-                                          ),
-                                        ));
-                                      }
+                                      // Map<String, dynamic> body = {
+                                      //   'title': title.text,
+                                      //   'description': description.text,
+                                      //   'tag_id': data2,
+                                      //   'user_id': PreferenceManager.getUId(),
+                                      //   'post_images[]':
+                                      //
+                                      // };
+                                      //
+                                      // Map<String, String> header = {
+                                      //   'content-type': 'application/json'
+                                      // };
+                                      //
+                                      // dio.FormData formData =
+                                      //     dio.FormData.fromMap(body);
+                                      //
+                                      // dio.Response result = await dio.Dio().post(
+                                      //     'https://tcm.sataware.dev//json/data_user_profile.php',
+                                      //     data: formData,
+                                      //     options:
+                                      //         dio.Options(headers: header));
+
+                                      // await addForumViewModel
+                                      //     .addForumViewModel(model);
+                                      // if (addForumViewModel
+                                      //         .addForumApiResponse.status ==
+                                      //     Status.COMPLETE) {
+                                      //   AddForumResponseModel responseModel =
+                                      //       addForumViewModel
+                                      //           .addForumApiResponse.data;
+                                      //   if (responseModel.success == true) {
+                                      //     Get.showSnackbar(GetSnackBar(
+                                      //       duration: Duration(seconds: 2),
+                                      //       messageText: Text(
+                                      //         'Post created successfully....',
+                                      //         style: FontTextStyle
+                                      //             .kTine17BoldRoboto,
+                                      //       ),
+                                      //     ));
+                                      //
+                                      //     Future.delayed(Duration(seconds: 2),
+                                      //         () async {
+                                      //       forumViewModel.selectedMenu =
+                                      //           'All Posts'.obs;
+                                      //       Navigator.pop(context);
+                                      //       SearchForumRequestModel model =
+                                      //           SearchForumRequestModel();
+                                      //       model.title = '';
+                                      //       model.userId =
+                                      //           PreferenceManager.getUId();
+                                      //
+                                      //       await forumViewModel
+                                      //           .searchForumViewModel(model);
+                                      //       if (forumViewModel
+                                      //               .searchApiResponse.status ==
+                                      //           Status.COMPLETE) {
+                                      //         GetAllForumsResponseModel
+                                      //             response = forumViewModel
+                                      //                 .searchApiResponse.data;
+                                      //
+                                      //         forumViewModel.setLikeDisLike(
+                                      //             response.data!);
+                                      //       }
+                                      //
+                                      //       controller.setSelectTagId('');
+                                      //
+                                      //       title.clear();
+                                      //       description.clear();
+                                      //     });
+                                      //   } else {
+                                      //     Get.showSnackbar(GetSnackBar(
+                                      //       duration: Duration(seconds: 2),
+                                      //       messageText: Text(
+                                      //         'Post not created',
+                                      //         style: FontTextStyle
+                                      //             .kTine17BoldRoboto,
+                                      //       ),
+                                      //     ));
+                                      //   }
+                                      // }
                                     }
                                   }
+
+                                  // }
                                 },
                                 child: Container(
                                   height: Get.height * 0.05,
@@ -893,6 +1019,14 @@ class _AddForumScreenState extends State<AddForumScreen> {
               ),
             ),
           ),
+          isStartCompressing == true
+              ? Container(
+                  color: Colors.white10,
+                  child: Center(
+                      child: CircularProgressIndicator(
+                    color: ColorUtils.kTint,
+                  )))
+              : SizedBox(),
           GetBuilder<AddForumViewModel>(
             builder: (addForumViewModel) {
               if (addForumViewModel.addForumApiResponse.status ==
@@ -910,6 +1044,17 @@ class _AddForumScreenState extends State<AddForumScreen> {
         ],
       ),
     );
+  }
+
+  getFileSize(String filepath, int decimals) async {
+    var file = File(filepath);
+    int bytes = await file.length();
+    if (bytes <= 0) return "0 B";
+    const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    var i = (log(bytes) / log(1024)).floor();
+    return ((bytes / pow(1024, i)).toStringAsFixed(decimals)) +
+        ' ' +
+        suffixes[i];
   }
 }
 

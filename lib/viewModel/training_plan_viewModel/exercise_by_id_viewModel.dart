@@ -4,6 +4,8 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/repo/training_plan_repo/exercise_by_id_repo.dart';
 
 class ExerciseByIdViewModel extends GetxController {
+  ExerciseByIdResponseModel? responseExe;
+
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get apiResponse => _apiResponse;

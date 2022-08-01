@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/remove_workout_program_request_model.dart';
+import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/remove_workout_program_response_model.dart';
-import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/screen/training_plan_screens/program_setup_page.dart';
@@ -14,10 +14,8 @@ import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/schedule_viewModel/schedule_by_date_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/remove_workout_program_viewModel.dart';
 
-RemoveWorkoutProgramViewModel _removeWorkoutProgramViewModel =
-    Get.put(RemoveWorkoutProgramViewModel());
-ScheduleByDateViewModel _scheduleByDateViewModel =
-    Get.put(ScheduleByDateViewModel());
+// ScheduleByDateViewModel _scheduleByDateViewModel =
+//     Get.put(ScheduleByDateViewModel());
 
 Padding listViewTab(
     {required List<Schedule> getEventForDay,
@@ -89,6 +87,8 @@ Padding listViewTab(
                                         programData: scheduleResponse
                                             .data![index].programData,
                                         isEdit: true,
+                                        workoutProgramId: scheduleResponse
+                                            .data![index].userProgramId,
                                       ));
                                     });
                               },
@@ -130,12 +130,13 @@ Tab tabBarCommonTab({IconData? icon, String? tabName}) {
   );
 }
 
-void openBottomSheet({
-  Schedule? event,
-  required BuildContext context,
-  Function()? onPressedView,
-  Function()? onPressedEdit,
-}) {
+void openBottomSheet(
+    {Schedule? event,
+    required BuildContext context,
+    Function()? onPressedView,
+    Function()? onPressedEdit,
+    RemoveWorkoutProgramViewModel? removeWorkoutProgramViewModel,
+    ScheduleByDateViewModel? scheduleByDateViewModel}) {
   Get.bottomSheet(
     Container(
       padding: const EdgeInsets.all(8),
@@ -177,9 +178,11 @@ void openBottomSheet({
               onPressed: () {
                 Get.back();
                 confirmAlertDialog(
-                  context: context,
-                  event: event,
-                );
+                    context: context,
+                    event: event,
+                    removeWorkoutProgramViewModel:
+                        removeWorkoutProgramViewModel,
+                    scheduleByDateViewModel: scheduleByDateViewModel);
               },
               style: ButtonStyle(
                   overlayColor: MaterialStateColor.resolveWith(
@@ -221,7 +224,11 @@ void openBottomSheet({
   );
 }
 
-confirmAlertDialog({BuildContext? context, Schedule? event}) {
+confirmAlertDialog(
+    {BuildContext? context,
+    Schedule? event,
+    RemoveWorkoutProgramViewModel? removeWorkoutProgramViewModel,
+    ScheduleByDateViewModel? scheduleByDateViewModel}) {
   showCupertinoDialog(
       context: context!,
       builder: (_) {
@@ -279,19 +286,16 @@ confirmAlertDialog({BuildContext? context, Schedule? event}) {
                     RemoveWorkoutProgramRequestModel _request =
                         RemoveWorkoutProgramRequestModel();
                     _request.userWorkoutProgramId = '${event!.userProgramId}';
-                    await _removeWorkoutProgramViewModel
+                    await removeWorkoutProgramViewModel!
                         .removeWorkoutProgramViewModel(_request);
-
                     print('goes');
                     Get.back();
-
-                    if (_removeWorkoutProgramViewModel.apiResponse.status ==
+                    if (removeWorkoutProgramViewModel.apiResponse.status ==
                         Status.COMPLETE) {
                       print(
-                          '${_removeWorkoutProgramViewModel.apiResponse.status}');
-
+                          '${removeWorkoutProgramViewModel.apiResponse.status}');
                       RemoveWorkoutProgramResponseModel removeWorkoutResponse =
-                          _removeWorkoutProgramViewModel.apiResponse.data;
+                          removeWorkoutProgramViewModel.apiResponse.data;
                       if (removeWorkoutResponse.success == true &&
                           removeWorkoutResponse.msg != null) {
                         print('${removeWorkoutResponse.msg}');
@@ -300,27 +304,40 @@ confirmAlertDialog({BuildContext? context, Schedule? event}) {
                           message: '${removeWorkoutResponse.msg}',
                           duration: Duration(seconds: 2),
                         ));
+
+                        print(
+                            'hello ================= ${removeWorkoutResponse.msg}');
+                        scheduleByDateViewModel!
+                            .dateRangePickerController.selectedDates = [];
+                        scheduleByDateViewModel
+                            .dateRangePickerController.selectedDates!
+                            .clear();
+                        scheduleByDateViewModel.dayList.clear();
+                        scheduleByDateViewModel.dayList = [];
+
+                        await scheduleByDateViewModel.getScheduleByDateDetails(
+                            userId: PreferenceManager.getUId());
+
+                        print('${removeWorkoutResponse.msg} ------------ ');
                       } else if (removeWorkoutResponse.success == true &&
                           removeWorkoutResponse.msg == null) {
                         Get.showSnackbar(GetSnackBar(
                           message: '${removeWorkoutResponse.msg}',
                           duration: Duration(seconds: 2),
                         ));
-                        print('${removeWorkoutResponse.msg}');
                       }
-                    } else if (_removeWorkoutProgramViewModel
+                    } else if (removeWorkoutProgramViewModel
                             .apiResponse.status ==
                         Status.ERROR) {
                       print(
-                          '${_removeWorkoutProgramViewModel.apiResponse.status}');
+                          '${removeWorkoutProgramViewModel.apiResponse.status}');
 
                       Get.showSnackbar(GetSnackBar(
                         message: 'Something went wrong!!!',
                         duration: Duration(seconds: 2),
                       ));
                     }
-                    _scheduleByDateViewModel.getScheduleByDateDetails(
-                        userId: PreferenceManager.getUId());
+
                     print("api recall successfully");
                   },
                 ),

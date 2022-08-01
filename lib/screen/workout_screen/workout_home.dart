@@ -387,35 +387,19 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                         commonNavigationButton(
                             name: 'Begin Warm-Up',
                             onTap: () {
-                              if (_workoutBaseExerciseViewModel.exeIdCounter <
+                              Get.to(NoWeightExerciseScreen(
+                                data: widget.data,
+                                workoutId: widget.workoutId,
+                              ));
+
+                              if (_workoutBaseExerciseViewModel.exeIdCounter ==
                                   _workoutBaseExerciseViewModel
                                       .exerciseId.length) {
-                                _workoutBaseExerciseViewModel.getExeId(
-                                    counter: _workoutBaseExerciseViewModel
-                                        .exeIdCounter);
-
-                                print(
-                                    "if else condition couter wise -------------------- ${_workoutBaseExerciseViewModel.exeIdCounter < _workoutBaseExerciseViewModel.exerciseId.length}");
-
-                                print(
-                                    "counter var --------------- ${_workoutBaseExerciseViewModel.exeIdCounter}");
-
-                                if ("${responseExe.data![0].exerciseType}" ==
-                                    "REPS") {
-                                  Get.to(NoWeightExerciseScreen(
-                                    data: responseExe.data!,
-                                  ));
-                                } else if ("${responseExe.data![0].exerciseType}" ==
-                                    "TIME") {
-                                  Get.to(TimeBasedExesiceScreen(
-                                    data: responseExe.data!,
-                                  ));
-                                }
-                              }
-                              if (_workoutBaseExerciseViewModel.exeIdCounter >=
-                                  _workoutBaseExerciseViewModel
-                                      .exerciseId.length) {
-                                Get.to(ShareProgressScreen());
+                                Get.to(ShareProgressScreen(
+                                  exeData: responseExe.data!,
+                                  data: widget.data,
+                                  workoutId: widget.workoutId,
+                                ));
                               }
 
                               setState(() {

@@ -297,21 +297,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
           child: Stack(
             alignment: Alignment.topRight,
             children: [
-              scheduled! || scheduled == "true"
-                  ? Container(
-                      alignment: Alignment.center,
-                      height: Get.height * .04,
-                      width: Get.height * .1,
-                      decoration: BoxDecoration(
-                          color: ColorUtils.kTint,
-                          borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(10),
-                              bottomLeft: Radius.circular(10))),
-                      child: Text('Following',
-                          style: FontTextStyle.kBlack12BoldRoboto
-                              .copyWith(fontWeight: FontWeight.w500)),
-                    )
-                  : SizedBox(),
               Container(
                 height: Get.height * .27,
                 width: Get.width * .99,
@@ -364,7 +349,22 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                   child: Text(
                     text!,
                     style: FontTextStyle.kWhite18BoldRoboto,
-                  ))
+                  )),
+              scheduled! || scheduled == "true"
+                  ? Container(
+                      alignment: Alignment.center,
+                      height: Get.height * .03,
+                      width: Get.height * .1,
+                      decoration: BoxDecoration(
+                          color: ColorUtils.kTint,
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomLeft: Radius.circular(10))),
+                      child: Text('Following',
+                          style: FontTextStyle.kBlack12BoldRoboto
+                              .copyWith(fontWeight: FontWeight.w500)),
+                    )
+                  : SizedBox(),
             ],
           ),
         ),

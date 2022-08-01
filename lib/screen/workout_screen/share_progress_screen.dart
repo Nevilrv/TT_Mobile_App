@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/widget/share_sheet_screen.dart';
+import 'package:tcm/screen/workout_screen/workout_home.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -12,6 +15,13 @@ import 'package:tcm/viewModel/workout_viewModel/share_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 
 class ShareProgressScreen extends StatelessWidget {
+  List<ExerciseById> exeData;
+  List<WorkoutById> data;
+  final String? workoutId;
+  ShareProgressScreen(
+      {Key? key, required this.data, this.workoutId, required this.exeData})
+      : super(key: key);
+
   ShareViewModel _shareViewModel = Get.put(ShareViewModel());
   WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
       Get.put(WorkoutBaseExerciseViewModel());
@@ -25,7 +35,12 @@ class ShareProgressScreen extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               Get.back();
-              _workoutBaseExerciseViewModel.exeIdCounter = -1;
+              _workoutBaseExerciseViewModel.getBackId(
+                  counter: _workoutBaseExerciseViewModel.exeIdCounter);
+
+              // _workoutBaseExerciseViewModel.exeIdCounter = 0;
+              // _workoutBaseExerciseViewModel.isHold = false;
+              // _workoutBaseExerciseViewModel.isFirst = false;
             },
             icon: Icon(
               Icons.arrow_back_ios_sharp,
@@ -93,10 +108,12 @@ class ShareProgressScreen extends StatelessWidget {
                 ),
               ),
               commonNavigationButton(
-                  name: 'Next',
+                  name: 'Finish',
                   onTap: () {
                     Get.offAll(HomeScreen());
-                    _workoutBaseExerciseViewModel.exeIdCounter = -1;
+                    _workoutBaseExerciseViewModel.exeIdCounter = 0;
+                    // _workoutBaseExerciseViewModel.isHold = false;
+                    // _workoutBaseExerciseViewModel.isFirst = false;
                   })
             ]),
       ),

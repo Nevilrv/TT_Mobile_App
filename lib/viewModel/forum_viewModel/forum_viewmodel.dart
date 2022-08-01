@@ -20,8 +20,10 @@ import '../../model/request_model/forum_request_model/add_forum_request_model.da
 import '../../model/response_model/forum_response_model/add_forum_response_model.dart';
 import '../../model/response_model/forum_response_model/get_all_forums_response_model.dart'
     as all;
+import '../../model/response_model/forum_response_model/report_response_model.dart';
 import '../../repo/forum_repo/delete_comment_repo.dart';
 import '../../repo/forum_repo/get_all_forums_repo.dart';
+import '../../repo/forum_repo/report_Forum_repo.dart';
 import '../../repo/forum_repo/search_forum_repo.dart';
 
 class ForumViewModel extends GetxController {
@@ -122,6 +124,25 @@ class ForumViewModel extends GetxController {
     } catch (e) {
       _deleteForumApiResponse = ApiResponse.error(message: e.toString());
       print("......... _deleteForumApiResponse ===== $e");
+    }
+    update();
+  }
+
+  ApiResponse _reportForumApiResponse =
+      ApiResponse.initial(message: 'Initialization');
+
+  ApiResponse get reportForumApiResponse => _reportForumApiResponse;
+  Future<void> reportForumViewModel(String id) async {
+    _reportForumApiResponse = ApiResponse.loading(message: 'Loading');
+    update();
+    try {
+      ReportForumResponseModel response =
+          await ReportForumRepo().reportForumRepo(postId: id);
+      print('==_reportForumApiResponse=>$response');
+      _reportForumApiResponse = ApiResponse.complete(response);
+    } catch (e) {
+      _reportForumApiResponse = ApiResponse.error(message: e.toString());
+      print("......... _reportForumApiResponse ===== $e");
     }
     update();
   }

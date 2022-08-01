@@ -7,13 +7,13 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/remove_workout_program_request_model.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/save_workout_program_request_model.dart';
+import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/day_based_exercise_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/remove_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/save_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_exercise_conflict_response_model.dart';
-import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/workout_screen/workout_home.dart';
@@ -33,6 +33,7 @@ class ProgramSetupPage extends StatefulWidget {
   final String? workoutId;
   final List<ProgramSchedule>? programData;
   bool? isEdit;
+  final String? workoutProgramId;
 
   final String? workoutName;
   ProgramSetupPage(
@@ -42,7 +43,8 @@ class ProgramSetupPage extends StatefulWidget {
       this.day,
       this.workoutName,
       this.programData,
-      this.isEdit})
+      this.isEdit,
+      this.workoutProgramId})
       : super(key: key);
 
   @override
@@ -391,6 +393,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("print is edit ------------------- ${widget.isEdit}");
+
     DateTime initialDisplayDate;
     if (widget.isEdit == true) {
       initialDisplayDate =
@@ -456,8 +460,11 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                           color: ColorUtils.kTint,
                         )),
                     backgroundColor: ColorUtils.kBlack,
-                    title: Text('Setup Program',
-                        style: FontTextStyle.kWhite16BoldRoboto),
+                    title: !widget.isEdit!
+                        ? Text('Setup Program',
+                            style: FontTextStyle.kWhite16BoldRoboto)
+                        : Text('Edit Program',
+                            style: FontTextStyle.kWhite16BoldRoboto),
                     centerTitle: true,
                   ),
                   body: response.data!.isNotEmpty && response.data != []
@@ -1249,6 +1256,14 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                 finalDayString;
                                                             _request.selectedDates =
                                                                 dateString();
+                                                            print(
+                                                                'print is edit ------------ ${widget.isEdit}');
+                                                            if (widget.isEdit ==
+                                                                true) {
+                                                              _request.workoutProgramId =
+                                                                  widget
+                                                                      .workoutProgramId;
+                                                            }
                                                             await saveWorkoutController
                                                                 .saveWorkoutProgramViewModel(
                                                                     _request);
@@ -1288,6 +1303,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                   workoutId: widget
                                                                       .workoutId,
                                                                 ));
+                                                                widget.isEdit =
+                                                                    false;
                                                               }
                                                               // else if (saveWorkoutResponse
                                                               //             .success ==
@@ -1362,7 +1379,9 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               Get.height * .1)),
-                                                  child: Text('Start Program',
+                                                  child: !widget.isEdit! ?  Text('Start Program',
+                                                      style: FontTextStyle
+                                                          .kBlack20BoldRoboto) : Text('Edit Program',
                                                       style: FontTextStyle
                                                           .kBlack20BoldRoboto),
                                                 ),
@@ -1439,8 +1458,11 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                             color: ColorUtils.kTint,
                           )),
                       backgroundColor: ColorUtils.kBlack,
-                      title: Text('Setup Program',
-                          style: FontTextStyle.kWhite16BoldRoboto),
+                      title: !widget.isEdit!
+                          ? Text('Setup Program',
+                              style: FontTextStyle.kWhite16BoldRoboto)
+                          : Text('Edit Program',
+                              style: FontTextStyle.kWhite16BoldRoboto),
                       centerTitle: true,
                     ),
                     body: Center(
@@ -1475,8 +1497,13 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                   style: FontTextStyle.kBlack24W400Roboto.copyWith(
                       fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
               SizedBox(height: 20),
-              Text(
-                'Are you sure you want to save this Workout Program!',
+              !widget.isEdit! ?  Text(
+                'Are you sure you want to Save this Workout Program!',
+                textAlign: TextAlign.center,
+                style: FontTextStyle.kBlack16W300Roboto
+                    .copyWith(color: ColorUtils.kTint),
+              ) : Text(
+                'Are you sure you want to Edit this Workout Program!',
                 textAlign: TextAlign.center,
                 style: FontTextStyle.kBlack16W300Roboto
                     .copyWith(color: ColorUtils.kTint),
@@ -1512,7 +1539,9 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                         },
                       ),
                     ),
-                    child: Text('Save',
+                    child:!widget.isEdit! ? Text('Save',
+                        style: FontTextStyle.kTint24W400Roboto
+                            .copyWith(fontWeight: FontWeight.bold)) : Text('Edit',
                         style: FontTextStyle.kTint24W400Roboto
                             .copyWith(fontWeight: FontWeight.bold)),
                     onPressed: onTapConfirmation,

@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
-import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
+import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/repo/schedule_repo/schedule_by_date_repo.dart';
 
 class ScheduleByDateViewModel extends GetxController {

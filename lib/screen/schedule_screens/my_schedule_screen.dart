@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
-import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
+import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/schedule_screens/widgets/my_schedule_screen_widget.dart';
 import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
@@ -13,6 +13,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/schedule_viewModel/schedule_by_date_viewModel.dart';
+import 'package:tcm/viewModel/training_plan_viewModel/remove_workout_program_viewModel.dart';
 
 class MyScheduleScreen extends StatefulWidget {
   @override
@@ -28,6 +29,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
 
   ScheduleByDateViewModel _scheduleByDateViewModel =
       Get.put(ScheduleByDateViewModel());
+  RemoveWorkoutProgramViewModel _removeWorkoutProgramViewModel =
+      Get.put(RemoveWorkoutProgramViewModel());
 
   @override
   void initState() {
@@ -65,14 +68,19 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
               controller.apiResponse.data;
 
           for (int i = 0; i < scheduleResponse.data!.length; i++) {
-            if (controller.dayList.contains(
-                DateTime.parse('${scheduleResponse.data![i].date}'))) {
-            } else {
-              controller.dayList
-                  .add(DateTime.parse('${scheduleResponse.data![i].date}'));
-            }
+            print(
+                "-------------- date condition is ${scheduleResponse.data![i].programData!.isNotEmpty}");
 
-            controller.allDates(date: controller.dayList);
+            if (scheduleResponse.data![i].programData!.isNotEmpty) {
+              if (controller.dayList.contains(
+                  DateTime.parse('${scheduleResponse.data![i].date}'))) {
+              } else {
+                controller.dayList
+                    .add(DateTime.parse('${scheduleResponse.data![i].date}'));
+              }
+
+              controller.allDates(date: controller.dayList);
+            }
           }
 
           return DefaultTabController(
@@ -325,6 +333,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                             trailing: InkWell(
                                               onTap: () {
                                                 openBottomSheet(
+                                                    scheduleByDateViewModel:
+                                                        controller,
+                                                    removeWorkoutProgramViewModel:
+                                                        _removeWorkoutProgramViewModel,
                                                     context: context,
                                                     event: scheduleResponse
                                                         .data![index],
@@ -355,6 +367,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                                 .data![index]
                                                                 .programData,
                                                         isEdit: true,
+                                                        workoutProgramId:
+                                                            scheduleResponse
+                                                                .data![index]
+                                                                .userProgramId,
                                                       ));
                                                     });
                                               },

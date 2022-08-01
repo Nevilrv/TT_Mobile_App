@@ -15,6 +15,8 @@ class ApiRoutes {
   String addUserHabitIdUrl = baseUrl + "/json/data_save_user_habits.php";
   String checkWorkoutProgramUrl =
       baseUrl + "/json/data_check_workout_program.php";
+  String reportFourm = baseUrl + "/json/data_forum_report_abuse.php";
+
   String saveUserCustomizedExerciseUrl =
       baseUrl + "/json/data_save_user_customized_exercise.php";
   String workoutExerciseConflictUrl =

@@ -1,6 +1,6 @@
 import 'package:tcm/api_services/api_routes.dart';
 import 'package:tcm/api_services/api_service.dart';
-import 'package:tcm/model/schedule_response_model/schedule_by_date_response_model.dart';
+import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
 
 class ScheduleByDateRepo extends ApiRoutes {
   Future<dynamic> scheduleByDateRepo({String? userId}) async {

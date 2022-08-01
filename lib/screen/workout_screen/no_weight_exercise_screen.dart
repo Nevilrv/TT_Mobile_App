@@ -1,14 +1,13 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:simple_timer/simple_timer.dart';
 import 'package:tcm/api_services/api_response.dart';
-import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
-import 'package:tcm/screen/workout_screen/no_weight_exercise_screen_one.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
-import 'package:tcm/screen/workout_screen/time_based_exercise_screen.dart';
-import 'package:tcm/screen/workout_screen/time_based_exercise_screen_one.dart';
+import 'package:tcm/screen/workout_screen/weighted_exercise.dart';
 import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -20,38 +19,58 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 // ignore: must_be_immutable
 class NoWeightExerciseScreen extends StatefulWidget {
-  List<ExerciseById> data;
-
-  NoWeightExerciseScreen({Key? key, required this.data}) : super(key: key);
-
+  List<WorkoutById> data;
+  final String? workoutId;
+  NoWeightExerciseScreen({Key? key, required this.data, this.workoutId})
+      : super(key: key);
   @override
   State<NoWeightExerciseScreen> createState() => _NoWeightExerciseScreenState();
 }
 
-class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
+class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
+    with SingleTickerProviderStateMixin {
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
-
   WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
       Get.put(WorkoutBaseExerciseViewModel());
-
   VideoPlayerController? _videoPlayerController;
   YoutubePlayerController? _youTubePlayerController;
   ChewieController? _chewieController;
-
+  TimerController? _timerController;
+  TimerStyle _timerStyle = TimerStyle.ring;
+  TimerProgressIndicatorDirection _progressIndicatorDirection =
+      TimerProgressIndicatorDirection.counter_clockwise;
+  TimerProgressTextCountDirection _progressTextCountDirection =
+      TimerProgressTextCountDirection.count_down;
   SaveUserCustomizedExerciseViewModel _customizedExerciseViewModel =
       Get.put(SaveUserCustomizedExerciseViewModel());
-
+  int totalRound = 0;
+  bool isHold = false;
+  bool isFirst = false;
+  bool isGreaterOne = false;
   @override
   void initState() {
+    _timerController = TimerController(this);
     super.initState();
-
-    _customizedExerciseViewModel.counterReps =
-        int.parse('${widget.data[0].exerciseReps}');
+    initData();
     initializePlayer();
-    _exerciseByIdViewModel.getExerciseByIdDetails(
+  }
+
+  initData() async {
+    await _exerciseByIdViewModel.getExerciseByIdDetails(
         id: _workoutBaseExerciseViewModel
             .exerciseId[_workoutBaseExerciseViewModel.exeIdCounter]);
+    if (_exerciseByIdViewModel.apiResponse.status == Status.LOADING) {
+      return Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+    if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
+      _exerciseByIdViewModel.responseExe =
+          _exerciseByIdViewModel.apiResponse.data;
+    }
+    _customizedExerciseViewModel.counterReps = int.parse(
+        '${_exerciseByIdViewModel.responseExe!.data![0].exerciseReps}');
   }
 
   @override
@@ -65,16 +84,16 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   Future initializePlayer() async {
     youtubeVideoID() {
       String finalLink;
-      String videoID = '${widget.data[0].exerciseVideo}';
+      String videoID =
+          '${_exerciseByIdViewModel.responseExe!.data![0].exerciseVideo}';
       List<String> splittedLink = videoID.split('v=');
       List<String> longLink = splittedLink.last.split('&');
-
       finalLink = longLink.first;
-
       return finalLink;
     }
 
-    if ('${widget.data[0].exerciseVideo}'.contains('www.youtube.com')) {
+    if ('${_exerciseByIdViewModel.responseExe!.data![0].exerciseVideo}'
+        .contains('www.youtube.com')) {
       _youTubePlayerController = YoutubePlayerController(
         initialVideoId: youtubeVideoID(),
         flags: YoutubePlayerFlags(
@@ -86,15 +105,14 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
         ),
       );
     } else {
-      _videoPlayerController =
-          VideoPlayerController.network('${widget.data[0].exerciseVideo}');
+      _videoPlayerController = VideoPlayerController.network(
+          '${_exerciseByIdViewModel.responseExe!.data![0].exerciseVideo}');
 
       await Future.wait([
         _videoPlayerController!.initialize(),
       ]);
       _createChewieController();
     }
-
     setState(() {});
   }
 
@@ -110,7 +128,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   }
 
   int currPlayIndex = 0;
-
   Future<void> toggleVideo() async {
     await _videoPlayerController!.pause();
     currPlayIndex = currPlayIndex == 0 ? 1 : 0;
@@ -118,9 +135,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   }
 
   int counterSets = 0;
-  // int counterReps = 0;
   int counterTime = 0;
-
   String timeCounter({int? counterTime}) {
     int finalCounter = counterTime! * 15;
     var setTime = Duration(seconds: finalCounter).toString().split('.')[0];
@@ -129,495 +144,675 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
     return finalTime;
   }
 
+  timeDuration() {
+    String time =
+        '${_exerciseByIdViewModel.responseExe!.data![0].exerciseTime}';
+    List<String> splittedTime = time.split(' ');
+    print('------------- ${splittedTime.first}');
+    int? timer;
+    if (splittedTime.first.length == 1) {
+      timer = int.parse(splittedTime.first) * 60;
+      print(' ----------  timer $timer');
+      return timer;
+    } else if (splittedTime.first.length >= 2) {
+      timer = int.parse(splittedTime.first);
+      print('timer -==-=-=-=-=-= $timer');
+      return timer;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (widget.data.isNotEmpty) {
-      // bool loader = false;
-      return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
-        if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
-          ExerciseByIdResponseModel responseExe =
-              _exerciseByIdViewModel.apiResponse.data;
-
-          print(
-              "new exe data ------------------ ${responseExe.data![0].exerciseId} +++++++++++++ ${responseExe.data![0].exerciseType}");
-
-          return Scaffold(
-            backgroundColor: ColorUtils.kBlack,
-            appBar: AppBar(
-              elevation: 0,
-              leading: IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_sharp,
-                    color: ColorUtils.kTint,
-                  )),
-              backgroundColor: ColorUtils.kBlack,
-              title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
-              centerTitle: true,
-              actions: [
-                TextButton(
-                    onPressed: () {
-                      Get.offAll(HomeScreen());
-                    },
-                    child: Text(
-                      'Quit',
-                      style: FontTextStyle.kTine16W400Roboto,
-                    ))
-              ],
+    return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
+      if (controller.apiResponse.status == Status.LOADING) {
+        return ColoredBox(
+          color: ColorUtils.kBlack,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: ColorUtils.kTint,
             ),
-            body: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      height: Get.height / 2.75,
-                      width: Get.width,
-                      child: '${widget.data[0].exerciseVideo}'
-                              .contains('www.youtube.com')
-                          ? Center(
-                              child: _youTubePlayerController != null ||
-                                      // ignore: unrelated_type_equality_checks
-                                      _youTubePlayerController != ''
-                                  ? YoutubePlayer(
-                                      controller: _youTubePlayerController!,
-                                      showVideoProgressIndicator: true,
-                                      bufferIndicator:
-                                          CircularProgressIndicator(
-                                              color: ColorUtils.kTint),
-                                      controlsTimeOut: Duration(hours: 2),
-                                      aspectRatio: 16 / 9,
-                                      progressColors: ProgressBarColors(
-                                          handleColor: ColorUtils.kRed,
-                                          playedColor: ColorUtils.kRed,
-                                          backgroundColor: ColorUtils.kGray,
-                                          bufferedColor: ColorUtils.kLightGray),
-                                    )
-                                  : noDataLottie(),
-                            )
-                          : Center(
-                              child: _chewieController != null &&
-                                      _chewieController!.videoPlayerController
-                                          .value.isInitialized
-                                  ? Chewie(
-                                      controller: _chewieController!,
-                                    )
-                                  : widget.data[0].exerciseImage == null
-                                      ? noDataLottie()
-                                      : Image.network(
-                                          "https://tcm.sataware.dev/images/" +
-                                              widget.data[0].exerciseImage!,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return noDataLottie();
+          ),
+        );
+      }
+      if (controller.apiResponse.status == Status.COMPLETE) {
+        controller.responseExe = _exerciseByIdViewModel.apiResponse.data;
+        if (controller.responseExe!.data![0].exerciseType == "REPS") {
+          return WillPopScope(
+            onWillPop: () async {
+              _workoutBaseExerciseViewModel.getBackId(
+                  counter: _workoutBaseExerciseViewModel.exeIdCounter);
+              if (_workoutBaseExerciseViewModel.exeIdCounter <
+                  _workoutBaseExerciseViewModel.exerciseId.length) {
+                await controller.getExerciseByIdDetails(
+                    id: _workoutBaseExerciseViewModel.exerciseId[
+                        _workoutBaseExerciseViewModel.exeIdCounter]);
+                if (controller.apiResponse.status == Status.LOADING) {
+                  Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (controller.apiResponse.status == Status.COMPLETE) {
+                  controller.responseExe = controller.apiResponse.data;
+                }
+              }
+              if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+                isFirst = true;
+              }
+              if (isFirst == true) {
+                if (isGreaterOne == false) {
+                  Get.back();
+                }
+                if (isHold == true) {
+                  Get.back();
+                  isHold = false;
+                  isFirst = false;
+                } else {
+                  isHold = true;
+                }
+              }
+              return false;
+            },
+            child: Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () async {
+                      _workoutBaseExerciseViewModel.getBackId(
+                          counter: _workoutBaseExerciseViewModel.exeIdCounter);
+                      if (_workoutBaseExerciseViewModel.exeIdCounter <
+                          _workoutBaseExerciseViewModel.exerciseId.length) {
+                        await controller.getExerciseByIdDetails(
+                            id: _workoutBaseExerciseViewModel.exerciseId[
+                                _workoutBaseExerciseViewModel.exeIdCounter]);
+                        if (controller.apiResponse.status == Status.LOADING) {
+                          Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (controller.apiResponse.status == Status.COMPLETE) {
+                          controller.responseExe = controller.apiResponse.data;
+                        }
+                      }
+                      if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+                        isFirst = true;
+                      }
+                      if (isFirst == true) {
+                        if (isGreaterOne == false) {
+                          Get.back();
+                        }
+                        if (isHold == true) {
+                          Get.back();
+                          isHold = false;
+                          isFirst = false;
+                        } else {
+                          isHold = true;
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+                title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
+                centerTitle: true,
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Get.offAll(HomeScreen());
+                        _workoutBaseExerciseViewModel.exeIdCounter = 0;
+                        isHold = false;
+                        isFirst = false;
+                      },
+                      child: Text(
+                        'Quit',
+                        style: FontTextStyle.kTine16W400Roboto,
+                      ))
+                ],
+              ),
+              body: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: Get.height / 2.75,
+                        width: Get.width,
+                        child:
+                            '${controller.responseExe!.data![0].exerciseVideo}'
+                                    .contains('www.youtube.com')
+                                ? Center(
+                                    child: _youTubePlayerController != null ||
+                                            // ignore: unrelated_type_equality_checks
+                                            _youTubePlayerController != ''
+                                        ? YoutubePlayer(
+                                            controller:
+                                                _youTubePlayerController!,
+                                            showVideoProgressIndicator: true,
+                                            bufferIndicator:
+                                                CircularProgressIndicator(
+                                                    color: ColorUtils.kTint),
+                                            controlsTimeOut: Duration(hours: 2),
+                                            aspectRatio: 16 / 9,
+                                            progressColors: ProgressBarColors(
+                                                handleColor: ColorUtils.kRed,
+                                                playedColor: ColorUtils.kRed,
+                                                backgroundColor:
+                                                    ColorUtils.kGray,
+                                                bufferedColor:
+                                                    ColorUtils.kLightGray),
+                                          )
+                                        : noDataLottie(),
+                                  )
+                                : Center(
+                                    child: _chewieController != null &&
+                                            _chewieController!
+                                                .videoPlayerController
+                                                .value
+                                                .isInitialized
+                                        ? Chewie(
+                                            controller: _chewieController!,
+                                          )
+                                        : controller.responseExe!.data![0]
+                                                    .exerciseImage ==
+                                                null
+                                            ? noDataLottie()
+                                            : Image.network(
+                                                "https://tcm.sataware.dev/images/" +
+                                                    controller
+                                                        .responseExe!
+                                                        .data![0]
+                                                        .exerciseImage!,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return noDataLottie();
+                                                },
+                                              )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Get.width * .06,
+                            vertical: Get.height * .02),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${controller.responseExe!.data![0].exerciseTitle}',
+                                style: FontTextStyle.kWhite24BoldRoboto,
+                              ),
+                              SizedBox(height: Get.height * .005),
+                              Text(
+                                '${controller.responseExe!.data![0].exerciseSets} sets of ${controller.responseExe!.data![0].exerciseReps} reps',
+                                style: FontTextStyle.kLightGray16W300Roboto,
+                              ),
+                              GetBuilder<SaveUserCustomizedExerciseViewModel>(
+                                  builder: (controllerSave) {
+                                return SizedBox(
+                                  child: ListView.builder(
+                                      physics: NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: int.parse(controller
+                                          .responseExe!.data![0].exerciseSets
+                                          .toString()),
+                                      itemBuilder: (_, index) {
+                                        return NoWeightedCounter(
+                                          counter: int.parse(
+                                              '${controller.responseExe!.data![0].exerciseReps}'),
+                                          repsNo:
+                                              '${controller.responseExe!.data![0].exerciseReps}',
+                                        );
+                                      }),
+                                );
+                              }),
+                              SizedBox(height: Get.height * .02),
+                              commonNavigationButton(
+                                  onTap: () async {
+                                    _workoutBaseExerciseViewModel.getExeId(
+                                        counter: _workoutBaseExerciseViewModel
+                                            .exeIdCounter);
+                                    if (_workoutBaseExerciseViewModel
+                                            .exeIdCounter <
+                                        _workoutBaseExerciseViewModel
+                                            .exerciseId.length) {
+                                      if (_workoutBaseExerciseViewModel
+                                              .exeIdCounter >
+                                          0) {
+                                        isGreaterOne = true;
+                                      }
+                                      await controller.getExerciseByIdDetails(
+                                          id: _workoutBaseExerciseViewModel
+                                                  .exerciseId[
+                                              _workoutBaseExerciseViewModel
+                                                  .exeIdCounter]);
+                                      if (controller.apiResponse.status ==
+                                          Status.LOADING) {
+                                        Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                      if (controller.apiResponse.status ==
+                                          Status.COMPLETE) {
+                                        controller.responseExe =
+                                            controller.apiResponse.data;
+                                      }
+                                    }
+                                    if (_workoutBaseExerciseViewModel
+                                            .exeIdCounter ==
+                                        _workoutBaseExerciseViewModel
+                                            .exerciseId.length) {
+                                      Get.to(ShareProgressScreen(
+                                        exeData: controller.responseExe!.data!,
+                                        data: widget.data,
+                                        workoutId: widget.workoutId,
+                                      ));
+                                      isFirst = false;
+                                      isHold = false;
+                                    }
+                                  },
+                                  name: controller.responseExe!.data![0]
+                                              .exerciseId ==
+                                          _workoutBaseExerciseViewModel
+                                              .exerciseId.last
+                                      ? 'Finish and Log Workout'
+                                      : 'Next Exercise')
+                            ]),
+                      ),
+                    ]),
+              ),
+            ),
+          );
+        } else if (controller.responseExe!.data![0].exerciseType == "TIME") {
+          timeDuration();
+          return WillPopScope(
+            onWillPop: () async {
+              _timerController!.reset();
+              setState(() {
+                totalRound = 0;
+              });
+              _workoutBaseExerciseViewModel.getBackId(
+                  counter: _workoutBaseExerciseViewModel.exeIdCounter);
+              if (_workoutBaseExerciseViewModel.exeIdCounter <
+                  _workoutBaseExerciseViewModel.exerciseId.length) {
+                await controller.getExerciseByIdDetails(
+                    id: _workoutBaseExerciseViewModel.exerciseId[
+                        _workoutBaseExerciseViewModel.exeIdCounter]);
+                if (controller.apiResponse.status == Status.LOADING) {
+                  Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (controller.apiResponse.status == Status.COMPLETE) {
+                  controller.responseExe = controller.apiResponse.data;
+                }
+              }
+              if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+                isFirst = true;
+              }
+              if (isFirst == true) {
+                if (isGreaterOne == false) {
+                  Get.back();
+                }
+                if (isHold == true) {
+                  Get.back();
+                  isHold = false;
+                  isFirst = false;
+                } else {
+                  isHold = true;
+                }
+              }
+              return false;
+            },
+            child: Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () async {
+                      _timerController!.reset();
+                      setState(() {
+                        totalRound = 0;
+                      });
+                      _workoutBaseExerciseViewModel.getBackId(
+                          counter: _workoutBaseExerciseViewModel.exeIdCounter);
+                      if (_workoutBaseExerciseViewModel.exeIdCounter <
+                          _workoutBaseExerciseViewModel.exerciseId.length) {
+                        await controller.getExerciseByIdDetails(
+                            id: _workoutBaseExerciseViewModel.exerciseId[
+                                _workoutBaseExerciseViewModel.exeIdCounter]);
+                        if (controller.apiResponse.status == Status.LOADING) {
+                          Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        if (controller.apiResponse.status == Status.COMPLETE) {
+                          controller.responseExe = controller.apiResponse.data;
+                        }
+                      }
+                      if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+                        isFirst = true;
+                      }
+                      if (isFirst == true) {
+                        if (isGreaterOne == false) {
+                          Get.back();
+                        }
+                        if (isHold == true) {
+                          Get.back();
+                          isHold = false;
+                          isFirst = false;
+                        } else {
+                          isHold = true;
+                        }
+                      }
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+                title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
+                centerTitle: true,
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Get.offAll(HomeScreen());
+                        _workoutBaseExerciseViewModel.exeIdCounter = 0;
+
+                        isFirst = false;
+                        isHold = false;
+
+                        _timerController!.reset();
+                        setState(() {
+                          totalRound = 0;
+                        });
+                      },
+                      child: Text(
+                        'Quit',
+                        style: FontTextStyle.kTine16W400Roboto,
+                      ))
+                ],
+              ),
+              body: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        height: Get.height / 2.75,
+                        width: Get.width,
+                        child:
+                            '${controller.responseExe!.data![0].exerciseVideo}'
+                                    .contains('www.youtube.com')
+                                ? Center(
+                                    child: _youTubePlayerController == null
+                                        ? CircularProgressIndicator(
+                                            color: ColorUtils.kTint)
+                                        : YoutubePlayer(
+                                            controller:
+                                                _youTubePlayerController!,
+                                            showVideoProgressIndicator: true,
+                                            bufferIndicator:
+                                                CircularProgressIndicator(
+                                                    color: ColorUtils.kTint),
+                                            controlsTimeOut: Duration(hours: 2),
+                                            aspectRatio: 16 / 9,
+                                            progressColors: ProgressBarColors(
+                                                handleColor: ColorUtils.kRed,
+                                                playedColor: ColorUtils.kRed,
+                                                backgroundColor:
+                                                    ColorUtils.kGray,
+                                                bufferedColor:
+                                                    ColorUtils.kLightGray),
+                                          ))
+                                : Center(
+                                    child: _chewieController != null &&
+                                            _chewieController!
+                                                .videoPlayerController
+                                                .value
+                                                .isInitialized
+                                        ? Chewie(
+                                            controller: _chewieController!,
+                                          )
+                                        : controller.responseExe!.data![0]
+                                                    .exerciseImage ==
+                                                null
+                                            ? noDataLottie()
+                                            : Image.network(
+                                                "https://tcm.sataware.dev/images/" +
+                                                    controller
+                                                        .responseExe!
+                                                        .data![0]
+                                                        .exerciseImage!,
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
+                                                  return noDataLottie();
+                                                },
+                                              )),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Get.width * .06,
+                            vertical: Get.height * .02),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${controller.responseExe!.data![0].exerciseTitle}',
+                                        style: FontTextStyle.kWhite24BoldRoboto,
+                                      ),
+                                      SizedBox(height: Get.height * .005),
+                                      Text(
+                                        '${controller.responseExe!.data![0].exerciseTime} seconds for each set',
+                                        style: FontTextStyle
+                                            .kLightGray16W300Roboto,
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      InkWell(
+                                          onTap: () {
+                                            Get.to(WeightExerciseScreen(
+                                              data:
+                                                  controller.responseExe!.data!,
+                                            ));
                                           },
-                                        )),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: Get.width * .06,
-                          vertical: Get.height * .02),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '${widget.data[0].exerciseTitle}',
-                              style: FontTextStyle.kWhite24BoldRoboto,
-                            ),
-                            SizedBox(height: Get.height * .005),
-                            Text(
-                              '${widget.data[0].exerciseSets} sets of ${widget.data[0].exerciseReps} reps',
-                              style: FontTextStyle.kLightGray16W300Roboto,
-                            ),
-                            // Padding(
-                            //   padding:
-                            //       EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                            //   child: Container(
-                            //     height: Get.height * .1,
-                            //     width: Get.width,
-                            //     decoration: BoxDecoration(
-                            //         gradient: LinearGradient(
-                            //             colors: ColorUtilsGradient.kGrayGradient,
-                            //             begin: Alignment.topCenter,
-                            //             end: Alignment.topCenter),
-                            //         borderRadius: BorderRadius.circular(6)),
-                            //     child: Row(
-                            //         mainAxisAlignment: MainAxisAlignment.center,
-                            //         children: [
-                            //           InkWell(
-                            //             onTap: () {
-                            //               log('minus $counterSets');
-                            //
-                            //               setState(() {
-                            //                 if (counterSets > 0) counterSets--;
-                            //               });
-                            //             },
-                            //             child: CircleAvatar(
-                            //               radius: Get.height * .03,
-                            //               backgroundColor: ColorUtils.kTint,
-                            //               child: Icon(Icons.remove,
-                            //                   color: ColorUtils.kBlack),
-                            //             ),
-                            //           ),
-                            //           SizedBox(width: Get.width * .08),
-                            //           RichText(
-                            //               text: TextSpan(
-                            //                   text: '$counterSets ',
-                            //                   style: counterSets == 0
-                            //                       ? FontTextStyle.kWhite24BoldRoboto
-                            //                           .copyWith(color: ColorUtils.kGray)
-                            //                       : FontTextStyle.kWhite24BoldRoboto,
-                            //                   children: [
-                            //                 TextSpan(
-                            //                     text: 'sets',
-                            //                     style: FontTextStyle.kWhite17W400Roboto)
-                            //               ])),
-                            //           SizedBox(width: Get.width * .08),
-                            //           InkWell(
-                            //             onTap: () {
-                            //               setState(() {
-                            //                 counterSets++;
-                            //               });
-                            //               log(' plus $counterSets');
-                            //             },
-                            //             child: CircleAvatar(
-                            //               radius: Get.height * .03,
-                            //               backgroundColor: ColorUtils.kTint,
-                            //               child:
-                            //                   Icon(Icons.add, color: ColorUtils.kBlack),
-                            //             ),
-                            //           ),
-                            //         ]),
-                            //   ),
-                            // ),
-                            GetBuilder<SaveUserCustomizedExerciseViewModel>(
-                                builder: (controller) {
-                              return SizedBox(
-                                child: ListView.builder(
-                                    physics: NeverScrollableScrollPhysics(),
-                                    shrinkWrap: true,
-                                    itemCount: int.parse(widget
-                                        .data[0].exerciseSets!
-                                        .toString()),
-                                    itemBuilder: (_, index) {
-                                      return NoWeightedCounter(
-                                        counter: int.parse(
-                                            '${widget.data[0].exerciseReps}'),
-                                        repsNo:
-                                            '${widget.data[0].exerciseReps}',
-                                      );
-                                    }),
-                              );
+                                          child: Text(
+                                            'Edit',
+                                            style:
+                                                FontTextStyle.kTine16W400Roboto,
+                                          )),
+                                      SizedBox(height: Get.height * .015),
+                                      totalRound == 0
+                                          ? Text(
+                                              'Sets ${controller.responseExe!.data![0].exerciseSets} ',
+                                              style: FontTextStyle
+                                                  .kLightGray16W300Roboto,
+                                            )
+                                          : Text(
+                                              'Sets $totalRound/${controller.responseExe!.data![0].exerciseSets} ',
+                                              style: FontTextStyle
+                                                  .kLightGray16W300Roboto,
+                                            ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                              SizedBox(height: Get.height * .04),
+                              Center(
+                                  child: Container(
+                                height: Get.height * .2,
+                                width: Get.height * .2,
+                                margin: EdgeInsets.symmetric(vertical: 10),
+                                child: SimpleTimer(
+                                  duration: Duration(
+                                      seconds: int.parse(
+                                          "${controller.responseExe!.data![0].exerciseTime}")),
+                                  controller: _timerController,
+                                  timerStyle: _timerStyle,
+                                  progressTextFormatter: (format) {
+                                    return format.inSeconds.toString();
+                                  },
+                                  backgroundColor: ColorUtils.kGray,
+                                  progressIndicatorColor: ColorUtils.kTint,
+                                  progressIndicatorDirection:
+                                      _progressIndicatorDirection,
+                                  progressTextCountDirection:
+                                      _progressTextCountDirection,
+                                  progressTextStyle:
+                                      FontTextStyle.kWhite24BoldRoboto,
+                                  strokeWidth: 15,
+                                  onStart: () {
+                                    setState(() {
+                                      totalRound = totalRound + 1;
+                                    });
+                                  },
+                                  onEnd: () {
+                                    if (totalRound !=
+                                        int.parse(controller
+                                            .responseExe!.data![0].exerciseSets
+                                            .toString())) {
+                                      _timerController!.reset();
+                                    } else {
+                                      _timerController!.stop();
+                                    }
+                                  },
+                                ),
+                              )),
+                              SizedBox(height: Get.height * .04),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      print('Start Pressed');
+                                      if (totalRound !=
+                                          int.parse(controller.responseExe!
+                                              .data![0].exerciseSets
+                                              .toString())) {
+                                        _timerController!.start();
 
-                              // return Padding(
-                              //   padding:
-                              //       EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                              //   child: Container(
-                              //     height: Get.height * .1,
-                              //     width: Get.width,
-                              //     decoration: BoxDecoration(
-                              //         gradient: LinearGradient(
-                              //             colors: ColorUtilsGradient.kGrayGradient,
-                              //             begin: Alignment.topCenter,
-                              //             end: Alignment.topCenter),
-                              //         borderRadius: BorderRadius.circular(6)),
-                              //     child: Row(
-                              //         mainAxisAlignment: MainAxisAlignment.center,
-                              //         children: [
-                              //           InkWell(
-                              //             onTap: () {
-                              //               controller.counterMinus();
-                              //               print('minus ${controller.counterReps}');
-                              //             },
-                              //             child: CircleAvatar(
-                              //               radius: Get.height * .03,
-                              //               backgroundColor: ColorUtils.kTint,
-                              //               child: Icon(Icons.remove,
-                              //                   color: ColorUtils.kBlack),
-                              //             ),
-                              //           ),
-                              //           SizedBox(width: Get.width * .08),
-                              //           RichText(
-                              //               text: TextSpan(
-                              //                   text: '${controller.counterReps} ',
-                              //                   style: controller.counterReps == 0
-                              //                       ? FontTextStyle.kWhite24BoldRoboto
-                              //                           .copyWith(
-                              //                               color: ColorUtils.kGray)
-                              //                       : FontTextStyle.kWhite24BoldRoboto,
-                              //                   children: [
-                              //                 TextSpan(
-                              //                     text: 'reps',
-                              //                     style:
-                              //                         FontTextStyle.kWhite17W400Roboto)
-                              //               ])),
-                              //           SizedBox(width: Get.width * .08),
-                              //           InkWell(
-                              //             onTap: () {
-                              //               controller.counterPlus(
-                              //                   totCount: int.parse(
-                              //                       '${widget.data[0].exerciseReps}'));
-                              //               print('plus ${controller.counterReps}');
-                              //             },
-                              //             child: CircleAvatar(
-                              //               radius: Get.height * .03,
-                              //               backgroundColor: ColorUtils.kTint,
-                              //               child: Icon(Icons.add,
-                              //                   color: ColorUtils.kBlack),
-                              //             ),
-                              //           ),
-                              //         ]),
-                              //   ),
-                              // );
-                            }),
+                                        print('totalRound-------> $totalRound');
+                                      }
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: Get.height * .05,
+                                      width: Get.width * .3,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          gradient: LinearGradient(
+                                              colors: ColorUtilsGradient
+                                                  .kTintGradient,
+                                              begin: Alignment.center,
+                                              end: Alignment.center)),
+                                      child: Text(
+                                        'Start',
+                                        style: FontTextStyle.kBlack18w600Roboto,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: Get.width * 0.05),
+                                  GestureDetector(
+                                    onTap: () {
+                                      print('Reset pressed ');
+                                      setState(() {
+                                        totalRound = 0;
+                                      });
+                                      _timerController!.reset();
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: Get.height * .05,
+                                      width: Get.width * .3,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(40),
+                                          border: Border.all(
+                                              color: ColorUtils.kTint,
+                                              width: 1.5)),
+                                      child: Text(
+                                        'Reset',
+                                        style: FontTextStyle.kTine17BoldRoboto,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: Get.height * .04),
+                              commonNavigationButton(
+                                  onTap: () async {
+                                    _timerController!.reset();
 
-                            // Padding(
-                            //   padding:
-                            //       EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                            //   child: Container(
-                            //     height: Get.height * .1,
-                            //     width: Get.width,
-                            //     decoration: BoxDecoration(
-                            //         gradient: LinearGradient(
-                            //             colors: ColorUtilsGradient.kGrayGradient,
-                            //             begin: Alignment.topCenter,
-                            //             end: Alignment.topCenter),
-                            //         borderRadius: BorderRadius.circular(6)),
-                            //     child: Row(
-                            //         mainAxisAlignment: MainAxisAlignment.center,
-                            //         children: [
-                            //           InkWell(
-                            //             onTap: () {
-                            //               setState(() {
-                            //                 if (counterTime > 0) {
-                            //                   counterTime--;
-                            //                   timeCounter(counterTime: counterTime);
-                            //                 }
-                            //               });
-                            //               log('time minus ------- ${timeCounter(counterTime: counterTime)}');
-                            //             },
-                            //             child: CircleAvatar(
-                            //               radius: Get.height * .03,
-                            //               backgroundColor: ColorUtils.kTint,
-                            //               child: Icon(Icons.remove,
-                            //                   color: ColorUtils.kBlack),
-                            //             ),
-                            //           ),
-                            //           SizedBox(width: Get.width * .08),
-                            //           RichText(
-                            //               text: TextSpan(
-                            //                   text:
-                            //                       '${timeCounter(counterTime: counterTime)} ',
-                            //                   style: counterTime == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
-                            //                   children: [
-                            //                 TextSpan(
-                            //                     text: 'Time',
-                            //                     style: FontTextStyle.kWhite17W400Roboto)
-                            //               ])),
-                            //           SizedBox(width: Get.width * .08),
-                            //           InkWell(
-                            //             onTap: () {
-                            //               setState(() {
-                            //                 counterTime++;
-                            //                 timeCounter(counterTime: counterTime);
-                            //               });
-                            //               log('time plus ------- ${timeCounter(counterTime: counterTime)}');
-                            //             },
-                            //             child: CircleAvatar(
-                            //               radius: Get.height * .03,
-                            //               backgroundColor: ColorUtils.kTint,
-                            //               child:
-                            //                   Icon(Icons.add, color: ColorUtils.kBlack),
-                            //             ),
-                            //           ),
-                            //         ]),
-                            //   ),
-                            // ),
-                            // ListView.builder(
-                            //     physics: NeverScrollableScrollPhysics(),
-                            //     shrinkWrap: true,
-                            //     itemCount:
-                            //         int.parse(widget.data[0].exerciseSets!.toString()),
-                            //     itemBuilder: (_, index) {
-                            //       return NoWeightedCounter(
-                            //         counter: counterReps,
-                            //         repsNo: '${widget.data[0].exerciseReps}',
-                            //       );
-                            //     }),
-                            ///
-                            ///
-                            // SizedBox(height: Get.height * .02),
-                            //
-                            // GetBuilder<SaveUserCustomizedExerciseViewModel>(
-                            //   builder: (controllerSave) {
-                            //     return loader == true
-                            //         ? Center(
-                            //             child: CircularProgressIndicator(
-                            //             color: ColorUtils.kTint,
-                            //           ))
-                            //         : commonNavigationButton(
-                            //             onTap: () async {
-                            //               print('Save Exercise pressed!!!');
-                            //
-                            //               setState(() {
-                            //                 loader = true;
-                            //               });
-                            //
-                            //               print('loader ----------- $loader');
-                            //
-                            //               print(
-                            //                   'counter out ----------------- $_customizedExerciseViewModel.counterReps');
-                            //               if (_customizedExerciseViewModel
-                            //                       .counterReps <=
-                            //                   0) {
-                            //                 Get.showSnackbar(GetSnackBar(
-                            //                   message: 'Please set reps more than 0',
-                            //                   duration: Duration(seconds: 2),
-                            //                 ));
-                            //               }
-                            //
-                            //               if (_customizedExerciseViewModel
-                            //                           .counterReps !=
-                            //                       0 &&
-                            //                   _customizedExerciseViewModel.counterReps >
-                            //                       0) {
-                            //                 print(
-                            //                     'counter ----------------- $_customizedExerciseViewModel.counterReps');
-                            //                 SaveUserCustomizedExerciseRequestModel
-                            //                     _request =
-                            //                     SaveUserCustomizedExerciseRequestModel();
-                            //                 _request.userId =
-                            //                     PreferenceManager.getUId();
-                            //                 _request.exerciseId =
-                            //                     widget.data[0].exerciseId;
-                            //                 _request.reps =
-                            //                     '${_customizedExerciseViewModel.counterReps}';
-                            //                 _request.isCompleted = '1';
-                            //
-                            //                 await controllerSave
-                            //                     .saveUserCustomizedExerciseViewModel(
-                            //                         _request);
-                            //
-                            //                 if (controllerSave.apiResponse.status ==
-                            //                     Status.COMPLETE) {
-                            //                   SaveUserCustomizedExerciseResponseModel
-                            //                       responseSave =
-                            //                       controllerSave.apiResponse.data;
-                            //
-                            //                   setState(() {
-                            //                     loader = false;
-                            //                   });
-                            //                   if (responseSave.success == true &&
-                            //                       responseSave.data != null) {
-                            //                     if ('${widget.data[0].exerciseVideo}'
-                            //                         .contains('www.youtube.com')) {
-                            //                       _youTubePlayerController?.pause();
-                            //                     } else {
-                            //                       _videoPlayerController?.pause();
-                            //                       _chewieController?.pause();
-                            //                     }
-                            //
-                            //                     Get.to(WeightExerciseScreen(
-                            //                         data: widget.data));
-                            //                     setState(() {
-                            //                       _customizedExerciseViewModel
-                            //                           .counterReps = 0;
-                            //                     });
-                            //                     Get.showSnackbar(GetSnackBar(
-                            //                       message: '${responseSave.msg}',
-                            //                       duration: Duration(seconds: 2),
-                            //                     ));
-                            //                   } else if (responseSave.msg == null ||
-                            //                       responseSave.msg == "" &&
-                            //                           responseSave.data == null ||
-                            //                       responseSave.data == "") {
-                            //                     setState(() {
-                            //                       loader = false;
-                            //                     });
-                            //                     Get.showSnackbar(GetSnackBar(
-                            //                       message: '${responseSave.msg}',
-                            //                       duration: Duration(seconds: 2),
-                            //                     ));
-                            //                   }
-                            //                 } else if (controllerSave
-                            //                         .apiResponse.status ==
-                            //                     Status.ERROR) {
-                            //                   setState(() {
-                            //                     loader = false;
-                            //                   });
-                            //                   Get.showSnackbar(GetSnackBar(
-                            //                     message:
-                            //                         'Something went wrong !!! please try again !!!',
-                            //                     duration: Duration(seconds: 2),
-                            //                   ));
-                            //                 }
-                            //               }
-                            //             },
-                            //             name: 'Next Exercise');
-                            //   },
-                            // ),
+                                    setState(() {
+                                      totalRound = 0;
+                                    });
 
-                            SizedBox(height: Get.height * .02),
-                            commonNavigationButton(
-                                onTap: () {
-                                  if (_workoutBaseExerciseViewModel
-                                          .exeIdCounter <
-                                      _workoutBaseExerciseViewModel
-                                          .exerciseId.length) {
                                     _workoutBaseExerciseViewModel.getExeId(
                                         counter: _workoutBaseExerciseViewModel
                                             .exeIdCounter);
 
-                                    print(
-                                        "if else condition counter wise -------------------- ${_workoutBaseExerciseViewModel.exeIdCounter < _workoutBaseExerciseViewModel.exerciseId.length}");
-
-                                    print(
-                                        "counter var --------------- ${_workoutBaseExerciseViewModel.exeIdCounter}");
-
-                                    if ("${responseExe.data![0].exerciseType}" ==
-                                        "REPS") {
-                                      if ('${widget.data[0].exerciseVideo}'
-                                          .contains('www.youtube.com')) {
-                                        _youTubePlayerController?.pause();
-                                      } else {
-                                        _videoPlayerController?.pause();
-                                        _chewieController?.pause();
+                                    if (_workoutBaseExerciseViewModel
+                                            .exeIdCounter <
+                                        _workoutBaseExerciseViewModel
+                                            .exerciseId.length) {
+                                      if (_workoutBaseExerciseViewModel
+                                              .exeIdCounter >
+                                          0) {
+                                        isGreaterOne = true;
                                       }
-                                      Get.off(NoWeightExerciseScreenOne(
-                                        data: responseExe.data!,
-                                      ));
-                                    } else if ("${responseExe.data![0].exerciseType}" ==
-                                        "TIME") {
-                                      if ('${widget.data[0].exerciseVideo}'
-                                          .contains('www.youtube.com')) {
-                                        _youTubePlayerController?.pause();
-                                      } else {
-                                        _videoPlayerController?.pause();
-                                        _chewieController?.pause();
+                                      await controller.getExerciseByIdDetails(
+                                          id: _workoutBaseExerciseViewModel
+                                                  .exerciseId[
+                                              _workoutBaseExerciseViewModel
+                                                  .exeIdCounter]);
+                                      if (controller.apiResponse.status ==
+                                          Status.LOADING) {
+                                        Center(
+                                          child: CircularProgressIndicator(),
+                                        );
                                       }
-                                      Get.off(TimeBasedExesiceScreenOne(
-                                        data: responseExe.data!,
-                                      ));
+                                      if (controller.apiResponse.status ==
+                                          Status.COMPLETE) {
+                                        controller.responseExe =
+                                            controller.apiResponse.data;
+                                      }
                                     }
-                                  }
-                                  if (_workoutBaseExerciseViewModel
-                                          .exeIdCounter ==
-                                      _workoutBaseExerciseViewModel
-                                          .exerciseId.length) {
-                                    Get.to(ShareProgressScreen());
-                                  }
+                                    if (_workoutBaseExerciseViewModel
+                                            .exeIdCounter ==
+                                        _workoutBaseExerciseViewModel
+                                            .exerciseId.length) {
+                                      Get.to(ShareProgressScreen(
+                                        exeData: controller.responseExe!.data!,
+                                        data: widget.data,
+                                        workoutId: widget.workoutId,
+                                      ));
 
-                                  setState(() {
-                                    _customizedExerciseViewModel.counterReps =
-                                        0;
-                                  });
-                                },
-                                name: 'Finish and Log Workout')
-                          ]),
-                    ),
-                  ]),
+                                      isFirst = false;
+                                      isHold = false;
+                                    }
+                                  },
+                                  name: controller.responseExe!.data![0]
+                                              .exerciseId ==
+                                          _workoutBaseExerciseViewModel
+                                              .exerciseId.last
+                                      ? 'Finish and Log Workout'
+                                      : 'Next Exercise')
+                            ]),
+                      ),
+                    ]),
+              ),
             ),
           );
         } else {
@@ -630,16 +825,16 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
             ),
           );
         }
-      });
-    } else {
-      return ColoredBox(
-        color: ColorUtils.kBlack,
-        child: Center(
-          child: CircularProgressIndicator(
-            color: ColorUtils.kTint,
+      } else {
+        return ColoredBox(
+          color: ColorUtils.kBlack,
+          child: Center(
+            child: CircularProgressIndicator(
+              color: ColorUtils.kTint,
+            ),
           ),
-        ),
-      );
-    }
+        );
+      }
+    });
   }
 }

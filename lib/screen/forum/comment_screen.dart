@@ -11,7 +11,7 @@ import '../../model/request_model/forum_request_model/search_forum_request_model
 import '../../viewModel/forum_viewModel/all_comment_viewmodel.dart';
 import '../../viewModel/forum_viewModel/forum_viewmodel.dart';
 
-enum Options { report, delete }
+enum Options { delete }
 
 class CommentScreen extends StatefulWidget {
   final String? postId;
@@ -235,67 +235,62 @@ class _CommentScreenState extends State<CommentScreen> {
                                           )
                                         ],
                                       ),
-                                      Positioned(
-                                        top: -10,
-                                        right: -10,
-                                        child: PopupMenuButton<Options>(
-                                            color: ColorUtils.kBlack,
-                                            icon: Icon(
-                                              Icons.more_vert,
-                                              color: ColorUtils.kTint,
-                                              size: Get.height * 0.025,
-                                            ),
-                                            // Callback that sets the selected popup menu item.
-                                            onSelected: (Options item) async {
-                                              setState(() {
-                                                _selectedOptions = item.name;
-                                              });
-                                              if (_selectedOptions ==
-                                                  'report') {
-                                              } else {
-                                                await forumViewModel
-                                                    .deleteCommentViewModel(
-                                                        userId:
-                                                            PreferenceManager
-                                                                .getUId(),
-                                                        commentId: response
-                                                            .data![index]
-                                                            .commentId)
-                                                    .then((value) async {
-                                                  Get.showSnackbar(GetSnackBar(
-                                                    duration:
-                                                        Duration(seconds: 2),
-                                                    messageText: Text(
-                                                      'Post deleted successfully....',
-                                                      style: FontTextStyle
-                                                          .kTine17BoldRoboto,
-                                                    ),
-                                                  ));
-
-                                                  await controller
-                                                      .getAllCommentsViewModel(
-                                                    postId: widget.postId,
-                                                  );
-                                                  ;
-                                                });
-                                              }
-                                            },
-                                            itemBuilder: (BuildContext
-                                                    context) =>
-                                                <PopupMenuEntry<Options>>[
-                                                  PopupMenuItem<Options>(
-                                                    value: Options.report,
-                                                    child: Text(
-                                                      'Report',
-                                                      style: FontTextStyle
-                                                          .kWhite16W300Roboto,
-                                                    ),
+                                      response.data![index].userId ==
+                                              PreferenceManager.getUId()
+                                          ? Positioned(
+                                              top: -10,
+                                              right: -10,
+                                              child: PopupMenuButton<Options>(
+                                                  color: ColorUtils.kBlack,
+                                                  icon: Icon(
+                                                    Icons.more_vert,
+                                                    color: ColorUtils.kTint,
+                                                    size: Get.height * 0.025,
                                                   ),
-                                                  response.data![index]
-                                                              .userId ==
-                                                          PreferenceManager
-                                                              .getUId()
-                                                      ? PopupMenuItem<Options>(
+                                                  // Callback that sets the selected popup menu item.
+                                                  onSelected:
+                                                      (Options item) async {
+                                                    setState(() {
+                                                      _selectedOptions =
+                                                          item.name;
+                                                    });
+                                                    if (_selectedOptions ==
+                                                        'report') {
+                                                    } else {
+                                                      await forumViewModel
+                                                          .deleteCommentViewModel(
+                                                              userId:
+                                                                  PreferenceManager
+                                                                      .getUId(),
+                                                              commentId: response
+                                                                  .data![index]
+                                                                  .commentId)
+                                                          .then((value) async {
+                                                        Get.showSnackbar(
+                                                            GetSnackBar(
+                                                          duration: Duration(
+                                                              seconds: 2),
+                                                          messageText: Text(
+                                                            'Post deleted successfully....',
+                                                            style: FontTextStyle
+                                                                .kTine17BoldRoboto,
+                                                          ),
+                                                        ));
+
+                                                        await controller
+                                                            .getAllCommentsViewModel(
+                                                          postId: widget.postId,
+                                                        );
+                                                        ;
+                                                      });
+                                                    }
+                                                  },
+                                                  itemBuilder: (BuildContext
+                                                          context) =>
+                                                      <PopupMenuEntry<Options>>[
+                                                        PopupMenuItem<Options>(
+                                                          height:
+                                                              Get.height * 0.04,
                                                           value: Options.delete,
                                                           child: Text(
                                                             'Delete',
@@ -303,12 +298,9 @@ class _CommentScreenState extends State<CommentScreen> {
                                                                 .kWhite16W300Roboto,
                                                           ),
                                                         )
-                                                      : PopupMenuItem(
-                                                          height: 0,
-                                                          child: SizedBox(),
-                                                        ),
-                                                ]),
-                                      ),
+                                                      ]),
+                                            )
+                                          : SizedBox(),
                                     ],
                                   ),
                                   SizedBox(
