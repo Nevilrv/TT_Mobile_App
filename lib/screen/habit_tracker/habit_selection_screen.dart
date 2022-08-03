@@ -332,56 +332,37 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
   }
 
   _customHabitAlertDialog() {
-    showCupertinoDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-            backgroundColor: ColorUtils.kBlack,
-            actionsOverflowDirection: VerticalDirection.down,
-            title: Column(children: [
-              Text('Custom Habit', style: TextStyle(color: ColorUtils.kTint)),
-              SizedBox(height: 10),
-              Text(
-                'Enter the name of your custom habit that you want to track',
-                style: FontTextStyle.kTine16W400Roboto,
-              ),
-            ]),
-            content: CupertinoTextField(
-              placeholder: 'Habit name',
-              placeholderStyle: TextStyle(color: ColorUtils.kHintTextGray),
-              controller: _alertDialogTextController,
-              cursorColor: ColorUtils.kTint,
-              style: TextStyle(color: ColorUtils.kWhite),
-              decoration: BoxDecoration(
-                  color: ColorUtils.kBlack,
-                  border: Border.all(color: ColorUtils.kTint),
-                  borderRadius: BorderRadius.circular(5)),
+    Get.dialog(
+        AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          backgroundColor: ColorUtils.kBlack,
+          actionsOverflowDirection: VerticalDirection.down,
+          title: Column(children: [
+            Text('Custom Habit', style: TextStyle(color: ColorUtils.kTint)),
+            SizedBox(height: 10),
+            Text(
+              'Enter the name of your custom habit that you want to track',
+              style: FontTextStyle.kTine16W400Roboto,
             ),
-            elevation: 10,
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith<Color?>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed))
-                              return ColorUtils.kTint.withOpacity(0.2);
-                            return null;
-                          },
-                        ),
-                      ),
-                      child: Text('Cancel',
-                          style: FontTextStyle.kTint24W400Roboto),
-                      onPressed: () {
-                        Get.back();
-                        _alertDialogTextController.clear();
-                      }),
-                  TextButton(
+          ]),
+          content: CupertinoTextField(
+            placeholder: 'Habit name',
+            placeholderStyle: TextStyle(color: ColorUtils.kHintTextGray),
+            controller: _alertDialogTextController,
+            cursorColor: ColorUtils.kTint,
+            style: TextStyle(color: ColorUtils.kWhite),
+            decoration: BoxDecoration(
+                color: ColorUtils.kBlack,
+                border: Border.all(color: ColorUtils.kTint),
+                borderRadius: BorderRadius.circular(5)),
+          ),
+          elevation: 10,
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.resolveWith<Color?>(
@@ -392,56 +373,71 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                         },
                       ),
                     ),
-                    child: Text('Save',
-                        style: FontTextStyle.kTint24W400Roboto
-                            .copyWith(fontWeight: FontWeight.bold)),
-                    onPressed: () async {
+                    child:
+                        Text('Cancel', style: FontTextStyle.kTint24W400Roboto),
+                    onPressed: () {
                       Get.back();
-                      setState(() {});
-                      if (_alertDialogTextController.text.isNotEmpty) {
-                        CustomHabitRequestModel _request =
-                            CustomHabitRequestModel();
-                        _request.name = _alertDialogTextController.text.trim();
-                        _request.userId = PreferenceManager.getUId();
+                      _alertDialogTextController.clear();
+                    }),
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed))
+                          return ColorUtils.kTint.withOpacity(0.2);
+                        return null;
+                      },
+                    ),
+                  ),
+                  child: Text('Save',
+                      style: FontTextStyle.kTint24W400Roboto
+                          .copyWith(fontWeight: FontWeight.bold)),
+                  onPressed: () async {
+                    Get.back();
+                    setState(() {});
+                    if (_alertDialogTextController.text.isNotEmpty) {
+                      CustomHabitRequestModel _request =
+                          CustomHabitRequestModel();
+                      _request.name = _alertDialogTextController.text.trim();
+                      _request.userId = PreferenceManager.getUId();
 
-                        await _customHabitViewModel
-                            .customHabitViewModel(_request);
+                      await _customHabitViewModel
+                          .customHabitViewModel(_request);
 
-                        if (_customHabitViewModel.apiResponse.status ==
-                            Status.COMPLETE) {
-                          CustomHabitResponseModel res =
-                              _customHabitViewModel.apiResponse.data;
+                      if (_customHabitViewModel.apiResponse.status ==
+                          Status.COMPLETE) {
+                        CustomHabitResponseModel res =
+                            _customHabitViewModel.apiResponse.data;
 
-                          Get.showSnackbar(GetSnackBar(
-                            message: '${res.msg}',
-                            duration: Duration(seconds: 2),
-                          ));
-                          print(
-                              "_customHabitViewModel.apiResponse.message  ${res.msg}");
-                          _habitViewModel.getHabitDetail(
-                              userId: PreferenceManager.getUId());
-                          _alertDialogTextController.clear();
-                          setState(() {});
-                        } else if (_customHabitViewModel.apiResponse.status ==
-                            Status.ERROR) {
-                          Get.showSnackbar(GetSnackBar(
-                            message:
-                                'Something went wrong!!! \nPlease try again',
-                            duration: Duration(seconds: 2),
-                          ));
-                        }
-                      } else {
                         Get.showSnackbar(GetSnackBar(
-                          message: 'Please Enter Habit Name',
+                          message: '${res.msg}',
+                          duration: Duration(seconds: 2),
+                        ));
+                        print(
+                            "_customHabitViewModel.apiResponse.message  ${res.msg}");
+                        _habitViewModel.getHabitDetail(
+                            userId: PreferenceManager.getUId());
+                        _alertDialogTextController.clear();
+                        setState(() {});
+                      } else if (_customHabitViewModel.apiResponse.status ==
+                          Status.ERROR) {
+                        Get.showSnackbar(GetSnackBar(
+                          message: 'Something went wrong!!! \nPlease try again',
                           duration: Duration(seconds: 2),
                         ));
                       }
-                    },
-                  ),
-                ],
-              ),
-            ],
-          );
-        });
+                    } else {
+                      Get.showSnackbar(GetSnackBar(
+                        message: 'Please Enter Habit Name',
+                        duration: Duration(seconds: 2),
+                      ));
+                    }
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+        barrierColor: ColorUtils.kBlack.withOpacity(0.6));
   }
 }

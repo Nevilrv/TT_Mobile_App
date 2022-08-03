@@ -25,7 +25,7 @@ class ScheduleByDateViewModel extends GetxController {
     try {
       ScheduleByDateResponseModel response =
           await ScheduleByDateRepo().scheduleByDateRepo(userId: userId);
-      log('ScheduleByDate=>$response');
+      print('ScheduleByDate=>$response');
       _apiResponse = ApiResponse.complete(response);
     } catch (e) {
       log("......... ScheduleByDate >$e");

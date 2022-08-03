@@ -1379,11 +1379,13 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               Get.height * .1)),
-                                                  child: !widget.isEdit! ?  Text('Start Program',
-                                                      style: FontTextStyle
-                                                          .kBlack20BoldRoboto) : Text('Edit Program',
-                                                      style: FontTextStyle
-                                                          .kBlack20BoldRoboto),
+                                                  child: !widget.isEdit!
+                                                      ? Text('Start Program',
+                                                          style: FontTextStyle
+                                                              .kBlack20BoldRoboto)
+                                                      : Text('Edit Program',
+                                                          style: FontTextStyle
+                                                              .kBlack20BoldRoboto),
                                                 ),
                                               ),
                                             )
@@ -1484,51 +1486,36 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
 
   _confirmationAlertDialog(
       {Function()? onTapCancel, Function()? onTapConfirmation}) {
-    showCupertinoDialog(
-        context: context,
-        builder: (_) {
-          return AlertDialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-            backgroundColor: ColorUtils.kBlack,
-            actionsOverflowDirection: VerticalDirection.down,
-            title: Column(children: [
-              Text('Please Confirm',
-                  style: FontTextStyle.kBlack24W400Roboto.copyWith(
-                      fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
-              SizedBox(height: 20),
-              !widget.isEdit! ?  Text(
-                'Are you sure you want to Save this Workout Program!',
-                textAlign: TextAlign.center,
-                style: FontTextStyle.kBlack16W300Roboto
-                    .copyWith(color: ColorUtils.kTint),
-              ) : Text(
-                'Are you sure you want to Edit this Workout Program!',
-                textAlign: TextAlign.center,
-                style: FontTextStyle.kBlack16W300Roboto
-                    .copyWith(color: ColorUtils.kTint),
-              ),
-            ]),
-            actions: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  TextButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.resolveWith<Color?>(
-                          (Set<MaterialState> states) {
-                            if (states.contains(MaterialState.pressed))
-                              return ColorUtils.kTint.withOpacity(0.2);
-                            return null;
-                          },
-                        ),
-                      ),
-                      child: Text('Cancel',
-                          style: FontTextStyle.kBlack24W400Roboto
-                              .copyWith(color: ColorUtils.kTint)),
-                      onPressed: onTapCancel),
-                  TextButton(
+    Get.dialog(
+        AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+          backgroundColor: ColorUtils.kBlack,
+          actionsOverflowDirection: VerticalDirection.down,
+          title: Column(children: [
+            Text('Please Confirm',
+                style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                    fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
+            SizedBox(height: 20),
+            !widget.isEdit!
+                ? Text(
+                    'Are you sure you want to Save this Workout Program!',
+                    textAlign: TextAlign.center,
+                    style: FontTextStyle.kBlack16W300Roboto
+                        .copyWith(color: ColorUtils.kTint),
+                  )
+                : Text(
+                    'Are you sure you want to Edit this Workout Program!',
+                    textAlign: TextAlign.center,
+                    style: FontTextStyle.kBlack16W300Roboto
+                        .copyWith(color: ColorUtils.kTint),
+                  ),
+          ]),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                TextButton(
                     style: ButtonStyle(
                       backgroundColor:
                           MaterialStateProperty.resolveWith<Color?>(
@@ -1539,17 +1526,33 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                         },
                       ),
                     ),
-                    child:!widget.isEdit! ? Text('Save',
-                        style: FontTextStyle.kTint24W400Roboto
-                            .copyWith(fontWeight: FontWeight.bold)) : Text('Edit',
-                        style: FontTextStyle.kTint24W400Roboto
-                            .copyWith(fontWeight: FontWeight.bold)),
-                    onPressed: onTapConfirmation,
+                    child: Text('Cancel',
+                        style: FontTextStyle.kBlack24W400Roboto
+                            .copyWith(color: ColorUtils.kTint)),
+                    onPressed: onTapCancel),
+                TextButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                      (Set<MaterialState> states) {
+                        if (states.contains(MaterialState.pressed))
+                          return ColorUtils.kTint.withOpacity(0.2);
+                        return null;
+                      },
+                    ),
                   ),
-                ],
-              ),
-            ],
-          );
-        });
+                  child: !widget.isEdit!
+                      ? Text('Save',
+                          style: FontTextStyle.kTint24W400Roboto
+                              .copyWith(fontWeight: FontWeight.bold))
+                      : Text('Edit',
+                          style: FontTextStyle.kTint24W400Roboto
+                              .copyWith(fontWeight: FontWeight.bold)),
+                  onPressed: onTapConfirmation,
+                ),
+              ],
+            ),
+          ],
+        ),
+        barrierColor: ColorUtils.kBlack.withOpacity(0.6));
   }
 }

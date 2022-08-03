@@ -12,6 +12,7 @@ import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/workout_viewModel/share_viewModel.dart';
+import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 
 class ShareProgressScreen extends StatelessWidget {
@@ -23,8 +24,8 @@ class ShareProgressScreen extends StatelessWidget {
       : super(key: key);
 
   ShareViewModel _shareViewModel = Get.put(ShareViewModel());
-  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
-      Get.put(WorkoutBaseExerciseViewModel());
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +36,8 @@ class ShareProgressScreen extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               Get.back();
-              _workoutBaseExerciseViewModel.getBackId(
-                  counter: _workoutBaseExerciseViewModel.exeIdCounter);
+              _userWorkoutsDateViewModel.getBackId(
+                  counter: _userWorkoutsDateViewModel.exeIdCounter);
 
               // _workoutBaseExerciseViewModel.exeIdCounter = 0;
               // _workoutBaseExerciseViewModel.isHold = false;
@@ -111,7 +112,7 @@ class ShareProgressScreen extends StatelessWidget {
                   name: 'Finish',
                   onTap: () {
                     Get.offAll(HomeScreen());
-                    _workoutBaseExerciseViewModel.exeIdCounter = 0;
+                    _userWorkoutsDateViewModel.exeIdCounter = 0;
                     // _workoutBaseExerciseViewModel.isHold = false;
                     // _workoutBaseExerciseViewModel.isFirst = false;
                   })

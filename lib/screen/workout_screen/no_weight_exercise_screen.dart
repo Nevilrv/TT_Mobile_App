@@ -13,6 +13,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
+import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -31,8 +32,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
     with SingleTickerProviderStateMixin {
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
-  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
-      Get.put(WorkoutBaseExerciseViewModel());
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
   VideoPlayerController? _videoPlayerController;
   YoutubePlayerController? _youTubePlayerController;
   ChewieController? _chewieController;
@@ -58,8 +59,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
 
   initData() async {
     await _exerciseByIdViewModel.getExerciseByIdDetails(
-        id: _workoutBaseExerciseViewModel
-            .exerciseId[_workoutBaseExerciseViewModel.exeIdCounter]);
+        id: _userWorkoutsDateViewModel
+            .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
     if (_exerciseByIdViewModel.apiResponse.status == Status.LOADING) {
       return Center(
         child: CircularProgressIndicator(),
@@ -179,13 +180,13 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
         if (controller.responseExe!.data![0].exerciseType == "REPS") {
           return WillPopScope(
             onWillPop: () async {
-              _workoutBaseExerciseViewModel.getBackId(
-                  counter: _workoutBaseExerciseViewModel.exeIdCounter);
-              if (_workoutBaseExerciseViewModel.exeIdCounter <
-                  _workoutBaseExerciseViewModel.exerciseId.length) {
+              _userWorkoutsDateViewModel.getBackId(
+                  counter: _userWorkoutsDateViewModel.exeIdCounter);
+              if (_userWorkoutsDateViewModel.exeIdCounter <
+                  _userWorkoutsDateViewModel.exerciseId.length) {
                 await controller.getExerciseByIdDetails(
-                    id: _workoutBaseExerciseViewModel.exerciseId[
-                        _workoutBaseExerciseViewModel.exeIdCounter]);
+                    id: _userWorkoutsDateViewModel
+                        .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
                 if (controller.apiResponse.status == Status.LOADING) {
                   Center(
                     child: CircularProgressIndicator(),
@@ -195,7 +196,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                   controller.responseExe = controller.apiResponse.data;
                 }
               }
-              if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+              if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
                 isFirst = true;
               }
               if (isFirst == true) {
@@ -210,6 +211,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                   isHold = true;
                 }
               }
+
               return false;
             },
             child: Scaffold(
@@ -218,13 +220,13 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                 elevation: 0,
                 leading: IconButton(
                     onPressed: () async {
-                      _workoutBaseExerciseViewModel.getBackId(
-                          counter: _workoutBaseExerciseViewModel.exeIdCounter);
-                      if (_workoutBaseExerciseViewModel.exeIdCounter <
-                          _workoutBaseExerciseViewModel.exerciseId.length) {
+                      _userWorkoutsDateViewModel.getBackId(
+                          counter: _userWorkoutsDateViewModel.exeIdCounter);
+                      if (_userWorkoutsDateViewModel.exeIdCounter <
+                          _userWorkoutsDateViewModel.exerciseId.length) {
                         await controller.getExerciseByIdDetails(
-                            id: _workoutBaseExerciseViewModel.exerciseId[
-                                _workoutBaseExerciseViewModel.exeIdCounter]);
+                            id: _userWorkoutsDateViewModel.exerciseId[
+                                _userWorkoutsDateViewModel.exeIdCounter]);
                         if (controller.apiResponse.status == Status.LOADING) {
                           Center(
                             child: CircularProgressIndicator(),
@@ -234,7 +236,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                           controller.responseExe = controller.apiResponse.data;
                         }
                       }
-                      if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+                      if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
                         isFirst = true;
                       }
                       if (isFirst == true) {
@@ -261,7 +263,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                   TextButton(
                       onPressed: () {
                         Get.offAll(HomeScreen());
-                        _workoutBaseExerciseViewModel.exeIdCounter = 0;
+                        _userWorkoutsDateViewModel.exeIdCounter = 0;
                         isHold = false;
                         isFirst = false;
                       },
@@ -368,22 +370,22 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                               SizedBox(height: Get.height * .02),
                               commonNavigationButton(
                                   onTap: () async {
-                                    _workoutBaseExerciseViewModel.getExeId(
-                                        counter: _workoutBaseExerciseViewModel
+                                    _userWorkoutsDateViewModel.getExeId(
+                                        counter: _userWorkoutsDateViewModel
                                             .exeIdCounter);
-                                    if (_workoutBaseExerciseViewModel
+                                    if (_userWorkoutsDateViewModel
                                             .exeIdCounter <
-                                        _workoutBaseExerciseViewModel
+                                        _userWorkoutsDateViewModel
                                             .exerciseId.length) {
-                                      if (_workoutBaseExerciseViewModel
+                                      if (_userWorkoutsDateViewModel
                                               .exeIdCounter >
                                           0) {
                                         isGreaterOne = true;
                                       }
                                       await controller.getExerciseByIdDetails(
-                                          id: _workoutBaseExerciseViewModel
+                                          id: _userWorkoutsDateViewModel
                                                   .exerciseId[
-                                              _workoutBaseExerciseViewModel
+                                              _userWorkoutsDateViewModel
                                                   .exeIdCounter]);
                                       if (controller.apiResponse.status ==
                                           Status.LOADING) {
@@ -397,9 +399,9 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                             controller.apiResponse.data;
                                       }
                                     }
-                                    if (_workoutBaseExerciseViewModel
+                                    if (_userWorkoutsDateViewModel
                                             .exeIdCounter ==
-                                        _workoutBaseExerciseViewModel
+                                        _userWorkoutsDateViewModel
                                             .exerciseId.length) {
                                       Get.to(ShareProgressScreen(
                                         exeData: controller.responseExe!.data!,
@@ -412,7 +414,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                   },
                                   name: controller.responseExe!.data![0]
                                               .exerciseId ==
-                                          _workoutBaseExerciseViewModel
+                                          _userWorkoutsDateViewModel
                                               .exerciseId.last
                                       ? 'Finish and Log Workout'
                                       : 'Next Exercise')
@@ -430,13 +432,13 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
               setState(() {
                 totalRound = 0;
               });
-              _workoutBaseExerciseViewModel.getBackId(
-                  counter: _workoutBaseExerciseViewModel.exeIdCounter);
-              if (_workoutBaseExerciseViewModel.exeIdCounter <
-                  _workoutBaseExerciseViewModel.exerciseId.length) {
+              _userWorkoutsDateViewModel.getBackId(
+                  counter: _userWorkoutsDateViewModel.exeIdCounter);
+              if (_userWorkoutsDateViewModel.exeIdCounter <
+                  _userWorkoutsDateViewModel.exerciseId.length) {
                 await controller.getExerciseByIdDetails(
-                    id: _workoutBaseExerciseViewModel.exerciseId[
-                        _workoutBaseExerciseViewModel.exeIdCounter]);
+                    id: _userWorkoutsDateViewModel
+                        .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
                 if (controller.apiResponse.status == Status.LOADING) {
                   Center(
                     child: CircularProgressIndicator(),
@@ -446,7 +448,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                   controller.responseExe = controller.apiResponse.data;
                 }
               }
-              if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+              if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
                 isFirst = true;
               }
               if (isFirst == true) {
@@ -473,13 +475,14 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                       setState(() {
                         totalRound = 0;
                       });
-                      _workoutBaseExerciseViewModel.getBackId(
-                          counter: _workoutBaseExerciseViewModel.exeIdCounter);
-                      if (_workoutBaseExerciseViewModel.exeIdCounter <
-                          _workoutBaseExerciseViewModel.exerciseId.length) {
+                      // controller.totalRound = 0;
+                      _userWorkoutsDateViewModel.getBackId(
+                          counter: _userWorkoutsDateViewModel.exeIdCounter);
+                      if (_userWorkoutsDateViewModel.exeIdCounter <
+                          _userWorkoutsDateViewModel.exerciseId.length) {
                         await controller.getExerciseByIdDetails(
-                            id: _workoutBaseExerciseViewModel.exerciseId[
-                                _workoutBaseExerciseViewModel.exeIdCounter]);
+                            id: _userWorkoutsDateViewModel.exerciseId[
+                                _userWorkoutsDateViewModel.exeIdCounter]);
                         if (controller.apiResponse.status == Status.LOADING) {
                           Center(
                             child: CircularProgressIndicator(),
@@ -489,7 +492,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                           controller.responseExe = controller.apiResponse.data;
                         }
                       }
-                      if (_workoutBaseExerciseViewModel.exeIdCounter == 0) {
+                      if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
                         isFirst = true;
                       }
                       if (isFirst == true) {
@@ -516,7 +519,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                   TextButton(
                       onPressed: () {
                         Get.offAll(HomeScreen());
-                        _workoutBaseExerciseViewModel.exeIdCounter = 0;
+                        _userWorkoutsDateViewModel.exeIdCounter = 0;
 
                         isFirst = false;
                         isHold = false;
@@ -525,6 +528,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                         setState(() {
                           totalRound = 0;
                         });
+                        // controller.totalRound = 0;
                       },
                       child: Text(
                         'Quit',
@@ -640,7 +644,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                                   .kLightGray16W300Roboto,
                                             )
                                           : Text(
-                                              'Sets $totalRound/${controller.responseExe!.data![0].exerciseSets} ',
+                                              'Sets ${totalRound}/${controller.responseExe!.data![0].exerciseSets} ',
                                               style: FontTextStyle
                                                   .kLightGray16W300Roboto,
                                             ),
@@ -702,7 +706,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                               .toString())) {
                                         _timerController!.start();
 
-                                        print('totalRound-------> $totalRound');
+                                        print(
+                                            'controller.totalRound-------> ${totalRound}');
                                       }
                                     },
                                     child: Container(
@@ -730,6 +735,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                       setState(() {
                                         totalRound = 0;
                                       });
+
+                                      // controller.totalRound = 0;
                                       _timerController!.reset();
                                     },
                                     child: Container(
@@ -758,24 +765,24 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                     setState(() {
                                       totalRound = 0;
                                     });
-
-                                    _workoutBaseExerciseViewModel.getExeId(
-                                        counter: _workoutBaseExerciseViewModel
+                                    // controller.totalRound = 0;
+                                    _userWorkoutsDateViewModel.getExeId(
+                                        counter: _userWorkoutsDateViewModel
                                             .exeIdCounter);
 
-                                    if (_workoutBaseExerciseViewModel
+                                    if (_userWorkoutsDateViewModel
                                             .exeIdCounter <
-                                        _workoutBaseExerciseViewModel
+                                        _userWorkoutsDateViewModel
                                             .exerciseId.length) {
-                                      if (_workoutBaseExerciseViewModel
+                                      if (_userWorkoutsDateViewModel
                                               .exeIdCounter >
                                           0) {
                                         isGreaterOne = true;
                                       }
                                       await controller.getExerciseByIdDetails(
-                                          id: _workoutBaseExerciseViewModel
+                                          id: _userWorkoutsDateViewModel
                                                   .exerciseId[
-                                              _workoutBaseExerciseViewModel
+                                              _userWorkoutsDateViewModel
                                                   .exeIdCounter]);
                                       if (controller.apiResponse.status ==
                                           Status.LOADING) {
@@ -789,9 +796,9 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                             controller.apiResponse.data;
                                       }
                                     }
-                                    if (_workoutBaseExerciseViewModel
+                                    if (_userWorkoutsDateViewModel
                                             .exeIdCounter ==
-                                        _workoutBaseExerciseViewModel
+                                        _userWorkoutsDateViewModel
                                             .exerciseId.length) {
                                       Get.to(ShareProgressScreen(
                                         exeData: controller.responseExe!.data!,
@@ -805,7 +812,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen>
                                   },
                                   name: controller.responseExe!.data![0]
                                               .exerciseId ==
-                                          _workoutBaseExerciseViewModel
+                                          _userWorkoutsDateViewModel
                                               .exerciseId.last
                                       ? 'Finish and Log Workout'
                                       : 'Next Exercise')

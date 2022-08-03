@@ -1,9 +1,14 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
+import 'package:tcm/model/response_model/workout_response_model/user_workouts_date_response_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/no_weight_exercise_screen.dart';
@@ -13,6 +18,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
+import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -35,8 +41,8 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
 
-  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
-      Get.put(WorkoutBaseExerciseViewModel());
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
 
   VideoPlayerController? _videoPlayerController;
   YoutubePlayerController? _youTubePlayerController;
@@ -48,9 +54,8 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     super.initState();
 
     initializePlayer();
-    _exerciseByIdViewModel.getExerciseByIdDetails(
-        id: _workoutBaseExerciseViewModel
-            .exerciseId[_workoutBaseExerciseViewModel.exeIdCounter]);
+
+    getExercisesId();
   }
 
   @override
@@ -59,6 +64,32 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     _chewieController?.dispose();
     _youTubePlayerController?.dispose();
     super.dispose();
+  }
+
+  getExercisesId() async {
+    print("called 123");
+    log("called 123");
+
+    await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
+        userId: PreferenceManager.getUId(),
+        date: DateTime.now().toString().split(" ").first);
+
+    if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
+      print("complete api call");
+      UserWorkoutsDateResponseModel resp =
+          _userWorkoutsDateViewModel.apiResponse.data;
+
+      log("--------------- dates ${resp.msg}");
+
+      _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+
+      print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
+      // log("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
+
+      await _exerciseByIdViewModel.getExerciseByIdDetails(
+          id: _userWorkoutsDateViewModel
+              .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+    }
   }
 
   Future initializePlayer() async {
@@ -111,6 +142,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
     print('is data comming ????? ${widget.data[0].workoutTitle}');
 
     if (widget.exeData.isNotEmpty) {
@@ -392,8 +424,8 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                 workoutId: widget.workoutId,
                               ));
 
-                              if (_workoutBaseExerciseViewModel.exeIdCounter ==
-                                  _workoutBaseExerciseViewModel
+                              if (_userWorkoutsDateViewModel.exeIdCounter ==
+                                  _userWorkoutsDateViewModel
                                       .exerciseId.length) {
                                 Get.to(ShareProgressScreen(
                                   exeData: responseExe.data!,

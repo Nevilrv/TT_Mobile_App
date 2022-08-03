@@ -1,3 +1,5 @@
+import 'package:carousel_slider/carousel_controller.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/material.dart';
 
@@ -16,10 +18,12 @@ import 'package:tcm/screen/forum/comment_screen.dart';
 
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
-
+import 'package:video_player/video_player.dart';
+import 'package:chewie/chewie.dart';
 import '../../api_services/api_response.dart';
 import '../../utils/font_styles.dart';
 import '../../viewModel/forum_viewModel/forum_viewmodel.dart';
+import 'forum_video_screen.dart';
 
 class ForumScreen extends StatefulWidget {
   const ForumScreen({Key? key}) : super(key: key);
@@ -35,6 +39,9 @@ class _ForumScreenState extends State<ForumScreen> {
   String _selectedOptions = '';
   ForumViewModel forumViewModel = Get.put(ForumViewModel());
   GetAllForumsResponseModel response = GetAllForumsResponseModel();
+  CarouselController carouselController = CarouselController();
+  int _current = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -45,6 +52,13 @@ class _ForumScreenState extends State<ForumScreen> {
     model.userId = PreferenceManager.getUId();
     forumViewModel.searchForumViewModel(model);
     // forumViewModel.getAllForumsViewModel();
+  }
+
+  @override
+  void dispose() {
+    videoPlayerController!.dispose();
+    chewieController!.dispose();
+    super.dispose();
   }
 
   @override
@@ -348,6 +362,95 @@ class _ForumScreenState extends State<ForumScreen> {
             SizedBox(
               height: Get.height * 0.01,
             ),
+            response.data![index].postImage == null
+                ? SizedBox()
+                : response.data![index].postImage!.length == 1
+                    ? response.data![index].postImage![0].isVideoFileName
+                        ? Center(
+                            child: Container(
+                              height: Get.height * 0.23,
+                              width: Get.width,
+                              child: ForumVideoScreen(
+                                  video: response.data![index].postImage![0]),
+                            ),
+                          )
+                        : Center(
+                            child: Container(
+                              width: Get.width,
+                              height: Get.height * 0.23,
+                              child: Image.network(
+                                response.data![index].postImage![0],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          )
+                    : SizedBox(
+                        height: Get.height * 0.25,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: Get.height * 0.23,
+                              child: CarouselSlider.builder(
+                                carouselController: carouselController,
+                                itemCount:
+                                    response.data![index].postImage!.length,
+                                itemBuilder: (BuildContext context,
+                                    int itemIndex, int pageViewIndex) {
+                                  return Container(
+                                    width: Get.width,
+                                    child: response
+                                            .data![index]
+                                            .postImage![itemIndex]
+                                            .isVideoFileName
+                                        ? ForumVideoScreen(
+                                            isPlay: _current == itemIndex
+                                                ? true
+                                                : false,
+                                            video: response.data![index]
+                                                .postImage![itemIndex])
+                                        : Image.network(
+                                            response.data![index]
+                                                .postImage![itemIndex],
+                                            fit: BoxFit.cover,
+                                          ),
+                                  );
+                                },
+                                options: CarouselOptions(
+                                  autoPlay: false,
+                                  enableInfiniteScroll: false,
+                                  enlargeCenterPage: true,
+                                  viewportFraction: 0.99,
+                                  aspectRatio: 2.0,
+                                  onPageChanged: (index, reason) {
+                                    setState(() {
+                                      _current = index;
+                                    });
+                                  },
+                                  initialPage: 0,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                  response.data![index].postImage!.length,
+                                  (index) => Padding(
+                                        padding: const EdgeInsets.all(2),
+                                        child: CircleAvatar(
+                                          radius: Get.height * 0.006,
+                                          backgroundColor: _current == index
+                                              ? ColorUtils.kTint
+                                              : ColorUtils.kTint
+                                                  .withOpacity(0.4),
+                                        ),
+                                      )),
+                            )
+                          ],
+                        ),
+                      ),
+            SizedBox(
+              height: Get.height * 0.01,
+            ),
             Text(
               '${response.data![index].postTitle!.replaceFirst(response.data![index].postTitle![0], response.data![index].postTitle![0].toUpperCase())}',
               maxLines: 2,
@@ -372,6 +475,28 @@ class _ForumScreenState extends State<ForumScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  VideoPlayerController? videoPlayerController;
+  ChewieController? chewieController;
+  Future<void> initializeVideoPlayer(String url) async {
+    videoPlayerController = VideoPlayerController.network(url);
+    await Future.wait([
+      videoPlayerController!.initialize(),
+    ]);
+    _createChewieController();
+    setState(() {});
+  }
+
+  void _createChewieController() {
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController!,
+      autoPlay: false,
+      looping: false,
+      allowFullScreen: true,
+      showControls: true,
+      showControlsOnInitialize: true,
     );
   }
 

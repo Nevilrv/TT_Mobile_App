@@ -229,121 +229,116 @@ confirmAlertDialog(
     Schedule? event,
     RemoveWorkoutProgramViewModel? removeWorkoutProgramViewModel,
     ScheduleByDateViewModel? scheduleByDateViewModel}) {
-  showCupertinoDialog(
-      context: context!,
-      builder: (_) {
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-          backgroundColor: ColorUtils.kBlack,
-          actionsOverflowDirection: VerticalDirection.down,
-          title: Column(children: [
-            Text('Delete Workout',
-                style: FontTextStyle.kBlack24W400Roboto.copyWith(
-                    fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
-            SizedBox(height: 20),
-            Text(
-              'Are you sure you want to delete workout from schedule?',
-              style: FontTextStyle.kBlack16W300Roboto
-                  .copyWith(color: ColorUtils.kTint),
-            ),
-          ]),
-          actions: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                TextButton(
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.resolveWith<Color?>(
-                        (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.pressed))
-                            return ColorUtils.kTint.withOpacity(0.2);
-                          return null;
-                        },
-                      ),
-                    ),
-                    child: Text('Cancel',
-                        style: FontTextStyle.kBlack24W400Roboto
-                            .copyWith(color: ColorUtils.kTint)),
-                    onPressed: () {
-                      Get.back();
-                    }),
-                TextButton(
+  Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        backgroundColor: ColorUtils.kBlack,
+        actionsOverflowDirection: VerticalDirection.down,
+        title: Column(children: [
+          Text('Delete Workout',
+              style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                  fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
+          SizedBox(height: 20),
+          Text(
+            'Are you sure you want to delete workout from schedule?',
+            style: FontTextStyle.kBlack16W300Roboto
+                .copyWith(color: ColorUtils.kTint),
+          ),
+        ]),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              TextButton(
                   style: ButtonStyle(
                     backgroundColor: MaterialStateProperty.resolveWith<Color?>(
                       (Set<MaterialState> states) {
                         if (states.contains(MaterialState.pressed))
-                          return ColorUtils.kRed.withOpacity(0.2);
+                          return ColorUtils.kTint.withOpacity(0.2);
                         return null;
                       },
                     ),
                   ),
-                  child: Text('Delete',
-                      style: FontTextStyle.kBlack24W400Roboto.copyWith(
-                          color: ColorUtils.kRed, fontWeight: FontWeight.bold)),
-                  onPressed: () async {
-                    RemoveWorkoutProgramRequestModel _request =
-                        RemoveWorkoutProgramRequestModel();
-                    _request.userWorkoutProgramId = '${event!.userProgramId}';
-                    await removeWorkoutProgramViewModel!
-                        .removeWorkoutProgramViewModel(_request);
-                    print('goes');
+                  child: Text('Cancel',
+                      style: FontTextStyle.kBlack24W400Roboto
+                          .copyWith(color: ColorUtils.kTint)),
+                  onPressed: () {
                     Get.back();
-                    if (removeWorkoutProgramViewModel.apiResponse.status ==
-                        Status.COMPLETE) {
-                      print(
-                          '${removeWorkoutProgramViewModel.apiResponse.status}');
-                      RemoveWorkoutProgramResponseModel removeWorkoutResponse =
-                          removeWorkoutProgramViewModel.apiResponse.data;
-                      if (removeWorkoutResponse.success == true &&
-                          removeWorkoutResponse.msg != null) {
-                        print('${removeWorkoutResponse.msg}');
-
-                        Get.showSnackbar(GetSnackBar(
-                          message: '${removeWorkoutResponse.msg}',
-                          duration: Duration(seconds: 2),
-                        ));
-
-                        print(
-                            'hello ================= ${removeWorkoutResponse.msg}');
-                        scheduleByDateViewModel!
-                            .dateRangePickerController.selectedDates = [];
-                        scheduleByDateViewModel
-                            .dateRangePickerController.selectedDates!
-                            .clear();
-                        scheduleByDateViewModel.dayList.clear();
-                        scheduleByDateViewModel.dayList = [];
-
-                        await scheduleByDateViewModel.getScheduleByDateDetails(
-                            userId: PreferenceManager.getUId());
-
-                        print('${removeWorkoutResponse.msg} ------------ ');
-                      } else if (removeWorkoutResponse.success == true &&
-                          removeWorkoutResponse.msg == null) {
-                        Get.showSnackbar(GetSnackBar(
-                          message: '${removeWorkoutResponse.msg}',
-                          duration: Duration(seconds: 2),
-                        ));
-                      }
-                    } else if (removeWorkoutProgramViewModel
-                            .apiResponse.status ==
-                        Status.ERROR) {
-                      print(
-                          '${removeWorkoutProgramViewModel.apiResponse.status}');
+                  }),
+              TextButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+                    (Set<MaterialState> states) {
+                      if (states.contains(MaterialState.pressed))
+                        return ColorUtils.kRed.withOpacity(0.2);
+                      return null;
+                    },
+                  ),
+                ),
+                child: Text('Delete',
+                    style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                        color: ColorUtils.kRed, fontWeight: FontWeight.bold)),
+                onPressed: () async {
+                  RemoveWorkoutProgramRequestModel _request =
+                      RemoveWorkoutProgramRequestModel();
+                  _request.userWorkoutProgramId = '${event!.userProgramId}';
+                  await removeWorkoutProgramViewModel!
+                      .removeWorkoutProgramViewModel(_request);
+                  print('goes');
+                  Get.back();
+                  if (removeWorkoutProgramViewModel.apiResponse.status ==
+                      Status.COMPLETE) {
+                    print(
+                        '${removeWorkoutProgramViewModel.apiResponse.status}');
+                    RemoveWorkoutProgramResponseModel removeWorkoutResponse =
+                        removeWorkoutProgramViewModel.apiResponse.data;
+                    if (removeWorkoutResponse.success == true &&
+                        removeWorkoutResponse.msg != null) {
+                      print('${removeWorkoutResponse.msg}');
 
                       Get.showSnackbar(GetSnackBar(
-                        message: 'Something went wrong!!!',
+                        message: '${removeWorkoutResponse.msg}',
+                        duration: Duration(seconds: 2),
+                      ));
+
+                      print(
+                          'hello ================= ${removeWorkoutResponse.msg}');
+                      scheduleByDateViewModel!
+                          .dateRangePickerController.selectedDates = [];
+                      scheduleByDateViewModel
+                          .dateRangePickerController.selectedDates!
+                          .clear();
+                      scheduleByDateViewModel.dayList.clear();
+                      scheduleByDateViewModel.dayList = [];
+
+                      await scheduleByDateViewModel.getScheduleByDateDetails(
+                          userId: PreferenceManager.getUId());
+
+                      print('${removeWorkoutResponse.msg} ------------ ');
+                    } else if (removeWorkoutResponse.success == true &&
+                        removeWorkoutResponse.msg == null) {
+                      Get.showSnackbar(GetSnackBar(
+                        message: '${removeWorkoutResponse.msg}',
                         duration: Duration(seconds: 2),
                       ));
                     }
+                  } else if (removeWorkoutProgramViewModel.apiResponse.status ==
+                      Status.ERROR) {
+                    print(
+                        '${removeWorkoutProgramViewModel.apiResponse.status}');
 
-                    print("api recall successfully");
-                  },
-                ),
-              ],
-            ),
-          ],
-        );
-      });
+                    Get.showSnackbar(GetSnackBar(
+                      message: 'Something went wrong!!!',
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
+
+                  print("api recall successfully");
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+      barrierColor: ColorUtils.kBlack.withOpacity(0.6));
 }

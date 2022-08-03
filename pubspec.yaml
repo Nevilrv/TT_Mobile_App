@@ -57,6 +57,7 @@ dependencies:
   dotted_border: ^2.0.0+1
   video_compress: ^3.1.0
   flutter_video_info: ^1.2.0
+  carousel_slider: ^4.1.1
 
     #  syncfusion_flutter_datepicker: ^20.1.61
 

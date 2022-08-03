@@ -53,6 +53,8 @@ class ApiRoutes {
   String exerciseByIdUrl = baseUrl + "/json/data_exercises.php?exercise=";
   String signInUrl = baseUrl + "/json/data_login.php";
   String dayBaseWorkoutUrl = baseUrl + "/json/data_days.php?day=";
+  String userWorkoutsDateUrl =
+      baseUrl + "/json/data_user_workouts_date.php?user_id=";
 
   String workoutByFilterUrl = baseUrl + "/json/data_workout_filter.php?goal=";
   String workoutByID = baseUrl + "/json/data_single_workout.php?workout_id=";
