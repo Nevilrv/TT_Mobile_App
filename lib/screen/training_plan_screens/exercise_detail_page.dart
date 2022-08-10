@@ -138,212 +138,423 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
               .add(element.replaceAll('<ol>', '').replaceAll('</ol>', ''));
         });
 
-        return Scaffold(
-          backgroundColor: ColorUtils.kBlack,
-          appBar: AppBar(
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () {
-                  Get.back();
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_sharp,
-                  color: ColorUtils.kTint,
-                )),
-            backgroundColor: ColorUtils.kBlack,
-            title: Text('${response.data![0].exerciseTitle}',
-                style: FontTextStyle.kWhite16BoldRoboto),
-            centerTitle: true,
-            actions: [
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(right: 18),
-                  child: InkWell(
-                    onTap: () async {
-                      if (controller.apiResponse.status == Status.COMPLETE) {
-                        CheckWorkoutProgramRequestModel _request =
-                            CheckWorkoutProgramRequestModel();
-                        _request.workoutId = widget.workoutId;
-                        _request.userId = PreferenceManager.getUId();
-
-                        await _checkWorkoutProgramViewModel
-                            .checkWorkoutProgramViewModel(_request);
-
-                        if (_checkWorkoutProgramViewModel.apiResponse.status ==
-                            Status.COMPLETE) {
-                          CheckWorkoutProgramResponseModel checkResponse =
-                              _checkWorkoutProgramViewModel.apiResponse.data;
-
-                          if (checkResponse.success == true) {
-                            if ('${response.data![0].exerciseVideo}'
-                                .contains('www.youtube.com')) {
-                              _youTubePlayerController?.pause();
-                            } else {
-                              _videoPlayerController?.pause();
-                              _chewieController?.pause();
-                            }
-                            Get.to(ProgramSetupPage(
-                              exerciseId: response.data![0].exerciseId,
-                              day: widget.day,
-                              workoutId: widget.workoutId,
-                              workoutName: widget.workoutName,
-                            ));
-                          } else if (checkResponse.success == false) {
-                            Get.showSnackbar(GetSnackBar(
-                              message: '${checkResponse.msg}',
-                              duration: Duration(seconds: 2),
-                              backgroundColor: ColorUtils.kRed,
-                            ));
-                          }
-                        } else if (_checkWorkoutProgramViewModel
-                                .apiResponse.status ==
-                            Status.ERROR) {
-                          Text(
-                            'Something went wrong',
-                            style: FontTextStyle.kWhite16W300Roboto,
-                          );
-                        }
-                      }
+        return response.data![0].exerciseVideo!.contains('www.youtube.com')
+            ? _youTubePlayerController == null || _youTubePlayerController == ''
+                ? Center(
+                    child: CircularProgressIndicator(
+                    color: ColorUtils.kTint,
+                  ))
+                : YoutubePlayerBuilder(
+                    onExitFullScreen: () {
+                      // The player forces portraitUp after exiting fullscreen. This overrides the behaviour.
+                      // SystemChrome.setPreferredOrientations(DeviceOrientation.values);
                     },
-                    child:
-                        Text('Start', style: FontTextStyle.kTine16W400Roboto),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          body: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            child: Column(children: [
-              Container(
-                height: Get.height / 2.75,
-                width: Get.width,
-                child: '${response.data![0].exerciseVideo}'
-                        .contains('www.youtube.com')
-                    ? Center(
-                        child: _youTubePlayerController != null ||
-                                _youTubePlayerController != ''
-                            ? YoutubePlayer(
-                                controller: _youTubePlayerController!,
-                                showVideoProgressIndicator: true,
-                                bufferIndicator: CircularProgressIndicator(
-                                    color: ColorUtils.kTint),
-                                controlsTimeOut: Duration(hours: 2),
-                                aspectRatio: 16 / 9,
-                                progressColors: ProgressBarColors(
-                                    handleColor: ColorUtils.kRed,
-                                    playedColor: ColorUtils.kRed,
-                                    backgroundColor: ColorUtils.kGray,
-                                    bufferedColor: ColorUtils.kLightGray),
-                              )
-                            : CircularProgressIndicator(
-                                color: ColorUtils.kTint),
-                      )
-                    : Center(
-                        child: _chewieController != null &&
-                                _chewieController!
-                                    .videoPlayerController.value.isInitialized
-                            ? Chewie(
-                                controller: _chewieController!,
-                              )
-                            : widget.workoutImage == null
-                                ? noDataLottie()
-                                : Image.network(
-                                    widget.workoutImage!,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return noDataLottie();
-                                    },
-                                  )),
-              ),
-              SizedBox(height: 15),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 18),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                            '${response.data![0].exerciseTitle}'.length >= 25
-                                ? '${response.data![0].exerciseTitle!.substring(0, 25) + ' ..'}'
-                                : '${response.data![0].exerciseTitle}',
-                            style: FontTextStyle.kWhite17BoldRoboto),
-                        RichText(
-                          text: TextSpan(
-                              text: 'Suggested: ',
-                              style: FontTextStyle.kLightGray16W300Roboto
-                                  .copyWith(fontWeight: FontWeight.w600),
-                              children: [
-                                TextSpan(
-                                  text:
-                                      '${response.data![0].exerciseSets}x${response.data![0].exerciseReps} reps',
-                                  style: FontTextStyle.kLightGray16W300Roboto,
-                                )
-                              ]),
-                        ),
-                      ],
+                    player: YoutubePlayer(
+                      controller: _youTubePlayerController!,
+                      showVideoProgressIndicator: true,
+                      bufferIndicator:
+                          CircularProgressIndicator(color: ColorUtils.kTint),
+                      controlsTimeOut: Duration(hours: 2),
+                      aspectRatio: 16 / 9,
+                      progressColors: ProgressBarColors(
+                          handleColor: ColorUtils.kRed,
+                          playedColor: ColorUtils.kRed,
+                          backgroundColor: ColorUtils.kGray,
+                          bufferedColor: ColorUtils.kLightGray),
                     ),
-                    // response.data![0].exerciseImage!.isEmpty
-                    //     ? SizedBox()
-                    //     : Container(
-                    //         alignment: Alignment.center,
-                    //         margin: EdgeInsets.symmetric(vertical: 5),
-                    //         height: Get.height * 0.25,
-                    //         width: Get.width,
-                    //         decoration: BoxDecoration(
-                    //             image: DecorationImage(
-                    //           fit: BoxFit.fitWidth,
-                    //           image: NetworkImage(
-                    //               '$baseImageUrl${response.data![0].exerciseImage}'),
-                    //         )),
-                    //       ),
-                    Container(
-                      padding: EdgeInsets.only(top: 20),
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'VIEW WORKOUTS',
-                        style: FontTextStyle.kWhite16BoldRoboto,
-                      ),
-                    ),
-                    Divider(
-                      color: ColorUtils.kTint,
-                      thickness: 1,
-                    ),
-                    ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: finalHTMLString.length - 1,
-                        itemBuilder: (_, index) {
-                          return Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(top: 10),
-                                child: CircleAvatar(
-                                  backgroundColor: ColorUtils.kTint,
-                                  radius: Get.width * 0.04,
-                                  child: Text('${index + 1}',
-                                      style: FontTextStyle.kBlack12BoldRoboto),
+                    builder: (context, player) {
+                      return Scaffold(
+                        backgroundColor: ColorUtils.kBlack,
+                        appBar: AppBar(
+                          elevation: 0,
+                          leading: IconButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios_sharp,
+                                color: ColorUtils.kTint,
+                              )),
+                          backgroundColor: ColorUtils.kBlack,
+                          title: Text('${response.data![0].exerciseTitle}',
+                              style: FontTextStyle.kWhite16BoldRoboto),
+                          centerTitle: true,
+                          actions: [
+                            Center(
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 18),
+                                child: InkWell(
+                                  onTap: () async {
+                                    if (controller.apiResponse.status ==
+                                        Status.COMPLETE) {
+                                      CheckWorkoutProgramRequestModel _request =
+                                          CheckWorkoutProgramRequestModel();
+                                      _request.workoutId = widget.workoutId;
+                                      _request.userId =
+                                          PreferenceManager.getUId();
+
+                                      await _checkWorkoutProgramViewModel
+                                          .checkWorkoutProgramViewModel(
+                                              _request);
+
+                                      if (_checkWorkoutProgramViewModel
+                                              .apiResponse.status ==
+                                          Status.COMPLETE) {
+                                        CheckWorkoutProgramResponseModel
+                                            checkResponse =
+                                            _checkWorkoutProgramViewModel
+                                                .apiResponse.data;
+
+                                        if (checkResponse.success == true) {
+                                          if ('${response.data![0].exerciseVideo}'
+                                              .contains('www.youtube.com')) {
+                                            _youTubePlayerController?.pause();
+                                          } else {
+                                            _videoPlayerController?.pause();
+                                            _chewieController?.pause();
+                                          }
+                                          Get.to(ProgramSetupPage(
+                                            exerciseId:
+                                                response.data![0].exerciseId,
+                                            day: widget.day,
+                                            workoutId: widget.workoutId,
+                                            workoutName: widget.workoutName,
+                                          ));
+                                        } else if (checkResponse.success ==
+                                            false) {
+                                          Get.showSnackbar(GetSnackBar(
+                                            message: '${checkResponse.msg}',
+                                            duration: Duration(seconds: 2),
+                                            backgroundColor: ColorUtils.kRed,
+                                          ));
+                                        }
+                                      } else if (_checkWorkoutProgramViewModel
+                                              .apiResponse.status ==
+                                          Status.ERROR) {
+                                        Text(
+                                          'Something went wrong',
+                                          style:
+                                              FontTextStyle.kWhite16W300Roboto,
+                                        );
+                                      }
+                                    }
+                                  },
+                                  child: Text('Start',
+                                      style: FontTextStyle.kTine16W400Roboto),
                                 ),
                               ),
-                              Expanded(
-                                  child:
-                                      htmlToText(data: finalHTMLString[index]))
-                              // Text(
-                              //     '${response.data![0].exerciseInstructions}',
-                              //     maxLines: 4,
-                              //     style: FontTextStyle.kWhite16W300Roboto)
-                              // ),
-                            ],
-                          );
-                        }),
-                    SizedBox(height: Get.height * 0.03),
+                            ),
+                          ],
+                        ),
+                        body: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(children: [
+                            Container(
+                              height: Get.height / 2.75,
+                              width: Get.width,
+                              child: Center(
+                                child: _youTubePlayerController != null ||
+                                        _youTubePlayerController != ''
+                                    ? player
+                                    : CircularProgressIndicator(
+                                        color: ColorUtils.kTint),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 18),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                          '${response.data![0].exerciseTitle}'
+                                                      .length >=
+                                                  25
+                                              ? '${response.data![0].exerciseTitle!.substring(0, 25) + ' ..'}'
+                                              : '${response.data![0].exerciseTitle}',
+                                          style:
+                                              FontTextStyle.kWhite17BoldRoboto),
+                                      RichText(
+                                        text: TextSpan(
+                                            text: 'Suggested: ',
+                                            style: FontTextStyle
+                                                .kLightGray16W300Roboto
+                                                .copyWith(
+                                                    fontWeight:
+                                                        FontWeight.w600),
+                                            children: [
+                                              TextSpan(
+                                                text:
+                                                    '${response.data![0].exerciseSets}x${response.data![0].exerciseReps} reps',
+                                                style: FontTextStyle
+                                                    .kLightGray16W300Roboto,
+                                              )
+                                            ]),
+                                      ),
+                                    ],
+                                  ),
+                                  // response.data![0].exerciseImage!.isEmpty
+                                  //     ? SizedBox()
+                                  //     : Container(
+                                  //         alignment: Alignment.center,
+                                  //         margin: EdgeInsets.symmetric(vertical: 5),
+                                  //         height: Get.height * 0.25,
+                                  //         width: Get.width,
+                                  //         decoration: BoxDecoration(
+                                  //             image: DecorationImage(
+                                  //           fit: BoxFit.fitWidth,
+                                  //           image: NetworkImage(
+                                  //               '$baseImageUrl${response.data![0].exerciseImage}'),
+                                  //         )),
+                                  //       ),
+                                  Container(
+                                    padding: EdgeInsets.only(top: 20),
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'VIEW WORKOUTS',
+                                      style: FontTextStyle.kWhite16BoldRoboto,
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: ColorUtils.kTint,
+                                    thickness: 1,
+                                  ),
+                                  ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: finalHTMLString.length - 1,
+                                      itemBuilder: (_, index) {
+                                        return Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.only(top: 10),
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    ColorUtils.kTint,
+                                                radius: Get.width * 0.04,
+                                                child: Text('${index + 1}',
+                                                    style: FontTextStyle
+                                                        .kBlack12BoldRoboto),
+                                              ),
+                                            ),
+                                            Expanded(
+                                                child: htmlToText(
+                                                    data:
+                                                        finalHTMLString[index]))
+                                            // Text(
+                                            //     '${response.data![0].exerciseInstructions}',
+                                            //     maxLines: 4,
+                                            //     style: FontTextStyle.kWhite16W300Roboto)
+                                            // ),
+                                          ],
+                                        );
+                                      }),
+                                  SizedBox(height: Get.height * 0.03),
+                                ],
+                              ),
+                            ),
+                          ]),
+                        ),
+                      );
+                    },
+                  )
+            : Scaffold(
+                backgroundColor: ColorUtils.kBlack,
+                appBar: AppBar(
+                  elevation: 0,
+                  leading: IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: ColorUtils.kTint,
+                      )),
+                  backgroundColor: ColorUtils.kBlack,
+                  title: Text('${response.data![0].exerciseTitle}',
+                      style: FontTextStyle.kWhite16BoldRoboto),
+                  centerTitle: true,
+                  actions: [
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.only(right: 18),
+                        child: InkWell(
+                          onTap: () async {
+                            if (controller.apiResponse.status ==
+                                Status.COMPLETE) {
+                              CheckWorkoutProgramRequestModel _request =
+                                  CheckWorkoutProgramRequestModel();
+                              _request.workoutId = widget.workoutId;
+                              _request.userId = PreferenceManager.getUId();
+
+                              await _checkWorkoutProgramViewModel
+                                  .checkWorkoutProgramViewModel(_request);
+
+                              if (_checkWorkoutProgramViewModel
+                                      .apiResponse.status ==
+                                  Status.COMPLETE) {
+                                CheckWorkoutProgramResponseModel checkResponse =
+                                    _checkWorkoutProgramViewModel
+                                        .apiResponse.data;
+
+                                if (checkResponse.success == true) {
+                                  if ('${response.data![0].exerciseVideo}'
+                                      .contains('www.youtube.com')) {
+                                    _youTubePlayerController?.pause();
+                                  } else {
+                                    _videoPlayerController?.pause();
+                                    _chewieController?.pause();
+                                  }
+                                  Get.to(ProgramSetupPage(
+                                    exerciseId: response.data![0].exerciseId,
+                                    day: widget.day,
+                                    workoutId: widget.workoutId,
+                                    workoutName: widget.workoutName,
+                                  ));
+                                } else if (checkResponse.success == false) {
+                                  Get.showSnackbar(GetSnackBar(
+                                    message: '${checkResponse.msg}',
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: ColorUtils.kRed,
+                                  ));
+                                }
+                              } else if (_checkWorkoutProgramViewModel
+                                      .apiResponse.status ==
+                                  Status.ERROR) {
+                                Text(
+                                  'Something went wrong',
+                                  style: FontTextStyle.kWhite16W300Roboto,
+                                );
+                              }
+                            }
+                          },
+                          child: Text('Start',
+                              style: FontTextStyle.kTine16W400Roboto),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
-              ),
-            ]),
-          ),
-        );
+                body: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(children: [
+                    Container(
+                      height: Get.height / 2.75,
+                      width: Get.width,
+                      child: Center(
+                          child: _chewieController != null &&
+                                  _chewieController!
+                                      .videoPlayerController.value.isInitialized
+                              ? Chewie(
+                                  controller: _chewieController!,
+                                )
+                              : widget.workoutImage == null
+                                  ? noDataLottie()
+                                  : Image.network(
+                                      widget.workoutImage!,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return noDataLottie();
+                                      },
+                                    )),
+                    ),
+                    SizedBox(height: 15),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 18),
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                  '${response.data![0].exerciseTitle}'.length >=
+                                          25
+                                      ? '${response.data![0].exerciseTitle!.substring(0, 25) + ' ..'}'
+                                      : '${response.data![0].exerciseTitle}',
+                                  style: FontTextStyle.kWhite17BoldRoboto),
+                              RichText(
+                                text: TextSpan(
+                                    text: 'Suggested: ',
+                                    style: FontTextStyle.kLightGray16W300Roboto
+                                        .copyWith(fontWeight: FontWeight.w600),
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            '${response.data![0].exerciseSets}x${response.data![0].exerciseReps} reps',
+                                        style: FontTextStyle
+                                            .kLightGray16W300Roboto,
+                                      )
+                                    ]),
+                              ),
+                            ],
+                          ),
+                          // response.data![0].exerciseImage!.isEmpty
+                          //     ? SizedBox()
+                          //     : Container(
+                          //         alignment: Alignment.center,
+                          //         margin: EdgeInsets.symmetric(vertical: 5),
+                          //         height: Get.height * 0.25,
+                          //         width: Get.width,
+                          //         decoration: BoxDecoration(
+                          //             image: DecorationImage(
+                          //           fit: BoxFit.fitWidth,
+                          //           image: NetworkImage(
+                          //               '$baseImageUrl${response.data![0].exerciseImage}'),
+                          //         )),
+                          //       ),
+                          Container(
+                            padding: EdgeInsets.only(top: 20),
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              'VIEW WORKOUTS',
+                              style: FontTextStyle.kWhite16BoldRoboto,
+                            ),
+                          ),
+                          Divider(
+                            color: ColorUtils.kTint,
+                            thickness: 1,
+                          ),
+                          ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: finalHTMLString.length - 1,
+                              itemBuilder: (_, index) {
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(top: 10),
+                                      child: CircleAvatar(
+                                        backgroundColor: ColorUtils.kTint,
+                                        radius: Get.width * 0.04,
+                                        child: Text('${index + 1}',
+                                            style: FontTextStyle
+                                                .kBlack12BoldRoboto),
+                                      ),
+                                    ),
+                                    Expanded(
+                                        child: htmlToText(
+                                            data: finalHTMLString[index]))
+                                    // Text(
+                                    //     '${response.data![0].exerciseInstructions}',
+                                    //     maxLines: 4,
+                                    //     style: FontTextStyle.kWhite16W300Roboto)
+                                    // ),
+                                  ],
+                                );
+                              }),
+                          SizedBox(height: Get.height * 0.03),
+                        ],
+                      ),
+                    ),
+                  ]),
+                ),
+              );
       } else {
         return Center(
           child: CircularProgressIndicator(

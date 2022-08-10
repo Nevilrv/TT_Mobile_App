@@ -232,15 +232,16 @@ class WorkoutById {
         goalTitle: json["goal_title"],
         levelTitle: json["level_title"],
         selectedDays: json["selected_days"],
-        dayNames: json["days_all_data"] == null
+        dayNames: json["days_all_data"] == []
             ? []
             : List<dynamic>.from(json["day_names"].map((x) => x)),
         daysAllData: json["days_all_data"] == null
             ? []
             : List<DaysAllWorkoutById>.from(json["days_all_data"]
                 .map((x) => DaysAllWorkoutById.fromJson(x))),
-        availableEquipments:
-            List<String>.from(json["available_equipments"].map((x) => x)),
+        availableEquipments: json["available_equipments"] == null
+            ? []
+            : List<String>.from(json["available_equipments"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
@@ -259,7 +260,7 @@ class WorkoutById {
         "days_all_data":
             List<dynamic>.from(daysAllData!.map((x) => x.toJson())),
         "available_equipments":
-            List<dynamic>.from(availableEquipments!.map((x) => x)),
+            List<String>.from(availableEquipments!.map((x) => x)),
       };
 }
 

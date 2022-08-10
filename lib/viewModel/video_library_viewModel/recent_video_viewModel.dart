@@ -2,47 +2,32 @@ import 'dart:developer';
 
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/response_model/video_library_response_model/recent_video_response_model.dart';
 import 'package:tcm/model/response_model/workout_response_model/user_workouts_date_response_model.dart';
+import 'package:tcm/repo/video_library_repo/recent_video_repo.dart';
 import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 
-class UserWorkoutsDateViewModel extends GetxController {
-  List exerciseId = [];
-  int exeIdCounter = 0;
-
-  getExeId({int? counter}) {
-    if (counter! < exerciseId.length) {
-      exeIdCounter++;
-    }
-    update();
-  }
-
-  getBackId({int? counter}) {
-    if (counter! > 0) {
-      exeIdCounter--;
-    }
-    update();
-  }
-
+class RecentVideoViewModel extends GetxController {
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get apiResponse => _apiResponse;
-  Future<void> getUserWorkoutsDateDetails({
-    String? date,
-    String? userId,
+  Future<void> getRecentVideoDetails({
+    String? videoId,
+    String? categoryId,
   }) async {
-    log('uid ==== $userId ------ date ========== $date ');
+    log('videoId ==== $videoId ------ categoryId ========== $categoryId ');
     if (_apiResponse.status == Status.INITIAL) {
       _apiResponse = ApiResponse.loading(message: 'Loading');
       update();
     }
 
     try {
-      UserWorkoutsDateResponseModel response = await UserWorkoutsDateRepo()
-          .userWorkoutsDateRepo(date: date, userId: userId);
-      print('UserWorkoutsDateResponseModel=>$response');
+      RecentVideoResponseModel response = await RecentVideoRepo()
+          .recentVideoRepo(videoId: videoId, catId: categoryId);
+      print('RecentVideoResponseModel=>$response');
       _apiResponse = ApiResponse.complete(response);
     } catch (e) {
-      print("----- UserWorkoutsDateResponseModel === >$e");
+      print("----- RecentVideoResponseModel === >$e");
       _apiResponse = ApiResponse.error(message: 'error');
     }
     update();

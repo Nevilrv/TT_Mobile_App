@@ -21,24 +21,24 @@ class UserWorkoutsDateResponseModel {
 
   bool? success;
   String? msg;
-  Data? data;
+  List<ExeIds>? data;
 
   factory UserWorkoutsDateResponseModel.fromJson(Map<String, dynamic> json) =>
       UserWorkoutsDateResponseModel(
         success: json["success"],
         msg: json["msg"],
-        data: Data.fromJson(json["data"]),
+        data: List<ExeIds>.from(json["data"].map((x) => ExeIds.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
         "success": success,
         "msg": msg,
-        "data": data!.toJson(),
+        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
-class Data {
-  Data({
+class ExeIds {
+  ExeIds({
     this.workoutId,
     this.date,
     this.exercisesIds,
@@ -48,7 +48,7 @@ class Data {
   String? date;
   List<String>? exercisesIds;
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory ExeIds.fromJson(Map<String, dynamic> json) => ExeIds(
         workoutId: json["workout_id"],
         date: json["date"],
         exercisesIds: List<String>.from(json["exercises_ids"].map((x) => x)),

@@ -8,7 +8,7 @@ class AllCategoriesRepo extends ApiService {
 
     var response = await ApiService()
         .getResponse(apiType: APIType.aGet, url: ApiRoutes.getCategories);
-
+    print('CategoriesResponseModel $response');
     CategoriesResponseModel allCategoriesResponseModel =
         CategoriesResponseModel.fromJson(response);
     return allCategoriesResponseModel;

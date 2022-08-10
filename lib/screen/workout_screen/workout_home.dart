@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -81,7 +82,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
       log("--------------- dates ${resp.msg}");
 
-      _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+      _userWorkoutsDateViewModel.exerciseId = resp.data![0].exercisesIds!;
 
       print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
       // log("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
@@ -114,13 +115,17 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
         ),
       );
     } else {
-      _videoPlayerController =
-          VideoPlayerController.network('${widget.data[0].workoutVideo}');
+      if (widget.data[0].workoutVideo == null ||
+          widget.data[0].workoutVideo == '') {
+      } else {
+        _videoPlayerController =
+            VideoPlayerController.network('${widget.data[0].workoutVideo}');
 
-      await Future.wait([
-        _videoPlayerController!.initialize(),
-      ]);
-      _createChewieController();
+        await Future.wait([
+          _videoPlayerController!.initialize(),
+        ]);
+        _createChewieController();
+      }
     }
 
     setState(() {});
@@ -169,285 +174,307 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
           print("exe date --------- ${responseExe.data![0].exerciseType}");
 
-          return WillPopScope(
-            onWillPop: () async {
-              Get.offAll(HomeScreen());
-              return true;
+          return GestureDetector(
+            onHorizontalDragUpdate: (details) {
+              print("hello ${details.localPosition}");
+              print("hello ${details.localPosition.dx}");
+              print("hello ${details.globalPosition.distance}");
+
+              if (details.localPosition.dx < 50.0) {
+                //SWIPE FROM RIGHT DETECTION
+                print("hello ");
+                Get.offAll(HomeScreen());
+              }
             },
-            child: Scaffold(
-              backgroundColor: ColorUtils.kBlack,
-              appBar: AppBar(
-                elevation: 0,
-                leading: IconButton(
-                    onPressed: () {
-                      Get.offAll(HomeScreen());
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_sharp,
-                      color: ColorUtils.kTint,
-                    )),
+            child: WillPopScope(
+              onWillPop: () async {
+                log("hello will");
+                return Future.value(true);
+              },
+              child: Scaffold(
                 backgroundColor: ColorUtils.kBlack,
-                title: Text('Workout Overview',
-                    style: FontTextStyle.kWhite16BoldRoboto),
-                centerTitle: true,
-              ),
-              body: SingleChildScrollView(
-                physics: BouncingScrollPhysics(),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Get.width * 0.09,
-                      vertical: Get.height * 0.02),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          '${widget.data[0].workoutTitle}',
-                          style: FontTextStyle.kWhite20BoldRoboto,
-                        ),
-                        SizedBox(height: Get.height * .02),
-                        ListView.builder(
-                            physics: NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: finalHTMLInstruction.length - 1,
-                            itemBuilder: (_, index) => htmlToTextGrey(
-                                data: finalHTMLInstruction[index])),
-                        SizedBox(height: Get.height * .03),
-                        !watchVideo
-                            ? commonNavigationButtonWithIcon(
-                                onTap: () {
-                                  setState(() {
-                                    watchVideo = true;
-                                  });
-                                },
-                                name: 'Watch Overview Video',
-                                iconImg: AppIcons.video,
-                                iconColor: ColorUtils.kBlack)
-                            : SizedBox(),
-                        watchVideo
-                            ? AnimatedContainer(
-                                height: Get.height / 3.5,
-                                width: Get.width,
-                                duration: Duration(seconds: 2),
-                                child: '${widget.data[0].workoutVideo}'
-                                        .contains('www.youtube.com')
-                                    ? Center(
-                                        child: _youTubePlayerController == null
-                                            ? CircularProgressIndicator(
-                                                color: ColorUtils.kTint)
-                                            : YoutubePlayer(
-                                                controller:
-                                                    _youTubePlayerController!,
-                                                showVideoProgressIndicator:
-                                                    true,
-                                                bufferIndicator:
-                                                    CircularProgressIndicator(
-                                                        color:
-                                                            ColorUtils.kTint),
-                                                controlsTimeOut:
-                                                    Duration(hours: 2),
-                                                aspectRatio: 16 / 9,
-                                                progressColors:
-                                                    ProgressBarColors(
-                                                        handleColor:
-                                                            ColorUtils.kRed,
-                                                        playedColor:
-                                                            ColorUtils.kRed,
-                                                        backgroundColor:
-                                                            ColorUtils.kGray,
-                                                        bufferedColor:
-                                                            ColorUtils
-                                                                .kLightGray),
-                                              ),
-                                      )
-                                    : Center(
-                                        child: _chewieController != null &&
-                                                _chewieController!
-                                                    .videoPlayerController
-                                                    .value
-                                                    .isInitialized
-                                            ? Chewie(
-                                                controller: _chewieController!,
-                                              )
-                                            : widget.data[0].workoutImage ==
-                                                    null
-                                                ? noDataLottie()
-                                                : Image.network(
-                                                    widget
-                                                        .data[0].workoutImage!,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return noDataLottie();
-                                                    },
-                                                  )),
-                              )
-                            : SizedBox(),
-
-                        SizedBox(height: Get.height * .03),
-                        Container(
-                          // height: Get.height * .4,
-                          width: Get.width * .9,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              gradient: LinearGradient(
-                                  colors: ColorUtilsGradient.kGrayGradient,
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                // color: Colors.pink,
-                                width: Get.width * .525,
-                                child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      SizedBox(height: Get.height * .05),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 10, right: 10),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            CircleAvatar(
-                                                radius: Get.height * .02,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                backgroundImage: AssetImage(
-                                                    AppIcons.kettle_bell)),
-                                            SizedBox(width: Get.width * .03),
-                                            Expanded(
-                                              child: Text('Equipment needed',
-                                                  style: FontTextStyle
-                                                      .kWhite20BoldRoboto),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: Get.height * .05),
-                                      Container(
-                                        // color: Colors.teal,
-                                        width: Get.width * .4,
-                                        alignment: Alignment.centerLeft,
-                                        child: ListView.separated(
-                                            physics:
-                                                NeverScrollableScrollPhysics(),
-                                            shrinkWrap: true,
-                                            itemCount: widget.data[0]
-                                                .availableEquipments!.length,
-                                            separatorBuilder: (_, index) {
-                                              return SizedBox(
-                                                  height: Get.height * .008);
-                                            },
-                                            itemBuilder: (_, index) {
-                                              if ('${widget.data[0].availableEquipments![index]}' !=
-                                                  "No Equipment") {
-                                                return Row(
-                                                  children: [
-                                                    SizedBox(
-                                                        width:
-                                                            Get.width * .075),
-                                                    RichText(
-                                                        text: TextSpan(
-                                                            text: '● ',
-                                                            style: FontTextStyle
-                                                                .kLightGray16W300Roboto,
-                                                            children: [
-                                                          TextSpan(
-                                                              text:
-                                                                  '${widget.data[0].availableEquipments![index]}',
-                                                              style: FontTextStyle
-                                                                  .kWhite17BoldRoboto)
-                                                        ])),
-                                                  ],
-                                                );
-                                              } else {
-                                                return SizedBox();
-                                              }
-                                            }),
-                                      ),
-                                      SizedBox(height: Get.height * .05),
-                                      Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 10, right: 10),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            CircleAvatar(
-                                                radius: Get.height * .02,
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                backgroundImage:
-                                                    AssetImage(AppIcons.clock)),
-                                            SizedBox(width: Get.width * .03),
-                                            Expanded(
-                                              child: Text(
-                                                '${widget.exeData[0].exerciseRest} rest between sets',
-                                                style: FontTextStyle
-                                                    .kWhite20BoldRoboto,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: Get.height * .05),
-                                    ]),
-                              ),
-                            ],
+                appBar: AppBar(
+                  elevation: 0,
+                  leading: IconButton(
+                      onPressed: () {
+                        Get.offAll(HomeScreen());
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: ColorUtils.kTint,
+                      )),
+                  backgroundColor: ColorUtils.kBlack,
+                  title: Text('Workout Overview',
+                      style: FontTextStyle.kWhite16BoldRoboto),
+                  centerTitle: true,
+                ),
+                body: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Get.width * 0.09,
+                        vertical: Get.height * 0.02),
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            '${widget.data[0].workoutTitle}',
+                            style: FontTextStyle.kWhite20BoldRoboto,
                           ),
-                        ),
-                        SizedBox(height: Get.height * .03),
-                        // ListView.builder(
-                        //     physics: NeverScrollableScrollPhysics(),
-                        //     shrinkWrap: true,
-                        //     itemCount: finalHTMLTips.length - 1,
-                        //     itemBuilder: (_, index) =>
-                        //         ),
-                        // htmlToTextGrey(data: finalHTMLTips[1]),
+                          SizedBox(height: Get.height * .02),
+                          ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: finalHTMLInstruction.length - 1,
+                              itemBuilder: (_, index) => htmlToTextGrey(
+                                  data: finalHTMLInstruction[index])),
+                          SizedBox(height: Get.height * .03),
+                          !watchVideo
+                              ? commonNavigationButtonWithIcon(
+                                  onTap: () {
+                                    setState(() {
+                                      watchVideo = true;
+                                    });
+                                  },
+                                  name: 'Watch Overview Video',
+                                  iconImg: AppIcons.video,
+                                  iconColor: ColorUtils.kBlack)
+                              : SizedBox(),
+                          watchVideo
+                              ? AnimatedContainer(
+                                  height: Get.height / 3.5,
+                                  width: Get.width,
+                                  duration: Duration(seconds: 2),
+                                  child: '${widget.data[0].workoutVideo}'
+                                          .contains('www.youtube.com')
+                                      ? Center(
+                                          child: _youTubePlayerController ==
+                                                  null
+                                              ? CircularProgressIndicator(
+                                                  color: ColorUtils.kTint)
+                                              : YoutubePlayer(
+                                                  controller:
+                                                      _youTubePlayerController!,
+                                                  showVideoProgressIndicator:
+                                                      true,
+                                                  bufferIndicator:
+                                                      CircularProgressIndicator(
+                                                          color:
+                                                              ColorUtils.kTint),
+                                                  controlsTimeOut:
+                                                      Duration(hours: 2),
+                                                  aspectRatio: 16 / 9,
+                                                  progressColors:
+                                                      ProgressBarColors(
+                                                          handleColor: ColorUtils
+                                                              .kRed,
+                                                          playedColor: ColorUtils
+                                                              .kRed,
+                                                          backgroundColor:
+                                                              ColorUtils.kGray,
+                                                          bufferedColor:
+                                                              ColorUtils
+                                                                  .kLightGray),
+                                                ),
+                                        )
+                                      : Center(
+                                          child: _chewieController != null &&
+                                                  _chewieController!
+                                                      .videoPlayerController
+                                                      .value
+                                                      .isInitialized
+                                              ? Chewie(
+                                                  controller:
+                                                      _chewieController!,
+                                                )
+                                              : widget.data[0].workoutImage ==
+                                                      null
+                                                  ? noDataLottie()
+                                                  : Image.network(
+                                                      widget.data[0]
+                                                          .workoutImage!,
+                                                      errorBuilder: (context,
+                                                          error, stackTrace) {
+                                                        return noDataLottie();
+                                                      },
+                                                    )),
+                                )
+                              : SizedBox(),
 
-                        SizedBox(height: Get.height * .03),
-                        commonNavigationButton(
-                            name: 'Begin Warm-Up',
-                            onTap: () {
-                              Get.to(NoWeightExerciseScreen(
-                                data: widget.data,
-                                workoutId: widget.workoutId,
-                              ));
+                          SizedBox(height: Get.height * .03),
+                          Container(
+                            // height: Get.height * .4,
+                            width: Get.width * .9,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                gradient: LinearGradient(
+                                    colors: ColorUtilsGradient.kGrayGradient,
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  // color: Colors.pink,
+                                  width: Get.width * .525,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        SizedBox(height: Get.height * .05),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              CircleAvatar(
+                                                  radius: Get.height * .02,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  backgroundImage: AssetImage(
+                                                      AppIcons.kettle_bell)),
+                                              SizedBox(width: Get.width * .03),
+                                              Expanded(
+                                                child: Text('Equipment needed',
+                                                    style: FontTextStyle
+                                                        .kWhite20BoldRoboto),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: Get.height * .05),
+                                        Container(
+                                          // color: Colors.teal,
+                                          width: Get.width * .4,
+                                          alignment: Alignment.centerLeft,
+                                          child: ListView.separated(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              itemCount: widget.data[0]
+                                                  .availableEquipments!.length,
+                                              separatorBuilder: (_, index) {
+                                                return SizedBox(
+                                                    height: Get.height * .008);
+                                              },
+                                              itemBuilder: (_, index) {
+                                                if ('${widget.data[0].availableEquipments![index]}' !=
+                                                    "No Equipment") {
+                                                  return Row(
+                                                    children: [
+                                                      SizedBox(
+                                                          width:
+                                                              Get.width * .075),
+                                                      Icon(
+                                                        Icons.circle,
+                                                        color: ColorUtils
+                                                            .kLightGray,
+                                                        size:
+                                                            Get.height * 0.0135,
+                                                      ),
+                                                      RichText(
+                                                          text: TextSpan(
+                                                              text: '',
+                                                              style: FontTextStyle
+                                                                  .kLightGray16W300Roboto,
+                                                              children: [
+                                                            TextSpan(
+                                                                text:
+                                                                    ' ${widget.data[0].availableEquipments![index]}',
+                                                                style: FontTextStyle
+                                                                    .kWhite17BoldRoboto)
+                                                          ])),
+                                                    ],
+                                                  );
+                                                } else {
+                                                  return SizedBox();
+                                                }
+                                              }),
+                                        ),
+                                        SizedBox(height: Get.height * .05),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              left: 10, right: 10),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              CircleAvatar(
+                                                  radius: Get.height * .02,
+                                                  backgroundColor:
+                                                      Colors.transparent,
+                                                  backgroundImage: AssetImage(
+                                                      AppIcons.clock)),
+                                              SizedBox(width: Get.width * .03),
+                                              Expanded(
+                                                child: Text(
+                                                  '${widget.exeData[0].exerciseRest} rest between sets',
+                                                  style: FontTextStyle
+                                                      .kWhite20BoldRoboto,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: Get.height * .05),
+                                      ]),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(height: Get.height * .03),
+                          // ListView.builder(
+                          //     physics: NeverScrollableScrollPhysics(),
+                          //     shrinkWrap: true,
+                          //     itemCount: finalHTMLTips.length - 1,
+                          //     itemBuilder: (_, index) =>
+                          //         ),
+                          // htmlToTextGrey(data: finalHTMLTips[1]),
 
-                              if (_userWorkoutsDateViewModel.exeIdCounter ==
-                                  _userWorkoutsDateViewModel
-                                      .exerciseId.length) {
-                                Get.to(ShareProgressScreen(
-                                  exeData: responseExe.data!,
+                          SizedBox(height: Get.height * .03),
+                          commonNavigationButton(
+                              name: 'Begin Warm-Up',
+                              onTap: () {
+                                Get.to(NoWeightExerciseScreen(
                                   data: widget.data,
                                   workoutId: widget.workoutId,
                                 ));
-                              }
 
-                              setState(() {
-                                watchVideo = false;
-                              });
-                            }),
-                        SizedBox(height: Get.height * .03),
-                        commonNavigationButton(
-                            name: 'Back to Home',
-                            onTap: () {
-                              Get.offAll(HomeScreen());
-                              setState(() {
-                                watchVideo = false;
-                              });
-                            })
-                      ]),
+                                if (_userWorkoutsDateViewModel.exeIdCounter ==
+                                    _userWorkoutsDateViewModel
+                                        .exerciseId.length) {
+                                  Get.to(ShareProgressScreen(
+                                    exeData: responseExe.data!,
+                                    data: widget.data,
+                                    workoutId: widget.workoutId,
+                                  ));
+                                }
+
+                                setState(() {
+                                  watchVideo = false;
+                                });
+                              }),
+                          SizedBox(height: Get.height * .03),
+                          commonNavigationButton(
+                              name: 'Back to Home',
+                              onTap: () {
+                                Get.offAll(HomeScreen());
+                                setState(() {
+                                  watchVideo = false;
+                                });
+                              })
+                        ]),
+                  ),
                 ),
               ),
             ),

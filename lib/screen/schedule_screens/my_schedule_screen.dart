@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/syncfusion_flutter_datepicker/lib/datepicker.dart';
 import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
@@ -262,8 +263,23 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     onSelectionChanged:
                                         (DateRangePickerSelectionChangedArgs
                                             args) {
+                                      setState(() {});
+                                      if (args.value.last !=
+                                          controller.dayList.last) {
+                                        controller.selectedDay =
+                                            args.value.last;
+                                        controller.dateRangePickerController
+                                            .selectedDates = controller.dayList;
+
+                                        print(
+                                            "selected day ================= ${controller.selectedDay}");
+                                      }
+
                                       controller.dateRangePickerController
                                           .selectedDates = controller.dayList;
+
+                                      print(
+                                          "selected day ================= ${args.value}");
                                       args.value.clear();
                                       setState(() {});
                                     },
@@ -294,97 +310,139 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                 thickness: 1.5,
                                 height: Get.height * .04,
                               ),
-                              ListView.builder(
-                                  physics: BouncingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: scheduleResponse.data!.length,
-                                  itemBuilder: (_, index) {
-                                    // List<String> finalDate =
-                                    //     selectedDay.toString().split(" ");
-                                    // print(" -=-=-==-=-=-= ${finalDate[0]}");
-                                    // print(
-                                    //     'date from api ${scheduleResponse.data![index].date}');
-                                    // print(
-                                    //     "condition =========${scheduleResponse.data![index].date == finalDate[0]} ");
-                                    // if (scheduleResponse.data![index].date ==
-                                    //     finalDate[0]) {
-                                    return ListView.builder(
-                                        itemCount: scheduleResponse
-                                            .data![index].programData!.length,
-                                        shrinkWrap: true,
-                                        physics: NeverScrollableScrollPhysics(),
-                                        itemBuilder: (_, index1) {
-                                          return ListTile(
-                                            title: Text(
-                                              scheduleResponse
+
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: Get.width * .01),
+                                child: Text(
+                                  '${Jiffy(controller.selectedDay).format('EEEE, MMMM do')}',
+                                  style: FontTextStyle.kWhite16BoldRoboto,
+                                ),
+                              ),
+
+                              controller.dayList
+                                      .contains(controller.selectedDay)
+                                  ? ListView.builder(
+                                      physics: BouncingScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemCount: scheduleResponse.data!.length,
+                                      itemBuilder: (_, index) {
+                                        List<String> finalDate = controller
+                                            .selectedDay
+                                            .toString()
+                                            .split(" ");
+                                        print(" -=-=-==-=-=-= ${finalDate[0]}");
+                                        print(
+                                            'date from api ${scheduleResponse.data![index].date}');
+                                        print(
+                                            "condition =========${scheduleResponse.data![index].date == finalDate[0]}");
+                                        if (scheduleResponse
+                                                .data![index].date ==
+                                            finalDate[0]) {
+                                          return ListView.builder(
+                                              itemCount: scheduleResponse
                                                   .data![index]
-                                                  .programData![index1]
-                                                  .workoutTitle!,
-                                              style: FontTextStyle
-                                                  .kWhite17BoldRoboto,
-                                            ),
-                                            subtitle: Text(
-                                              '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
-                                                  " - " +
-                                                  ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
-                                              style: FontTextStyle
-                                                  .kLightGray16W300Roboto,
-                                            ),
-                                            trailing: InkWell(
-                                              onTap: () {
-                                                openBottomSheet(
-                                                    scheduleByDateViewModel:
-                                                        controller,
-                                                    removeWorkoutProgramViewModel:
-                                                        _removeWorkoutProgramViewModel,
-                                                    context: context,
-                                                    event: scheduleResponse
-                                                        .data![index],
-                                                    onPressedView: () {
-                                                      Get.to(PlanOverviewScreen(
-                                                          id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                  .programData!
+                                                  .length,
+                                              shrinkWrap: true,
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              itemBuilder: (_, index1) {
+                                                return ListTile(
+                                                  title: Text(
+                                                    scheduleResponse
+                                                        .data![index]
+                                                        .programData![index1]
+                                                        .workoutTitle!,
+                                                    style: FontTextStyle
+                                                        .kWhite17BoldRoboto,
+                                                  ),
+                                                  subtitle: scheduleResponse
+                                                              .data![index]
+                                                              .programData![0]
+                                                              .exerciseTitle ==
+                                                          null
+                                                      ? SizedBox()
+                                                      : Text(
+                                                          '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
+                                                              " - " +
+                                                              ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
+                                                          style: FontTextStyle
+                                                              .kLightGray16W300Roboto,
+                                                        ),
+                                                  trailing: InkWell(
+                                                    onTap: () {
+                                                      openBottomSheet(
+                                                          scheduleByDateViewModel:
+                                                              controller,
+                                                          removeWorkoutProgramViewModel:
+                                                              _removeWorkoutProgramViewModel,
+                                                          context: context,
+                                                          event:
+                                                              scheduleResponse
+                                                                  .data![index],
+                                                          onPressedView: () {
+                                                            Get.to(PlanOverviewScreen(
+                                                                id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                          },
+                                                          onPressedEdit: () {
+                                                            Get.to(
+                                                                ProgramSetupPage(
+                                                              day: '1',
+                                                              workoutName:
+                                                                  scheduleResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .programData![
+                                                                          0]
+                                                                      .workoutTitle,
+                                                              workoutId:
+                                                                  scheduleResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .programData![
+                                                                          0]
+                                                                      .workoutId,
+                                                              exerciseId:
+                                                                  scheduleResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .programData![
+                                                                          0]
+                                                                      .exerciseId,
+                                                              programData:
+                                                                  scheduleResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .programData,
+                                                              isEdit: true,
+                                                              workoutProgramId:
+                                                                  scheduleResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .userProgramId,
+                                                            ));
+                                                          });
                                                     },
-                                                    onPressedEdit: () {
-                                                      Get.to(ProgramSetupPage(
-                                                        day: '1',
-                                                        workoutName:
-                                                            scheduleResponse
-                                                                .data![index]
-                                                                .programData![0]
-                                                                .workoutTitle,
-                                                        workoutId:
-                                                            scheduleResponse
-                                                                .data![index]
-                                                                .programData![0]
-                                                                .workoutId,
-                                                        exerciseId:
-                                                            scheduleResponse
-                                                                .data![index]
-                                                                .programData![0]
-                                                                .exerciseId,
-                                                        programData:
-                                                            scheduleResponse
-                                                                .data![index]
-                                                                .programData,
-                                                        isEdit: true,
-                                                        workoutProgramId:
-                                                            scheduleResponse
-                                                                .data![index]
-                                                                .userProgramId,
-                                                      ));
-                                                    });
-                                              },
-                                              child: Icon(
-                                                Icons.more_horiz_sharp,
-                                                color: ColorUtils.kTint,
-                                              ),
-                                            ),
-                                          );
-                                        });
-                                    // } else {
-                                    //   return SizedBox();
-                                    // }
-                                  }),
+                                                    child: Icon(
+                                                      Icons.more_horiz_sharp,
+                                                      color: ColorUtils.kTint,
+                                                    ),
+                                                  ),
+                                                );
+                                              });
+                                        } else {
+                                          return SizedBox();
+                                        }
+                                      })
+                                  : Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.height * .03,
+                                          vertical: Get.height * .02),
+                                      child: Text('No Exercises Today',
+                                          style:
+                                              FontTextStyle.kWhite17BoldRoboto),
+                                    ),
                             ],
                           ),
                         ),

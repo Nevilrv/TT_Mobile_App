@@ -9,9 +9,6 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
-import 'package:tcm/screen/home_screen.dart';
-import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
-import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
@@ -230,19 +227,18 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                 InkWell(
                                   onTap: () {
                                     counterMinus();
-                                    log('minus ${counterReps}');
+                                    log('minus $counterReps');
                                   },
                                   child: CircleAvatar(
-                                    radius: Get.height * .03,
-                                    backgroundColor: ColorUtils.kTint,
-                                    child: Icon(Icons.remove,
-                                        color: ColorUtils.kBlack),
-                                  ),
+                                      radius: Get.height * .03,
+                                      backgroundColor: ColorUtils.kTint,
+                                      child: Icon(Icons.remove,
+                                          color: ColorUtils.kBlack)),
                                 ),
                                 SizedBox(width: Get.width * .08),
                                 RichText(
                                     text: TextSpan(
-                                        text: '${counterReps} ',
+                                        text: '$counterReps ',
                                         style: counterReps == 0
                                             ? FontTextStyle.kWhite24BoldRoboto
                                                 .copyWith(
@@ -258,7 +254,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                 InkWell(
                                   onTap: () {
                                     counterPlus();
-                                    log('plus ${counterReps}');
+                                    log('plus $counterReps');
                                   },
                                   child: CircleAvatar(
                                     radius: Get.height * .03,
@@ -371,7 +367,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                   print('loader ----------- $loader');
 
                                   print(
-                                      'counter out ----------------- ${counterReps}');
+                                      'counter out ----------------- $counterReps');
                                   if (counterReps <= 0) {
                                     Get.showSnackbar(GetSnackBar(
                                       message: 'Please set reps more than 0',

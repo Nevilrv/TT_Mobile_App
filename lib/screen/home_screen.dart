@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -56,7 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _homeViewModel.initialized;
     _signInViewModel.initialized;
     dateApiCall();
-    // scheduleDateApiCall();
+    scheduleDateApiCall();
     // getExercisesId();
   }
 
@@ -88,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? finalDate;
   DateTime today = DateTime.now();
   dateApiCall() async {
-    print('hello........................1');
+    log('hello........................1');
     tmpDateList = today.toString().split(" ");
     finalDate = tmpDateList[0];
 
@@ -105,55 +107,66 @@ class _HomeScreenState extends State<HomeScreen> {
     response = resp;
   }
 
-  // scheduleDateApiCall() async {
-  //   print('hello........................2');
-  //   await _scheduleByDateViewModel.getScheduleByDateDetails(
-  //       userId: PreferenceManager.getUId());
-  //   ScheduleByDateResponseModel scheduleResp =
-  //       _scheduleByDateViewModel.apiResponse.data;
-  //   scheduleResponse = scheduleResp;
-  // }
+  scheduleDateApiCall() async {
+    log('hello........................2');
+    await _scheduleByDateViewModel.getScheduleByDateDetails(
+        userId: PreferenceManager.getUId());
+    ScheduleByDateResponseModel scheduleResp =
+        _scheduleByDateViewModel.apiResponse.data;
+    scheduleResponse = scheduleResp;
+  }
 
   getExercisesId() async {
-    print("called 123");
-    print('hello........................3');
+    log("called 123");
+    log('hello........................3');
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(),
         date: DateTime.now().toString().split(" ").first);
 
     if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      print("complete api call");
+      log("complete api call");
       UserWorkoutsDateResponseModel resp =
           _userWorkoutsDateViewModel.apiResponse.data;
 
-      print("--------------- dates ${resp.msg}");
+      log("--------------- dates ${resp.msg}");
 
-      _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+      log("success ------------- true");
 
-      if (resp.success == true && resp.data!.exercisesIds!.isNotEmpty) {
+      if (resp.success == true) {
+        _userWorkoutsDateViewModel.exerciseId = resp.data![0].exercisesIds!;
+
+        await _exerciseByIdViewModel.getExerciseByIdDetails(
+            id: _userWorkoutsDateViewModel
+                    .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??
+                '1');
+
+        exerciseResponse = _exerciseByIdViewModel.apiResponse.data;
+
+        await _workoutByIdViewModel.getWorkoutByIdDetails(
+            id: resp.data![0].workoutId ?? '1');
+
+        workoutResponse = _workoutByIdViewModel.apiResponse.data;
         setState(() {
           selected = true;
         });
       } else {
+        log("success ------------- false");
+
+        // await _exerciseByIdViewModel.getExerciseByIdDetails(
+        //     id: _userWorkoutsDateViewModel
+        //             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??
+        //         '1');
+        //
+        // exerciseResponse = _exerciseByIdViewModel.apiResponse.data;
+        //
+        // await _workoutByIdViewModel.getWorkoutByIdDetails(
+        //     id: resp.data![0].workoutId ?? '1');
+        //
+        // workoutResponse = _workoutByIdViewModel.apiResponse.data;
         setState(() {
           selected = false;
         });
       }
-      print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
-      // log("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
-
-      await _workoutByIdViewModel.getWorkoutByIdDetails(
-          id: resp.data!.workoutId);
-
-      workoutResponse = _workoutByIdViewModel.apiResponse.data;
-
-      await _exerciseByIdViewModel.getExerciseByIdDetails(
-          id: _userWorkoutsDateViewModel
-              .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
-
-      exerciseResponse = _exerciseByIdViewModel.apiResponse.data;
-
-      print("-------------- ${workoutResponse!.data![0].workoutTitle}");
     }
   }
 
@@ -169,7 +182,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('hello........................4');
+    log('hello........................4');
     if (oneTime == false) {
       setState(() {
         getExercisesId();
@@ -177,180 +190,207 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
 
-    return WillPopScope(
-      onWillPop: () async {
-        Get.back();
-        return true;
+    return GestureDetector(
+      onHorizontalDragStart: (details) {
+        print("hello ${details.localPosition}");
+        print("hello ${details.localPosition.dx}");
+        print("hello ${details.globalPosition.distance}");
+
+        if (details.localPosition.dx < 45.0) {
+          //SWIPE FROM RIGHT DETECTION
+          print("hello ");
+          Get.back();
+        }
       },
-      child: Scaffold(
-          backgroundColor: ColorUtils.kBlack,
-          drawer: _drawerList(),
-          appBar: AppBar(
-            elevation: 0,
+      child: WillPopScope(
+        onWillPop: () async {
+          Get.back();
+          return Future.value(true);
+        },
+        child: Scaffold(
             backgroundColor: ColorUtils.kBlack,
-            centerTitle: true,
-            title: Image.asset(
-              'asset/images/logoSmall.png',
-              height: Get.height * .033,
-              fit: BoxFit.cover,
+            drawer: _drawerList(),
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: ColorUtils.kBlack,
+              centerTitle: true,
+              title: Image.asset(
+                'asset/images/logoSmall.png',
+                height: Get.height * .033,
+                fit: BoxFit.cover,
+              ),
+              // actions: [
+              //   bild(
+              //       image: AppIcons.logout,
+              //       text: 'Log Out',
+              //       onTap: () {
+              //         _logOutAlertDialog(onTapCancel: () {
+              //           Get.back();
+              //         }, onTapLogOut: () {
+              //           Get.showSnackbar(GetSnackBar(
+              //             message: 'Logout Successfully',
+              //             duration: Duration(seconds: 2),
+              //           ));
+              //           PreferenceManager.clearData();
+              //           PreferenceManager.isSetLogin(false);
+              //           Get.offAll(SignInScreen());
+              //         });
+              //       }),
+              // ]
             ),
-            // actions: [
-            //   bild(
-            //       image: AppIcons.logout,
-            //       text: 'Log Out',
-            //       onTap: () {
-            //         _logOutAlertDialog(onTapCancel: () {
-            //           Get.back();
-            //         }, onTapLogOut: () {
-            //           Get.showSnackbar(GetSnackBar(
-            //             message: 'Logout Successfully',
-            //             duration: Duration(seconds: 2),
-            //           ));
-            //           PreferenceManager.clearData();
-            //           PreferenceManager.isSetLogin(false);
-            //           Get.offAll(SignInScreen());
-            //         });
-            //       }),
-            // ]
-          ),
-          body: GetBuilder<WorkoutByIdViewModel>(builder: (controllerWork) {
-            return GetBuilder<ExerciseByIdViewModel>(builder: (controllerExe) {
-              if (controllerExe.apiResponse.status == Status.LOADING ||
-                  controllerWork.apiResponse.status == Status.LOADING) {
-                return Center(
-                    child: CircularProgressIndicator(
-                  color: ColorUtils.kTint,
-                ));
-              } else if (controllerExe.apiResponse.status == Status.COMPLETE ||
-                  controllerWork.apiResponse.status == Status.COMPLETE) {
-                return SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: Column(children: [
-                      SizedBox(
-                        height: Get.height * .04,
-                      ),
-                      Container(
-                        height: Get.height * 0.22,
-                        width: Get.width * 0.99,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
-                            color: Color(0xff363636)),
-                        child: selected == true
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        bottom: 10,
-                                        top: 20,
-                                        right: 20),
-                                    child: Text(
-                                      'Your Next Workout',
-                                      style: FontTextStyle.kWhite20BoldRoboto,
+            body: !selected
+                ? SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: Column(children: [
+                        SizedBox(
+                          height: Get.height * .04,
+                        ),
+                        Container(
+                          height: Get.height * 0.22,
+                          width: Get.width * 0.99,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xff363636)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, bottom: 10, top: 20, right: 20),
+                                  child: Text(
+                                    'No Workouts Scheduled',
+                                    style: FontTextStyle.kWhite20BoldRoboto,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Text(
+                                    'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                    style: FontTextStyle.kWhite16W300Roboto,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * .03,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(TrainingPlanScreen());
+                                      setState(() {
+                                        oneTime = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: Get.height * .05,
+                                      width: Get.width * .9,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(50),
+                                          color: ColorUtils.kTint),
+                                      child: Center(
+                                          child: Text(
+                                        'Choose a Workout Plan',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: Get.height * 0.02),
+                                      )),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 18, vertical: 8),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          height: Get.height * .12,
-                                          width: Get.width * .24,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: ColorUtils.kTint),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          child: workoutResponse!.data![0]
-                                                          .workoutImage ==
-                                                      null ||
-                                                  workoutResponse!.data![0]
-                                                          .workoutImage ==
-                                                      ""
-                                              ? Image.asset(
-                                                  AppImages.logo,
-                                                  scale: 3.5,
-                                                )
-                                              : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: Image.network(
-                                                    "${workoutResponse!.data![0].workoutImage}",
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                ),
-                                        ),
-                                        SizedBox(
-                                          width: Get.width * .04,
-                                        ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: Get.width * 0.5,
-                                              child: Text(
-                                                '${workoutResponse!.data![0].workoutTitle}',
-                                                style: FontTextStyle
-                                                    .kWhite17BoldRoboto,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${Jiffy(DateTime.now()).format('EEEE, MMMM do')}',
-                                              style: FontTextStyle
-                                                  .kGrey18BoldRoboto,
-                                            ),
-                                            SizedBox(
-                                              height: Get.height * .01,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                Get.to(WorkoutHomeScreen(
-                                                  exeData:
-                                                      exerciseResponse!.data!,
-                                                  data: workoutResponse!.data!,
-                                                ));
-                                                setState(() {
-                                                  oneTime = false;
-                                                });
-                                              },
-                                              child: Container(
-                                                height: Get.height * 0.042,
-                                                width: Get.width * 0.5,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                    color: ColorUtils.kTint),
-                                                child: Center(
-                                                    child: Text(
-                                                  'Start Workout',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Get.height * 0.02),
-                                                )),
-                                              ),
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                                ),
+                              ]),
+                        ),
+                        SizedBox(
+                          height: Get.height * .04,
+                        ),
+                        category(
+                            onTap: () {
+                              Get.to(TrainingPlanScreen());
+                              setState(() {
+                                oneTime = false;
+                              });
+                            },
+                            image: 'asset/images/training.png',
+                            text: 'Training Plans'),
+                        category(
+                            onTap: () {
+                              Get.to(VideoLibraryScreen());
+                              setState(() {
+                                oneTime = false;
+                              });
+                            },
+                            image: 'asset/images/videos.png',
+                            text: 'Video Library'),
+                        category(
+                            image: 'asset/images/forums.png',
+                            text: 'The Forums',
+                            onTap: () {
+                              Get.to(ForumScreen());
+                              setState(() {
+                                oneTime = false;
+                              });
+                            }),
+                        category(
+                            image: 'asset/images/habit.png',
+                            text: 'Habit Tracker',
+                            onTap: () {
+                              log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                              if (response!.data![0].habitId == "" ||
+                                  response!.data![0].habitId!.isEmpty &&
+                                      response!.data![0].habitName == null ||
+                                  response!.data![0].habitName!.isEmpty &&
+                                      response!.data![0].completed == "" ||
+                                  response!.data![0].completed!.isEmpty &&
+                                      response!.data![0].completed == "false") {
+                                Get.to(HabitTrackerHomeScreen());
+                              } else {
+                                Get.to(UpdateProgressScreen());
+                              }
+                              setState(() {
+                                oneTime = false;
+                              });
+                            })
+                      ]),
+                    ),
+                  )
+                : GetBuilder<WorkoutByIdViewModel>(builder: (controllerWork) {
+                    return GetBuilder<ExerciseByIdViewModel>(
+                        builder: (controllerExe) {
+                      if (controllerExe.apiResponse.status == Status.LOADING ||
+                          controllerWork.apiResponse.status == Status.LOADING) {
+                        log('LOADING......................>>>');
+
+                        return Center(
+                            child: CircularProgressIndicator(
+                          color: ColorUtils.kTint,
+                        ));
+                      } else if (controllerExe.apiResponse.status ==
+                              Status.COMPLETE ||
+                          controllerWork.apiResponse.status ==
+                              Status.COMPLETE) {
+                        log('complete......................>>>');
+                        return SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(children: [
+                              SizedBox(
+                                height: Get.height * .04,
+                              ),
+                              Container(
+                                height: Get.height * 0.22,
+                                width: Get.width * 0.99,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xff363636)),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
                                     Padding(
                                       padding: const EdgeInsets.only(
                                           left: 20,
@@ -358,109 +398,172 @@ class _HomeScreenState extends State<HomeScreen> {
                                           top: 20,
                                           right: 20),
                                       child: Text(
-                                        'No Workouts Scheduled',
+                                        'Your Next Workout',
                                         style: FontTextStyle.kWhite20BoldRoboto,
                                       ),
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: Text(
-                                        'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
-                                        style: FontTextStyle.kWhite16W300Roboto,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: Get.height * .03,
-                                    ),
-                                    Padding(
                                       padding: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.05),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Get.to(TrainingPlanScreen());
-                                          setState(() {
-                                            oneTime = false;
-                                          });
-                                        },
-                                        child: Container(
-                                          height: Get.height * .05,
-                                          width: Get.width * .9,
-                                          decoration: BoxDecoration(
+                                          horizontal: 18, vertical: 8),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            height: Get.height * .12,
+                                            width: Get.width * .24,
+                                            decoration: BoxDecoration(
+                                              border: Border.all(
+                                                  color: ColorUtils.kTint),
                                               borderRadius:
-                                                  BorderRadius.circular(50),
-                                              color: ColorUtils.kTint),
-                                          child: Center(
-                                              child: Text(
-                                            'Choose a Workout Plan',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                                fontSize: Get.height * 0.02),
-                                          )),
-                                        ),
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: workoutResponse!.data![0]
+                                                            .workoutImage ==
+                                                        null ||
+                                                    workoutResponse!.data![0]
+                                                            .workoutImage ==
+                                                        ""
+                                                ? Image.asset(
+                                                    AppImages.logo,
+                                                    scale: 3.5,
+                                                  )
+                                                : ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    child: Image.network(
+                                                      "${workoutResponse!.data![0].workoutImage}",
+                                                      fit: BoxFit.fill,
+                                                    ),
+                                                  ),
+                                          ),
+                                          SizedBox(
+                                            width: Get.width * .04,
+                                          ),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: Get.width * 0.5,
+                                                child: Text(
+                                                  '${workoutResponse!.data![0].workoutTitle}',
+                                                  style: FontTextStyle
+                                                      .kWhite17BoldRoboto,
+                                                ),
+                                              ),
+                                              Text(
+                                                '${Jiffy(DateTime.now()).format('EEEE, MMMM do')}',
+                                                style: FontTextStyle
+                                                    .kGrey18BoldRoboto,
+                                              ),
+                                              SizedBox(
+                                                height: Get.height * .01,
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Get.to(WorkoutHomeScreen(
+                                                    exeData:
+                                                        exerciseResponse!.data!,
+                                                    data:
+                                                        workoutResponse!.data!,
+                                                  ));
+                                                  setState(() {
+                                                    oneTime = false;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  height: Get.height * 0.042,
+                                                  width: Get.width * 0.5,
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                      color: ColorUtils.kTint),
+                                                  child: Center(
+                                                      child: Text(
+                                                    'Start Workout',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                        fontSize:
+                                                            Get.height * 0.02),
+                                                  )),
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        ],
                                       ),
                                     ),
-                                  ]),
-                      ),
-                      SizedBox(
-                        height: Get.height * .04,
-                      ),
-                      category(
-                          onTap: () {
-                            Get.to(TrainingPlanScreen());
-                            setState(() {
-                              oneTime = false;
-                            });
-                          },
-                          image: 'asset/images/training.png',
-                          text: 'Training Plans'),
-                      category(
-                          onTap: () {
-                            Get.to(VideoLibraryScreen());
-                            setState(() {
-                              oneTime = false;
-                            });
-                          },
-                          image: 'asset/images/videos.png',
-                          text: 'Video Library'),
-                      category(
-                          image: 'asset/images/forums.png',
-                          text: 'The Forums',
-                          onTap: () {
-                            Get.to(ForumScreen());
-                            setState(() {
-                              oneTime = false;
-                            });
-                          }),
-                      category(
-                          image: 'asset/images/habit.png',
-                          text: 'Habit Tracker',
-                          onTap: () {
-                            print(
-                                "if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
-                            if (response!.data![0].habitId == "" ||
-                                response!.data![0].habitId!.isEmpty &&
-                                    response!.data![0].habitName == null ||
-                                response!.data![0].habitName!.isEmpty &&
-                                    response!.data![0].completed == "" ||
-                                response!.data![0].completed!.isEmpty &&
-                                    response!.data![0].completed == "false") {
-                              Get.to(HabitTrackerHomeScreen());
-                            } else {
-                              Get.to(UpdateProgressScreen());
-                            }
-                            setState(() {
-                              oneTime = false;
-                            });
-                          })
-                    ]),
-                  ),
-                );
-              }
-              return SizedBox();
-            });
-          })),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: Get.height * .04,
+                              ),
+                              category(
+                                  onTap: () {
+                                    Get.to(TrainingPlanScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  },
+                                  image: 'asset/images/training.png',
+                                  text: 'Training Plans'),
+                              category(
+                                  onTap: () {
+                                    Get.to(VideoLibraryScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  },
+                                  image: 'asset/images/videos.png',
+                                  text: 'Video Library'),
+                              category(
+                                  image: 'asset/images/forums.png',
+                                  text: 'The Forums',
+                                  onTap: () {
+                                    Get.to(ForumScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  }),
+                              category(
+                                  image: 'asset/images/habit.png',
+                                  text: 'Habit Tracker',
+                                  onTap: () {
+                                    log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                                    if (response!.data![0].habitId == "" ||
+                                        response!.data![0].habitId!.isEmpty &&
+                                            response!.data![0].habitName ==
+                                                null ||
+                                        response!.data![0].habitName!.isEmpty &&
+                                            response!.data![0].completed ==
+                                                "" ||
+                                        response!.data![0].completed!.isEmpty &&
+                                            response!.data![0].completed ==
+                                                "false") {
+                                      Get.to(HabitTrackerHomeScreen());
+                                    } else {
+                                      Get.to(UpdateProgressScreen());
+                                    }
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  })
+                            ]),
+                          ),
+                        );
+                      }
+                      return Container(
+                        color: Colors.red,
+                      );
+                    });
+                  })),
+      ),
     );
   }
 
@@ -566,12 +669,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
               UserdetailResponseModel response = controller.apiResponse.data;
-              print('Name====${response.data!.name}');
-              print('Pref Name====${PreferenceManager.getUserName()}');
+              log('Name====${response.data!.name}');
+              log('Pref Name====${PreferenceManager.getUserName()}');
               if (response.data != null ||
                   response.data != '' ||
                   response.success == true) {
-                print('----------- ${PreferenceManager.getProfilePic()}');
+                log('----------- ${PreferenceManager.getProfilePic()}');
                 return Column(
                   children: [
                     GestureDetector(

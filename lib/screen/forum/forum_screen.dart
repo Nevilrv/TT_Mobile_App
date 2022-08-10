@@ -1,6 +1,9 @@
+import 'dart:developer' as d;
+
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
@@ -15,6 +18,7 @@ import 'package:tcm/model/response_model/forum_response_model/get_all_forums_res
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
+import 'package:tcm/screen/home_screen.dart';
 
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
@@ -56,8 +60,6 @@ class _ForumScreenState extends State<ForumScreen> {
 
   @override
   void dispose() {
-    videoPlayerController!.dispose();
-    chewieController!.dispose();
     super.dispose();
   }
 

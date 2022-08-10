@@ -84,10 +84,12 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
       } else {
         _videoPlayerController = VideoPlayerController.network(
             '${responseVid.data![0].workoutVideo}');
+        if (responseVid.data![0].workoutVideo != null) {
+          await Future.wait([
+            _videoPlayerController!.initialize(),
+          ]);
+        }
 
-        await Future.wait([
-          _videoPlayerController!.initialize(),
-        ]);
         _createChewieController();
       }
     } else {
@@ -137,204 +139,451 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
               data.add(v);
             });
           });
+          print('response.data![0].workoutVideo ${response.data}');
 
-          List daysPerWeek = response.data![0].selectedDays!.split(",");
+          List daysPerWeek = response.data![0].selectedDays == null
+              ? []
+              : response.data![0].selectedDays!.split(",");
 
-          return Scaffold(
-            backgroundColor: ColorUtils.kBlack,
-            appBar: AppBar(
-              elevation: 0,
-              leading: IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_sharp,
-                    color: ColorUtils.kTint,
-                  )),
-              backgroundColor: ColorUtils.kBlack,
-              title: Text('${response.data![0].workoutTitle}',
-                  style: FontTextStyle.kWhite16BoldRoboto),
-              centerTitle: true,
-              actions: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 18),
-                    child: InkWell(
-                      onTap: () async {
-                        if (controller.apiResponse.status == Status.COMPLETE) {
-                          CheckWorkoutProgramRequestModel _request =
-                              CheckWorkoutProgramRequestModel();
-                          _request.workoutId = response.data![0].workoutId;
-                          _request.userId = PreferenceManager.getUId();
+          return response.data![0].workoutVideo == null
+              ? screenData(response, controller, daysPerWeek)
+              : response.data![0].workoutVideo.contains('www.youtube.com')
+                  ? _youTubePlayerController == null
+                      ? screenData(response, controller, daysPerWeek)
+                      : YoutubePlayerBuilder(
+                          onExitFullScreen: () {
+                            // The player forces portraitUp after exiting fullscreen. This overrides the behaviour.
+                            // SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+                          },
+                          player: YoutubePlayer(
+                            controller: _youTubePlayerController!,
+                            showVideoProgressIndicator: true,
+                            bufferIndicator: CircularProgressIndicator(
+                                color: ColorUtils.kTint),
+                            controlsTimeOut: Duration(hours: 2),
+                            aspectRatio: 16 / 9,
+                            progressColors: ProgressBarColors(
+                                handleColor: ColorUtils.kRed,
+                                playedColor: ColorUtils.kRed,
+                                backgroundColor: ColorUtils.kGray,
+                                bufferedColor: ColorUtils.kLightGray),
+                          ),
+                          builder: (context, player) {
+                            return Scaffold(
+                              backgroundColor: ColorUtils.kBlack,
+                              appBar: AppBar(
+                                elevation: 0,
+                                leading: IconButton(
+                                    onPressed: () {
+                                      Get.back();
+                                    },
+                                    icon: Icon(
+                                      Icons.arrow_back_ios_sharp,
+                                      color: ColorUtils.kTint,
+                                    )),
+                                backgroundColor: ColorUtils.kBlack,
+                                title: Text('${response.data![0].workoutTitle}',
+                                    style: FontTextStyle.kWhite16BoldRoboto),
+                                centerTitle: true,
+                                actions: [
+                                  Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(right: 18),
+                                      child: InkWell(
+                                        onTap: () async {
+                                          if (controller.apiResponse.status ==
+                                              Status.COMPLETE) {
+                                            CheckWorkoutProgramRequestModel
+                                                _request =
+                                                CheckWorkoutProgramRequestModel();
+                                            _request.workoutId =
+                                                response.data![0].workoutId;
+                                            _request.userId =
+                                                PreferenceManager.getUId();
 
-                          await _checkWorkoutProgramViewModel
-                              .checkWorkoutProgramViewModel(_request);
+                                            await _checkWorkoutProgramViewModel
+                                                .checkWorkoutProgramViewModel(
+                                                    _request);
 
-                          if (_checkWorkoutProgramViewModel
-                                  .apiResponse.status ==
-                              Status.COMPLETE) {
-                            CheckWorkoutProgramResponseModel checkResponse =
-                                _checkWorkoutProgramViewModel.apiResponse.data;
+                                            if (_checkWorkoutProgramViewModel
+                                                    .apiResponse.status ==
+                                                Status.COMPLETE) {
+                                              CheckWorkoutProgramResponseModel
+                                                  checkResponse =
+                                                  _checkWorkoutProgramViewModel
+                                                      .apiResponse.data;
 
-                            if (checkResponse.success == true) {
-                              if ('${response.data![0].workoutVideo}'
-                                  .contains('www.youtube.com')) {
-                                _youTubePlayerController?.pause();
-                              } else {
-                                _videoPlayerController?.pause();
-                                _chewieController?.pause();
-                              }
-                              Get.to(ProgramSetupPage(
-                                workoutId: '${response.data![0].workoutId}',
-                                day: '1',
-                                workoutName:
-                                    '${response.data![0].workoutTitle}',
-                              ));
-                            } else if (checkResponse.success == false) {
-                              Get.showSnackbar(GetSnackBar(
-                                message: '${checkResponse.msg}',
-                                duration: Duration(seconds: 2),
-                                backgroundColor: ColorUtils.kRed,
-                              ));
-                            }
-                          } else if (_checkWorkoutProgramViewModel
-                                  .apiResponse.status ==
-                              Status.ERROR) {
-                            Text(
-                              'Something went wrong',
-                              style: FontTextStyle.kWhite16W300Roboto,
-                            );
-                          }
-                        }
-                      },
-                      child:
-                          Text('Start', style: FontTextStyle.kTine16W400Roboto),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            body: SingleChildScrollView(
-              physics: BouncingScrollPhysics(),
-              child: Column(
-                children: [
-                  Container(
-                    height: Get.height / 2.75,
-                    width: Get.width,
-                    child: '${response.data![0].workoutVideo}'
-                            .contains('www.youtube.com')
-                        ? Center(
-                            child: _youTubePlayerController == null
-                                ? CircularProgressIndicator(
-                                    color: ColorUtils.kTint)
-                                : YoutubePlayer(
-                                    controller: _youTubePlayerController!,
-                                    showVideoProgressIndicator: true,
-                                    bufferIndicator: CircularProgressIndicator(
-                                        color: ColorUtils.kTint),
-                                    controlsTimeOut: Duration(hours: 2),
-                                    aspectRatio: 16 / 9,
-                                    progressColors: ProgressBarColors(
-                                        handleColor: ColorUtils.kRed,
-                                        playedColor: ColorUtils.kRed,
-                                        backgroundColor: ColorUtils.kGray,
-                                        bufferedColor: ColorUtils.kLightGray),
-                                  ),
-                          )
-                        : Center(
-                            child: _chewieController != null &&
-                                    _chewieController!.videoPlayerController
-                                        .value.isInitialized
-                                ? Chewie(
-                                    controller: _chewieController!,
-                                  )
-                                : response.data![0].workoutImage == null
-                                    ? noDataLottie()
-                                    : Image.network(
-                                        response.data![0].workoutImage!,
-                                        errorBuilder:
-                                            (context, error, stackTrace) {
-                                          return noDataLottie();
+                                              if (checkResponse.success ==
+                                                  true) {
+                                                if ('${response.data![0].workoutVideo}'
+                                                    .contains(
+                                                        'www.youtube.com')) {
+                                                  _youTubePlayerController
+                                                      ?.pause();
+                                                } else {
+                                                  _videoPlayerController
+                                                      ?.pause();
+                                                  _chewieController?.pause();
+                                                }
+                                                Get.to(ProgramSetupPage(
+                                                  workoutId:
+                                                      '${response.data![0].workoutId}',
+                                                  day: '1',
+                                                  workoutName:
+                                                      '${response.data![0].workoutTitle}',
+                                                ));
+                                              } else if (checkResponse
+                                                      .success ==
+                                                  false) {
+                                                Get.showSnackbar(GetSnackBar(
+                                                  message:
+                                                      '${checkResponse.msg}',
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                  backgroundColor:
+                                                      ColorUtils.kRed,
+                                                ));
+                                              }
+                                            } else if (_checkWorkoutProgramViewModel
+                                                    .apiResponse.status ==
+                                                Status.ERROR) {
+                                              Text(
+                                                'Something went wrong',
+                                                style: FontTextStyle
+                                                    .kWhite16W300Roboto,
+                                              );
+                                            }
+                                          }
                                         },
-                                      )),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 18),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SizedBox(height: Get.height * .02),
-                        Container(
-                          width: Get.width,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Image.asset(AppIcons.calender,
-                                      height: 15, width: 15),
-                                  SizedBox(width: 5),
-                                  Text(
-                                      '${response.data![0].workoutDuration} WEEKS',
-                                      style: FontTextStyle.kWhite16BoldRoboto),
+                                        child: Text('Start',
+                                            style: FontTextStyle
+                                                .kTine16W400Roboto),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  Image.asset(AppIcons.clock,
-                                      height: 15, width: 15),
-                                  SizedBox(width: 5),
-                                  Text('${daysPerWeek.length} x PER WEEK',
-                                      style: FontTextStyle.kWhite16BoldRoboto),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(AppIcons.medal,
-                                      height: 15, width: 15),
-                                  SizedBox(width: 5),
-                                  Text('${response.data![0].levelTitle}',
-                                      style: FontTextStyle.kWhite16BoldRoboto),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: Get.height * .02),
-                        htmlToText(
-                            data: '${response.data![0].workoutDescription}'),
-                        // Text("${response.data![0].workoutDescription}",
-                        //     maxLines: 5,
-                        //     style: FontTextStyle.kWhite16W300Roboto),
-                        SizedBox(height: Get.height * .03),
-                        Container(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'VIEW WORKOUTS',
-                            style: FontTextStyle.kWhite16BoldRoboto,
-                          ),
-                        ),
-                        Divider(
-                          color: ColorUtils.kTint,
-                          thickness: 1,
-                        ),
-                        SizedBox(height: Get.height * .01),
+                              body: SingleChildScrollView(
+                                physics: BouncingScrollPhysics(),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      height: Get.height / 2.75,
+                                      width: Get.width,
+                                      child: '${response.data![0].workoutVideo}'
+                                              .contains('www.youtube.com')
+                                          ? Center(
+                                              child: _youTubePlayerController ==
+                                                      null
+                                                  ? CircularProgressIndicator(
+                                                      color: ColorUtils.kTint)
+                                                  : player,
+                                            )
+                                          : Center(
+                                              child: _chewieController !=
+                                                          null &&
+                                                      _chewieController!
+                                                          .videoPlayerController
+                                                          .value
+                                                          .isInitialized
+                                                  ? Chewie(
+                                                      controller:
+                                                          _chewieController!,
+                                                    )
+                                                  : response.data![0]
+                                                              .workoutImage ==
+                                                          null
+                                                      ? noDataLottie()
+                                                      : Image.network(
+                                                          response.data![0]
+                                                              .workoutImage!,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return noDataLottie();
+                                                          },
+                                                        )),
+                                    ),
+                                    Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(horizontal: 18),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        children: [
+                                          SizedBox(height: Get.height * .02),
+                                          Container(
+                                            width: Get.width,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    Image.asset(
+                                                        AppIcons.calender,
+                                                        height: 15,
+                                                        width: 15),
+                                                    SizedBox(width: 5),
+                                                    Text(
+                                                        '${response.data![0].workoutDuration} WEEKS',
+                                                        style: FontTextStyle
+                                                            .kWhite16BoldRoboto),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Image.asset(AppIcons.clock,
+                                                        height: 15, width: 15),
+                                                    SizedBox(width: 5),
+                                                    Text(
+                                                        '${daysPerWeek.length} x PER WEEK',
+                                                        style: FontTextStyle
+                                                            .kWhite16BoldRoboto),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Image.asset(AppIcons.medal,
+                                                        height: 15, width: 15),
+                                                    SizedBox(width: 5),
+                                                    Text(
+                                                        '${response.data![0].levelTitle}',
+                                                        style: FontTextStyle
+                                                            .kWhite16BoldRoboto),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(height: Get.height * .02),
+                                          htmlToText(
+                                              data:
+                                                  '${response.data![0].workoutDescription}'),
+                                          // Text("${response.data![0].workoutDescription}",
+                                          //     maxLines: 5,
+                                          //     style: FontTextStyle.kWhite16W300Roboto),
+                                          SizedBox(height: Get.height * .03),
+                                          Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              'VIEW WORKOUTS',
+                                              style: FontTextStyle
+                                                  .kWhite16BoldRoboto,
+                                            ),
+                                          ),
+                                          Divider(
+                                            color: ColorUtils.kTint,
+                                            thickness: 1,
+                                          ),
+                                          SizedBox(height: Get.height * .01),
 
-                        data.isNotEmpty || data.length != 0
-                            ? Padding(
-                                padding: EdgeInsets.symmetric(
-                                    vertical: Get.height * .012),
-                                child: ListView.separated(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  itemCount: data.length,
-                                  separatorBuilder: (_, index) {
-                                    return SizedBox(height: Get.height * .022);
-                                  },
-                                  itemBuilder: (_, index) {
-                                    return GestureDetector(
-                                      onTap: () {
+                                          data.isNotEmpty || data.length != 0
+                                              ? Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical:
+                                                          Get.height * .012),
+                                                  child: ListView.separated(
+                                                    shrinkWrap: true,
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    itemCount: data.length,
+                                                    separatorBuilder:
+                                                        (_, index) {
+                                                      return SizedBox(
+                                                          height: Get.height *
+                                                              .022);
+                                                    },
+                                                    itemBuilder: (_, index) {
+                                                      return GestureDetector(
+                                                        onTap: () {
+                                                          if ('${response.data![0].workoutVideo}'
+                                                              .contains(
+                                                                  'www.youtube.com')) {
+                                                            _youTubePlayerController
+                                                                ?.pause();
+                                                          } else {
+                                                            _videoPlayerController
+                                                                ?.pause();
+                                                            _chewieController
+                                                                ?.pause();
+                                                          }
+                                                          Get.to(
+                                                              WorkoutOverviewPage(
+                                                            day: index + 1,
+                                                            workoutId:
+                                                                '${response.data![0].workoutId}',
+                                                            workoutDay:
+                                                                '${response.data![0].workoutDuration}',
+                                                            workoutName:
+                                                                '${response.data![0].workoutTitle}',
+                                                          ));
+                                                        },
+                                                        child:
+                                                            exerciseDayButton(
+                                                          day: '${response.data![0].dayNames![index]}'
+                                                              .capitalizeFirst,
+                                                          exercise:
+                                                              '${data[index].dayName}'
+                                                                  .capitalizeFirst,
+                                                          weekDay:
+                                                              '${data[index].day}'
+                                                                  .capitalizeFirst,
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                )
+                                              : noDataLottie(),
+
+                                          SizedBox(height: Get.height * .025),
+                                          InkWell(
+                                            onTap: () async {
+                                              if (controller
+                                                      .apiResponse.status ==
+                                                  Status.COMPLETE) {
+                                                CheckWorkoutProgramRequestModel
+                                                    _request =
+                                                    CheckWorkoutProgramRequestModel();
+                                                _request.workoutId =
+                                                    response.data![0].workoutId;
+                                                _request.userId =
+                                                    PreferenceManager.getUId();
+
+                                                await _checkWorkoutProgramViewModel
+                                                    .checkWorkoutProgramViewModel(
+                                                        _request);
+
+                                                if (_checkWorkoutProgramViewModel
+                                                        .apiResponse.status ==
+                                                    Status.COMPLETE) {
+                                                  CheckWorkoutProgramResponseModel
+                                                      checkResponse =
+                                                      _checkWorkoutProgramViewModel
+                                                          .apiResponse.data;
+
+                                                  if (checkResponse.success ==
+                                                      true) {
+                                                    if ('${response.data![0].workoutVideo}'
+                                                        .contains(
+                                                            'www.youtube.com')) {
+                                                      _youTubePlayerController
+                                                          ?.pause();
+                                                    } else {
+                                                      _videoPlayerController
+                                                          ?.pause();
+                                                      _chewieController
+                                                          ?.pause();
+                                                    }
+                                                    Get.to(ProgramSetupPage(
+                                                      workoutId:
+                                                          '${response.data![0].workoutId}',
+                                                      day: '1',
+                                                      workoutName:
+                                                          '${response.data![0].workoutTitle}',
+                                                    ));
+                                                  } else if (checkResponse
+                                                          .success ==
+                                                      false) {
+                                                    Get.showSnackbar(
+                                                        GetSnackBar(
+                                                      message:
+                                                          '${checkResponse.msg}',
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                      backgroundColor:
+                                                          ColorUtils.kRed,
+                                                    ));
+                                                  }
+                                                } else if (_checkWorkoutProgramViewModel
+                                                        .apiResponse.status ==
+                                                    Status.ERROR) {
+                                                  Text(
+                                                    'Something went wrong',
+                                                    style: FontTextStyle
+                                                        .kWhite16W300Roboto,
+                                                  );
+                                                }
+                                              }
+                                            },
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  bottom: 15,
+                                                  top: 5,
+                                                  right: 12,
+                                                  left: 12),
+                                              alignment: Alignment.center,
+                                              height: Get.height * .06,
+                                              width: Get.width,
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                      colors: ColorUtilsGradient
+                                                          .kTintGradient,
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end: Alignment.topCenter),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          Get.height * .1)),
+                                              child: Text('Start Program',
+                                                  style: FontTextStyle
+                                                      .kBlack20BoldRoboto),
+                                            ),
+                                          ),
+                                          SizedBox(height: Get.height * .03),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                  : Scaffold(
+                      backgroundColor: ColorUtils.kBlack,
+                      appBar: AppBar(
+                        elevation: 0,
+                        leading: IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios_sharp,
+                              color: ColorUtils.kTint,
+                            )),
+                        backgroundColor: ColorUtils.kBlack,
+                        title: Text('${response.data![0].workoutTitle}',
+                            style: FontTextStyle.kWhite16BoldRoboto),
+                        centerTitle: true,
+                        actions: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 18),
+                              child: InkWell(
+                                onTap: () async {
+                                  if (controller.apiResponse.status ==
+                                      Status.COMPLETE) {
+                                    CheckWorkoutProgramRequestModel _request =
+                                        CheckWorkoutProgramRequestModel();
+                                    _request.workoutId =
+                                        response.data![0].workoutId;
+                                    _request.userId =
+                                        PreferenceManager.getUId();
+
+                                    await _checkWorkoutProgramViewModel
+                                        .checkWorkoutProgramViewModel(_request);
+
+                                    if (_checkWorkoutProgramViewModel
+                                            .apiResponse.status ==
+                                        Status.COMPLETE) {
+                                      CheckWorkoutProgramResponseModel
+                                          checkResponse =
+                                          _checkWorkoutProgramViewModel
+                                              .apiResponse.data;
+
+                                      if (checkResponse.success == true) {
                                         if ('${response.data![0].workoutVideo}'
                                             .contains('www.youtube.com')) {
                                           _youTubePlayerController?.pause();
@@ -342,107 +591,275 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                           _videoPlayerController?.pause();
                                           _chewieController?.pause();
                                         }
-                                        Get.to(WorkoutOverviewPage(
-                                          day: index + 1,
+                                        Get.to(ProgramSetupPage(
                                           workoutId:
                                               '${response.data![0].workoutId}',
-                                          workoutDay:
-                                              '${response.data![0].workoutDuration}',
+                                          day: '1',
                                           workoutName:
                                               '${response.data![0].workoutTitle}',
                                         ));
-                                      },
-                                      child: exerciseDayButton(
-                                        day:
-                                            '${response.data![0].dayNames![index]}'
-                                                .capitalizeFirst,
-                                        exercise: '${data[index].dayName}'
-                                            .capitalizeFirst,
-                                        weekDay: '${data[index].day}'
-                                            .capitalizeFirst,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              )
-                            : noDataLottie(),
-
-                        SizedBox(height: Get.height * .025),
-                        InkWell(
-                          onTap: () async {
-                            if (controller.apiResponse.status ==
-                                Status.COMPLETE) {
-                              CheckWorkoutProgramRequestModel _request =
-                                  CheckWorkoutProgramRequestModel();
-                              _request.workoutId = response.data![0].workoutId;
-                              _request.userId = PreferenceManager.getUId();
-
-                              await _checkWorkoutProgramViewModel
-                                  .checkWorkoutProgramViewModel(_request);
-
-                              if (_checkWorkoutProgramViewModel
-                                      .apiResponse.status ==
-                                  Status.COMPLETE) {
-                                CheckWorkoutProgramResponseModel checkResponse =
-                                    _checkWorkoutProgramViewModel
-                                        .apiResponse.data;
-
-                                if (checkResponse.success == true) {
-                                  if ('${response.data![0].workoutVideo}'
-                                      .contains('www.youtube.com')) {
-                                    _youTubePlayerController?.pause();
-                                  } else {
-                                    _videoPlayerController?.pause();
-                                    _chewieController?.pause();
+                                      } else if (checkResponse.success ==
+                                          false) {
+                                        Get.showSnackbar(GetSnackBar(
+                                          message: '${checkResponse.msg}',
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: ColorUtils.kRed,
+                                        ));
+                                      }
+                                    } else if (_checkWorkoutProgramViewModel
+                                            .apiResponse.status ==
+                                        Status.ERROR) {
+                                      Text(
+                                        'Something went wrong',
+                                        style: FontTextStyle.kWhite16W300Roboto,
+                                      );
+                                    }
                                   }
-                                  Get.to(ProgramSetupPage(
-                                    workoutId: '${response.data![0].workoutId}',
-                                    day: '1',
-                                    workoutName:
-                                        '${response.data![0].workoutTitle}',
-                                  ));
-                                } else if (checkResponse.success == false) {
-                                  Get.showSnackbar(GetSnackBar(
-                                    message: '${checkResponse.msg}',
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: ColorUtils.kRed,
-                                  ));
-                                }
-                              } else if (_checkWorkoutProgramViewModel
-                                      .apiResponse.status ==
-                                  Status.ERROR) {
-                                Text(
-                                  'Something went wrong',
-                                  style: FontTextStyle.kWhite16W300Roboto,
-                                );
-                              }
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                bottom: 15, top: 5, right: 12, left: 12),
-                            alignment: Alignment.center,
-                            height: Get.height * .06,
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: ColorUtilsGradient.kTintGradient,
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.topCenter),
-                                borderRadius:
-                                    BorderRadius.circular(Get.height * .1)),
-                            child: Text('Start Program',
-                                style: FontTextStyle.kBlack20BoldRoboto),
+                                },
+                                child: Text('Start',
+                                    style: FontTextStyle.kTine16W400Roboto),
+                              ),
+                            ),
                           ),
+                        ],
+                      ),
+                      body: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            Container(
+                              height: Get.height / 2.75,
+                              width: Get.width,
+                              child: Center(
+                                  child: _chewieController != null &&
+                                          _chewieController!
+                                              .videoPlayerController
+                                              .value
+                                              .isInitialized
+                                      ? Chewie(
+                                          controller: _chewieController!,
+                                        )
+                                      : response.data![0].workoutImage == null
+                                          ? noDataLottie()
+                                          : Image.network(
+                                              response.data![0].workoutImage!,
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return noDataLottie();
+                                              },
+                                            )),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 18),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  SizedBox(height: Get.height * .02),
+                                  Container(
+                                    width: Get.width,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Image.asset(AppIcons.calender,
+                                                height: 15, width: 15),
+                                            SizedBox(width: 5),
+                                            Text(
+                                                '${response.data![0].workoutDuration} WEEKS',
+                                                style: FontTextStyle
+                                                    .kWhite16BoldRoboto),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Image.asset(AppIcons.clock,
+                                                height: 15, width: 15),
+                                            SizedBox(width: 5),
+                                            Text(
+                                                '${daysPerWeek.length} x PER WEEK',
+                                                style: FontTextStyle
+                                                    .kWhite16BoldRoboto),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Image.asset(AppIcons.medal,
+                                                height: 15, width: 15),
+                                            SizedBox(width: 5),
+                                            Text(
+                                                '${response.data![0].levelTitle}',
+                                                style: FontTextStyle
+                                                    .kWhite16BoldRoboto),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: Get.height * .02),
+                                  htmlToText(
+                                      data:
+                                          '${response.data![0].workoutDescription}'),
+                                  // Text("${response.data![0].workoutDescription}",
+                                  //     maxLines: 5,
+                                  //     style: FontTextStyle.kWhite16W300Roboto),
+                                  SizedBox(height: Get.height * .03),
+                                  Container(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'VIEW WORKOUTS',
+                                      style: FontTextStyle.kWhite16BoldRoboto,
+                                    ),
+                                  ),
+                                  Divider(
+                                    color: ColorUtils.kTint,
+                                    thickness: 1,
+                                  ),
+                                  SizedBox(height: Get.height * .01),
+
+                                  data.isNotEmpty || data.length != 0
+                                      ? Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: Get.height * .012),
+                                          child: ListView.separated(
+                                            shrinkWrap: true,
+                                            physics:
+                                                NeverScrollableScrollPhysics(),
+                                            itemCount: data.length,
+                                            separatorBuilder: (_, index) {
+                                              return SizedBox(
+                                                  height: Get.height * .022);
+                                            },
+                                            itemBuilder: (_, index) {
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  if ('${response.data![0].workoutVideo}'
+                                                      .contains(
+                                                          'www.youtube.com')) {
+                                                    _youTubePlayerController
+                                                        ?.pause();
+                                                  } else {
+                                                    _videoPlayerController
+                                                        ?.pause();
+                                                    _chewieController?.pause();
+                                                  }
+                                                  Get.to(WorkoutOverviewPage(
+                                                    day: index + 1,
+                                                    workoutId:
+                                                        '${response.data![0].workoutId}',
+                                                    workoutDay:
+                                                        '${response.data![0].workoutDuration}',
+                                                    workoutName:
+                                                        '${response.data![0].workoutTitle}',
+                                                  ));
+                                                },
+                                                child: exerciseDayButton(
+                                                  day:
+                                                      '${response.data![0].dayNames![index]}'
+                                                          .capitalizeFirst,
+                                                  exercise:
+                                                      '${data[index].dayName}'
+                                                          .capitalizeFirst,
+                                                  weekDay: '${data[index].day}'
+                                                      .capitalizeFirst,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      : noDataLottie(),
+
+                                  SizedBox(height: Get.height * .025),
+                                  InkWell(
+                                    onTap: () async {
+                                      if (controller.apiResponse.status ==
+                                          Status.COMPLETE) {
+                                        CheckWorkoutProgramRequestModel
+                                            _request =
+                                            CheckWorkoutProgramRequestModel();
+                                        _request.workoutId =
+                                            response.data![0].workoutId;
+                                        _request.userId =
+                                            PreferenceManager.getUId();
+
+                                        await _checkWorkoutProgramViewModel
+                                            .checkWorkoutProgramViewModel(
+                                                _request);
+
+                                        if (_checkWorkoutProgramViewModel
+                                                .apiResponse.status ==
+                                            Status.COMPLETE) {
+                                          CheckWorkoutProgramResponseModel
+                                              checkResponse =
+                                              _checkWorkoutProgramViewModel
+                                                  .apiResponse.data;
+
+                                          if (checkResponse.success == true) {
+                                            if ('${response.data![0].workoutVideo}'
+                                                .contains('www.youtube.com')) {
+                                              _youTubePlayerController?.pause();
+                                            } else {
+                                              _videoPlayerController?.pause();
+                                              _chewieController?.pause();
+                                            }
+                                            Get.to(ProgramSetupPage(
+                                              workoutId:
+                                                  '${response.data![0].workoutId}',
+                                              day: '1',
+                                              workoutName:
+                                                  '${response.data![0].workoutTitle}',
+                                            ));
+                                          } else if (checkResponse.success ==
+                                              false) {
+                                            Get.showSnackbar(GetSnackBar(
+                                              message: '${checkResponse.msg}',
+                                              duration: Duration(seconds: 2),
+                                              backgroundColor: ColorUtils.kRed,
+                                            ));
+                                          }
+                                        } else if (_checkWorkoutProgramViewModel
+                                                .apiResponse.status ==
+                                            Status.ERROR) {
+                                          Text(
+                                            'Something went wrong',
+                                            style: FontTextStyle
+                                                .kWhite16W300Roboto,
+                                          );
+                                        }
+                                      }
+                                    },
+                                    child: Container(
+                                      margin: EdgeInsets.only(
+                                          bottom: 15,
+                                          top: 5,
+                                          right: 12,
+                                          left: 12),
+                                      alignment: Alignment.center,
+                                      height: Get.height * .06,
+                                      width: Get.width,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              colors: ColorUtilsGradient
+                                                  .kTintGradient,
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.topCenter),
+                                          borderRadius: BorderRadius.circular(
+                                              Get.height * .1)),
+                                      child: Text('Start Program',
+                                          style:
+                                              FontTextStyle.kBlack20BoldRoboto),
+                                    ),
+                                  ),
+                                  SizedBox(height: Get.height * .03),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: Get.height * .03),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
+                      ),
+                    );
         } else {
           return Center(
             child: CircularProgressIndicator(
@@ -451,6 +868,296 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
           );
         }
       },
+    );
+  }
+
+  Widget screenData(WorkoutByIdResponseModel response,
+      WorkoutByIdViewModel controller, List<dynamic> daysPerWeek) {
+    return Scaffold(
+      backgroundColor: ColorUtils.kBlack,
+      appBar: AppBar(
+        elevation: 0,
+        leading: IconButton(
+            onPressed: () {
+              Get.back();
+            },
+            icon: Icon(
+              Icons.arrow_back_ios_sharp,
+              color: ColorUtils.kTint,
+            )),
+        backgroundColor: ColorUtils.kBlack,
+        title: Text('${response.data![0].workoutTitle}',
+            style: FontTextStyle.kWhite16BoldRoboto),
+        centerTitle: true,
+        actions: [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 18),
+              child: InkWell(
+                onTap: () async {
+                  if (controller.apiResponse.status == Status.COMPLETE) {
+                    CheckWorkoutProgramRequestModel _request =
+                        CheckWorkoutProgramRequestModel();
+                    _request.workoutId = response.data![0].workoutId;
+                    _request.userId = PreferenceManager.getUId();
+
+                    await _checkWorkoutProgramViewModel
+                        .checkWorkoutProgramViewModel(_request);
+
+                    if (_checkWorkoutProgramViewModel.apiResponse.status ==
+                        Status.COMPLETE) {
+                      CheckWorkoutProgramResponseModel checkResponse =
+                          _checkWorkoutProgramViewModel.apiResponse.data;
+
+                      if (checkResponse.success == true) {
+                        if ('${response.data![0].workoutVideo}'
+                            .contains('www.youtube.com')) {
+                          _youTubePlayerController?.pause();
+                        } else {
+                          _videoPlayerController?.pause();
+                          _chewieController?.pause();
+                        }
+                        Get.to(ProgramSetupPage(
+                          workoutId: '${response.data![0].workoutId}',
+                          day: '1',
+                          workoutName: '${response.data![0].workoutTitle}',
+                        ));
+                      } else if (checkResponse.success == false) {
+                        Get.showSnackbar(GetSnackBar(
+                          message: '${checkResponse.msg}',
+                          duration: Duration(seconds: 2),
+                          backgroundColor: ColorUtils.kRed,
+                        ));
+                      }
+                    } else if (_checkWorkoutProgramViewModel
+                            .apiResponse.status ==
+                        Status.ERROR) {
+                      Text(
+                        'Something went wrong',
+                        style: FontTextStyle.kWhite16W300Roboto,
+                      );
+                    }
+                  }
+                },
+                child: Text('Start', style: FontTextStyle.kTine16W400Roboto),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Column(
+          children: [
+            Container(
+              height: Get.height / 2.75,
+              width: Get.width,
+              child: '${response.data![0].workoutVideo}'
+                      .contains('www.youtube.com')
+                  ? Center(
+                      child: _youTubePlayerController == null
+                          ? CircularProgressIndicator(color: ColorUtils.kTint)
+                          : YoutubePlayer(
+                              controller: _youTubePlayerController!,
+                              showVideoProgressIndicator: true,
+                              bufferIndicator: CircularProgressIndicator(
+                                  color: ColorUtils.kTint),
+                              controlsTimeOut: Duration(hours: 2),
+                              aspectRatio: 16 / 9,
+                              progressColors: ProgressBarColors(
+                                  handleColor: ColorUtils.kRed,
+                                  playedColor: ColorUtils.kRed,
+                                  backgroundColor: ColorUtils.kGray,
+                                  bufferedColor: ColorUtils.kLightGray),
+                            ),
+                    )
+                  : Center(
+                      child: _chewieController != null &&
+                              _chewieController!
+                                  .videoPlayerController.value.isInitialized
+                          ? Chewie(
+                              controller: _chewieController!,
+                            )
+                          : response.data![0].workoutImage == null
+                              ? noDataLottie()
+                              : Image.network(
+                                  response.data![0].workoutImage!,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return noDataLottie();
+                                  },
+                                )),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 18),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(height: Get.height * .02),
+                  Container(
+                    width: Get.width,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            Image.asset(AppIcons.calender,
+                                height: 15, width: 15),
+                            SizedBox(width: 5),
+                            Text('${response.data![0].workoutDuration} WEEKS',
+                                style: FontTextStyle.kWhite16BoldRoboto),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Image.asset(AppIcons.clock, height: 15, width: 15),
+                            SizedBox(width: 5),
+                            Text('${daysPerWeek.length} x PER WEEK',
+                                style: FontTextStyle.kWhite16BoldRoboto),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Image.asset(AppIcons.medal, height: 15, width: 15),
+                            SizedBox(width: 5),
+                            Text('${response.data![0].levelTitle}',
+                                style: FontTextStyle.kWhite16BoldRoboto),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: Get.height * .02),
+                  htmlToText(data: '${response.data![0].workoutDescription}'),
+                  // Text("${response.data![0].workoutDescription}",
+                  //     maxLines: 5,
+                  //     style: FontTextStyle.kWhite16W300Roboto),
+                  SizedBox(height: Get.height * .03),
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'VIEW WORKOUTS',
+                      style: FontTextStyle.kWhite16BoldRoboto,
+                    ),
+                  ),
+                  Divider(
+                    color: ColorUtils.kTint,
+                    thickness: 1,
+                  ),
+                  SizedBox(height: Get.height * .01),
+
+                  data.isNotEmpty || data.length != 0
+                      ? Padding(
+                          padding:
+                              EdgeInsets.symmetric(vertical: Get.height * .012),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: data.length,
+                            separatorBuilder: (_, index) {
+                              return SizedBox(height: Get.height * .022);
+                            },
+                            itemBuilder: (_, index) {
+                              return GestureDetector(
+                                onTap: () {
+                                  if ('${response.data![0].workoutVideo}'
+                                      .contains('www.youtube.com')) {
+                                    _youTubePlayerController?.pause();
+                                  } else {
+                                    _videoPlayerController?.pause();
+                                    _chewieController?.pause();
+                                  }
+                                  Get.to(WorkoutOverviewPage(
+                                    day: index + 1,
+                                    workoutId: '${response.data![0].workoutId}',
+                                    workoutDay:
+                                        '${response.data![0].workoutDuration}',
+                                    workoutName:
+                                        '${response.data![0].workoutTitle}',
+                                  ));
+                                },
+                                child: exerciseDayButton(
+                                  day: '${response.data![0].dayNames![index]}'
+                                      .capitalizeFirst,
+                                  exercise:
+                                      '${data[index].dayName}'.capitalizeFirst,
+                                  weekDay: '${data[index].day}'.capitalizeFirst,
+                                ),
+                              );
+                            },
+                          ),
+                        )
+                      : noDataLottie(),
+
+                  SizedBox(height: Get.height * .025),
+                  InkWell(
+                    onTap: () async {
+                      if (controller.apiResponse.status == Status.COMPLETE) {
+                        CheckWorkoutProgramRequestModel _request =
+                            CheckWorkoutProgramRequestModel();
+                        _request.workoutId = response.data![0].workoutId;
+                        _request.userId = PreferenceManager.getUId();
+
+                        await _checkWorkoutProgramViewModel
+                            .checkWorkoutProgramViewModel(_request);
+
+                        if (_checkWorkoutProgramViewModel.apiResponse.status ==
+                            Status.COMPLETE) {
+                          CheckWorkoutProgramResponseModel checkResponse =
+                              _checkWorkoutProgramViewModel.apiResponse.data;
+
+                          if (checkResponse.success == true) {
+                            if ('${response.data![0].workoutVideo}'
+                                .contains('www.youtube.com')) {
+                              _youTubePlayerController?.pause();
+                            } else {
+                              _videoPlayerController?.pause();
+                              _chewieController?.pause();
+                            }
+                            Get.to(ProgramSetupPage(
+                              workoutId: '${response.data![0].workoutId}',
+                              day: '1',
+                              workoutName: '${response.data![0].workoutTitle}',
+                            ));
+                          } else if (checkResponse.success == false) {
+                            Get.showSnackbar(GetSnackBar(
+                              message: '${checkResponse.msg}',
+                              duration: Duration(seconds: 2),
+                              backgroundColor: ColorUtils.kRed,
+                            ));
+                          }
+                        } else if (_checkWorkoutProgramViewModel
+                                .apiResponse.status ==
+                            Status.ERROR) {
+                          Text(
+                            'Something went wrong',
+                            style: FontTextStyle.kWhite16W300Roboto,
+                          );
+                        }
+                      }
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          bottom: 15, top: 5, right: 12, left: 12),
+                      alignment: Alignment.center,
+                      height: Get.height * .06,
+                      width: Get.width,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: ColorUtilsGradient.kTintGradient,
+                              begin: Alignment.topCenter,
+                              end: Alignment.topCenter),
+                          borderRadius: BorderRadius.circular(Get.height * .1)),
+                      child: Text('Start Program',
+                          style: FontTextStyle.kBlack20BoldRoboto),
+                    ),
+                  ),
+                  SizedBox(height: Get.height * .03),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 

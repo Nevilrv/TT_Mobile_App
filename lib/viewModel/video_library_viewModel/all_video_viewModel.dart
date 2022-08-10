@@ -1,9 +1,27 @@
+import 'dart:developer';
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/repo/video_library_repo/all_video_repo.dart';
 
 class AllVideoViewModel extends GetxController {
+  File? _thumbnail;
+
+  File get thumbnail => _thumbnail!;
+
+  set thumbnail(File value) {
+    _thumbnail = value;
+    print('thumnail>>>>>>>> $thumbnail');
+    update();
+  }
+  // void setThumbnail(String path) {
+  //   thumbnail = File(path);
+  //   log('thumbnailthumbnail>>>> ${thumbnail}');
+  //   update();
+  // }
+
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get apiResponse => _apiResponse;

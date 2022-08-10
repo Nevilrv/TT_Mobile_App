@@ -7,7 +7,7 @@ import 'package:tcm/model/response_model/training_plans_response_model/workout_b
 class WorkoutByFilterRepo extends ApiRoutes {
   Future<dynamic> workoutByFilterRepo(
       {String? goal, String? duration, String? gender, String? userId}) async {
-    log("repo $userId");
+    log("repo $workoutByFilterUrl");
     var response = await ApiService().getResponse(
         apiType: APIType.aGet,
         url: workoutByFilterUrl +
@@ -18,7 +18,7 @@ class WorkoutByFilterRepo extends ApiRoutes {
             gender! +
             "&user_id=" +
             userId!);
-
+    log("responseresponseresponse $response");
     WorkoutByFilterResponseModel workoutByFilterResponseModel =
         WorkoutByFilterResponseModel.fromJson(response);
     return workoutByFilterResponseModel;

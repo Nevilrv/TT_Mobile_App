@@ -8,11 +8,13 @@ import 'package:tcm/repo/schedule_repo/schedule_by_date_repo.dart';
 
 class ScheduleByDateViewModel extends GetxController {
   List<DateTime> dayList = [];
+  DateTime selectedDay = DateTime.now();
   DateRangePickerController dateRangePickerController =
       DateRangePickerController();
 
   allDates({List<DateTime>? date}) {
     dateRangePickerController.selectedDates?.addAll(date!);
+
     update();
   }
 

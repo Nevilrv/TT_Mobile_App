@@ -33,6 +33,7 @@ class ApiRoutes {
       baseUrl + "/json/data_save_workout_exercise.php";
 
   String userDetailUrl = baseUrl + "/json/data_users.php?user_id=";
+  String recentVideoUrl = baseUrl + "/json/data_videos_related.php?video_id=";
   String scheduleByDateUrl =
       baseUrl + "/json/data_user_schedules_dates.php?user_id=";
 

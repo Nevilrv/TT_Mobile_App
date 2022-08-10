@@ -1,13 +1,17 @@
+// To parse this JSON data, do
+//
+//     final recentVideoResponseModel = recentVideoResponseModelFromJson(jsonString);
+
 import 'dart:convert';
 
-AllVideoResponseModel allVideoResponseModelFromJson(String str) =>
-    AllVideoResponseModel.fromJson(json.decode(str));
+RecentVideoResponseModel recentVideoResponseModelFromJson(String str) =>
+    RecentVideoResponseModel.fromJson(json.decode(str));
 
-String allVideoResponseModelToJson(AllVideoResponseModel data) =>
+String recentVideoResponseModelToJson(RecentVideoResponseModel data) =>
     json.encode(data.toJson());
 
-class AllVideoResponseModel {
-  AllVideoResponseModel({
+class RecentVideoResponseModel {
+  RecentVideoResponseModel({
     this.success,
     this.msg,
     this.data,
@@ -15,14 +19,14 @@ class AllVideoResponseModel {
 
   bool? success;
   String? msg;
-  List<VideoData>? data;
+  List<RecentVideo>? data;
 
-  factory AllVideoResponseModel.fromJson(Map<String, dynamic> json) =>
-      AllVideoResponseModel(
+  factory RecentVideoResponseModel.fromJson(Map<String, dynamic> json) =>
+      RecentVideoResponseModel(
         success: json["success"],
         msg: json["msg"],
-        data: List<VideoData>.from(
-            json["data"].map((x) => VideoData.fromJson(x))),
+        data: List<RecentVideo>.from(
+            json["data"].map((x) => RecentVideo.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -32,8 +36,8 @@ class AllVideoResponseModel {
       };
 }
 
-class VideoData {
-  VideoData({
+class RecentVideo {
+  RecentVideo({
     this.videoId,
     this.categoryId,
     this.videoTitle,
@@ -44,6 +48,7 @@ class VideoData {
     this.videoVisits,
     this.videoLike,
     this.videoDislike,
+    this.createdAt,
     this.categoryTitle,
   });
 
@@ -57,9 +62,10 @@ class VideoData {
   String? videoVisits;
   String? videoLike;
   String? videoDislike;
+  String? createdAt;
   String? categoryTitle;
 
-  factory VideoData.fromJson(Map<String, dynamic> json) => VideoData(
+  factory RecentVideo.fromJson(Map<String, dynamic> json) => RecentVideo(
         videoId: json["video_id"],
         categoryId: json["category_id"],
         videoTitle: json["video_title"],
@@ -70,6 +76,7 @@ class VideoData {
         videoVisits: json["video_visits"],
         videoLike: json["video_like"],
         videoDislike: json["video_dislike"],
+        createdAt: json["created_at"],
         categoryTitle: json["category_title"],
       );
 
@@ -84,6 +91,7 @@ class VideoData {
         "video_visits": videoVisits,
         "video_like": videoLike,
         "video_dislike": videoDislike,
+        "created_at": createdAt,
         "category_title": categoryTitle,
       };
 }

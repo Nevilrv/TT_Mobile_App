@@ -7,6 +7,8 @@ class ScheduleByDateRepo extends ApiRoutes {
     var response = await ApiService()
         .getResponse(apiType: APIType.aGet, url: scheduleByDateUrl + userId!);
 
+    print('response?>>>>>>>  ${response}');
+
     ScheduleByDateResponseModel scheduleByDateResponseModel =
         ScheduleByDateResponseModel.fromJson(response);
     return scheduleByDateResponseModel;

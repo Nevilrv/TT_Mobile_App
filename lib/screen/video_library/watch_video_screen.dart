@@ -3,12 +3,15 @@ import 'dart:developer';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
+import 'package:tcm/model/response_model/video_library_response_model/recent_video_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
+import 'package:tcm/viewModel/video_library_viewModel/recent_video_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -26,6 +29,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
   late VideoPlayerController _videoPlayerController;
   late YoutubePlayerController _youTubePlayerController;
   ChewieController? _chewieController;
+  RecentVideoViewModel _recentVideoViewModel = Get.put(RecentVideoViewModel());
 
   // Future<void> _initializeVideoPlayerFuture;
   // VideoByIdViewModel _videoByIdViewModel = Get.put(VideoByIdViewModel());
@@ -38,6 +42,12 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
   @override
   void initState() {
     super.initState();
+
+    print(
+        "-=-=-=-=-=-=-=-=-=- ${widget.data[0].videoId} ----------- ${widget.data[0].categoryId}");
+
+    _recentVideoViewModel.getRecentVideoDetails(
+        videoId: widget.data[0].videoId, categoryId: widget.data[0].categoryId);
     initializePlayer();
   }
 
@@ -160,63 +170,226 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
   @override
   Widget build(BuildContext context) {
     // AllVideoResponseModel response = _videoByIdViewModel.apiResponse.data;
-
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
+    return '${widget.data[widget.id].videoUrl}'.contains('www.youtube.com')
+        ? YoutubePlayerBuilder(
+            onExitFullScreen: () {
+              // The player forces portraitUp after exiting fullscreen. This overrides the behaviour.
+              // SystemChrome.setPreferredOrientations(DeviceOrientation.values);
             },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-        title: Text('Video Library', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-        // actions: [
-        //   Padding(
-        //     padding: EdgeInsets.symmetric(horizontal: Get.height * .02),
-        //     child: IconButton(
-        //       onPressed: () {
-        //         _launchURL();
-        //       },
-        //       icon: Image.asset(AppIcons.youtube),
-        //     ),
-        //   ),
-        // ],
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(
-          children: [
-            Container(
-              height: Get.height / 2.75,
+            player: YoutubePlayer(
+              controller: _youTubePlayerController,
+              showVideoProgressIndicator: true,
               width: Get.width,
-              child: '${widget.data[widget.id].videoUrl}'
-                      .contains('www.youtube.com')
-                  ? Center(
-                      child: _youTubePlayerController != null ||
-                              _youTubePlayerController != ''
-                          ? YoutubePlayer(
-                              controller: _youTubePlayerController,
-                              showVideoProgressIndicator: true,
-                              progressIndicatorColor: ColorUtils.kTint,
-                              aspectRatio: 16 / 9,
-                              progressColors: ProgressBarColors(
-                                  handleColor: ColorUtils.kRed,
-                                  playedColor: ColorUtils.kRed,
-                                  backgroundColor: ColorUtils.kGray,
-                                  bufferedColor: ColorUtils.kLightGray),
-                            )
-                          : Center(
-                              child: CircularProgressIndicator(
+              progressIndicatorColor: ColorUtils.kTint,
+              // aspectRatio: 16 / 9,
+              progressColors: ProgressBarColors(
+                  handleColor: ColorUtils.kRed,
+                  playedColor: ColorUtils.kRed,
+                  backgroundColor: ColorUtils.kGray,
+                  bufferedColor: ColorUtils.kLightGray),
+            ),
+            builder: (context, player) {
+              return Scaffold(
+                backgroundColor: ColorUtils.kBlack,
+                appBar: AppBar(
+                  elevation: 0,
+                  leading: IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: ColorUtils.kTint,
+                      )),
+                  backgroundColor: ColorUtils.kBlack,
+                  title: Text('Video Library',
+                      style: FontTextStyle.kWhite16BoldRoboto),
+                  centerTitle: true,
+                  // actions: [
+                  //   Padding(
+                  //     padding: EdgeInsets.symmetric(horizontal: Get.height * .02),
+                  //     child: IconButton(
+                  //       onPressed: () {
+                  //         _launchURL();
+                  //       },
+                  //       icon: Image.asset(AppIcons.youtube),
+                  //     ),
+                  //   ),
+                  // ],
+                ),
+                body: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      Container(
+                          height: Get.height / 2.75,
+                          width: Get.width,
+                          child: Center(
+                            child: _youTubePlayerController != null ||
+                                    _youTubePlayerController != ''
+                                ? player
+                                : Center(
+                                    child: CircularProgressIndicator(
+                                    color: ColorUtils.kTint,
+                                  )),
+                          )),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            top: Get.height * 0.008,
+                            left: Get.width * .06,
+                            right: Get.width * .06),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('${widget.data[widget.id].videoTitle}',
+                                style: FontTextStyle.kWhite17BoldRoboto),
+                            SizedBox(height: Get.height * .008),
+                            SizedBox(height: Get.height * .02),
+                            htmlToText(
+                                data: widget.data[widget.id].videoDescription),
+                            SizedBox(height: Get.height * .03),
+                            Text(
+                              'RELATED VIDEOS',
+                              style: FontTextStyle.kWhite16BoldRoboto,
+                            ),
+                            Divider(
                               color: ColorUtils.kTint,
-                            )),
-                    )
-                  : Center(
+                              height: Get.height * .03,
+                              thickness: 1.5,
+                            ),
+                            GetBuilder<RecentVideoViewModel>(
+                                builder: (controller) {
+                              if (controller.apiResponse.status ==
+                                  Status.LOADING) {
+                                return Center(
+                                    child: CircularProgressIndicator(
+                                  color: ColorUtils.kTint,
+                                ));
+                              }
+
+                              if (controller.apiResponse.status ==
+                                  Status.COMPLETE) {
+                                RecentVideoResponseModel response =
+                                    controller.apiResponse.data;
+
+                                return SizedBox(
+                                  child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: response.data!.length,
+                                      itemBuilder: (_, index) {
+                                        return GestureDetector(
+                                          onTap: () {
+                                            print("button pressed ");
+                                          },
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 3,
+                                                child: Container(
+                                                  margin: EdgeInsets.only(
+                                                      top: Get.height * .02),
+                                                  height: Get.height * 0.1,
+                                                  width: Get.height * 0.1,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                          color:
+                                                              ColorUtils.kTint,
+                                                          width: 1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15),
+                                                      image: DecorationImage(
+                                                          image: NetworkImage(
+                                                              response
+                                                                  .data![index]
+                                                                  .videoThumbnail!),
+                                                          scale: 2.5)),
+                                                ),
+                                              ),
+                                              SizedBox(width: Get.height * .03),
+                                              Expanded(
+                                                flex: 4,
+                                                child: SizedBox(
+                                                  height: Get.height * .1,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceEvenly,
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        '${response.data![index].videoTitle}',
+                                                        style: FontTextStyle
+                                                            .kWhite17BoldRoboto,
+                                                      ),
+                                                      htmlToTextGrey(
+                                                        data:
+                                                            '${response.data![index].videoDescription}',
+
+                                                        // maxLines: 1,
+                                                        // style: FontTextStyle
+                                                        //     .kLightGray16W300Roboto,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        );
+                                      }),
+                                );
+                              }
+                              return SizedBox();
+                            }),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              );
+            },
+          )
+        : Scaffold(
+            backgroundColor: ColorUtils.kBlack,
+            appBar: AppBar(
+              elevation: 0,
+              leading: IconButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios_sharp,
+                    color: ColorUtils.kTint,
+                  )),
+              backgroundColor: ColorUtils.kBlack,
+              title: Text('Video Library',
+                  style: FontTextStyle.kWhite16BoldRoboto),
+              centerTitle: true,
+              // actions: [
+              //   Padding(
+              //     padding: EdgeInsets.symmetric(horizontal: Get.height * .02),
+              //     child: IconButton(
+              //       onPressed: () {
+              //         _launchURL();
+              //       },
+              //       icon: Image.asset(AppIcons.youtube),
+              //     ),
+              //   ),
+              // ],
+            ),
+            body: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: Column(
+                children: [
+                  Container(
+                    height: Get.height / 2.75,
+                    width: Get.width,
+                    child: Center(
                       child: _chewieController != null &&
                               _chewieController!
                                   .videoPlayerController.value.isInitialized
@@ -228,98 +401,120 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                               color: ColorUtils.kTint,
                             )),
                     ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: Get.height * 0.008,
-                  left: Get.width * .06,
-                  right: Get.width * .06),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('${widget.data[widget.id].videoTitle}',
-                      style: FontTextStyle.kWhite17BoldRoboto),
-                  SizedBox(height: Get.height * .008),
-                  SizedBox(height: Get.height * .02),
-                  htmlToText(data: widget.data[widget.id].videoDescription),
-                  SizedBox(height: Get.height * .03),
-                  Text(
-                    'RELATED VIDEOS',
-                    style: FontTextStyle.kWhite16BoldRoboto,
                   ),
-                  Divider(
-                    color: ColorUtils.kTint,
-                    height: Get.height * .03,
-                    thickness: 1.5,
-                  ),
-                  SizedBox(
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: 7,
-                        itemBuilder: (_, index) {
-                          return GestureDetector(
-                            onTap: () {
-                              print("button pressed ");
-                            },
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Container(
-                                    margin:
-                                        EdgeInsets.only(top: Get.height * .02),
-                                    height: Get.height * 0.1,
-                                    width: Get.height * 0.1,
-                                    decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: ColorUtils.kTint, width: 1),
-                                        borderRadius: BorderRadius.circular(15),
-                                        image: DecorationImage(
-                                            image: AssetImage(AppImages.logo),
-                                            scale: 2.5)),
-                                  ),
-                                ),
-                                SizedBox(width: Get.height * .03),
-                                Expanded(
-                                  flex: 4,
-                                  child: SizedBox(
-                                    height: Get.height * .1,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Best Chiro Treatment for',
-                                          style:
-                                              FontTextStyle.kWhite17BoldRoboto,
-                                        ),
-                                        Text(
-                                          AppText.perfectDayText
-                                                  .substring(0, 35) +
-                                              ('...'),
-                                          maxLines: 1,
-                                          style: FontTextStyle
-                                              .kLightGray16W300Roboto,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          );
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: Get.height * 0.008,
+                        left: Get.width * .06,
+                        right: Get.width * .06),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('${widget.data[widget.id].videoTitle}',
+                            style: FontTextStyle.kWhite17BoldRoboto),
+                        SizedBox(height: Get.height * .008),
+                        SizedBox(height: Get.height * .02),
+                        htmlToText(
+                            data: widget.data[widget.id].videoDescription),
+                        SizedBox(height: Get.height * .03),
+                        Text(
+                          'RELATED VIDEOS',
+                          style: FontTextStyle.kWhite16BoldRoboto,
+                        ),
+                        Divider(
+                          color: ColorUtils.kTint,
+                          height: Get.height * .03,
+                          thickness: 1.5,
+                        ),
+                        GetBuilder<RecentVideoViewModel>(builder: (controller) {
+                          if (controller.apiResponse.status == Status.LOADING) {
+                            return Center(
+                                child: CircularProgressIndicator(
+                              color: ColorUtils.kTint,
+                            ));
+                          }
+
+                          if (controller.apiResponse.status ==
+                              Status.COMPLETE) {
+                            RecentVideoResponseModel response =
+                                controller.apiResponse.data;
+
+                            return SizedBox(
+                              child: ListView.builder(
+                                  shrinkWrap: true,
+                                  physics: NeverScrollableScrollPhysics(),
+                                  itemCount: response.data!.length,
+                                  itemBuilder: (_, index) {
+                                    return GestureDetector(
+                                      onTap: () {
+                                        print("button pressed ");
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 3,
+                                            child: Container(
+                                              margin: EdgeInsets.only(
+                                                  top: Get.height * .02),
+                                              height: Get.height * 0.1,
+                                              width: Get.height * 0.1,
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                      color: ColorUtils.kTint,
+                                                      width: 1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                  image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          response.data![index]
+                                                              .videoThumbnail!),
+                                                      scale: 2.5)),
+                                            ),
+                                          ),
+                                          SizedBox(width: Get.height * .03),
+                                          Expanded(
+                                            flex: 4,
+                                            child: SizedBox(
+                                              height: Get.height * .1,
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    '${response.data![index].videoTitle}',
+                                                    style: FontTextStyle
+                                                        .kWhite17BoldRoboto,
+                                                  ),
+                                                  htmlToTextGrey(
+                                                    data:
+                                                        '${response.data![index].videoDescription}',
+
+                                                    // maxLines: 1,
+                                                    // style: FontTextStyle
+                                                    //     .kLightGray16W300Roboto,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                            );
+                          }
+                          return SizedBox();
                         }),
-                  ),
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   youtubeVideoID() {

@@ -12,8 +12,13 @@ class ExerciseByIdViewModel extends GetxController {
 
   ApiResponse get apiResponse => _apiResponse;
   Future<void> getExerciseByIdDetails({String? id}) async {
-    _apiResponse = ApiResponse.loading(message: 'Loading');
-    // update();
+    if (_apiResponse.status == Status.INITIAL) {
+      _apiResponse = ApiResponse.loading(message: 'Loading');
+      update();
+    }
+
+    // _apiResponse = ApiResponse.loading(message: 'Loading');
+
     try {
       ExerciseByIdResponseModel response =
           await ExerciseByIdRepo().exerciseByIdRepo(id: id);

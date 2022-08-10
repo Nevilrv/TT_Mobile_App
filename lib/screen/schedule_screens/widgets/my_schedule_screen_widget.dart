@@ -56,12 +56,17 @@ Padding listViewTab(
                                   .workoutTitle!,
                               style: FontTextStyle.kWhite17BoldRoboto,
                             ),
-                            subtitle: Text(
-                              '${getEventForDay[index].programData![0].exerciseTitle}' +
-                                  " - " +
-                                  ' ${getEventForDay[index].programData![0].exerciseTitle} ',
-                              style: FontTextStyle.kLightGray16W300Roboto,
-                            ),
+                            subtitle: getEventForDay[index]
+                                        .programData![0]
+                                        .exerciseTitle ==
+                                    null
+                                ? SizedBox()
+                                : Text(
+                                    '${getEventForDay[index].programData![0].exerciseTitle}' +
+                                        " - " +
+                                        ' ${getEventForDay[index].programData![0].exerciseTitle} ',
+                                    style: FontTextStyle.kLightGray16W300Roboto,
+                                  ),
                             trailing: InkWell(
                               onTap: () {
                                 openBottomSheet(

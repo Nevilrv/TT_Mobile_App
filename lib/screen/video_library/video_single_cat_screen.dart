@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
@@ -8,6 +12,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/video_library_viewModel/all_video_viewModel.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 
 class VideoSingleCatScreen extends StatefulWidget {
   String? videoCatID;
@@ -22,7 +27,8 @@ class VideoSingleCatScreen extends StatefulWidget {
 
 class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
   AllVideoViewModel _allVideoViewModel = Get.put(AllVideoViewModel());
-
+  File? thumbnail;
+  String thumbnail1 = '';
   void initState() {
     super.initState();
 
@@ -105,6 +111,8 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                             physics: NeverScrollableScrollPhysics(),
                             itemCount: videoResponse.data!.length,
                             itemBuilder: (_, index) {
+                              print(
+                                  'videoResponse.data!.length  ${videoResponse.data!.length}');
                               return widget.videoCatID ==
                                       videoResponse.data![index].categoryId
                                   ? GestureDetector(
@@ -114,7 +122,7 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                                           data: videoResponse.data!,
                                           // id: response.data![index1].videoId)
                                         ));
-                                        print("button pressed ");
+                                        print("button pressed");
                                       },
                                       child: Row(
                                         children: [
@@ -126,15 +134,41 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                                               height: Get.height * 0.1,
                                               width: Get.height * 0.1,
                                               decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: ColorUtils.kTint,
-                                                      width: 1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                  image: DecorationImage(
-                                                      image: AssetImage(
-                                                          AppImages.logo),
-                                                      scale: 2.5)),
+                                                border: Border.all(
+                                                    color: ColorUtils.kTint,
+                                                    width: 1),
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
+                                                child: Center(
+                                                    child: videoResponse
+                                                                    .data![
+                                                                        index]
+                                                                    .videoThumbnail ==
+                                                                null ||
+                                                            videoResponse
+                                                                    .data![
+                                                                        index]
+                                                                    .videoThumbnail ==
+                                                                ''
+                                                        ? Padding(
+                                                            padding:
+                                                                EdgeInsets.all(
+                                                                    15.0),
+                                                            child: Image.asset(
+                                                                AppImages.logo),
+                                                          )
+                                                        : Image.network(
+                                                            videoResponse
+                                                                .data![index]
+                                                                .videoThumbnail!,
+                                                            fit: BoxFit.cover,
+                                                            height: Get.height,
+                                                            width: Get.width)),
+                                              ),
                                             ),
                                           ),
                                           SizedBox(width: Get.height * .015),
@@ -218,5 +252,32 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
         ),
       ),
     );
+  }
+
+  String getYoutubeThumbnail(String videoUrl) {
+    final Uri? uri = Uri.tryParse(videoUrl);
+
+    return 'https://img.youtube.com/vi/${uri!.queryParameters['v']}/0.jpg';
+  }
+
+  Future<void>? data(String url) async {
+    final fileName = await VideoThumbnail.thumbnailFile(
+      video: url,
+      thumbnailPath: (await getTemporaryDirectory()).path,
+      imageFormat: ImageFormat.JPEG,
+      maxHeight: 200,
+      maxWidth: 200,
+      quality: 75,
+    ).then((value) {
+      setState(() {
+        thumbnail = File(value!);
+      });
+
+      print('thumbnailthumbnailthumbnail ${thumbnail}');
+    });
+    print('fileNamefileNamefileName ${fileName}');
+    // setState(() {
+
+    // });
   }
 }

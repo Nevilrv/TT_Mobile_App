@@ -1029,6 +1029,9 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                     model.tagId = data2;
                                     model.title = title.text;
                                     model.description = description.text;
+                                    setState(() {
+                                      isStartCompressing = true;
+                                    });
                                     await addForumViewModel
                                         .addForumViewModel(model);
                                     if (addForumViewModel
@@ -1070,6 +1073,9 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                             forumViewModel
                                                 .setLikeDisLike(response.data!);
                                           }
+                                          setState(() {
+                                            isStartCompressing = false;
+                                          });
 
                                           controller.setSelectTagId('');
 
@@ -1089,11 +1095,11 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                     }
                                   } else {
                                     for (int i = 0; i < filesAll.length; i++) {
+                                      setState(() {
+                                        isStartCompressing = true;
+                                      });
                                       d.log('${filesAll}');
                                       if (filesAll[i]['type'] == 'mp4') {
-                                        setState(() {
-                                          isStartCompressing = true;
-                                        });
                                         d.log(
                                             'element>>>>>>....${filesAll[i]}');
                                         mediaInfo =
@@ -1122,11 +1128,12 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                         for (int i = 0;
                                             i < filesAll.length;
                                             i++) {
-                                          dataFile.add(
-                                              await dio.MultipartFile.fromFile(
-                                                  filesAll[i]['file'].path,
-                                                  filename:
-                                                      'Video_${DateTime.now().millisecondsSinceEpoch}.mp4'));
+                                          dataFile.add(await dio.MultipartFile.fromFile(
+                                              filesAll[i]['file'].path,
+                                              filename: filesAll[i]['type'] ==
+                                                      'mp4'
+                                                  ? 'Video_${DateTime.now().millisecondsSinceEpoch}.mp4'
+                                                  : 'Image_${DateTime.now().millisecondsSinceEpoch}.jpg'));
 
                                           d.log(
                                               'dataFiledataFiledataFile>>>>>>  ${dataFile}');
