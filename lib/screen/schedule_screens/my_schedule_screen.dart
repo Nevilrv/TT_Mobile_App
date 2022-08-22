@@ -270,16 +270,13 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                             args.value.last;
                                         controller.dateRangePickerController
                                             .selectedDates = controller.dayList;
-
-                                        print(
-                                            "selected day ================= ${controller.selectedDay}");
                                       }
 
                                       controller.dateRangePickerController
                                           .selectedDates = controller.dayList;
 
-                                      print(
-                                          "selected day ================= ${args.value}");
+                                      controller.selectedDay = args.value.last;
+
                                       args.value.clear();
                                       setState(() {});
                                     },

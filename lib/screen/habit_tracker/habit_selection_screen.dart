@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -148,15 +150,7 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
 
                                 controller.firstSelectedHabits(
                                     id: '${response.data![index].id}');
-                                // log('${response.data![index].name}');
-                                // log('${controller.selectedHabitList}');
-                                // print(
-                                //     '----------========= ${response.data![index].id}');
-                                // // setState(() {});
-                                // print(
-                                //     'list of habit id ---------------- $habitId');
-                                // print(
-                                //     "abc ------------------- ${listOfHabitId()}");
+                                listOfHabitId();
                               },
                               child: Container(
                                 padding: EdgeInsets.symmetric(
@@ -166,16 +160,17 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                                 decoration: habitId
                                         .contains('${response.data![index].id}')
                                     ? BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            Get.height * .05),
+                                        borderRadius: BorderRadius.circular(6),
                                         gradient: LinearGradient(
-                                            colors: ColorUtilsGradient
-                                                .kTintGradient,
-                                            begin: Alignment.center,
-                                            end: Alignment.center))
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          stops: [0.0, 1.0],
+                                          colors:
+                                              ColorUtilsGradient.kTintGradient,
+                                        ),
+                                      )
                                     : BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                            Get.height * .05),
+                                        borderRadius: BorderRadius.circular(6),
                                         border:
                                             Border.all(color: ColorUtils.kTint),
                                         color: ColorUtils.kBlack),
@@ -256,11 +251,14 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                     height: Get.height * 0.065,
                     width: Get.width * 0.6,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(Get.height * .05),
-                        gradient: LinearGradient(
-                            colors: ColorUtilsGradient.kTintGradient,
-                            begin: Alignment.center,
-                            end: Alignment.center)),
+                      borderRadius: BorderRadius.circular(6),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: [0.0, 1.0],
+                        colors: ColorUtilsGradient.kTintGradient,
+                      ),
+                    ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -303,9 +301,6 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           message: '${res.msg}',
                           duration: Duration(seconds: 2),
                         ));
-                        // print("------------------- ${listOfHabitId()}");
-                        print(
-                            "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
                         HabitResponseModel resp =
                             _habitViewModel.apiResponse.data;
                         Get.to(TrackingFrequencyScreen(data: resp.data));

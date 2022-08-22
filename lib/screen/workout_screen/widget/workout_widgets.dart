@@ -26,7 +26,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
             gradient: LinearGradient(
                 colors: ColorUtilsGradient.kGrayGradient,
                 begin: Alignment.topCenter,
-                end: Alignment.topCenter),
+                end: Alignment.bottomCenter),
             borderRadius: BorderRadius.circular(6)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           InkWell(
@@ -70,7 +70,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
           VerticalDivider(
             width: Get.width * .08,
             thickness: 1.25,
-            color: ColorUtils.kGray,
+            color: ColorUtils.kBlack,
             indent: Get.height * .015,
             endIndent: Get.height * .015,
           ),
@@ -141,7 +141,7 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
             gradient: LinearGradient(
                 colors: ColorUtilsGradient.kGrayGradient,
                 begin: Alignment.topCenter,
-                end: Alignment.topCenter),
+                end: Alignment.bottomCenter),
             borderRadius: BorderRadius.circular(6)),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           InkWell(

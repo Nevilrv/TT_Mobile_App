@@ -82,7 +82,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
       log("--------------- dates ${resp.msg}");
 
-      _userWorkoutsDateViewModel.exerciseId = resp.data![0].exercisesIds!;
+      _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
 
       print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
       // log("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
@@ -335,11 +335,17 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               CircleAvatar(
-                                                  radius: Get.height * .02,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  backgroundImage: AssetImage(
-                                                      AppIcons.kettle_bell)),
+                                                radius: Get.height * .02,
+                                                backgroundColor:
+                                                    ColorUtils.kTint,
+                                                child: Center(
+                                                  child: Image.asset(
+                                                    AppIcons.kettle_bell,
+                                                    height: Get.height * 0.025,
+                                                    width: Get.width * 0.1,
+                                                  ),
+                                                ),
+                                              ),
                                               SizedBox(width: Get.width * .03),
                                               Expanded(
                                                 child: Text('Equipment needed',
@@ -410,11 +416,19 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                 CrossAxisAlignment.center,
                                             children: [
                                               CircleAvatar(
-                                                  radius: Get.height * .02,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  backgroundImage: AssetImage(
-                                                      AppIcons.clock)),
+                                                radius: Get.height * .02,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                child: ClipOval(
+                                                  child: Image.asset(
+                                                    AppIcons.clock,
+                                                    color: ColorUtils.kTint,
+                                                    fit: BoxFit.fill,
+                                                    height: Get.height,
+                                                    width: Get.width,
+                                                  ),
+                                                ),
+                                              ),
                                               SizedBox(width: Get.width * .03),
                                               Expanded(
                                                 child: Text(
@@ -508,10 +522,12 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
             width: Get.width,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: ColorUtilsGradient.kTintGradient,
-                    end: Alignment.center,
-                    begin: Alignment.center),
-                borderRadius: BorderRadius.circular(Get.height * .06)),
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: [0.0, 1.0],
+                  colors: ColorUtilsGradient.kTintGradient,
+                ),
+                borderRadius: BorderRadius.circular(6)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

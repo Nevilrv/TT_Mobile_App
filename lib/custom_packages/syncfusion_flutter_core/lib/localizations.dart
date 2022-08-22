@@ -1,1 +1,1 @@
-export './src/localizations/global_localizations.dart';
+export 'src/localizations/global_localizations.dart';

@@ -115,7 +115,13 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                 height: Get.height * 0.06,
                 width: Get.width * 0.9,
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
+                    borderRadius: BorderRadius.circular(6),
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.0, 1.0],
+                      colors: ColorUtilsGradient.kTintGradient,
+                    ),
                     color: ColorUtils.kTint),
                 child: Center(
                     child: Text(

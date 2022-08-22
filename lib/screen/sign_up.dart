@@ -140,10 +140,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             width: Get.width * 0.9,
                             decoration: index == 1
                                 ? BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
+                                    borderRadius: BorderRadius.circular(6),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      stops: [0.0, 1.0],
+                                      colors: ColorUtilsGradient.kTintGradient,
+                                    ),
                                     color: ColorUtils.kTint)
                                 : BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
+                                    borderRadius: BorderRadius.circular(6),
                                     border:
                                         Border.all(color: ColorUtils.kTint)),
                             child: Center(
@@ -172,10 +178,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             width: Get.width * 0.9,
                             decoration: index == 2
                                 ? BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
+                                    borderRadius: BorderRadius.circular(6),
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      stops: [0.0, 1.0],
+                                      colors: ColorUtilsGradient.kTintGradient,
+                                    ),
                                     color: ColorUtils.kTint)
                                 : BoxDecoration(
-                                    borderRadius: BorderRadius.circular(50),
+                                    borderRadius: BorderRadius.circular(6),
                                     border:
                                         Border.all(color: ColorUtils.kTint)),
                             child: Center(
@@ -1053,7 +1065,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               height: Get.height * 0.06,
                               width: Get.width * 0.9,
                               decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(50),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    stops: [0.0, 1.0],
+                                    colors: ColorUtilsGradient.kTintGradient,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6),
                                   color: ColorUtils.kTint),
                               child: Center(
                                   child: Text(

@@ -1,8 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
@@ -15,7 +12,6 @@ import 'package:tcm/screen/habit_tracker/habit_tracker_home_screen.dart';
 import 'package:tcm/screen/profile_view_screen.dart';
 import 'package:tcm/screen/schedule_screens/my_schedule_screen.dart';
 import 'package:tcm/screen/signIn_screens.dart';
-import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/screen/training_plan_screens/training_plan.dart';
 import 'package:tcm/screen/video_library/video_library_screen.dart';
 import 'package:tcm/screen/workout_screen/workout_home.dart';
@@ -90,7 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? finalDate;
   DateTime today = DateTime.now();
   dateApiCall() async {
-    log('hello........................1');
+    print('hello........................1');
     tmpDateList = today.toString().split(" ");
     finalDate = tmpDateList[0];
 
@@ -108,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   scheduleDateApiCall() async {
-    log('hello........................2');
+    print('hello........................2');
     await _scheduleByDateViewModel.getScheduleByDateDetails(
         userId: PreferenceManager.getUId());
     ScheduleByDateResponseModel scheduleResp =
@@ -117,23 +113,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getExercisesId() async {
-    log("called 123");
-    log('hello........................3');
+    print("called 123");
+    print('hello........................3');
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(),
         date: DateTime.now().toString().split(" ").first);
 
     if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      log("complete api call");
+      print("complete api call");
       UserWorkoutsDateResponseModel resp =
           _userWorkoutsDateViewModel.apiResponse.data;
 
-      log("--------------- dates ${resp.msg}");
+      print("--------------- dates ${resp.msg}");
 
-      log("success ------------- true");
+      print("success ------------- true");
 
       if (resp.success == true) {
-        _userWorkoutsDateViewModel.exerciseId = resp.data![0].exercisesIds!;
+        _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
 
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
@@ -143,15 +139,16 @@ class _HomeScreenState extends State<HomeScreen> {
         exerciseResponse = _exerciseByIdViewModel.apiResponse.data;
 
         await _workoutByIdViewModel.getWorkoutByIdDetails(
-            id: resp.data![0].workoutId ?? '1');
+            id: resp.data!.workoutId ?? '1');
 
         workoutResponse = _workoutByIdViewModel.apiResponse.data;
+
+        print('workoutResponse>>>>>> ${workoutResponse!.data}');
         setState(() {
           selected = true;
         });
       } else {
-        log("success ------------- false");
-
+        print("success ------------- false");
         // await _exerciseByIdViewModel.getExerciseByIdDetails(
         //     id: _userWorkoutsDateViewModel
         //             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??
@@ -182,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    log('hello........................4');
+    print('hello........................4');
     if (oneTime == false) {
       setState(() {
         getExercisesId();
@@ -224,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //       image: AppIcons.logout,
               //       text: 'Log Out',
               //       onTap: () {
-              //         _logOutAlertDialog(onTapCancel: () {
+              //         _logOutAlertDiaprint(onTapCancel: () {
               //           Get.back();
               //         }, onTapLogOut: () {
               //           Get.showSnackbar(GetSnackBar(
@@ -289,8 +286,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                       height: Get.height * .05,
                                       width: Get.width * .9,
                                       decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            stops: [0.0, 1.0],
+                                            colors: ColorUtilsGradient
+                                                .kTintGradient,
+                                          ),
                                           borderRadius:
-                                              BorderRadius.circular(50),
+                                              BorderRadius.circular(6),
                                           color: ColorUtils.kTint),
                                       child: Center(
                                           child: Text(
@@ -339,7 +343,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             image: 'asset/images/habit.png',
                             text: 'Habit Tracker',
                             onTap: () {
-                              log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                              print(
+                                  "if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
                               if (response!.data![0].habitId == "" ||
                                   response!.data![0].habitId!.isEmpty &&
                                       response!.data![0].habitName == null ||
@@ -363,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (controllerExe) {
                       if (controllerExe.apiResponse.status == Status.LOADING ||
                           controllerWork.apiResponse.status == Status.LOADING) {
-                        log('LOADING......................>>>');
+                        print('LOADING......................>>>');
 
                         return Center(
                             child: CircularProgressIndicator(
@@ -373,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               Status.COMPLETE ||
                           controllerWork.apiResponse.status ==
                               Status.COMPLETE) {
-                        log('complete......................>>>');
+                        print('complete......................>>>');
                         return SingleChildScrollView(
                           physics: BouncingScrollPhysics(),
                           child: Padding(
@@ -477,9 +482,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   height: Get.height * 0.042,
                                                   width: Get.width * 0.5,
                                                   decoration: BoxDecoration(
+                                                      gradient: LinearGradient(
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter,
+                                                        stops: [0.0, 1.0],
+                                                        colors:
+                                                            ColorUtilsGradient
+                                                                .kTintGradient,
+                                                      ),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              50),
+                                                              6),
                                                       color: ColorUtils.kTint),
                                                   child: Center(
                                                       child: Text(
@@ -535,7 +550,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   image: 'asset/images/habit.png',
                                   text: 'Habit Tracker',
                                   onTap: () {
-                                    log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                                    print(
+                                        "if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
                                     if (response!.data![0].habitId == "" ||
                                         response!.data![0].habitId!.isEmpty &&
                                             response!.data![0].habitName ==
@@ -669,12 +685,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
               UserdetailResponseModel response = controller.apiResponse.data;
-              log('Name====${response.data!.name}');
-              log('Pref Name====${PreferenceManager.getUserName()}');
+              print('Name====${response.data!.name}');
+              print('Pref Name====${PreferenceManager.getUserName()}');
               if (response.data != null ||
                   response.data != '' ||
                   response.success == true) {
-                log('----------- ${PreferenceManager.getProfilePic()}');
+                print('----------- ${PreferenceManager.getProfilePic()}');
                 return Column(
                   children: [
                     GestureDetector(
@@ -803,6 +819,7 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.journal,
               text: 'Habit Tracker',
               onTap: () {
+                // Get.to(HabitTrackerHomeScreen());
                 if (response!.data![0].habitId == "" ||
                     response!.data![0].habitId!.isEmpty &&
                         response!.data![0].habitName == null ||
@@ -873,7 +890,7 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.logout,
               text: 'Sign Out',
               onTap: () {
-                _logOutAlertDialog(onTapCancel: () {
+                _logOutAlertDiaprint(onTapCancel: () {
                   Get.back();
                 }, onTapLogOut: () {
                   Get.showSnackbar(GetSnackBar(
@@ -947,7 +964,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _logOutAlertDialog({Function()? onTapCancel, Function()? onTapLogOut}) {
+  _logOutAlertDiaprint({Function()? onTapCancel, Function()? onTapLogOut}) {
     Get.dialog(
         AlertDialog(
           shape:

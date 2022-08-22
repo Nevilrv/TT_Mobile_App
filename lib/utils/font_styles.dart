@@ -115,7 +115,7 @@ class FontTextStyle {
   static TextStyle kWhite12BoldRoboto = TextStyle(
       color: Colors.white,
       fontWeight: FontWeight.bold,
-      fontSize: Get.width * .033);
+      fontSize: Get.width * .03);
 
   static TextStyle kGreyBoldRoboto = TextStyle(
       color: Colors.grey,

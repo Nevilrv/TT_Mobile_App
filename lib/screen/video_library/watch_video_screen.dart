@@ -7,6 +7,7 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/model/response_model/video_library_response_model/recent_video_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
+import 'package:tcm/screen/video_library/related_video_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -44,10 +45,11 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
     super.initState();
 
     print(
-        "-=-=-=-=-=-=-=-=-=- ${widget.data[0].videoId} ----------- ${widget.data[0].categoryId}");
+        "-=-=-=-=-=-=-=-=-=- ${widget.data[widget.id].videoId} ----------- ${widget.data[widget.id].categoryId}");
 
     _recentVideoViewModel.getRecentVideoDetails(
-        videoId: widget.data[0].videoId, categoryId: widget.data[0].categoryId);
+        videoId: widget.data[widget.id].videoId,
+        categoryId: widget.data[widget.id].categoryId);
     initializePlayer();
   }
 
@@ -110,63 +112,6 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
 
   int currPlayIndex = 0;
 
-  // _launchURL() async {
-  //   if (Platform.isIOS) {
-  //     if (await canLaunch(_url)) {
-  //       await launch(_url, forceSafariVC: false);
-  //     } else {
-  //       if (await canLaunch(_url)) {
-  //         await launch(_url);
-  //       } else {
-  //         throw 'Could not launch $_url';
-  //       }
-  //     }
-  //   } else {
-  //     if (await canLaunch(_url)) {
-  //       await launch(_url);
-  //     } else {
-  //       throw 'Could not launch $_url';
-  //     }
-  //   }
-  // }
-  //
-  // videoViews({String? id}) async {
-  //   await _videoViewsViewModel.videoViewsViewModel(id: id);
-  //   VideoViewsResponseModel responseViews =
-  //       _videoViewsViewModel.apiResponse.data;
-  //   setState(() {
-  //     widget.data[widget.id].videoVisits =
-  //         responseViews.data!.totalVisits.toString();
-  //     _allVideoViewModel.getVideoDetails();
-  //   });
-  //   log("video id--${widget.data[widget.id].videoId}");
-  //   log('---widget.data[widget.id].videoVisits-------${widget.data[widget.id].videoVisits}');
-  // }
-  //
-  // likeVideo({String? id}) async {
-  //   await _videoLikeViewModel.videoLikeViewModel(id: id);
-  //
-  //   VideoLikeResponseModel responseLike = _videoLikeViewModel.apiResponse.data;
-  //   setState(() {
-  //     widget.data[widget.id].videoLike =
-  //         responseLike.data!.totalLikes.toString();
-  //   });
-  //   print(
-  //       '---widget.data[widget.id].videoLike-------${widget.data[widget.id].videoLike}');
-  // }
-  //
-  // dislikeVideo({String? id}) async {
-  //   await _videoDislikeViewModel.videoDislikeViewModel(id: id);
-  //   VideoDislikeResponseModel responseDislike =
-  //       _videoDislikeViewModel.apiResponse.data;
-  //   setState(() {
-  //     widget.data[widget.id].videoDislike =
-  //         responseDislike.data!.totalDislikes.toString();
-  //   });
-  //   print(
-  //       '---widget.data[widget.id].videoDisLike-------${widget.data[widget.id].videoDislike}');
-  // }
-
   @override
   Widget build(BuildContext context) {
     // AllVideoResponseModel response = _videoByIdViewModel.apiResponse.data;
@@ -222,7 +167,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                   child: Column(
                     children: [
                       Container(
-                          height: Get.height / 2.75,
+                          height: Get.height / 3,
                           width: Get.width,
                           child: Center(
                             child: _youTubePlayerController != null ||
@@ -235,7 +180,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                           )),
                       Padding(
                         padding: EdgeInsets.only(
-                            top: Get.height * 0.008,
+                            top: 0,
                             left: Get.width * .06,
                             right: Get.width * .06),
                         child: Column(
@@ -244,10 +189,9 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                             Text('${widget.data[widget.id].videoTitle}',
                                 style: FontTextStyle.kWhite17BoldRoboto),
                             SizedBox(height: Get.height * .008),
-                            SizedBox(height: Get.height * .02),
                             htmlToText(
                                 data: widget.data[widget.id].videoDescription),
-                            SizedBox(height: Get.height * .03),
+                            SizedBox(height: Get.height * .02),
                             Text(
                               'RELATED VIDEOS',
                               style: FontTextStyle.kWhite16BoldRoboto,
@@ -266,12 +210,30 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                   color: ColorUtils.kTint,
                                 ));
                               }
+                              if (controller.apiResponse.status ==
+                                  Status.ERROR) {
+                                return Center(
+                                  child: Text(
+                                    'Server error',
+                                    style: FontTextStyle.kTine16W400Roboto,
+                                  ),
+                                );
+                              }
+                              RecentVideoResponseModel response =
+                                  controller.apiResponse.data;
 
+                              if (response.data!.isEmpty) {
+                                print(
+                                    'response.data!.isEmpty>>>>>> ${response.data!.isEmpty}');
+                                return Center(
+                                  child: Text(
+                                    'No related data',
+                                    style: FontTextStyle.kTine16W400Roboto,
+                                  ),
+                                );
+                              }
                               if (controller.apiResponse.status ==
                                   Status.COMPLETE) {
-                                RecentVideoResponseModel response =
-                                    controller.apiResponse.data;
-
                                 return SizedBox(
                                   child: ListView.builder(
                                       shrinkWrap: true,
@@ -280,6 +242,10 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                       itemBuilder: (_, index) {
                                         return GestureDetector(
                                           onTap: () {
+                                            Get.to(RelatedVideoScreen(
+                                              data: response.data!,
+                                              id: index,
+                                            ));
                                             print("button pressed ");
                                           },
                                           child: Row(
@@ -310,31 +276,30 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                               SizedBox(width: Get.height * .03),
                                               Expanded(
                                                 flex: 4,
-                                                child: SizedBox(
-                                                  height: Get.height * .1,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        '${response.data![index].videoTitle}',
-                                                        style: FontTextStyle
-                                                            .kWhite17BoldRoboto,
-                                                      ),
-                                                      htmlToTextGrey(
-                                                        data:
-                                                            '${response.data![index].videoDescription}',
-
-                                                        // maxLines: 1,
-                                                        // style: FontTextStyle
-                                                        //     .kLightGray16W300Roboto,
-                                                      )
-                                                    ],
-                                                  ),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                      '${response.data![index].videoTitle}',
+                                                      style: FontTextStyle
+                                                          .kWhite17BoldRoboto,
+                                                    ),
+                                                    htmlToTextGreyVidDesc(
+                                                        data: '${response.data![index].videoDescription!}'
+                                                                    .length >
+                                                                30
+                                                            ? response
+                                                                    .data![
+                                                                        index]
+                                                                    .videoDescription!
+                                                                    .substring(
+                                                                        0, 30) +
+                                                                ('...')
+                                                            : response
+                                                                .data![index]
+                                                                .videoDescription!),
+                                                  ],
                                                 ),
                                               )
                                             ],
@@ -413,10 +378,9 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                         Text('${widget.data[widget.id].videoTitle}',
                             style: FontTextStyle.kWhite17BoldRoboto),
                         SizedBox(height: Get.height * .008),
-                        SizedBox(height: Get.height * .02),
                         htmlToText(
                             data: widget.data[widget.id].videoDescription),
-                        SizedBox(height: Get.height * .03),
+                        SizedBox(height: Get.height * .02),
                         Text(
                           'RELATED VIDEOS',
                           style: FontTextStyle.kWhite16BoldRoboto,
@@ -433,12 +397,20 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                               color: ColorUtils.kTint,
                             ));
                           }
-
+                          RecentVideoResponseModel response =
+                              controller.apiResponse.data;
+                          if (response.data!.isEmpty) {
+                            print(
+                                'response.data!.isEmpty>>>>>> ${response.data!.isEmpty}');
+                            return Center(
+                              child: Text(
+                                'No related data',
+                                style: FontTextStyle.kTine16W400Roboto,
+                              ),
+                            );
+                          }
                           if (controller.apiResponse.status ==
                               Status.COMPLETE) {
-                            RecentVideoResponseModel response =
-                                controller.apiResponse.data;
-
                             return SizedBox(
                               child: ListView.builder(
                                   shrinkWrap: true,
@@ -447,6 +419,10 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                   itemBuilder: (_, index) {
                                     return GestureDetector(
                                       onTap: () {
+                                        Get.to(RelatedVideoScreen(
+                                          data: response.data!,
+                                          id: index,
+                                        ));
                                         print("button pressed ");
                                       },
                                       child: Row(

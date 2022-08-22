@@ -1,7 +1,3 @@
-// To parse this JSON data, do
-//
-//     final userWorkoutsDateResponseModel = userWorkoutsDateResponseModelFromJson(jsonString);
-
 import 'dart:convert';
 
 UserWorkoutsDateResponseModel userWorkoutsDateResponseModelFromJson(
@@ -21,24 +17,24 @@ class UserWorkoutsDateResponseModel {
 
   bool? success;
   String? msg;
-  List<ExeIds>? data;
+  Data? data;
 
   factory UserWorkoutsDateResponseModel.fromJson(Map<String, dynamic> json) =>
       UserWorkoutsDateResponseModel(
         success: json["success"],
         msg: json["msg"],
-        data: List<ExeIds>.from(json["data"].map((x) => ExeIds.fromJson(x))),
+        data: Data.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
         "success": success,
         "msg": msg,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+        "data": data!.toJson(),
       };
 }
 
-class ExeIds {
-  ExeIds({
+class Data {
+  Data({
     this.workoutId,
     this.date,
     this.exercisesIds,
@@ -48,7 +44,7 @@ class ExeIds {
   String? date;
   List<String>? exercisesIds;
 
-  factory ExeIds.fromJson(Map<String, dynamic> json) => ExeIds(
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
         workoutId: json["workout_id"],
         date: json["date"],
         exercisesIds: List<String>.from(json["exercises_ids"].map((x) => x)),

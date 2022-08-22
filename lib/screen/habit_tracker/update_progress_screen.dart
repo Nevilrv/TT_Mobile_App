@@ -3,7 +3,9 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
+import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/habit_tracker_request_model/get_habit_record_date_request_model.dart';
 import 'package:tcm/model/request_model/habit_tracker_request_model/habit_record_add_update_request_model.dart';
@@ -321,56 +323,340 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                     );
                   }),
                   SizedBox(height: Get.height * .04),
-                  GetBuilder<HabitViewModel>(
-                    builder: (controller) {
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(color: ColorUtils.kTint),
-                                borderRadius:
-                                    BorderRadius.circular(Get.height * .05)),
-                            child: LinearPercentIndicator(
-                              lineHeight: Get.height * .03,
-                              width: Get.width * .7,
-                              padding: EdgeInsets.zero,
-                              barRadius: Radius.circular(Get.height * .05),
-                              animation: true,
-                              percent: controller.percent! / 100,
-                              progressColor: ColorUtils.kTint,
-                              backgroundColor: ColorUtils.kBlack,
+                  // GetBuilder<HabitViewModel>(
+                  //   builder: (controller) {
+                  //     return Row(
+                  //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  //       children: [
+                  //         Container(
+                  //           decoration: BoxDecoration(
+                  //               border: Border.all(color: ColorUtils.kTint),
+                  //               borderRadius:
+                  //                   BorderRadius.circular(Get.height * .05)),
+                  //           child: LinearPercentIndicator(
+                  //             lineHeight: Get.height * .03,
+                  //             width: Get.width * .7,
+                  //             padding: EdgeInsets.zero,
+                  //             barRadius: Radius.circular(Get.height * .05),
+                  //             animation: true,
+                  //             percent: controller.percent! / 100,
+                  //             progressColor: ColorUtils.kTint,
+                  //             backgroundColor: ColorUtils.kBlack,
+                  //           ),
+                  //         ),
+                  //         Text(
+                  //           '${controller.tmpHabitUpdatesList.length}/${recordResponse!.data!.length}',
+                  //           style: FontTextStyle.kWhite20BoldRoboto,
+                  //         ),
+                  //       ],
+                  //     );
+                  //   },
+                  // ),
+                  Stack(
+                    alignment: Alignment.center,
+                    clipBehavior: Clip.none,
+                    children: [
+                      // Positioned(
+                      //   bottom: Get.height * 0.0393,
+                      //   left: Get.width * 0.25,
+                      //   child: CircleAvatar(
+                      //     radius: Get.height * 0.0103,
+                      //     backgroundColor: Color(0xffDF3541),
+                      //   ),
+                      // ),
+                      // Positioned(
+                      //   bottom: Get.height * 0.0393,
+                      //   right: Get.width * 0.25,
+                      //   child: CircleAvatar(
+                      //     radius: Get.height * 0.0103,
+                      //     backgroundColor: Color(0xff00FE07),
+                      //   ),
+                      // ),
+                      // Container(
+                      //     height: Get.height * .3,
+                      //     width: Get.width,
+                      //     child: SfRadialGauge(
+                      //       axes: [
+                      //         RadialAxis(
+                      //           minimum: 0,
+                      //           maximum:
+                      //               recordResponse!.data!.length.toDouble(),
+                      //           axisLabelStyle:
+                      //               GaugeTextStyle(color: Colors.transparent),
+                      //           ranges: <GaugeRange>[
+                      //             GaugeRange(
+                      //               startValue: 0,
+                      //               endValue: recordResponse!.data!.length
+                      //                       .toDouble() /
+                      //                   3,
+                      //               gradient: SweepGradient(
+                      //                 colors: [
+                      //                   Color(0xffDF3541),
+                      //                   Color(0xff7E7F9D)
+                      //                 ],
+                      //                 stops: <double>[0.4, 1],
+                      //               ),
+                      //               startWidth: Get.height * 0.021,
+                      //               endWidth: Get.height * 0.021,
+                      //             ),
+                      //             GaugeRange(
+                      //               startValue: recordResponse!.data!.length
+                      //                       .toDouble() /
+                      //                   3,
+                      //               endValue: recordResponse!.data!.length
+                      //                       .toDouble() /
+                      //                   2,
+                      //               gradient: SweepGradient(
+                      //                 colors: [
+                      //                   Color(0xff7E7F9D),
+                      //                   Color(0xff21C4F8),
+                      //                 ],
+                      //                 stops: <double>[0, 0.3],
+                      //               ),
+                      //               startWidth: Get.height * 0.021,
+                      //               endWidth: Get.height * 0.021,
+                      //             ),
+                      //             GaugeRange(
+                      //               startValue: recordResponse!.data!.length
+                      //                       .toDouble() /
+                      //                   2,
+                      //               endValue: recordResponse!.data!.length
+                      //                       .toDouble() /
+                      //                   1.5,
+                      //               // color: Colors.green,
+                      //
+                      //               gradient: SweepGradient(
+                      //                 colors: [
+                      //                   Color(0xff21C4F8),
+                      //                   Color(0xff10E0A7),
+                      //                 ],
+                      //                 stops: <double>[0, 0.2],
+                      //               ),
+                      //               startWidth: Get.height * 0.021,
+                      //               endWidth: Get.height * 0.021,
+                      //             ),
+                      //             GaugeRange(
+                      //               startValue: recordResponse!.data!.length
+                      //                       .toDouble() /
+                      //                   1.5,
+                      //               endValue:
+                      //                   recordResponse!.data!.length.toDouble(),
+                      //               gradient: SweepGradient(
+                      //                 colors: [
+                      //                   Color(0xff10E0A7),
+                      //                   Color(0xff00FE07)
+                      //                 ],
+                      //                 stops: <double>[0, 0.2],
+                      //               ),
+                      //               startWidth: Get.height * 0.021,
+                      //               endWidth: Get.height * 0.021,
+                      //             )
+                      //           ],
+                      //           interval: 1,
+                      //           pointers: [
+                      //             NeedlePointer(
+                      //               needleEndWidth: 80,
+                      //               needleLength: .92,
+                      //               enableAnimation: true,
+                      //               animationType: AnimationType.ease,
+                      //               needleColor: ColorUtils.kBlack,
+                      //               value: _habitViewModel
+                      //                   .tmpHabitUpdatesList.length
+                      //                   .toDouble(),
+                      //             ),
+                      //             NeedlePointer(
+                      //               needleEndWidth: 65,
+                      //               needleLength: .87,
+                      //               enableAnimation: true,
+                      //               animationType: AnimationType.ease,
+                      //               needleColor: ColorUtils.kSaperatedGray,
+                      //               value: _habitViewModel
+                      //                   .tmpHabitUpdatesList.length
+                      //                   .toDouble(),
+                      //               knobStyle: KnobStyle(
+                      //                   knobRadius: .75,
+                      //                   color: ColorUtils.kSaperatedGray),
+                      //             )
+                      //           ],
+                      //         )
+                      //       ],
+                      //     )),
+                      Container(
+                        height: 230,
+                        width: 230,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          clipBehavior: Clip.none,
+                          children: [
+                            Positioned(
+                              bottom: 29.5,
+                              left: 41,
+                              child: CircleAvatar(
+                                radius: 9,
+                                backgroundColor: Color(0xffDF3541),
+                              ),
                             ),
-                          ),
-                          Text(
-                            '${controller.tmpHabitUpdatesList.length}/${recordResponse!.data!.length}',
-                            style: FontTextStyle.kWhite20BoldRoboto,
-                          ),
-                        ],
-                      );
-                    },
+                            Positioned(
+                              bottom: 29.5,
+                              right: 41,
+                              child: CircleAvatar(
+                                radius: 9,
+                                backgroundColor: Color(0xff00FE07),
+                              ),
+                            ),
+                            Container(
+                                height: 230,
+                                width: 230,
+                                child: SfRadialGauge(
+                                  axes: [
+                                    RadialAxis(
+                                      minimum: 0,
+                                      maximum: recordResponse!.data!.length
+                                          .toDouble(),
+                                      axisLabelStyle: GaugeTextStyle(
+                                          color: Colors.transparent),
+                                      ranges: <GaugeRange>[
+                                        GaugeRange(
+                                          startValue: 0,
+                                          endValue: recordResponse!.data!.length
+                                                  .toDouble() /
+                                              3,
+                                          gradient: SweepGradient(
+                                            colors: [
+                                              Color(0xffDF3541),
+                                              Color(0xff7E7F9D)
+                                            ],
+                                            stops: <double>[0.4, 1],
+                                          ),
+                                          startWidth: 18,
+                                          endWidth: 18,
+                                        ),
+                                        GaugeRange(
+                                          startValue: recordResponse!
+                                                  .data!.length
+                                                  .toDouble() /
+                                              3,
+                                          endValue: recordResponse!.data!.length
+                                                  .toDouble() /
+                                              2,
+                                          gradient: SweepGradient(
+                                            colors: [
+                                              Color(0xff7E7F9D),
+                                              Color(0xff21C4F8),
+                                            ],
+                                            stops: <double>[0, 0.3],
+                                          ),
+                                          startWidth: 18,
+                                          endWidth: 18,
+                                        ),
+                                        GaugeRange(
+                                          startValue: recordResponse!
+                                                  .data!.length
+                                                  .toDouble() /
+                                              2,
+                                          endValue: recordResponse!.data!.length
+                                                  .toDouble() /
+                                              1,
+                                          // color: Colors.green,
+
+                                          gradient: SweepGradient(
+                                            colors: [
+                                              Color(0xff21C4F8),
+                                              Color(0xff10E0A7),
+                                            ],
+                                            stops: <double>[0, 0.2],
+                                          ),
+                                          startWidth: 18,
+                                          endWidth: 18,
+                                        ),
+                                        GaugeRange(
+                                          startValue: recordResponse!
+                                                  .data!.length
+                                                  .toDouble() /
+                                              1.5,
+                                          endValue: recordResponse!.data!.length
+                                              .toDouble(),
+                                          gradient: SweepGradient(
+                                            colors: [
+                                              Color(0xff10E0A7),
+                                              Color(0xff00FE07)
+                                            ],
+                                            stops: <double>[0, 0.2],
+                                          ),
+                                          startWidth: 18,
+                                          endWidth: 18,
+                                        )
+                                      ],
+                                      interval: 1,
+                                      pointers: [
+                                        NeedlePointer(
+                                          needleEndWidth: 80,
+                                          needleLength: .92,
+                                          enableAnimation: true,
+                                          animationType: AnimationType.ease,
+                                          needleColor: ColorUtils.kBlack,
+                                          value: _habitViewModel
+                                              .tmpHabitUpdatesList.length
+                                              .toDouble(),
+                                        ),
+                                        NeedlePointer(
+                                          needleEndWidth: 65,
+                                          needleLength: .87,
+                                          enableAnimation: true,
+                                          animationType: AnimationType.ease,
+                                          needleColor:
+                                              ColorUtils.kSaperatedGray,
+                                          value: _habitViewModel
+                                              .tmpHabitUpdatesList.length
+                                              .toDouble(),
+                                          knobStyle: KnobStyle(
+                                              knobRadius: .75,
+                                              color: ColorUtils.kSaperatedGray),
+                                        )
+                                      ],
+                                    )
+                                  ],
+                                )),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '${_habitViewModel.tmpHabitUpdatesList.length}/${recordResponse!.data!.length}',
+                                  style: FontTextStyle.kWhite20BoldRoboto
+                                      .copyWith(fontSize: Get.height * 0.055),
+                                ),
+                                Text(
+                                  'TRACKED',
+                                  style: FontTextStyle.kWhite17BoldRoboto,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                   SizedBox(height: Get.height * .03),
-                  Text(
-                    'UPDATE YOUR PROGRESS',
-                    style: FontTextStyle.kWhite17BoldRoboto,
-                  ),
-                  Divider(
-                    height: Get.height * .02,
-                    color: ColorUtils.kTint,
-                    thickness: 1.5,
-                  ),
-                  SizedBox(height: Get.height * .02),
-                  Center(
-                    child: SizedBox(
-                      height: Get.height * .275,
-                      width: Get.height * .3,
-                      child: Image.asset(
-                        _habitViewModel.selectedBodyIllu,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ),
+                  // Text(
+                  //   'UPDATE YOUR PROGRESS',
+                  //   style: FontTextStyle.kWhite17BoldRoboto,
+                  // ),
+                  // Divider(
+                  //   height: Get.height * .02,
+                  //   color: ColorUtils.kTint,
+                  //   thickness: 1.5,
+                  // ),
+                  // SizedBox(height: Get.height * .02),
+                  // Center(
+                  //   child: SizedBox(
+                  //     height: Get.height * .275,
+                  //     width: Get.height * .3,
+                  //     child: Image.asset(
+                  //       _habitViewModel.selectedBodyIllu,
+                  //       fit: BoxFit.contain,
+                  //     ),
+                  //   ),
+                  // ),
                   SizedBox(height: Get.height * .03),
 
                   GetBuilder<HabitViewModel>(
@@ -435,16 +721,19 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                             .contains(
                                                 '${recordResponse!.data![index].habitId}')
                                         ? BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                Get.height * .05),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
                                             gradient: LinearGradient(
-                                                colors: ColorUtilsGradient
-                                                    .kTintGradient,
-                                                begin: Alignment.center,
-                                                end: Alignment.center))
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              stops: [0.0, 1.0],
+                                              colors: ColorUtilsGradient
+                                                  .kTintGradient,
+                                            ),
+                                          )
                                         : BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                                Get.height * .05),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
                                             border: Border.all(
                                                 color: ColorUtils.kTint),
                                             color: ColorUtils.kBlack),

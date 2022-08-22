@@ -723,30 +723,33 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                   Get.height *
                                                                       0.065,
                                                               width: Get.width,
-                                                              decoration: BoxDecoration(
-                                                                  gradient: _workoutByIdViewModel.dayAddedList.contains(AppText.weekDays[index])
-                                                                      ? LinearGradient(
-                                                                          colors: ColorUtilsGradient
-                                                                              .kTintGradient,
-                                                                          begin: Alignment
-                                                                              .topCenter,
-                                                                          end: Alignment
-                                                                              .bottomCenter)
-                                                                      : null,
-                                                                  color: controllerWork.dayAddedList.contains(AppText.weekDays[index])
-                                                                      ? null
-                                                                      : ColorUtils
-                                                                          .kBlack,
-                                                                  borderRadius:
-                                                                      BorderRadius.circular(
-                                                                          Get.height *
-                                                                              0.1),
-                                                                  border: _workoutByIdViewModel
-                                                                          .dayAddedList
-                                                                          .contains(
-                                                                              AppText.weekDays[index])
-                                                                      ? null
-                                                                      : Border.all(color: ColorUtils.kTint)),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                      gradient: _workoutByIdViewModel.dayAddedList.contains(AppText.weekDays[
+                                                                              index])
+                                                                          ? LinearGradient(
+                                                                              begin: Alignment.topCenter,
+                                                                              end: Alignment.bottomCenter,
+                                                                              stops: [
+                                                                                0.0,
+                                                                                1.0
+                                                                              ],
+                                                                              colors: ColorUtilsGradient.kTintGradient,
+                                                                            )
+                                                                          : null,
+                                                                      color: controllerWork.dayAddedList.contains(AppText.weekDays[
+                                                                              index])
+                                                                          ? null
+                                                                          : ColorUtils
+                                                                              .kBlack,
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              6),
+                                                                      border: _workoutByIdViewModel
+                                                                              .dayAddedList
+                                                                              .contains(AppText.weekDays[index])
+                                                                          ? null
+                                                                          : Border.all(color: ColorUtils.kTint)),
                                                               child: Padding(
                                                                 padding: EdgeInsets.symmetric(
                                                                     horizontal:
@@ -759,7 +762,12 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                   children: [
                                                                     data[index] ==
                                                                             0
-                                                                        ? SizedBox()
+                                                                        ? Container(
+                                                                            height:
+                                                                                Get.height * .05,
+                                                                            width:
+                                                                                Get.height * .05,
+                                                                          )
                                                                         : Container(
                                                                             alignment:
                                                                                 Alignment.center,
@@ -770,17 +778,21 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                             decoration:
                                                                                 BoxDecoration(color: ColorUtils.kBlack, shape: BoxShape.circle),
                                                                             child:
-                                                                                Text(
-                                                                              data[index].toString(),
-                                                                              style: FontTextStyle.kTint20BoldRoboto,
+                                                                                Center(
+                                                                              child: Text(
+                                                                                data[index].toString(),
+                                                                                style: FontTextStyle.kTint20BoldRoboto,
+                                                                              ),
                                                                             ),
                                                                           ),
-                                                                    Text(
-                                                                        AppText.weekDays[
-                                                                            index],
-                                                                        style: controllerWork.dayAddedList.contains(AppText.weekDays[index])
-                                                                            ? FontTextStyle.kBlack20BoldRoboto
-                                                                            : FontTextStyle.kTint20BoldRoboto),
+                                                                    Center(
+                                                                      child: Text(
+                                                                          AppText.weekDays[
+                                                                              index],
+                                                                          style: controllerWork.dayAddedList.contains(AppText.weekDays[index])
+                                                                              ? FontTextStyle.kBlack20BoldRoboto
+                                                                              : FontTextStyle.kTint20BoldRoboto),
+                                                                    ),
                                                                     apiDayDataList
                                                                             .contains(AppText.weekDays[index])
                                                                         // &&
@@ -1054,8 +1066,17 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 Get.height * .05,
                                                                             width:
                                                                                 Get.width * .3,
-                                                                            decoration:
-                                                                                BoxDecoration(borderRadius: BorderRadius.circular(40), gradient: LinearGradient(colors: ColorUtilsGradient.kTintGradient, begin: Alignment.center, end: Alignment.center)),
+                                                                            decoration: BoxDecoration(
+                                                                                borderRadius: BorderRadius.circular(6),
+                                                                                gradient: LinearGradient(
+                                                                                  begin: Alignment.topCenter,
+                                                                                  end: Alignment.bottomCenter,
+                                                                                  stops: [
+                                                                                    0.0,
+                                                                                    1.0
+                                                                                  ],
+                                                                                  colors: ColorUtilsGradient.kTintGradient,
+                                                                                )),
                                                                             child:
                                                                                 Text(
                                                                               'Keep',
@@ -1110,7 +1131,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                             width:
                                                                                 Get.width * .3,
                                                                             decoration:
-                                                                                BoxDecoration(borderRadius: BorderRadius.circular(40), border: Border.all(color: ColorUtils.kTint, width: 1.5)),
+                                                                                BoxDecoration(borderRadius: BorderRadius.circular(6), border: Border.all(color: ColorUtils.kTint, width: 1.5)),
                                                                             child:
                                                                                 Text(
                                                                               'Remove',
@@ -1366,19 +1387,20 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                     height: Get.height * .06,
                                                     width: Get.width,
                                                     decoration: BoxDecoration(
-                                                        gradient: LinearGradient(
-                                                            colors:
-                                                                ColorUtilsGradient
-                                                                    .kTintGradient,
-                                                            begin: Alignment
-                                                                .topCenter,
-                                                            end: Alignment
-                                                                .topCenter),
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          stops: [0.0, 1.0],
+                                                          colors:
+                                                              ColorUtilsGradient
+                                                                  .kTintGradient,
+                                                        ),
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(
-                                                                    Get.height *
-                                                                        .1)),
+                                                                .circular(6)),
                                                     child: !widget.isEdit!
                                                         ? Text('Start Program',
                                                             style: FontTextStyle

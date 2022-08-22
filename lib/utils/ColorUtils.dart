@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ColorUtils {
-  static Color kTint = Color(0xffC9AB83);
+  static Color kTint = Color(0xff64FDFF);
+  // static Color kTint = Color(0xffC9AB83);
   static Color kBlack = Color(0xff171717);
   static Color kGray = Color(0xff505050);
   static Color kSaperatedGray = Color(0xff404040);
@@ -15,8 +16,11 @@ class ColorUtils {
 }
 
 class ColorUtilsGradient {
-  static List<Color> kTintGradient = [Color(0xffC9AB83), Color(0xffC19865)];
+  static List<Color> kTintGradient = [Color(0xff64FDFF), Color(0xff50CACC)];
+  // static List<Color> kTintGradient = [Color(0xffC9AB83), Color(0xffC19865)];
   static List<Color> kGrayGradient = [Color(0xff383838), Color(0xff262626)];
+  static List<Color> kGreenGradient = [Color(0xff057C00), Color(0xff045500)];
+  static List<Color> kOrangeGradient = [Color(0xffFFA200), Color(0xff9E6400)];
   static List<Color> kBlackGradient = [
     Color(0xff000000).withOpacity(0),
     Color(0xff000000)

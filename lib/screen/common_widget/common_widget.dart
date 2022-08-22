@@ -17,10 +17,12 @@ Padding commonNavigationButton({Function()? onTap, String? name}) {
           width: Get.width,
           decoration: BoxDecoration(
               gradient: LinearGradient(
-                  colors: ColorUtilsGradient.kTintGradient,
-                  end: Alignment.center,
-                  begin: Alignment.center),
-              borderRadius: BorderRadius.circular(Get.height * .06)),
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0.0, 1.0],
+                colors: ColorUtilsGradient.kTintGradient,
+              ),
+              borderRadius: BorderRadius.circular(6)),
           child: Text(
             name!,
             style: FontTextStyle.kBlack16BoldRoboto,

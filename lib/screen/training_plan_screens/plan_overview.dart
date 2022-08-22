@@ -665,7 +665,9 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                         Row(
                                           children: [
                                             Image.asset(AppIcons.calender,
-                                                height: 15, width: 15),
+                                                height: 15,
+                                                width: 15,
+                                                color: ColorUtils.kTint),
                                             SizedBox(width: 5),
                                             Text(
                                                 '${response.data![0].workoutDuration} WEEKS',
@@ -675,8 +677,12 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                         ),
                                         Row(
                                           children: [
-                                            Image.asset(AppIcons.clock,
-                                                height: 15, width: 15),
+                                            Image.asset(
+                                              AppIcons.clock,
+                                              height: 15,
+                                              width: 15,
+                                              color: ColorUtils.kTint,
+                                            ),
                                             SizedBox(width: 5),
                                             Text(
                                                 '${daysPerWeek.length} x PER WEEK',
@@ -687,7 +693,9 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                         Row(
                                           children: [
                                             Image.asset(AppIcons.medal,
-                                                height: 15, width: 15),
+                                                height: 15,
+                                                width: 15,
+                                                color: ColorUtils.kTint),
                                             SizedBox(width: 5),
                                             Text(
                                                 '${response.data![0].levelTitle}',
@@ -1146,7 +1154,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                               colors: ColorUtilsGradient.kTintGradient,
                               begin: Alignment.topCenter,
                               end: Alignment.topCenter),
-                          borderRadius: BorderRadius.circular(Get.height * .1)),
+                          borderRadius: BorderRadius.circular(6)),
                       child: Text('Start Program',
                           style: FontTextStyle.kBlack20BoldRoboto),
                     ),

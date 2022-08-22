@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
+import 'package:tcm/utils/ColorUtils.dart';
 
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
@@ -260,10 +261,13 @@ class _ShareSheetScreenState extends State<ShareSheetScreen> {
       children: [
         GestureDetector(
             onTap: onTap,
-            child: Image.asset(image!,
-                height: Get.height * .05,
-                width: Get.height * .05,
-                fit: BoxFit.contain)),
+            child: Image.asset(
+              image!,
+              height: Get.height * .05,
+              width: Get.height * .05,
+              fit: BoxFit.contain,
+              color: ColorUtils.kTint,
+            )),
         SizedBox(
           height: 5,
         ),

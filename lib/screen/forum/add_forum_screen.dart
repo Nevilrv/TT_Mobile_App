@@ -895,9 +895,14 @@ class _AddForumScreenState extends State<AddForumScreen> {
                       height: Get.height * 0.05,
                       width: Get.width * 0.365,
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: ColorUtils.kTint,
-                          border: Border.all(color: ColorUtils.kTint)),
+                        borderRadius: BorderRadius.circular(6),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          stops: [0.0, 1.0],
+                          colors: ColorUtilsGradient.kTintGradient,
+                        ),
+                      ),
                       child: Padding(
                         padding:
                             EdgeInsets.symmetric(horizontal: Get.height * 0.02),
@@ -1229,8 +1234,14 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                   height: Get.height * 0.05,
                                   width: Get.width,
                                   decoration: BoxDecoration(
-                                      color: ColorUtils.kTint,
-                                      borderRadius: BorderRadius.circular(10)),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        stops: [0.0, 1.0],
+                                        colors:
+                                            ColorUtilsGradient.kTintGradient,
+                                      ),
+                                      borderRadius: BorderRadius.circular(6)),
                                   child: Center(
                                     child: Text(
                                       'Add Post',

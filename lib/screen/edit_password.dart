@@ -504,8 +504,14 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                             height: Get.height * 0.06,
                             width: Get.width * 0.9,
                             decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(50),
-                                color: ColorUtils.kTint),
+                              borderRadius: BorderRadius.circular(6),
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                stops: [0.0, 1.0],
+                                colors: ColorUtilsGradient.kTintGradient,
+                              ),
+                            ),
                             child: Center(
                                 child: Text(
                               'Update Password',

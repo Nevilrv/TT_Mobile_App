@@ -152,16 +152,19 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                   width: Get.width,
                                   decoration: index == controller.selectedIndex
                                       ? BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              Get.height * .05),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           gradient: LinearGradient(
-                                              colors: ColorUtilsGradient
-                                                  .kTintGradient,
-                                              begin: Alignment.center,
-                                              end: Alignment.center))
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            stops: [0.0, 1.0],
+                                            colors: ColorUtilsGradient
+                                                .kTintGradient,
+                                          ),
+                                        )
                                       : BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              Get.height * .05),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
                                           border: Border.all(
                                               color: ColorUtils.kTint),
                                           color: ColorUtils.kBlack),
