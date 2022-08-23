@@ -352,291 +352,156 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                   //     );
                   //   },
                   // ),
-                  Stack(
-                    alignment: Alignment.center,
-                    clipBehavior: Clip.none,
-                    children: [
-                      // Positioned(
-                      //   bottom: Get.height * 0.0393,
-                      //   left: Get.width * 0.25,
-                      //   child: CircleAvatar(
-                      //     radius: Get.height * 0.0103,
-                      //     backgroundColor: Color(0xffDF3541),
-                      //   ),
-                      // ),
-                      // Positioned(
-                      //   bottom: Get.height * 0.0393,
-                      //   right: Get.width * 0.25,
-                      //   child: CircleAvatar(
-                      //     radius: Get.height * 0.0103,
-                      //     backgroundColor: Color(0xff00FE07),
-                      //   ),
-                      // ),
-                      // Container(
-                      //     height: Get.height * .3,
-                      //     width: Get.width,
-                      //     child: SfRadialGauge(
-                      //       axes: [
-                      //         RadialAxis(
-                      //           minimum: 0,
-                      //           maximum:
-                      //               recordResponse!.data!.length.toDouble(),
-                      //           axisLabelStyle:
-                      //               GaugeTextStyle(color: Colors.transparent),
-                      //           ranges: <GaugeRange>[
-                      //             GaugeRange(
-                      //               startValue: 0,
-                      //               endValue: recordResponse!.data!.length
-                      //                       .toDouble() /
-                      //                   3,
-                      //               gradient: SweepGradient(
-                      //                 colors: [
-                      //                   Color(0xffDF3541),
-                      //                   Color(0xff7E7F9D)
-                      //                 ],
-                      //                 stops: <double>[0.4, 1],
-                      //               ),
-                      //               startWidth: Get.height * 0.021,
-                      //               endWidth: Get.height * 0.021,
-                      //             ),
-                      //             GaugeRange(
-                      //               startValue: recordResponse!.data!.length
-                      //                       .toDouble() /
-                      //                   3,
-                      //               endValue: recordResponse!.data!.length
-                      //                       .toDouble() /
-                      //                   2,
-                      //               gradient: SweepGradient(
-                      //                 colors: [
-                      //                   Color(0xff7E7F9D),
-                      //                   Color(0xff21C4F8),
-                      //                 ],
-                      //                 stops: <double>[0, 0.3],
-                      //               ),
-                      //               startWidth: Get.height * 0.021,
-                      //               endWidth: Get.height * 0.021,
-                      //             ),
-                      //             GaugeRange(
-                      //               startValue: recordResponse!.data!.length
-                      //                       .toDouble() /
-                      //                   2,
-                      //               endValue: recordResponse!.data!.length
-                      //                       .toDouble() /
-                      //                   1.5,
-                      //               // color: Colors.green,
-                      //
-                      //               gradient: SweepGradient(
-                      //                 colors: [
-                      //                   Color(0xff21C4F8),
-                      //                   Color(0xff10E0A7),
-                      //                 ],
-                      //                 stops: <double>[0, 0.2],
-                      //               ),
-                      //               startWidth: Get.height * 0.021,
-                      //               endWidth: Get.height * 0.021,
-                      //             ),
-                      //             GaugeRange(
-                      //               startValue: recordResponse!.data!.length
-                      //                       .toDouble() /
-                      //                   1.5,
-                      //               endValue:
-                      //                   recordResponse!.data!.length.toDouble(),
-                      //               gradient: SweepGradient(
-                      //                 colors: [
-                      //                   Color(0xff10E0A7),
-                      //                   Color(0xff00FE07)
-                      //                 ],
-                      //                 stops: <double>[0, 0.2],
-                      //               ),
-                      //               startWidth: Get.height * 0.021,
-                      //               endWidth: Get.height * 0.021,
-                      //             )
-                      //           ],
-                      //           interval: 1,
-                      //           pointers: [
-                      //             NeedlePointer(
-                      //               needleEndWidth: 80,
-                      //               needleLength: .92,
-                      //               enableAnimation: true,
-                      //               animationType: AnimationType.ease,
-                      //               needleColor: ColorUtils.kBlack,
-                      //               value: _habitViewModel
-                      //                   .tmpHabitUpdatesList.length
-                      //                   .toDouble(),
-                      //             ),
-                      //             NeedlePointer(
-                      //               needleEndWidth: 65,
-                      //               needleLength: .87,
-                      //               enableAnimation: true,
-                      //               animationType: AnimationType.ease,
-                      //               needleColor: ColorUtils.kSaperatedGray,
-                      //               value: _habitViewModel
-                      //                   .tmpHabitUpdatesList.length
-                      //                   .toDouble(),
-                      //               knobStyle: KnobStyle(
-                      //                   knobRadius: .75,
-                      //                   color: ColorUtils.kSaperatedGray),
-                      //             )
-                      //           ],
-                      //         )
-                      //       ],
-                      //     )),
-                      Container(
-                        height: 230,
-                        width: 230,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          clipBehavior: Clip.none,
-                          children: [
-                            Positioned(
-                              bottom: 29.5,
-                              left: 41,
-                              child: CircleAvatar(
-                                radius: 9,
-                                backgroundColor: Color(0xffDF3541),
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 29.5,
-                              right: 41,
-                              child: CircleAvatar(
-                                radius: 9,
-                                backgroundColor: Color(0xff00FE07),
-                              ),
-                            ),
-                            Container(
-                                height: 230,
-                                width: 230,
-                                child: SfRadialGauge(
-                                  axes: [
-                                    RadialAxis(
-                                      minimum: 0,
-                                      maximum: recordResponse!.data!.length
-                                          .toDouble(),
-                                      axisLabelStyle: GaugeTextStyle(
-                                          color: Colors.transparent),
-                                      ranges: <GaugeRange>[
-                                        GaugeRange(
-                                          startValue: 0,
-                                          endValue: recordResponse!.data!.length
-                                                  .toDouble() /
-                                              3,
-                                          gradient: SweepGradient(
-                                            colors: [
-                                              Color(0xffDF3541),
-                                              Color(0xff7E7F9D)
-                                            ],
-                                            stops: <double>[0.4, 1],
-                                          ),
-                                          startWidth: 18,
-                                          endWidth: 18,
-                                        ),
-                                        GaugeRange(
-                                          startValue: recordResponse!
-                                                  .data!.length
-                                                  .toDouble() /
-                                              3,
-                                          endValue: recordResponse!.data!.length
-                                                  .toDouble() /
-                                              2,
-                                          gradient: SweepGradient(
-                                            colors: [
-                                              Color(0xff7E7F9D),
-                                              Color(0xff21C4F8),
-                                            ],
-                                            stops: <double>[0, 0.3],
-                                          ),
-                                          startWidth: 18,
-                                          endWidth: 18,
-                                        ),
-                                        GaugeRange(
-                                          startValue: recordResponse!
-                                                  .data!.length
-                                                  .toDouble() /
-                                              2,
-                                          endValue: recordResponse!.data!.length
-                                                  .toDouble() /
-                                              1,
-                                          // color: Colors.green,
+                  Container(
+                    height: 230,
+                    width: 230,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      clipBehavior: Clip.none,
+                      children: [
+                        Positioned(
+                          bottom: 29.5,
+                          left: 41,
+                          child: CircleAvatar(
+                            radius: 9,
+                            backgroundColor: Color(0xffDF3541),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 29.5,
+                          right: 41,
+                          child: CircleAvatar(
+                            radius: 9,
+                            backgroundColor: Color(0xff00FE07),
+                          ),
+                        ),
+                        Container(
+                            height: 230,
+                            width: 230,
+                            child: SfRadialGauge(
+                              axes: [
+                                RadialAxis(
+                                  minimum: 0,
+                                  maximum:
+                                      recordResponse!.data!.length.toDouble(),
+                                  axisLabelStyle:
+                                      GaugeTextStyle(color: Colors.transparent),
+                                  ranges: <GaugeRange>[
+                                    GaugeRange(
+                                      startValue: 0,
+                                      endValue: recordResponse!.data!.length
+                                              .toDouble() /
+                                          3,
+                                      gradient: SweepGradient(
+                                        colors: [
+                                          Color(0xffDF3541),
+                                          Color(0xff7E7F9D)
+                                        ],
+                                        stops: <double>[0.4, 1],
+                                      ),
+                                      startWidth: 18,
+                                      endWidth: 18,
+                                    ),
+                                    GaugeRange(
+                                      startValue: recordResponse!.data!.length
+                                              .toDouble() /
+                                          3,
+                                      endValue: recordResponse!.data!.length
+                                              .toDouble() /
+                                          2,
+                                      gradient: SweepGradient(
+                                        colors: [
+                                          Color(0xff7E7F9D),
+                                          Color(0xff21C4F8),
+                                        ],
+                                        stops: <double>[0, 0.3],
+                                      ),
+                                      startWidth: 18,
+                                      endWidth: 18,
+                                    ),
+                                    GaugeRange(
+                                      startValue: recordResponse!.data!.length
+                                              .toDouble() /
+                                          2,
+                                      endValue: recordResponse!.data!.length
+                                              .toDouble() /
+                                          1,
+                                      // color: Colors.green,
 
-                                          gradient: SweepGradient(
-                                            colors: [
-                                              Color(0xff21C4F8),
-                                              Color(0xff10E0A7),
-                                            ],
-                                            stops: <double>[0, 0.2],
-                                          ),
-                                          startWidth: 18,
-                                          endWidth: 18,
-                                        ),
-                                        GaugeRange(
-                                          startValue: recordResponse!
-                                                  .data!.length
-                                                  .toDouble() /
-                                              1.5,
-                                          endValue: recordResponse!.data!.length
-                                              .toDouble(),
-                                          gradient: SweepGradient(
-                                            colors: [
-                                              Color(0xff10E0A7),
-                                              Color(0xff00FE07)
-                                            ],
-                                            stops: <double>[0, 0.2],
-                                          ),
-                                          startWidth: 18,
-                                          endWidth: 18,
-                                        )
-                                      ],
-                                      interval: 1,
-                                      pointers: [
-                                        NeedlePointer(
-                                          needleEndWidth: 80,
-                                          needleLength: .92,
-                                          enableAnimation: true,
-                                          animationType: AnimationType.ease,
-                                          needleColor: ColorUtils.kBlack,
-                                          value: _habitViewModel
-                                              .tmpHabitUpdatesList.length
-                                              .toDouble(),
-                                        ),
-                                        NeedlePointer(
-                                          needleEndWidth: 65,
-                                          needleLength: .87,
-                                          enableAnimation: true,
-                                          animationType: AnimationType.ease,
-                                          needleColor:
-                                              ColorUtils.kSaperatedGray,
-                                          value: _habitViewModel
-                                              .tmpHabitUpdatesList.length
-                                              .toDouble(),
-                                          knobStyle: KnobStyle(
-                                              knobRadius: .75,
-                                              color: ColorUtils.kSaperatedGray),
-                                        )
-                                      ],
+                                      gradient: SweepGradient(
+                                        colors: [
+                                          Color(0xff21C4F8),
+                                          Color(0xff10E0A7),
+                                        ],
+                                        stops: <double>[0, 0.2],
+                                      ),
+                                      startWidth: 18,
+                                      endWidth: 18,
+                                    ),
+                                    GaugeRange(
+                                      startValue: recordResponse!.data!.length
+                                              .toDouble() /
+                                          1.5,
+                                      endValue: recordResponse!.data!.length
+                                          .toDouble(),
+                                      gradient: SweepGradient(
+                                        colors: [
+                                          Color(0xff10E0A7),
+                                          Color(0xff00FE07)
+                                        ],
+                                        stops: <double>[0, 0.2],
+                                      ),
+                                      startWidth: 18,
+                                      endWidth: 18,
                                     )
                                   ],
-                                )),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '${_habitViewModel.tmpHabitUpdatesList.length}/${recordResponse!.data!.length}',
-                                  style: FontTextStyle.kWhite20BoldRoboto
-                                      .copyWith(fontSize: Get.height * 0.055),
-                                ),
-                                Text(
-                                  'TRACKED',
-                                  style: FontTextStyle.kWhite17BoldRoboto,
-                                ),
+                                  interval: 1,
+                                  pointers: [
+                                    NeedlePointer(
+                                      needleEndWidth: 80,
+                                      needleLength: .92,
+                                      enableAnimation: true,
+                                      animationType: AnimationType.ease,
+                                      needleColor: ColorUtils.kBlack,
+                                      value: _habitViewModel
+                                          .tmpHabitUpdatesList.length
+                                          .toDouble(),
+                                    ),
+                                    NeedlePointer(
+                                      needleEndWidth: 65,
+                                      needleLength: .87,
+                                      enableAnimation: true,
+                                      animationType: AnimationType.ease,
+                                      needleColor: ColorUtils.kSaperatedGray,
+                                      value: _habitViewModel
+                                          .tmpHabitUpdatesList.length
+                                          .toDouble(),
+                                      knobStyle: KnobStyle(
+                                          knobRadius: .75,
+                                          color: ColorUtils.kSaperatedGray),
+                                    )
+                                  ],
+                                )
                               ],
+                            )),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${_habitViewModel.tmpHabitUpdatesList.length}/${recordResponse!.data!.length}',
+                              style: FontTextStyle.kWhite20BoldRoboto
+                                  .copyWith(fontSize: Get.height * 0.055),
+                            ),
+                            Text(
+                              'TRACKED',
+                              style: FontTextStyle.kWhite17BoldRoboto,
                             ),
                           ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                  SizedBox(height: Get.height * .03),
+
                   // Text(
                   //   'UPDATE YOUR PROGRESS',
                   //   style: FontTextStyle.kWhite17BoldRoboto,

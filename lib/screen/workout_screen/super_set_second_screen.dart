@@ -5,6 +5,7 @@ import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/utils/images.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -33,7 +34,9 @@ class _SuperSetSecondScreenState extends State<SuperSetSecondScreen> {
       appBar: AppBar(
         elevation: 0,
         leading: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.back();
+            },
             icon: Icon(
               Icons.arrow_back_ios_sharp,
               color: ColorUtils.kTint,
@@ -102,8 +105,8 @@ class _SuperSetSecondScreenState extends State<SuperSetSecondScreen> {
             Padding(
               padding: EdgeInsets.only(
                   top: Get.height * .03,
-                  left: Get.height * .04,
-                  right: Get.height * .04),
+                  left: Get.height * .025,
+                  right: Get.height * .025),
               child: SizedBox(
                 width: Get.width,
                 child: ListView.builder(
@@ -114,39 +117,32 @@ class _SuperSetSecondScreenState extends State<SuperSetSecondScreen> {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          !watchVideo
-                              ? GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      watchVideo = true;
-                                    });
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Text('${exeName[index]}',
-                                          style: FontTextStyle
-                                              .kWhite24BoldRoboto
-                                              .copyWith(
-                                            fontSize: Get.height * .026,
-                                          )),
-                                      SizedBox(width: Get.width * .03),
-                                      Container(
-                                        height: Get.height * .04,
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: ColorUtils.kBlack,
-                                            border: Border.all(
-                                                color: ColorUtils.kTint,
-                                                width: 2)),
-                                        child: Icon(Icons.play_arrow_outlined,
-                                            size: Get.height * .03,
-                                            color: ColorUtils.kTint),
-                                      )
-                                    ],
-                                  ),
-                                )
-                              : SizedBox(),
+                          Row(
+                            children: [
+                              watchVideo
+                                  ? SizedBox(height: Get.height * .075)
+                                  : SizedBox(),
+                              Text('${exeName[index]}',
+                                  style:
+                                      FontTextStyle.kWhite24BoldRoboto.copyWith(
+                                    fontSize: Get.height * .026,
+                                  )),
+                              SizedBox(width: Get.width * .03),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    watchVideo = !watchVideo;
+                                  });
+                                },
+                                child: Image.asset(
+                                  AppIcons.play,
+                                  height: Get.height * 0.03,
+                                  width: Get.height * 0.03,
+                                  color: ColorUtils.kTint,
+                                ),
+                              ),
+                            ],
+                          ),
                           watchVideo
                               ? AnimatedContainer(
                                   height: Get.height / 3.5,
@@ -204,7 +200,9 @@ class _SuperSetSecondScreenState extends State<SuperSetSecondScreen> {
                                                     )),
                                 )
                               : SizedBox(),
-                          SizedBox(height: Get.height * .005),
+                          watchVideo
+                              ? SizedBox(height: Get.height * .025)
+                              : SizedBox(height: Get.height * .005),
                           Text(
                             '10 reps',
                             style: FontTextStyle.kLightGray18W300Roboto,
@@ -223,8 +221,8 @@ class _SuperSetSecondScreenState extends State<SuperSetSecondScreen> {
                 margin: EdgeInsets.only(
                     top: Get.height * .01,
                     bottom: Get.height * .04,
-                    left: Get.height * .04,
-                    right: Get.height * .04),
+                    left: Get.height * .025,
+                    right: Get.height * .025),
                 alignment: Alignment.center,
                 width: Get.width,
                 height: Get.height * .055,
@@ -240,7 +238,11 @@ class _SuperSetSecondScreenState extends State<SuperSetSecondScreen> {
                     left: Get.height * .03,
                     right: Get.height * .03,
                     bottom: Get.height * .05),
-                child: commonNavigationButton(name: "Next Round", onTap: () {}))
+                child: commonNavigationButton(
+                    name: "Next Round",
+                    onTap: () {
+                      Get.to(SuperSetSecondScreen());
+                    }))
           ]),
         ),
       ),
@@ -282,9 +284,16 @@ class _CounterCardState extends State<CounterCard> {
                   });
                   print('minus ${widget.counter}');
                 },
-                child: CircleAvatar(
-                  radius: Get.height * .03,
-                  backgroundColor: ColorUtils.kTint,
+                child: Container(
+                  height: Get.height * .05,
+                  width: Get.height * .05,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                          colors: ColorUtilsGradient.kTintGradient,
+                          stops: [0.0, 1.0],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter)),
                   child: Icon(Icons.remove, color: ColorUtils.kBlack),
                 ),
               ),
@@ -308,9 +317,16 @@ class _CounterCardState extends State<CounterCard> {
                   });
                   print('plus ${widget.counter}');
                 },
-                child: CircleAvatar(
-                  radius: Get.height * .03,
-                  backgroundColor: ColorUtils.kTint,
+                child: Container(
+                  height: Get.height * .05,
+                  width: Get.height * .05,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                          colors: ColorUtilsGradient.kTintGradient,
+                          stops: [0.0, 1.0],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter)),
                   child: Icon(Icons.add, color: ColorUtils.kBlack),
                 ),
               ),
@@ -365,7 +381,7 @@ class _CounterCardState extends State<CounterCard> {
             width: Get.height * .09,
             decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: ColorUtilsGradient.kOrangeGradient,
+                    colors: ColorUtilsGradient.kRedGradient,
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter),
                 borderRadius: BorderRadius.only(

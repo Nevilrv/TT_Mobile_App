@@ -54,6 +54,7 @@ class AppIcons {
   static const String profile_app_icon = "asset/icons/profile_app_icon.png";
   static const String twitter = "asset/icons/twitter.png";
   static const String video = "asset/icons/video.png";
+  static const String play = "asset/icons/play-button.png";
   static const String youtube = "asset/icons/youtube.png";
   static const String clock = 'asset/icons/clock.png';
   static const String medal = 'asset/icons/medal.png';

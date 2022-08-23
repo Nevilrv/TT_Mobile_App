@@ -518,14 +518,14 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                               width: Get.width,
                                               decoration: BoxDecoration(
                                                   gradient: LinearGradient(
-                                                      colors: ColorUtilsGradient
-                                                          .kTintGradient,
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment.topCenter),
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    stops: [0.0, 1.0],
+                                                    colors: ColorUtilsGradient
+                                                        .kTintGradient,
+                                                  ),
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          Get.height * .1)),
+                                                      BorderRadius.circular(6)),
                                               child: Text('Start Program',
                                                   style: FontTextStyle
                                                       .kBlack20BoldRoboto),
@@ -849,12 +849,14 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                       width: Get.width,
                                       decoration: BoxDecoration(
                                           gradient: LinearGradient(
-                                              colors: ColorUtilsGradient
-                                                  .kTintGradient,
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.topCenter),
-                                          borderRadius: BorderRadius.circular(
-                                              Get.height * .1)),
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            stops: [0.0, 1.0],
+                                            colors: ColorUtilsGradient
+                                                .kTintGradient,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
                                       child: Text('Start Program',
                                           style:
                                               FontTextStyle.kBlack20BoldRoboto),
@@ -1151,9 +1153,11 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                       width: Get.width,
                       decoration: BoxDecoration(
                           gradient: LinearGradient(
-                              colors: ColorUtilsGradient.kTintGradient,
-                              begin: Alignment.topCenter,
-                              end: Alignment.topCenter),
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [0.0, 1.0],
+                            colors: ColorUtilsGradient.kTintGradient,
+                          ),
                           borderRadius: BorderRadius.circular(6)),
                       child: Text('Start Program',
                           style: FontTextStyle.kBlack20BoldRoboto),

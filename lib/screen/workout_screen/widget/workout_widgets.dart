@@ -7,8 +7,11 @@ class WeightedCounter extends StatefulWidget {
   int counter;
   String repsNo;
 
-  WeightedCounter({Key? key, required this.counter, required this.repsNo})
-      : super(key: key);
+  WeightedCounter({
+    Key? key,
+    required this.counter,
+    required this.repsNo,
+  }) : super(key: key);
 
   @override
   State<WeightedCounter> createState() => _WeightedCounterState();
@@ -17,6 +20,8 @@ class WeightedCounter extends StatefulWidget {
 class _WeightedCounterState extends State<WeightedCounter> {
   @override
   Widget build(BuildContext context) {
+    int repsCounter = int.parse(widget.repsNo.toString());
+
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: Container(
@@ -36,9 +41,16 @@ class _WeightedCounterState extends State<WeightedCounter> {
               });
               print('minus ${widget.counter}');
             },
-            child: CircleAvatar(
-              radius: Get.height * .03,
-              backgroundColor: ColorUtils.kTint,
+            child: Container(
+              height: Get.height * .06,
+              width: Get.height * .06,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                      colors: ColorUtilsGradient.kTintGradient,
+                      stops: [0.0, 1.0],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter)),
               child: Icon(Icons.remove, color: ColorUtils.kBlack),
             ),
           ),
@@ -57,13 +69,22 @@ class _WeightedCounterState extends State<WeightedCounter> {
           InkWell(
             onTap: () {
               setState(() {
-                widget.counter++;
+                setState(() {
+                  if (widget.counter < repsCounter) widget.counter++;
+                });
               });
               print('plus ${widget.counter}');
             },
-            child: CircleAvatar(
-              radius: Get.height * .03,
-              backgroundColor: ColorUtils.kTint,
+            child: Container(
+              height: Get.height * .06,
+              width: Get.height * .06,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                      colors: ColorUtilsGradient.kTintGradient,
+                      stops: [0.0, 1.0],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter)),
               child: Icon(Icons.add, color: ColorUtils.kBlack),
             ),
           ),
@@ -152,9 +173,16 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
                 });
               });
             },
-            child: CircleAvatar(
-              radius: Get.height * .03,
-              backgroundColor: ColorUtils.kTint,
+            child: Container(
+              height: Get.height * .06,
+              width: Get.height * .06,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                      colors: ColorUtilsGradient.kTintGradient,
+                      stops: [0.0, 1.0],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter)),
               child: Icon(Icons.remove, color: ColorUtils.kBlack),
             ),
           ),
@@ -171,19 +199,25 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
               ])),
           SizedBox(width: Get.width * .08),
           InkWell(
-            onTap: () {
-              setState(() {
+              onTap: () {
                 setState(() {
-                  if (widget.counter < repsCounter) widget.counter++;
+                  setState(() {
+                    if (widget.counter < repsCounter) widget.counter++;
+                  });
                 });
-              });
-            },
-            child: CircleAvatar(
-              radius: Get.height * .03,
-              backgroundColor: ColorUtils.kTint,
-              child: Icon(Icons.add, color: ColorUtils.kBlack),
-            ),
-          ),
+              },
+              child: Container(
+                height: Get.height * .06,
+                width: Get.height * .06,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                        colors: ColorUtilsGradient.kTintGradient,
+                        stops: [0.0, 1.0],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter)),
+                child: Icon(Icons.add, color: ColorUtils.kBlack),
+              )),
         ]),
       ),
     );

@@ -188,8 +188,9 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
             },
             child: WillPopScope(
               onWillPop: () async {
-                log("hello will");
-                return Future.value(true);
+                print('xyz');
+                Get.offAll(HomeScreen());
+                return true;
               },
               child: Scaffold(
                 backgroundColor: ColorUtils.kBlack,
@@ -217,9 +218,14 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                     child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Text(
-                            '${widget.data[0].workoutTitle}',
-                            style: FontTextStyle.kWhite20BoldRoboto,
+                          Center(
+                            child: Text(
+                              '${widget.data[0].workoutTitle}',
+                              textAlign: TextAlign.center,
+                              style: FontTextStyle.kWhite20BoldRoboto.copyWith(
+                                  fontSize: Get.height * 0.022,
+                                  fontWeight: FontWeight.bold),
+                            ),
                           ),
                           SizedBox(height: Get.height * .02),
                           ListView.builder(
@@ -337,7 +343,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                               CircleAvatar(
                                                 radius: Get.height * .02,
                                                 backgroundColor:
-                                                    ColorUtils.kTint,
+                                                    ColorUtils.kWhite,
                                                 child: Center(
                                                   child: Image.asset(
                                                     AppIcons.kettle_bell,
@@ -422,7 +428,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                 child: ClipOval(
                                                   child: Image.asset(
                                                     AppIcons.clock,
-                                                    color: ColorUtils.kTint,
+                                                    color: ColorUtils.kWhite,
                                                     fit: BoxFit.fill,
                                                     height: Get.height,
                                                     width: Get.width,
@@ -479,14 +485,14 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                 });
                               }),
                           SizedBox(height: Get.height * .03),
-                          commonNavigationButton(
-                              name: 'Back to Home',
-                              onTap: () {
-                                Get.offAll(HomeScreen());
-                                setState(() {
-                                  watchVideo = false;
-                                });
-                              })
+                          // commonNavigationButton(
+                          //     name: 'Back to Home',
+                          //     onTap: () {
+                          //       Get.offAll(HomeScreen());
+                          //       setState(() {
+                          //         watchVideo = false;
+                          //       });
+                          //     })
                         ]),
                   ),
                 ),
@@ -529,13 +535,17 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                 ),
                 borderRadius: BorderRadius.circular(6)),
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(iconImg!,
-                    color: iconColor,
-                    width: Get.width * 0.042,
-                    height: Get.width * 0.036,
-                    fit: BoxFit.fill),
+                Image.asset(
+                  iconImg!,
+                  color: iconColor,
+                  width: Get.width * 0.06,
+                  height: Get.width * 0.06,
+                ),
+                SizedBox(
+                  width: 15,
+                ),
                 Text(
                   name!,
                   style: FontTextStyle.kBlack16BoldRoboto,

@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
@@ -12,6 +15,7 @@ import 'package:tcm/screen/habit_tracker/habit_tracker_home_screen.dart';
 import 'package:tcm/screen/profile_view_screen.dart';
 import 'package:tcm/screen/schedule_screens/my_schedule_screen.dart';
 import 'package:tcm/screen/signIn_screens.dart';
+import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/screen/training_plan_screens/training_plan.dart';
 import 'package:tcm/screen/video_library/video_library_screen.dart';
 import 'package:tcm/screen/workout_screen/workout_home.dart';
@@ -86,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? finalDate;
   DateTime today = DateTime.now();
   dateApiCall() async {
-    print('hello........................1');
+    log('hello........................1');
     tmpDateList = today.toString().split(" ");
     finalDate = tmpDateList[0];
 
@@ -104,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   scheduleDateApiCall() async {
-    print('hello........................2');
+    log('hello........................2');
     await _scheduleByDateViewModel.getScheduleByDateDetails(
         userId: PreferenceManager.getUId());
     ScheduleByDateResponseModel scheduleResp =
@@ -113,20 +117,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   getExercisesId() async {
-    print("called 123");
-    print('hello........................3');
+    log("called 123");
+    log('hello........................3');
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(),
         date: DateTime.now().toString().split(" ").first);
 
     if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      print("complete api call");
+      log("complete api call");
       UserWorkoutsDateResponseModel resp =
           _userWorkoutsDateViewModel.apiResponse.data;
 
-      print("--------------- dates ${resp.msg}");
+      log("--------------- dates ${resp.msg}");
 
-      print("success ------------- true");
+      log("success ------------- true");
 
       if (resp.success == true) {
         _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
@@ -143,12 +147,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
         workoutResponse = _workoutByIdViewModel.apiResponse.data;
 
-        print('workoutResponse>>>>>> ${workoutResponse!.data}');
+        log('workoutResponse>>>>>>  ${workoutResponse!.data}');
         setState(() {
           selected = true;
         });
       } else {
-        print("success ------------- false");
+        log("success ------------- false");
         // await _exerciseByIdViewModel.getExerciseByIdDetails(
         //     id: _userWorkoutsDateViewModel
         //             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??
@@ -179,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('hello........................4');
+    log('hello........................4');
     if (oneTime == false) {
       setState(() {
         getExercisesId();
@@ -221,7 +225,7 @@ class _HomeScreenState extends State<HomeScreen> {
               //       image: AppIcons.logout,
               //       text: 'Log Out',
               //       onTap: () {
-              //         _logOutAlertDiaprint(onTapCancel: () {
+              //         _logOutAlertDialog(onTapCancel: () {
               //           Get.back();
               //         }, onTapLogOut: () {
               //           Get.showSnackbar(GetSnackBar(
@@ -235,151 +239,161 @@ class _HomeScreenState extends State<HomeScreen> {
               //       }),
               // ]
             ),
-            body: !selected
-                ? SingleChildScrollView(
-                    physics: BouncingScrollPhysics(),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Column(children: [
-                        SizedBox(
-                          height: Get.height * .04,
-                        ),
-                        Container(
-                          height: Get.height * 0.22,
-                          width: Get.width * 0.99,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: Color(0xff363636)),
-                          child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 20, bottom: 10, top: 20, right: 20),
-                                  child: Text(
-                                    'No Workouts Scheduled',
-                                    style: FontTextStyle.kWhite20BoldRoboto,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20),
-                                  child: Text(
-                                    'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
-                                    style: FontTextStyle.kWhite16W300Roboto,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: Get.height * .03,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: Get.width * 0.05),
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Get.to(TrainingPlanScreen());
-                                      setState(() {
-                                        oneTime = false;
-                                      });
-                                    },
-                                    child: Container(
-                                      height: Get.height * .05,
-                                      width: Get.width * .9,
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            stops: [0.0, 1.0],
-                                            colors: ColorUtilsGradient
-                                                .kTintGradient,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: ColorUtils.kTint),
-                                      child: Center(
-                                          child: Text(
-                                        'Choose a Workout Plan',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: Get.height * 0.02),
-                                      )),
-                                    ),
-                                  ),
-                                ),
-                              ]),
-                        ),
-                        SizedBox(
-                          height: Get.height * .04,
-                        ),
-                        category(
-                            onTap: () {
-                              Get.to(TrainingPlanScreen());
-                              setState(() {
-                                oneTime = false;
-                              });
-                            },
-                            image: 'asset/images/training.png',
-                            text: 'Training Plans'),
-                        category(
-                            onTap: () {
-                              Get.to(VideoLibraryScreen());
-                              setState(() {
-                                oneTime = false;
-                              });
-                            },
-                            image: 'asset/images/videos.png',
-                            text: 'Video Library'),
-                        category(
-                            image: 'asset/images/forums.png',
-                            text: 'The Forums',
-                            onTap: () {
-                              Get.to(ForumScreen());
-                              setState(() {
-                                oneTime = false;
-                              });
-                            }),
-                        category(
-                            image: 'asset/images/habit.png',
-                            text: 'Habit Tracker',
-                            onTap: () {
-                              print(
-                                  "if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
-                              if (response!.data![0].habitId == "" ||
-                                  response!.data![0].habitId!.isEmpty &&
-                                      response!.data![0].habitName == null ||
-                                  response!.data![0].habitName!.isEmpty &&
-                                      response!.data![0].completed == "" ||
-                                  response!.data![0].completed!.isEmpty &&
-                                      response!.data![0].completed == "false") {
-                                Get.to(HabitTrackerHomeScreen());
-                              } else {
-                                Get.to(UpdateProgressScreen());
-                              }
-                              setState(() {
-                                oneTime = false;
-                              });
-                            })
-                      ]),
-                    ),
-                  )
-                : GetBuilder<WorkoutByIdViewModel>(builder: (controllerWork) {
-                    return GetBuilder<ExerciseByIdViewModel>(
-                        builder: (controllerExe) {
-                      if (controllerExe.apiResponse.status == Status.LOADING ||
-                          controllerWork.apiResponse.status == Status.LOADING) {
-                        print('LOADING......................>>>');
+            body: GetBuilder<WorkoutByIdViewModel>(builder: (controllerWork) {
+              return GetBuilder<ExerciseByIdViewModel>(
+                  builder: (controllerExe) {
+                if (controllerExe.apiResponse.status == Status.LOADING ||
+                    controllerWork.apiResponse.status == Status.LOADING) {
+                  log('LOADING......................>>>');
 
-                        return Center(
-                            child: CircularProgressIndicator(
-                          color: ColorUtils.kTint,
-                        ));
-                      } else if (controllerExe.apiResponse.status ==
-                              Status.COMPLETE ||
-                          controllerWork.apiResponse.status ==
-                              Status.COMPLETE) {
-                        print('complete......................>>>');
-                        return SingleChildScrollView(
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: ColorUtils.kTint,
+                  ));
+                }
+                if (controllerExe.apiResponse.status == Status.COMPLETE ||
+                    controllerWork.apiResponse.status == Status.COMPLETE) {
+                  log('complete......................>>>');
+                  return !selected
+                      ? SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Column(children: [
+                              SizedBox(
+                                height: Get.height * .04,
+                              ),
+                              Container(
+                                height: Get.height * 0.22,
+                                width: Get.width * 0.99,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xff363636)),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 20,
+                                            bottom: 10,
+                                            top: 20,
+                                            right: 20),
+                                        child: Text(
+                                          'No Workouts Scheduled',
+                                          style:
+                                              FontTextStyle.kWhite20BoldRoboto,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Text(
+                                          'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                          style:
+                                              FontTextStyle.kWhite16W300Roboto,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: Get.height * .03,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.width * 0.05),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.to(TrainingPlanScreen());
+                                            setState(() {
+                                              oneTime = false;
+                                            });
+                                          },
+                                          child: Container(
+                                            height: Get.height * .05,
+                                            width: Get.width * .9,
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topCenter,
+                                                  end: Alignment.bottomCenter,
+                                                  stops: [0.0, 1.0],
+                                                  colors: ColorUtilsGradient
+                                                      .kTintGradient,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: ColorUtils.kTint),
+                                            child: Center(
+                                                child: Text(
+                                              'Choose a Workout Plan',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontSize: Get.height * 0.02),
+                                            )),
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                              ),
+                              SizedBox(
+                                height: Get.height * .04,
+                              ),
+                              category(
+                                  onTap: () {
+                                    Get.to(TrainingPlanScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  },
+                                  image: 'asset/images/training.png',
+                                  text: 'Training Plans'),
+                              category(
+                                  onTap: () {
+                                    Get.to(VideoLibraryScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  },
+                                  image: 'asset/images/videos.png',
+                                  text: 'Video Library'),
+                              category(
+                                  image: 'asset/images/forums.png',
+                                  text: 'The Forums',
+                                  onTap: () {
+                                    Get.to(ForumScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  }),
+                              category(
+                                  image: 'asset/images/habit.png',
+                                  text: 'Habit Tracker',
+                                  onTap: () {
+                                    log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                                    if (response!.data![0].habitId == "" ||
+                                        response!.data![0].habitId!.isEmpty &&
+                                            response!.data![0].habitName ==
+                                                null ||
+                                        response!.data![0].habitName!.isEmpty &&
+                                            response!.data![0].completed ==
+                                                "" ||
+                                        response!.data![0].completed!.isEmpty &&
+                                            response!.data![0].completed ==
+                                                "false") {
+                                      Get.to(HabitTrackerHomeScreen());
+                                    } else {
+                                      Get.to(UpdateProgressScreen());
+                                    }
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  }),
+                              SizedBox(
+                                height: Get.height * .04,
+                              ),
+                            ]),
+                          ),
+                        )
+                      : SingleChildScrollView(
                           physics: BouncingScrollPhysics(),
                           child: Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -468,6 +482,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ),
                                               GestureDetector(
                                                 onTap: () {
+                                                  // Navigator.push(
+                                                  //   context,
+                                                  //   CustomMaterialPageRoute(
+                                                  //     builder: (context) =>
+                                                  //         WorkoutHomeScreen(
+                                                  //       exeData:
+                                                  //           exerciseResponse!
+                                                  //               .data!,
+                                                  //       data: workoutResponse!
+                                                  //           .data!,
+                                                  //     ),
+                                                  //   ),
+                                                  // );
                                                   Get.to(WorkoutHomeScreen(
                                                     exeData:
                                                         exerciseResponse!.data!,
@@ -550,8 +577,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   image: 'asset/images/habit.png',
                                   text: 'Habit Tracker',
                                   onTap: () {
-                                    print(
-                                        "if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                                    log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
                                     if (response!.data![0].habitId == "" ||
                                         response!.data![0].habitId!.isEmpty &&
                                             response!.data![0].habitName ==
@@ -569,16 +595,144 @@ class _HomeScreenState extends State<HomeScreen> {
                                     setState(() {
                                       oneTime = false;
                                     });
-                                  })
+                                  }),
+                              SizedBox(
+                                height: Get.height * .04,
+                              ),
                             ]),
                           ),
                         );
-                      }
-                      return Container(
-                        color: Colors.red,
-                      );
-                    });
-                  })),
+                }
+                return SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(children: [
+                      SizedBox(
+                        height: Get.height * .04,
+                      ),
+                      Container(
+                        height: Get.height * 0.22,
+                        width: Get.width * 0.99,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color(0xff363636)),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, bottom: 10, top: 20, right: 20),
+                                child: Text(
+                                  'No Workouts Scheduled',
+                                  style: FontTextStyle.kWhite20BoldRoboto,
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Text(
+                                  'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                  style: FontTextStyle.kWhite16W300Roboto,
+                                ),
+                              ),
+                              SizedBox(
+                                height: Get.height * .03,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.width * 0.05),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Get.to(TrainingPlanScreen());
+                                    setState(() {
+                                      oneTime = false;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: Get.height * .05,
+                                    width: Get.width * .9,
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                          stops: [0.0, 1.0],
+                                          colors:
+                                              ColorUtilsGradient.kTintGradient,
+                                        ),
+                                        borderRadius: BorderRadius.circular(6),
+                                        color: ColorUtils.kTint),
+                                    child: Center(
+                                        child: Text(
+                                      'Choose a Workout Plan',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: Get.height * 0.02),
+                                    )),
+                                  ),
+                                ),
+                              ),
+                            ]),
+                      ),
+                      SizedBox(
+                        height: Get.height * .04,
+                      ),
+                      category(
+                          onTap: () {
+                            Get.to(TrainingPlanScreen());
+                            setState(() {
+                              oneTime = false;
+                            });
+                          },
+                          image: 'asset/images/training.png',
+                          text: 'Training Plans'),
+                      category(
+                          onTap: () {
+                            Get.to(VideoLibraryScreen());
+                            setState(() {
+                              oneTime = false;
+                            });
+                          },
+                          image: 'asset/images/videos.png',
+                          text: 'Video Library'),
+                      category(
+                          image: 'asset/images/forums.png',
+                          text: 'The Forums',
+                          onTap: () {
+                            Get.to(ForumScreen());
+                            setState(() {
+                              oneTime = false;
+                            });
+                          }),
+                      category(
+                          image: 'asset/images/habit.png',
+                          text: 'Habit Tracker',
+                          onTap: () {
+                            log("if condition ------------------ ${response!.data![0].habitId == "" || response!.data![0].habitId!.isEmpty && response!.data![0].habitName == null || response!.data![0].habitName!.isEmpty}");
+                            if (response!.data![0].habitId == "" ||
+                                response!.data![0].habitId!.isEmpty &&
+                                    response!.data![0].habitName == null ||
+                                response!.data![0].habitName!.isEmpty &&
+                                    response!.data![0].completed == "" ||
+                                response!.data![0].completed!.isEmpty &&
+                                    response!.data![0].completed == "false") {
+                              Get.to(HabitTrackerHomeScreen());
+                            } else {
+                              Get.to(UpdateProgressScreen());
+                            }
+                            setState(() {
+                              oneTime = false;
+                            });
+                          }),
+                      SizedBox(
+                        height: Get.height * .04,
+                      ),
+                    ]),
+                  ),
+                );
+              });
+            })),
       ),
     );
   }
@@ -685,12 +839,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               }
               UserdetailResponseModel response = controller.apiResponse.data;
-              print('Name====${response.data!.name}');
-              print('Pref Name====${PreferenceManager.getUserName()}');
+              log('Name====${response.data!.name}');
+              log('Pref Name====${PreferenceManager.getUserName()}');
               if (response.data != null ||
                   response.data != '' ||
                   response.success == true) {
-                print('----------- ${PreferenceManager.getProfilePic()}');
+                log('----------- ${PreferenceManager.getProfilePic()}');
                 return Column(
                   children: [
                     GestureDetector(
@@ -890,7 +1044,7 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.logout,
               text: 'Sign Out',
               onTap: () {
-                _logOutAlertDiaprint(onTapCancel: () {
+                _logOutAlertDialog(onTapCancel: () {
                   Get.back();
                 }, onTapLogOut: () {
                   Get.showSnackbar(GetSnackBar(
@@ -964,7 +1118,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  _logOutAlertDiaprint({Function()? onTapCancel, Function()? onTapLogOut}) {
+  _logOutAlertDialog({Function()? onTapCancel, Function()? onTapLogOut}) {
     Get.dialog(
         AlertDialog(
           shape:
@@ -1022,4 +1176,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         barrierColor: ColorUtils.kBlack.withOpacity(0.6));
   }
+}
+
+class CustomMaterialPageRoute extends MaterialPageRoute {
+  @override
+  @protected
+  bool get hasScopedWillPopCallback {
+    Get.offAll(HomeScreen());
+    return false;
+  }
+
+  CustomMaterialPageRoute({
+    @required WidgetBuilder? builder,
+    RouteSettings? settings,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+  }) : super(
+          builder: builder!,
+          settings: settings,
+          maintainState: maintainState,
+          fullscreenDialog: fullscreenDialog,
+        );
 }

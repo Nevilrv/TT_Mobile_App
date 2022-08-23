@@ -9,8 +9,11 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
+import 'package:tcm/screen/home_screen.dart';
+import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -102,6 +105,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
   }
 
   int counterReps = 0;
+  bool isShow = false;
 
   counterPlus() {
     setState(() {
@@ -115,6 +119,12 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
     });
   }
 
+  List colors = [
+    [Color(0xff057C00), Color(0xff045500)],
+    [Color(0xffFFA200), Color(0xff9E6400)],
+    [Color(0xffFF0000), Color(0xff8B0303)]
+  ];
+
   @override
   Widget build(BuildContext context) {
     if (widget.data.isNotEmpty) {
@@ -125,7 +135,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
-              onPressed: () {
+              onPressed: () async {
                 Get.back();
               },
               icon: Icon(
@@ -133,326 +143,1046 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                 color: ColorUtils.kTint,
               )),
           backgroundColor: ColorUtils.kBlack,
-          title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
+          title: Text('${widget.data[0].exerciseTitle}',
+              style: FontTextStyle.kWhite16BoldRoboto),
           centerTitle: true,
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.offAll(HomeScreen());
+                },
+                child: Text(
+                  'Quit',
+                  style: FontTextStyle.kTine16W400Roboto,
+                ))
+          ],
         ),
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              height: Get.height / 2.75,
-              width: Get.width,
-              child: '${widget.data[0].exerciseVideo}'
-                      .contains('www.youtube.com')
-                  ? Center(
-                      child: _youTubePlayerController != null ||
-                              _youTubePlayerController != ''
-                          ? YoutubePlayer(
-                              controller: _youTubePlayerController!,
-                              showVideoProgressIndicator: true,
-                              bufferIndicator: CircularProgressIndicator(
-                                  color: ColorUtils.kTint),
-                              controlsTimeOut: Duration(hours: 2),
-                              aspectRatio: 16 / 9,
-                              progressColors: ProgressBarColors(
-                                  handleColor: ColorUtils.kRed,
-                                  playedColor: ColorUtils.kRed,
-                                  backgroundColor: ColorUtils.kGray,
-                                  bufferedColor: ColorUtils.kLightGray),
-                            )
-                          : noDataLottie(),
-                    )
-                  : Center(
-                      child: _chewieController != null &&
-                              _chewieController!
-                                  .videoPlayerController.value.isInitialized
-                          ? Chewie(
-                              controller: _chewieController!,
-                            )
-                          : widget.data[0].exerciseImage == null
-                              ? noDataLottie()
-                              : Image.network(
-                                  "https://tcm.sataware.dev/images/" +
-                                      widget.data[0].exerciseImage!,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return noDataLottie();
-                                  },
-                                )),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Get.width * .06, vertical: Get.height * .02),
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${widget.data[0].exerciseTitle}',
-                      style: FontTextStyle.kWhite24BoldRoboto,
-                    ),
-                    SizedBox(height: Get.height * .005),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '${widget.data[0].exerciseSets} sets of ${widget.data[0].exerciseReps} reps',
-                          style: FontTextStyle.kLightGray16W300Roboto,
-                        ),
-                        Text(
-                          '${widget.data[0].exerciseRest} second rest',
-                          style: FontTextStyle.kLightGray16W300Roboto,
-                        ),
-                      ],
-                    ),
-                    Column(children: [
-                      // WeightedCounter(
-                      //   counter: int.parse('${widget.data[0].exerciseReps}'),
-                      //   repsNo: '${widget.data[0].exerciseReps}',
+        body: '${widget.data[0].exerciseVideo}'.contains('www.youtube.com')
+            ? YoutubePlayerBuilder(
+                onExitFullScreen: () {
+                  // The player forces portraitUp after exiting fullscreen. This overrides the behaviour.
+                  // SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+                },
+                player: YoutubePlayer(
+                  controller: _youTubePlayerController!,
+                  showVideoProgressIndicator: true,
+                  width: Get.width,
+                  progressIndicatorColor: ColorUtils.kTint,
+                  // aspectRatio: 16 / 9,
+                  progressColors: ProgressBarColors(
+                      handleColor: ColorUtils.kRed,
+                      playedColor: ColorUtils.kRed,
+                      backgroundColor: ColorUtils.kGray,
+                      bufferedColor: ColorUtils.kLightGray),
+                ),
+                builder: (context, player) {
+                  return SingleChildScrollView(
+                    physics: BouncingScrollPhysics(),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Container(
+                          //   height: Get.height / 2.75,
+                          //   width: Get.width,
+                          //   child: '${widget.data[0].exerciseVideo}'
+                          //           .contains('www.youtube.com')
+                          //       ? Center(
+                          //           child: _youTubePlayerController != null ||
+                          //                   _youTubePlayerController != ''
+                          //               ? YoutubePlayer(
+                          //                   controller: _youTubePlayerController!,
+                          //                   showVideoProgressIndicator: true,
+                          //                   bufferIndicator: CircularProgressIndicator(
+                          //                       color: ColorUtils.kTint),
+                          //                   controlsTimeOut: Duration(hours: 2),
+                          //                   aspectRatio: 16 / 9,
+                          //                   progressColors: ProgressBarColors(
+                          //                       handleColor: ColorUtils.kRed,
+                          //                       playedColor: ColorUtils.kRed,
+                          //                       backgroundColor: ColorUtils.kGray,
+                          //                       bufferedColor: ColorUtils.kLightGray),
+                          //                 )
+                          //               : noDataLottie(),
+                          //         )
+                          //       : Center(
+                          //           child: _chewieController != null &&
+                          //                   _chewieController!
+                          //                       .videoPlayerController.value.isInitialized
+                          //               ? Chewie(
+                          //                   controller: _chewieController!,
+                          //                 )
+                          //               : widget.data[0].exerciseImage == null
+                          //                   ? noDataLottie()
+                          //                   : Image.network(
+                          //                       "https://tcm.sataware.dev/images/" +
+                          //                           widget.data[0].exerciseImage!,
+                          //                       errorBuilder: (context, error, stackTrace) {
+                          //                         return noDataLottie();
+                          //                       },
+                          //                     )),
+                          // ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * .06,
+                                vertical: Get.height * .02),
+                            child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    width: Get.width * 0.7,
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              '${widget.data[0].exerciseTitle}',
+                                              style: FontTextStyle
+                                                  .kWhite24BoldRoboto,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 3,
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          GestureDetector(
+                                            onTap: () async {
+                                              log('hello...');
+                                              setState(() {
+                                                if (isShow == true) {
+                                                  isShow = false;
+                                                  _youTubePlayerController !=
+                                                              null ||
+                                                          _youTubePlayerController !=
+                                                              ''
+                                                      ? _youTubePlayerController
+                                                          ?.pause()
+                                                      : SizedBox();
+                                                } else {
+                                                  if (widget.data[0]
+                                                              .exerciseVideo ==
+                                                          null ||
+                                                      widget.data[0]
+                                                              .exerciseVideo ==
+                                                          '') {
+                                                  } else {
+                                                    log('_exerciseByIdViewModel.responseExe!.data![0].exerciseVideo 111  ${widget.data[0].exerciseVideo}');
+                                                    youtubeVideoID() {
+                                                      String finalLink;
+                                                      String videoID =
+                                                          '${widget.data[0].exerciseVideo}';
+                                                      List<String>
+                                                          splittedLink =
+                                                          videoID.split('v=');
+                                                      List<String> longLink =
+                                                          splittedLink.last
+                                                              .split('&');
+                                                      finalLink =
+                                                          longLink.first;
+                                                      return finalLink;
+                                                    }
+
+                                                    _youTubePlayerController =
+                                                        YoutubePlayerController(
+                                                      initialVideoId:
+                                                          youtubeVideoID(),
+                                                      flags: YoutubePlayerFlags(
+                                                        autoPlay: true,
+                                                        mute: false,
+                                                        controlsVisibleAtStart:
+                                                            true,
+                                                        hideControls: false,
+                                                        loop: true,
+                                                      ),
+                                                    );
+                                                  }
+                                                  isShow = true;
+                                                }
+                                              });
+                                            },
+                                            child: Image.asset(
+                                              AppIcons.play,
+                                              height: Get.height * 0.03,
+                                              width: Get.height * 0.03,
+                                              color: ColorUtils.kTint,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: Get.height * 0.015,
+                                  ),
+                                  Text(
+                                      '${widget.data[0].exerciseSets} sets of ${widget.data[0].exerciseReps} reps',
+                                      style: FontTextStyle
+                                          .kLightGray16W300Roboto
+                                          .copyWith(
+                                              fontSize: Get.height * 0.023,
+                                              color:
+                                                  Colors.white.withOpacity(0.8),
+                                              fontWeight: FontWeight.w300)),
+                                  isShow == true
+                                      ? Container(
+                                          height: Get.height / 3,
+                                          width: Get.width,
+                                          child: Center(
+                                            child: _youTubePlayerController !=
+                                                        null ||
+                                                    _youTubePlayerController !=
+                                                        ''
+                                                ? player
+                                                : Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                    color: ColorUtils.kTint,
+                                                  )),
+                                          ))
+                                      : SizedBox(),
+                                  // Column(children: [
+                                  //   // WeightedCounter(
+                                  //   //   counter: int.parse('${widget.data[0].exerciseReps}'),
+                                  //   //   repsNo: '${widget.data[0].exerciseReps}',
+                                  //   // ),
+                                  //   Padding(
+                                  //     padding:
+                                  //         EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                                  //     child: Container(
+                                  //       height: Get.height * .1,
+                                  //       width: Get.width,
+                                  //       decoration: BoxDecoration(
+                                  //           gradient: LinearGradient(
+                                  //               colors: ColorUtilsGradient.kGrayGradient,
+                                  //               begin: Alignment.topCenter,
+                                  //               end: Alignment.topCenter),
+                                  //           borderRadius: BorderRadius.circular(6)),
+                                  //       child: Row(
+                                  //           mainAxisAlignment: MainAxisAlignment.center,
+                                  //           children: [
+                                  //             InkWell(
+                                  //               onTap: () {
+                                  //                 counterMinus();
+                                  //                 log('minus $counterReps');
+                                  //               },
+                                  //               child: CircleAvatar(
+                                  //                   radius: Get.height * .03,
+                                  //                   backgroundColor: ColorUtils.kTint,
+                                  //                   child: Icon(Icons.remove,
+                                  //                       color: ColorUtils.kBlack)),
+                                  //             ),
+                                  //             SizedBox(width: Get.width * .08),
+                                  //             RichText(
+                                  //                 text: TextSpan(
+                                  //                     text: '$counterReps ',
+                                  //                     style: counterReps == 0
+                                  //                         ? FontTextStyle.kWhite24BoldRoboto
+                                  //                             .copyWith(
+                                  //                                 color: ColorUtils.kGray)
+                                  //                         : FontTextStyle.kWhite24BoldRoboto,
+                                  //                     children: [
+                                  //                   TextSpan(
+                                  //                       text: 'reps',
+                                  //                       style:
+                                  //                           FontTextStyle.kWhite17W400Roboto)
+                                  //                 ])),
+                                  //             SizedBox(width: Get.width * .08),
+                                  //             InkWell(
+                                  //               onTap: () {
+                                  //                 counterPlus();
+                                  //                 log('plus $counterReps');
+                                  //               },
+                                  //               child: CircleAvatar(
+                                  //                 radius: Get.height * .03,
+                                  //                 backgroundColor: ColorUtils.kTint,
+                                  //                 child: Icon(Icons.add,
+                                  //                     color: ColorUtils.kBlack),
+                                  //               ),
+                                  //             ),
+                                  //             VerticalDivider(
+                                  //               width: Get.width * .08,
+                                  //               thickness: 1.25,
+                                  //               color: ColorUtils.kGray,
+                                  //               indent: Get.height * .015,
+                                  //               endIndent: Get.height * .015,
+                                  //             ),
+                                  //             Column(
+                                  //               mainAxisAlignment: MainAxisAlignment.center,
+                                  //               children: [
+                                  //                 SizedBox(height: 10),
+                                  //                 Row(
+                                  //                   children: [
+                                  //                     SizedBox(
+                                  //                       width: 40,
+                                  //                       child: TextField(
+                                  //                         style: counterReps == 0
+                                  //                             ? FontTextStyle
+                                  //                                 .kWhite24BoldRoboto
+                                  //                                 .copyWith(
+                                  //                                     color: ColorUtils.kGray)
+                                  //                             : FontTextStyle
+                                  //                                 .kWhite24BoldRoboto,
+                                  //                         keyboardType: TextInputType.number,
+                                  //                         maxLength: 3,
+                                  //                         cursorColor: ColorUtils.kTint,
+                                  //                         decoration: InputDecoration(
+                                  //                             hintText: '0',
+                                  //                             counterText: '',
+                                  //                             semanticCounterText: '',
+                                  //                             hintStyle: FontTextStyle
+                                  //                                 .kWhite24BoldRoboto
+                                  //                                 .copyWith(
+                                  //                                     color: ColorUtils
+                                  //                                         .kGray),
+                                  //                             enabledBorder:
+                                  //                                 UnderlineInputBorder(
+                                  //                                     borderSide: BorderSide(
+                                  //                                         color: Colors
+                                  //                                             .transparent)),
+                                  //                             focusedBorder:
+                                  //                                 UnderlineInputBorder(
+                                  //                                     borderSide: BorderSide(
+                                  //                                         color: Colors
+                                  //                                             .transparent))),
+                                  //                       ),
+                                  //                     ),
+                                  //                     Text('lbs',
+                                  //                         style: FontTextStyle
+                                  //                             .kWhite17W400Roboto),
+                                  //                   ],
+                                  //                 ),
+                                  //                 SizedBox(),
+                                  //               ],
+                                  //             ),
+                                  //           ]),
+                                  //     ),
+                                  //   ),
+                                  //   Container(
+                                  //       margin:
+                                  //           EdgeInsets.symmetric(vertical: Get.height * .007),
+                                  //       alignment: Alignment.center,
+                                  //       width: Get.width,
+                                  //       height: Get.height * .035,
+                                  //       decoration: BoxDecoration(
+                                  //           color: ColorUtils.kSaperatedGray,
+                                  //           borderRadius: BorderRadius.circular(6)),
+                                  //       child: Text(
+                                  //         '${widget.data[0].exerciseRest} second rest',
+                                  //         style: FontTextStyle.kWhite17W400Roboto,
+                                  //       ))
+                                  // ]),
+                                  SizedBox(
+                                    child: ListView.separated(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        shrinkWrap: true,
+                                        itemCount: 3,
+                                        separatorBuilder: (_, index) {
+                                          return Container(
+                                            alignment: Alignment.center,
+                                            height: Get.height * .03,
+                                            width: Get.width,
+                                            decoration: BoxDecoration(
+                                                color: ColorUtils.kGray,
+                                                borderRadius:
+                                                    BorderRadius.circular(6)),
+                                            child: Text(
+                                                "${widget.data[0].exerciseRest} Seconds Rest",
+                                                style: FontTextStyle
+                                                    .kWhite17W400Roboto),
+                                          );
+                                        },
+                                        itemBuilder: (_, index) {
+                                          return Stack(
+                                            alignment: Alignment.topRight,
+                                            children: [
+                                              WeightedCounter(
+                                                counter: int.parse(
+                                                    '${widget.data[0].exerciseReps}'),
+                                                repsNo:
+                                                    '${widget.data[0].exerciseReps}',
+                                              ),
+                                              Container(
+                                                alignment: Alignment.center,
+                                                height: Get.height * .027,
+                                                width: Get.height * .09,
+                                                decoration: BoxDecoration(
+                                                    gradient: LinearGradient(
+                                                        colors:
+                                                            ColorUtilsGradient
+                                                                .kGreenGradient,
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter),
+                                                    borderRadius:
+                                                        BorderRadius.only(
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    6),
+                                                            bottomLeft: Radius
+                                                                .circular(6))),
+                                                child: Text('RIR 0-1',
+                                                    style: FontTextStyle
+                                                        .kWhite12BoldRoboto
+                                                        .copyWith(
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500)),
+                                              )
+                                            ],
+                                          );
+                                        }),
+                                  ),
+                                  isShow == false
+                                      ? SizedBox(height: Get.height * .25)
+                                      : SizedBox(height: Get.height * .025),
+                                  commonNavigationButton(
+                                      onTap: () async {
+                                        //   print(
+                                        //       'Save Exercise pressed!!!');
+                                        //
+                                        //   setState(() {
+                                        //     loader = true;
+                                        //   });
+                                        //
+                                        //   print(
+                                        //       'loader ----------- $loader');
+                                        //
+                                        //   print(
+                                        //       'counter out ----------------- $counterReps');
+                                        //   if (counterReps <= 0) {
+                                        //     Get.showSnackbar(GetSnackBar(
+                                        //       message:
+                                        //           'Please set reps more than 0',
+                                        //       duration:
+                                        //           Duration(seconds: 2),
+                                        //     ));
+                                        //   }
+                                        //
+                                        //   if (counterReps != 0 &&
+                                        //       counterReps > 0) {
+                                        //     print(
+                                        //         'counter ----------------- $counterReps');
+                                        //     SaveUserCustomizedExerciseRequestModel
+                                        //         _request =
+                                        //         SaveUserCustomizedExerciseRequestModel();
+                                        //     _request.userId =
+                                        //         PreferenceManager
+                                        //             .getUId();
+                                        //     _request.exerciseId =
+                                        //         widget.data[0].exerciseId;
+                                        //     _request.reps =
+                                        //         '$counterReps';
+                                        //     _request.isCompleted = '1';
+                                        //
+                                        //     await controllerSave
+                                        //         .saveUserCustomizedExerciseViewModel(
+                                        //             _request);
+                                        //
+                                        //     if (controllerSave
+                                        //             .apiResponse.status ==
+                                        //         Status.COMPLETE) {
+                                        //       SaveUserCustomizedExerciseResponseModel
+                                        //           responseSave =
+                                        //           controllerSave
+                                        //               .apiResponse.data;
+                                        //
+                                        //       setState(() {
+                                        //         loader = false;
+                                        //       });
+                                        //       if (responseSave.success ==
+                                        //               true &&
+                                        //           responseSave.data !=
+                                        //               null) {
+                                        //         if ('${widget.data[0].exerciseVideo}'
+                                        //             .contains(
+                                        //                 'www.youtube.com')) {
+                                        //           _youTubePlayerController
+                                        //               ?.pause();
+                                        //         } else {
+                                        //           _videoPlayerController
+                                        //               ?.pause();
+                                        //           _chewieController
+                                        //               ?.pause();
+                                        //         }
+                                        //
+                                        //         Get.back();
+                                        //         setState(() {
+                                        //           counterReps = 0;
+                                        //         });
+                                        //         Get.showSnackbar(
+                                        //             GetSnackBar(
+                                        //           message:
+                                        //               '${responseSave.msg}',
+                                        //           duration: Duration(
+                                        //               seconds: 2),
+                                        //         ));
+                                        //       } else if (responseSave
+                                        //                   .msg ==
+                                        //               null ||
+                                        //           responseSave.msg ==
+                                        //                   "" &&
+                                        //               responseSave.data ==
+                                        //                   null ||
+                                        //           responseSave.data ==
+                                        //               "") {
+                                        //         setState(() {
+                                        //           loader = false;
+                                        //         });
+                                        //         Get.showSnackbar(
+                                        //             GetSnackBar(
+                                        //           message:
+                                        //               '${responseSave.msg}',
+                                        //           duration: Duration(
+                                        //               seconds: 2),
+                                        //         ));
+                                        //       }
+                                        //     } else if (controllerSave
+                                        //             .apiResponse.status ==
+                                        //         Status.ERROR) {
+                                        //       setState(() {
+                                        //         loader = false;
+                                        //       });
+                                        //       Get.showSnackbar(
+                                        //           GetSnackBar(
+                                        //         message:
+                                        //             'Something went wrong !!! please try again !!!',
+                                        //         duration:
+                                        //             Duration(seconds: 2),
+                                        //       ));
+                                        //     }
+                                        //   }
+                                        // },
+                                      },
+                                      name: 'Next Exercise'),
+                                  SizedBox(height: Get.height * .04)
+                                ]),
+                          ),
+                        ]),
+                  );
+                })
+            : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Container(
+                      //   height: Get.height / 2.75,
+                      //   width: Get.width,
+                      //   child: '${widget.data[0].exerciseVideo}'
+                      //           .contains('www.youtube.com')
+                      //       ? Center(
+                      //           child: _youTubePlayerController != null ||
+                      //                   _youTubePlayerController != ''
+                      //               ? YoutubePlayer(
+                      //                   controller: _youTubePlayerController!,
+                      //                   showVideoProgressIndicator: true,
+                      //                   bufferIndicator: CircularProgressIndicator(
+                      //                       color: ColorUtils.kTint),
+                      //                   controlsTimeOut: Duration(hours: 2),
+                      //                   aspectRatio: 16 / 9,
+                      //                   progressColors: ProgressBarColors(
+                      //                       handleColor: ColorUtils.kRed,
+                      //                       playedColor: ColorUtils.kRed,
+                      //                       backgroundColor: ColorUtils.kGray,
+                      //                       bufferedColor: ColorUtils.kLightGray),
+                      //                 )
+                      //               : noDataLottie(),
+                      //         )
+                      //       : Center(
+                      //           child: _chewieController != null &&
+                      //                   _chewieController!
+                      //                       .videoPlayerController.value.isInitialized
+                      //               ? Chewie(
+                      //                   controller: _chewieController!,
+                      //                 )
+                      //               : widget.data[0].exerciseImage == null
+                      //                   ? noDataLottie()
+                      //                   : Image.network(
+                      //                       "https://tcm.sataware.dev/images/" +
+                      //                           widget.data[0].exerciseImage!,
+                      //                       errorBuilder: (context, error, stackTrace) {
+                      //                         return noDataLottie();
+                      //                       },
+                      //                     )),
                       // ),
                       Padding(
-                        padding:
-                            EdgeInsets.symmetric(vertical: Get.height * 0.01),
-                        child: Container(
-                          height: Get.height * .1,
-                          width: Get.width,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: ColorUtilsGradient.kGrayGradient,
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.topCenter),
-                              borderRadius: BorderRadius.circular(6)),
-                          child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    counterMinus();
-                                    log('minus $counterReps');
-                                  },
-                                  child: CircleAvatar(
-                                      radius: Get.height * .03,
-                                      backgroundColor: ColorUtils.kTint,
-                                      child: Icon(Icons.remove,
-                                          color: ColorUtils.kBlack)),
-                                ),
-                                SizedBox(width: Get.width * .08),
-                                RichText(
-                                    text: TextSpan(
-                                        text: '$counterReps ',
-                                        style: counterReps == 0
-                                            ? FontTextStyle.kWhite24BoldRoboto
-                                                .copyWith(
-                                                    color: ColorUtils.kGray)
-                                            : FontTextStyle.kWhite24BoldRoboto,
-                                        children: [
-                                      TextSpan(
-                                          text: 'reps',
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Get.width * .06,
+                            vertical: Get.height * .02),
+                        child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: Get.width * 0.7,
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          '${widget.data[0].exerciseTitle}',
                                           style:
-                                              FontTextStyle.kWhite17W400Roboto)
-                                    ])),
-                                SizedBox(width: Get.width * .08),
-                                InkWell(
-                                  onTap: () {
-                                    counterPlus();
-                                    log('plus $counterReps');
-                                  },
-                                  child: CircleAvatar(
-                                    radius: Get.height * .03,
-                                    backgroundColor: ColorUtils.kTint,
-                                    child: Icon(Icons.add,
-                                        color: ColorUtils.kBlack),
+                                              FontTextStyle.kWhite24BoldRoboto,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 3,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 10,
+                                      ),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          log('hello...');
+                                          if (isShow == true) {
+                                            setState(() {
+                                              isShow = false;
+                                            });
+
+                                            if (_chewieController != null &&
+                                                _chewieController!
+                                                    .videoPlayerController
+                                                    .value
+                                                    .isInitialized) {
+                                              _chewieController!.pause();
+                                              _videoPlayerController!.pause();
+                                            } else {
+                                              SizedBox();
+                                            }
+                                          } else {
+                                            print(
+                                                '_exerciseByIdViewModel.responseExe!.data![0].exerciseVideo ${widget.data[0].exerciseVideo}');
+
+                                            if (widget.data[0].exerciseVideo ==
+                                                    null ||
+                                                widget.data[0].exerciseVideo ==
+                                                    '') {
+                                            } else {
+                                              _videoPlayerController =
+                                                  VideoPlayerController.network(
+                                                      '${widget.data[0].exerciseVideo}');
+                                              print('started.....vide0 11');
+                                              await Future.wait([
+                                                _videoPlayerController!
+                                                    .initialize(),
+                                              ]);
+                                              _createChewieController();
+                                              // setState(() {});
+                                            }
+                                            setState(() {
+                                              isShow = true;
+                                            });
+                                          }
+                                          log('hello...1 $isShow');
+                                        },
+                                        child: Image.asset(
+                                          AppIcons.play,
+                                          height: Get.height * 0.03,
+                                          width: Get.height * 0.03,
+                                          color: ColorUtils.kTint,
+                                        ),
+                                      )
+                                    ],
                                   ),
                                 ),
-                                VerticalDivider(
-                                  width: Get.width * .08,
-                                  thickness: 1.25,
-                                  color: ColorUtils.kGray,
-                                  indent: Get.height * .015,
-                                  endIndent: Get.height * .015,
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          child: TextField(
-                                            style: counterReps == 0
-                                                ? FontTextStyle
-                                                    .kWhite24BoldRoboto
-                                                    .copyWith(
-                                                        color: ColorUtils.kGray)
-                                                : FontTextStyle
-                                                    .kWhite24BoldRoboto,
-                                            keyboardType: TextInputType.number,
-                                            maxLength: 3,
-                                            cursorColor: ColorUtils.kTint,
-                                            decoration: InputDecoration(
-                                                hintText: '0',
-                                                counterText: '',
-                                                semanticCounterText: '',
-                                                hintStyle: FontTextStyle
-                                                    .kWhite24BoldRoboto
-                                                    .copyWith(
-                                                        color: ColorUtils
-                                                            .kGray),
-                                                enabledBorder:
-                                                    UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: Colors
-                                                                .transparent)),
-                                                focusedBorder:
-                                                    UnderlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color: Colors
-                                                                .transparent))),
-                                          ),
-                                        ),
-                                        Text('lbs',
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.015,
+                              ),
+                              Text(
+                                  '${widget.data[0].exerciseSets} sets of ${widget.data[0].exerciseReps} reps',
+                                  style: FontTextStyle.kLightGray16W300Roboto
+                                      .copyWith(
+                                          fontSize: Get.height * 0.023,
+                                          color: Colors.white.withOpacity(0.8),
+                                          fontWeight: FontWeight.w300)),
+                              isShow == true
+                                  ? Container(
+                                      height: Get.height / 2.75,
+                                      width: Get.width,
+                                      child: Center(
+                                          child: widget.data[0].exerciseVideo !=
+                                                  "https://yourvideolink.com/"
+                                              ? _chewieController != null &&
+                                                      _chewieController!
+                                                          .videoPlayerController
+                                                          .value
+                                                          .isInitialized
+                                                  ? Chewie(
+                                                      controller:
+                                                          _chewieController!,
+                                                    )
+                                                  : widget.data[0]
+                                                              .exerciseImage ==
+                                                          null
+                                                      ? noDataLottie()
+                                                      : Image.network(
+                                                          "https://tcm.sataware.dev/images/" +
+                                                              widget.data[0]
+                                                                  .exerciseImage!
+                                                                  .split("\/")
+                                                                  .last,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return noDataLottie();
+                                                          },
+                                                        )
+                                              : Image.network(
+                                                  "https://tcm.sataware.dev/images/" +
+                                                      widget.data[0]
+                                                          .exerciseImage!
+                                                          .split("\/")
+                                                          .last,
+                                                  errorBuilder: (context, error,
+                                                      stackTrace) {
+                                                    return noDataLottie();
+                                                  },
+                                                ))
+
+                                      // Center(
+                                      //   child: _chewieController != null &&
+                                      //           _chewieController!.videoPlayerController
+                                      //               .value.isInitialized
+                                      //       ? Chewie(
+                                      //           controller: _chewieController!,
+                                      //         )
+                                      //       : Center(
+                                      //           child: CircularProgressIndicator(
+                                      //           color: ColorUtils.kTint,
+                                      //         )),
+                                      // ),
+                                      )
+                                  : SizedBox(),
+                              // Column(children: [
+                              //   // WeightedCounter(
+                              //   //   counter: int.parse('${widget.data[0].exerciseReps}'),
+                              //   //   repsNo: '${widget.data[0].exerciseReps}',
+                              //   // ),
+                              //   Padding(
+                              //     padding:
+                              //         EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                              //     child: Container(
+                              //       height: Get.height * .1,
+                              //       width: Get.width,
+                              //       decoration: BoxDecoration(
+                              //           gradient: LinearGradient(
+                              //               colors: ColorUtilsGradient.kGrayGradient,
+                              //               begin: Alignment.topCenter,
+                              //               end: Alignment.topCenter),
+                              //           borderRadius: BorderRadius.circular(6)),
+                              //       child: Row(
+                              //           mainAxisAlignment: MainAxisAlignment.center,
+                              //           children: [
+                              //             InkWell(
+                              //               onTap: () {
+                              //                 counterMinus();
+                              //                 log('minus $counterReps');
+                              //               },
+                              //               child: CircleAvatar(
+                              //                   radius: Get.height * .03,
+                              //                   backgroundColor: ColorUtils.kTint,
+                              //                   child: Icon(Icons.remove,
+                              //                       color: ColorUtils.kBlack)),
+                              //             ),
+                              //             SizedBox(width: Get.width * .08),
+                              //             RichText(
+                              //                 text: TextSpan(
+                              //                     text: '$counterReps ',
+                              //                     style: counterReps == 0
+                              //                         ? FontTextStyle.kWhite24BoldRoboto
+                              //                             .copyWith(
+                              //                                 color: ColorUtils.kGray)
+                              //                         : FontTextStyle.kWhite24BoldRoboto,
+                              //                     children: [
+                              //                   TextSpan(
+                              //                       text: 'reps',
+                              //                       style:
+                              //                           FontTextStyle.kWhite17W400Roboto)
+                              //                 ])),
+                              //             SizedBox(width: Get.width * .08),
+                              //             InkWell(
+                              //               onTap: () {
+                              //                 counterPlus();
+                              //                 log('plus $counterReps');
+                              //               },
+                              //               child: CircleAvatar(
+                              //                 radius: Get.height * .03,
+                              //                 backgroundColor: ColorUtils.kTint,
+                              //                 child: Icon(Icons.add,
+                              //                     color: ColorUtils.kBlack),
+                              //               ),
+                              //             ),
+                              //             VerticalDivider(
+                              //               width: Get.width * .08,
+                              //               thickness: 1.25,
+                              //               color: ColorUtils.kGray,
+                              //               indent: Get.height * .015,
+                              //               endIndent: Get.height * .015,
+                              //             ),
+                              //             Column(
+                              //               mainAxisAlignment: MainAxisAlignment.center,
+                              //               children: [
+                              //                 SizedBox(height: 10),
+                              //                 Row(
+                              //                   children: [
+                              //                     SizedBox(
+                              //                       width: 40,
+                              //                       child: TextField(
+                              //                         style: counterReps == 0
+                              //                             ? FontTextStyle
+                              //                                 .kWhite24BoldRoboto
+                              //                                 .copyWith(
+                              //                                     color: ColorUtils.kGray)
+                              //                             : FontTextStyle
+                              //                                 .kWhite24BoldRoboto,
+                              //                         keyboardType: TextInputType.number,
+                              //                         maxLength: 3,
+                              //                         cursorColor: ColorUtils.kTint,
+                              //                         decoration: InputDecoration(
+                              //                             hintText: '0',
+                              //                             counterText: '',
+                              //                             semanticCounterText: '',
+                              //                             hintStyle: FontTextStyle
+                              //                                 .kWhite24BoldRoboto
+                              //                                 .copyWith(
+                              //                                     color: ColorUtils
+                              //                                         .kGray),
+                              //                             enabledBorder:
+                              //                                 UnderlineInputBorder(
+                              //                                     borderSide: BorderSide(
+                              //                                         color: Colors
+                              //                                             .transparent)),
+                              //                             focusedBorder:
+                              //                                 UnderlineInputBorder(
+                              //                                     borderSide: BorderSide(
+                              //                                         color: Colors
+                              //                                             .transparent))),
+                              //                       ),
+                              //                     ),
+                              //                     Text('lbs',
+                              //                         style: FontTextStyle
+                              //                             .kWhite17W400Roboto),
+                              //                   ],
+                              //                 ),
+                              //                 SizedBox(),
+                              //               ],
+                              //             ),
+                              //           ]),
+                              //     ),
+                              //   ),
+                              //   Container(
+                              //       margin:
+                              //           EdgeInsets.symmetric(vertical: Get.height * .007),
+                              //       alignment: Alignment.center,
+                              //       width: Get.width,
+                              //       height: Get.height * .035,
+                              //       decoration: BoxDecoration(
+                              //           color: ColorUtils.kSaperatedGray,
+                              //           borderRadius: BorderRadius.circular(6)),
+                              //       child: Text(
+                              //         '${widget.data[0].exerciseRest} second rest',
+                              //         style: FontTextStyle.kWhite17W400Roboto,
+                              //       ))
+                              // ]),
+                              SizedBox(
+                                child: ListView.separated(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: 3,
+                                    separatorBuilder: (_, index) {
+                                      return Container(
+                                        alignment: Alignment.center,
+                                        height: Get.height * .03,
+                                        width: Get.width,
+                                        decoration: BoxDecoration(
+                                            color: ColorUtils.kGray,
+                                            borderRadius:
+                                                BorderRadius.circular(6)),
+                                        child: Text(
+                                            "${widget.data[0].exerciseRest} Seconds Rest",
                                             style: FontTextStyle
                                                 .kWhite17W400Roboto),
-                                      ],
-                                    ),
-                                    SizedBox(),
-                                  ],
-                                ),
-                              ]),
-                        ),
+                                      );
+                                    },
+                                    itemBuilder: (_, index) {
+                                      return Stack(
+                                        alignment: Alignment.topRight,
+                                        children: [
+                                          WeightedCounter(
+                                            counter: int.parse(
+                                                '${widget.data[0].exerciseReps}'),
+                                            repsNo:
+                                                '${widget.data[0].exerciseReps}',
+                                          ),
+                                          Positioned(
+                                            top: Get.height * .01,
+                                            child: Container(
+                                              alignment: Alignment.center,
+                                              height: Get.height * .027,
+                                              width: Get.height * .09,
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                      colors: colors[index],
+                                                      begin:
+                                                          Alignment.topCenter,
+                                                      end: Alignment
+                                                          .bottomCenter),
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  6),
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  6))),
+                                              child: Text('RIR 0-1',
+                                                  style: FontTextStyle
+                                                      .kWhite12BoldRoboto
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.w500)),
+                                            ),
+                                          )
+                                        ],
+                                      );
+                                    }),
+                              ),
+                              isShow == false
+                                  ? SizedBox(height: Get.height * .25)
+                                  : SizedBox(height: Get.height * .025),
+
+                              commonNavigationButton(
+                                  onTap: () async {
+                                    //   print(
+                                    //       'Save Exercise pressed!!!');
+                                    //
+                                    //   setState(() {
+                                    //     loader = true;
+                                    //   });
+                                    //
+                                    //   print(
+                                    //       'loader ----------- $loader');
+                                    //
+                                    //   print(
+                                    //       'counter out ----------------- $counterReps');
+                                    //   if (counterReps <= 0) {
+                                    //     Get.showSnackbar(GetSnackBar(
+                                    //       message:
+                                    //           'Please set reps more than 0',
+                                    //       duration:
+                                    //           Duration(seconds: 2),
+                                    //     ));
+                                    //   }
+                                    //
+                                    //   if (counterReps != 0 &&
+                                    //       counterReps > 0) {
+                                    //     print(
+                                    //         'counter ----------------- $counterReps');
+                                    //     SaveUserCustomizedExerciseRequestModel
+                                    //         _request =
+                                    //         SaveUserCustomizedExerciseRequestModel();
+                                    //     _request.userId =
+                                    //         PreferenceManager
+                                    //             .getUId();
+                                    //     _request.exerciseId =
+                                    //         widget.data[0].exerciseId;
+                                    //     _request.reps =
+                                    //         '$counterReps';
+                                    //     _request.isCompleted = '1';
+                                    //
+                                    //     await controllerSave
+                                    //         .saveUserCustomizedExerciseViewModel(
+                                    //             _request);
+                                    //
+                                    //     if (controllerSave
+                                    //             .apiResponse.status ==
+                                    //         Status.COMPLETE) {
+                                    //       SaveUserCustomizedExerciseResponseModel
+                                    //           responseSave =
+                                    //           controllerSave
+                                    //               .apiResponse.data;
+                                    //
+                                    //       setState(() {
+                                    //         loader = false;
+                                    //       });
+                                    //       if (responseSave.success ==
+                                    //               true &&
+                                    //           responseSave.data !=
+                                    //               null) {
+                                    //         if ('${widget.data[0].exerciseVideo}'
+                                    //             .contains(
+                                    //                 'www.youtube.com')) {
+                                    //           _youTubePlayerController
+                                    //               ?.pause();
+                                    //         } else {
+                                    //           _videoPlayerController
+                                    //               ?.pause();
+                                    //           _chewieController
+                                    //               ?.pause();
+                                    //         }
+                                    //
+                                    //         Get.back();
+                                    //         setState(() {
+                                    //           counterReps = 0;
+                                    //         });
+                                    //         Get.showSnackbar(
+                                    //             GetSnackBar(
+                                    //           message:
+                                    //               '${responseSave.msg}',
+                                    //           duration: Duration(
+                                    //               seconds: 2),
+                                    //         ));
+                                    //       } else if (responseSave
+                                    //                   .msg ==
+                                    //               null ||
+                                    //           responseSave.msg ==
+                                    //                   "" &&
+                                    //               responseSave.data ==
+                                    //                   null ||
+                                    //           responseSave.data ==
+                                    //               "") {
+                                    //         setState(() {
+                                    //           loader = false;
+                                    //         });
+                                    //         Get.showSnackbar(
+                                    //             GetSnackBar(
+                                    //           message:
+                                    //               '${responseSave.msg}',
+                                    //           duration: Duration(
+                                    //               seconds: 2),
+                                    //         ));
+                                    //       }
+                                    //     } else if (controllerSave
+                                    //             .apiResponse.status ==
+                                    //         Status.ERROR) {
+                                    //       setState(() {
+                                    //         loader = false;
+                                    //       });
+                                    //       Get.showSnackbar(
+                                    //           GetSnackBar(
+                                    //         message:
+                                    //             'Something went wrong !!! please try again !!!',
+                                    //         duration:
+                                    //             Duration(seconds: 2),
+                                    //       ));
+                                    //     }
+                                    //   }
+                                  },
+                                  name: 'Next Exercise'),
+                              SizedBox(height: Get.height * .04),
+                            ]),
                       ),
-                      Container(
-                          margin:
-                              EdgeInsets.symmetric(vertical: Get.height * .007),
-                          alignment: Alignment.center,
-                          width: Get.width,
-                          height: Get.height * .035,
-                          decoration: BoxDecoration(
-                              color: ColorUtils.kSaperatedGray,
-                              borderRadius: BorderRadius.circular(6)),
-                          child: Text(
-                            '${widget.data[0].exerciseRest} second rest',
-                            style: FontTextStyle.kWhite17W400Roboto,
-                          ))
                     ]),
-                    // SizedBox(
-                    //   child: ListView.separated(
-                    //       physics: NeverScrollableScrollPhysics(),
-                    //       shrinkWrap: true,
-                    //       itemCount: int.parse(
-                    //           widget.data[0].exerciseSets!.toString()),
-                    //       separatorBuilder: (_, index) {
-                    //         return ;
-                    //       },
-                    //       itemBuilder: (_, index) {
-                    //         return ;
-                    //       }),
-                    // ),
-                    SizedBox(height: Get.height * .02),
-                    GetBuilder<SaveUserCustomizedExerciseViewModel>(
-                      builder: (controllerSave) {
-                        return loader == true
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                color: ColorUtils.kTint,
-                              ))
-                            : commonNavigationButton(
-                                onTap: () async {
-                                  print('Save Exercise pressed!!!');
-
-                                  setState(() {
-                                    loader = true;
-                                  });
-
-                                  print('loader ----------- $loader');
-
-                                  print(
-                                      'counter out ----------------- $counterReps');
-                                  if (counterReps <= 0) {
-                                    Get.showSnackbar(GetSnackBar(
-                                      message: 'Please set reps more than 0',
-                                      duration: Duration(seconds: 2),
-                                    ));
-                                  }
-
-                                  if (counterReps != 0 && counterReps > 0) {
-                                    print(
-                                        'counter ----------------- $counterReps');
-                                    SaveUserCustomizedExerciseRequestModel
-                                        _request =
-                                        SaveUserCustomizedExerciseRequestModel();
-                                    _request.userId =
-                                        PreferenceManager.getUId();
-                                    _request.exerciseId =
-                                        widget.data[0].exerciseId;
-                                    _request.reps = '$counterReps';
-                                    _request.isCompleted = '1';
-
-                                    await controllerSave
-                                        .saveUserCustomizedExerciseViewModel(
-                                            _request);
-
-                                    if (controllerSave.apiResponse.status ==
-                                        Status.COMPLETE) {
-                                      SaveUserCustomizedExerciseResponseModel
-                                          responseSave =
-                                          controllerSave.apiResponse.data;
-
-                                      setState(() {
-                                        loader = false;
-                                      });
-                                      if (responseSave.success == true &&
-                                          responseSave.data != null) {
-                                        if ('${widget.data[0].exerciseVideo}'
-                                            .contains('www.youtube.com')) {
-                                          _youTubePlayerController?.pause();
-                                        } else {
-                                          _videoPlayerController?.pause();
-                                          _chewieController?.pause();
-                                        }
-
-                                        Get.back();
-                                        setState(() {
-                                          counterReps = 0;
-                                        });
-                                        Get.showSnackbar(GetSnackBar(
-                                          message: '${responseSave.msg}',
-                                          duration: Duration(seconds: 2),
-                                        ));
-                                      } else if (responseSave.msg == null ||
-                                          responseSave.msg == "" &&
-                                              responseSave.data == null ||
-                                          responseSave.data == "") {
-                                        setState(() {
-                                          loader = false;
-                                        });
-                                        Get.showSnackbar(GetSnackBar(
-                                          message: '${responseSave.msg}',
-                                          duration: Duration(seconds: 2),
-                                        ));
-                                      }
-                                    } else if (controllerSave
-                                            .apiResponse.status ==
-                                        Status.ERROR) {
-                                      setState(() {
-                                        loader = false;
-                                      });
-                                      Get.showSnackbar(GetSnackBar(
-                                        message:
-                                            'Something went wrong !!! please try again !!!',
-                                        duration: Duration(seconds: 2),
-                                      ));
-                                    }
-                                  }
-                                },
-                                name: 'Save Exercise');
-                      },
-                    ),
-                    SizedBox(height: Get.height * .04)
-                  ]),
-            ),
-          ]),
-        ),
+              ),
       );
     } else {
       return Center(

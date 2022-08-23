@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -150,6 +148,13 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
 
                                 controller.firstSelectedHabits(
                                     id: '${response.data![index].id}');
+                                // log('${response.data![index].name}');
+                                // log('${controller.selectedHabitList}');
+                                // print(
+                                //     '----------========= ${response.data![index].id}');
+                                // // setState(() {});
+                                // print(
+                                //     'list of habit id ---------------- $habitId');
                                 listOfHabitId();
                               },
                               child: Container(
@@ -301,6 +306,9 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                           message: '${res.msg}',
                           duration: Duration(seconds: 2),
                         ));
+                        // print("------------------- ${listOfHabitId()}");
+                        print(
+                            "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
                         HabitResponseModel resp =
                             _habitViewModel.apiResponse.data;
                         Get.to(TrackingFrequencyScreen(data: resp.data));

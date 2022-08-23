@@ -21,6 +21,7 @@ class ColorUtilsGradient {
   static List<Color> kGrayGradient = [Color(0xff383838), Color(0xff262626)];
   static List<Color> kGreenGradient = [Color(0xff057C00), Color(0xff045500)];
   static List<Color> kOrangeGradient = [Color(0xffFFA200), Color(0xff9E6400)];
+  static List<Color> kRedGradient = [Color(0xffFF0000), Color(0xff8B0303)];
   static List<Color> kBlackGradient = [
     Color(0xff000000).withOpacity(0),
     Color(0xff000000)
