@@ -59,6 +59,10 @@ dependencies:
   flutter_video_info: ^1.2.0
   carousel_slider: ^4.1.1
   syncfusion_flutter_gauges: ^20.2.38
+  vimeo_video_player: ^0.0.4
+  cached_network_image: ^3.2.0
+#  pinput: ^2.2.12
+
 
     #  syncfusion_flutter_datepicker: ^20.1.61
     #  get: ^4.6.1
