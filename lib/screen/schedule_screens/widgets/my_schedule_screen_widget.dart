@@ -94,7 +94,7 @@ Padding listViewTab(
                                     event: getEventForDay[index],
                                     date: getEventForDay[index].date,
                                     onPressedView: () {
-                                      Get.to(PlanOverviewScreen(
+                                      Get.to(() => PlanOverviewScreen(
                                           id: "${getEventForDay[index].programData![0].workoutId}"));
                                     },
                                     onPressedStart: () {
@@ -104,24 +104,26 @@ Padding listViewTab(
                                           getEventForDay[index].date!);
                                     },
                                     onPressedEdit: () {
-                                      Get.to(ProgramSetupPage(
-                                        day: '1',
-                                        workoutName: scheduleResponse!
-                                            .data![index]
-                                            .programData![0]
-                                            .workoutTitle,
-                                        workoutId: scheduleResponse.data![index]
-                                            .programData![0].workoutId,
-                                        exerciseId: scheduleResponse
-                                            .data![index]
-                                            .programData![0]
-                                            .exerciseId,
-                                        programData: scheduleResponse
-                                            .data![index].programData,
-                                        isEdit: true,
-                                        workoutProgramId: scheduleResponse
-                                            .data![index].userProgramId,
-                                      ));
+                                      Get.to(() => ProgramSetupPage(
+                                            day: '1',
+                                            workoutName: scheduleResponse!
+                                                .data![index]
+                                                .programData![0]
+                                                .workoutTitle,
+                                            workoutId: scheduleResponse
+                                                .data![index]
+                                                .programData![0]
+                                                .workoutId,
+                                            exerciseId: scheduleResponse
+                                                .data![index]
+                                                .programData![0]
+                                                .exerciseId,
+                                            programData: scheduleResponse
+                                                .data![index].programData,
+                                            isEdit: true,
+                                            workoutProgramId: scheduleResponse
+                                                .data![index].userProgramId,
+                                          ));
                                     });
                               },
                               child: Icon(
@@ -380,7 +382,20 @@ getExercisesId(String time) async {
     log("success ------------- true");
 
     if (resp.success == true) {
+      _userWorkoutsDateViewModel.supersetExerciseId.clear();
+      _userWorkoutsDateViewModel.exerciseId.clear();
+
       _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+
+      if (resp.data!.supersetExercisesIds! != [] ||
+          resp.data!.supersetExercisesIds!.isNotEmpty) {
+        _userWorkoutsDateViewModel.supersetExerciseId =
+            resp.data!.supersetExercisesIds!;
+      } else {
+        _userWorkoutsDateViewModel.supersetExerciseId = [];
+      }
+
+      // _userWorkoutsDateViewModel.supersetExerciseId = ["2", "5", "7", "10"];
 
       await _exerciseByIdViewModel.getExerciseByIdDetails(
           id: _userWorkoutsDateViewModel
@@ -396,10 +411,10 @@ getExercisesId(String time) async {
       WorkoutByIdResponseModel workoutResponse =
           _workoutByIdViewModel.apiResponse.data;
 
-      Get.to(WorkoutHomeScreen(
-        exeData: exerciseResponse.data!,
-        data: workoutResponse.data!,
-      ));
+      Get.to(() => WorkoutHomeScreen(
+            exeData: exerciseResponse.data!,
+            data: workoutResponse.data!,
+          ));
       log('workoutResponse>>>>>>  ${workoutResponse.data}');
     } else {
       log("success ------------- false");

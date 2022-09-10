@@ -36,8 +36,11 @@ class ShareProgressScreen extends StatelessWidget {
         leading: IconButton(
             onPressed: () {
               Get.back();
-              _userWorkoutsDateViewModel.getBackId(
-                  counter: _userWorkoutsDateViewModel.exeIdCounter);
+
+              if (_userWorkoutsDateViewModel.supersetExerciseId.isEmpty) {
+                _userWorkoutsDateViewModel.getBackId(
+                    counter: _userWorkoutsDateViewModel.exeIdCounter);
+              }
 
               // _workoutBaseExerciseViewModel.exeIdCounter = 0;
               // _workoutBaseExerciseViewModel.isHold = false;

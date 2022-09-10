@@ -3,23 +3,27 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/model/response_model/user_detail_response_model.dart';
 import 'package:tcm/model/response_model/workout_response_model/user_workouts_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
+import 'package:tcm/screen/edit_profile_page.dart';
+import 'package:tcm/screen/forum/forum_screen.dart';
 import 'package:tcm/screen/habit_tracker/habit_tracker_home_screen.dart';
+import 'package:tcm/screen/habit_tracker/update_progress_screen.dart';
 import 'package:tcm/screen/profile_view_screen.dart';
 import 'package:tcm/screen/schedule_screens/my_schedule_screen.dart';
 import 'package:tcm/screen/signIn_screens.dart';
-import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/screen/training_plan_screens/training_plan.dart';
 import 'package:tcm/screen/video_library/video_library_screen.dart';
 import 'package:tcm/screen/workout_screen/workout_home.dart';
+import 'package:tcm/utils/ColorUtils.dart';
+import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/home_viewModel.dart';
 import 'package:tcm/viewModel/schedule_viewModel/schedule_by_date_viewModel.dart';
@@ -28,15 +32,9 @@ import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.d
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 import 'package:tcm/viewModel/user_detail_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
+
 import '../model/request_model/habit_tracker_request_model/get_habit_record_date_request_model.dart';
-import '../model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
-import '../utils/ColorUtils.dart';
-import '../utils/font_styles.dart';
 import '../viewModel/habit_tracking_viewModel/get_habit_record_viewModel.dart';
-import 'edit_profile_page.dart';
-import 'forum/forum_screen.dart';
-import 'habit_tracker/habit_selection_screen.dart';
-import 'habit_tracker/update_progress_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? id;
@@ -134,8 +132,20 @@ class _HomeScreenState extends State<HomeScreen> {
       log("success ------------- true");
 
       if (resp.success == true) {
+        _userWorkoutsDateViewModel.supersetExerciseId.clear();
         _userWorkoutsDateViewModel.exerciseId.clear();
+
         _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+
+        if (resp.data!.supersetExercisesIds! != [] ||
+            resp.data!.supersetExercisesIds!.isNotEmpty) {
+          _userWorkoutsDateViewModel.supersetExerciseId =
+              resp.data!.supersetExercisesIds!;
+        } else {
+          _userWorkoutsDateViewModel.supersetExerciseId = [];
+        }
+
+        // _userWorkoutsDateViewModel.supersetExerciseId = ["2", "5", "7", "10"];
 
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel

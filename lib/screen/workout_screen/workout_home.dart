@@ -365,26 +365,29 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                   width:
                                                                       Get.width *
                                                                           .075),
-                                                              Icon(
-                                                                Icons.circle,
-                                                                color: ColorUtils
-                                                                    .kLightGray,
-                                                                size:
-                                                                    Get.height *
-                                                                        0.0135,
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        top: 3),
+                                                                child: Icon(
+                                                                  Icons.circle,
+                                                                  color: ColorUtils
+                                                                      .kLightGray,
+                                                                  size:
+                                                                      Get.height *
+                                                                          0.0135,
+                                                                ),
                                                               ),
-                                                              RichText(
-                                                                  text: TextSpan(
-                                                                      text: '',
-                                                                      style: FontTextStyle
-                                                                          .kLightGray16W300Roboto,
-                                                                      children: [
-                                                                    TextSpan(
-                                                                        text:
-                                                                            ' ${widget.data[0].availableEquipments![index]}',
-                                                                        style: FontTextStyle
-                                                                            .kWhite17BoldRoboto)
-                                                                  ])),
+                                                              SizedBox(
+                                                                  width:
+                                                                      Get.width *
+                                                                          .025),
+                                                              Flexible(
+                                                                child: Text(
+                                                                    ' ${widget.data[0].availableEquipments![index]}',
+                                                                    style: FontTextStyle
+                                                                        .kWhite17BoldRoboto),
+                                                              )
                                                             ],
                                                           );
                                                         } else {
@@ -662,29 +665,47 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                     if ('${widget.data[0].availableEquipments![index]}' !=
                                                         "No Equipment") {
                                                       return Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
                                                         children: [
                                                           SizedBox(
                                                               width: Get.width *
                                                                   .075),
-                                                          Icon(
-                                                            Icons.circle,
-                                                            color: ColorUtils
-                                                                .kLightGray,
-                                                            size: Get.height *
-                                                                0.0135,
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    top: 3),
+                                                            child: Icon(
+                                                              Icons.circle,
+                                                              color: ColorUtils
+                                                                  .kLightGray,
+                                                              size: Get.height *
+                                                                  0.0135,
+                                                            ),
                                                           ),
-                                                          RichText(
-                                                              text: TextSpan(
-                                                                  text: '',
-                                                                  style: FontTextStyle
-                                                                      .kLightGray16W300Roboto,
-                                                                  children: [
-                                                                TextSpan(
-                                                                    text:
-                                                                        ' ${widget.data[0].availableEquipments![index]}',
-                                                                    style: FontTextStyle
-                                                                        .kWhite17BoldRoboto)
-                                                              ])),
+                                                          SizedBox(
+                                                              width: Get.width *
+                                                                  .025),
+                                                          Flexible(
+                                                            child: Text(
+                                                              '${widget.data[0].availableEquipments![index]}',
+                                                              style: FontTextStyle
+                                                                  .kWhite17BoldRoboto,
+                                                            ),
+                                                          )
+                                                          // RichText(
+                                                          //     text: TextSpan(
+                                                          //         text: '',
+                                                          //         style: FontTextStyle
+                                                          //             .kLightGray16W300Roboto,
+                                                          //         children: [
+                                                          //       TextSpan(
+                                                          //           text:
+                                                          //               ' ${widget.data[0].availableEquipments![index]}',
+                                                          //           style: FontTextStyle
+                                                          //               .kWhite17BoldRoboto)
+                                                          //     ])),
                                                         ],
                                                       );
                                                     } else {

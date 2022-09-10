@@ -854,6 +854,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                   child: SfDateRangePicker(
                                                     view: DateRangePickerView
                                                         .month,
+                                                    allowViewNavigation: false,
                                                     showNavigationArrow: true,
                                                     enablePastDates: false,
                                                     controller: controllerWork
@@ -913,38 +914,30 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         child: Container(
                                                           alignment:
                                                               Alignment.center,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  // color: controller.dayList
-                                                                  //         .contains(details.date)
-                                                                  //     ? completeExercise.contains(
-                                                                  //             details.date)
-                                                                  //         ? ColorUtils.kGreen
-                                                                  //         : missedExercises.contains(
-                                                                  //                 details.date)
-                                                                  //             ? ColorUtils.kRed
-                                                                  //             : ColorUtils.kTint
-                                                                  //     : ColorUtils.kBlack,
-                                                                  gradient: controllerWork
-                                                                          .defSelectedList
-                                                                          .contains(details
+                                                          decoration: BoxDecoration(
+                                                              gradient: controllerWork
+                                                                      .defSelectedList
+                                                                      .contains(
+                                                                          details
                                                                               .date)
-                                                                      ? LinearGradient(
-                                                                          colors:
-                                                                              ColorUtilsGradient.kTintGradient,
-                                                                          begin: Alignment.topCenter,
-                                                                          end: Alignment.bottomCenter,
-                                                                          stops: [
-                                                                              0.0,
-                                                                              0.7
-                                                                            ])
-                                                                      : LinearGradient(
-                                                                          colors: [
-                                                                              Colors.transparent,
-                                                                              Colors.transparent
-                                                                            ]),
-                                                                  shape: BoxShape
-                                                                      .circle),
+                                                                  ? LinearGradient(
+                                                                      colors: ColorUtilsGradient
+                                                                          .kTintGradient,
+                                                                      begin: Alignment.topCenter,
+                                                                      end: Alignment.bottomCenter,
+                                                                      stops: [
+                                                                          0.0,
+                                                                          0.7
+                                                                        ])
+                                                                  : LinearGradient(
+                                                                      colors: [
+                                                                          Colors
+                                                                              .transparent,
+                                                                          Colors
+                                                                              .transparent
+                                                                        ]),
+                                                              shape: BoxShape
+                                                                  .circle),
                                                           child: Text(
                                                               details.date.day
                                                                   .toString(),
@@ -955,8 +948,13 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                               .date)
                                                                   ? FontTextStyle
                                                                       .kBlack18w600Roboto
-                                                                  : FontTextStyle
-                                                                      .kWhite17W400Roboto),
+                                                                  : DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+                                                                          .isAfter(details
+                                                                              .date)
+                                                                      ? FontTextStyle
+                                                                          .kGrey18BoldRoboto
+                                                                      : FontTextStyle
+                                                                          .kWhite17W400Roboto),
                                                         ),
                                                       );
                                                     },

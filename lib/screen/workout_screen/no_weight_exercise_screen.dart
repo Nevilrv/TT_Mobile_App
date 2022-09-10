@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_timer/simple_timer.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/home_screen.dart';
@@ -16,6 +17,8 @@ import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
+
+import '../../repo/training_plan_repo/exercise_by_id_repo.dart';
 
 // ignore: must_be_immutable
 class NoWeightExerciseScreen extends StatefulWidget {
@@ -79,49 +82,84 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
-      if (controller.apiResponse.status == Status.LOADING) {
-        return ColoredBox(
-          color: ColorUtils.kBlack,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: ColorUtils.kTint,
+    return GetBuilder<UserWorkoutsDateViewModel>(builder: (controllerUSD) {
+      return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
+        if (controller.apiResponse.status == Status.LOADING) {
+          return ColoredBox(
+            color: ColorUtils.kBlack,
+            child: Center(
+              child: CircularProgressIndicator(
+                color: ColorUtils.kTint,
+              ),
             ),
-          ),
-        );
-      }
-      if (controller.apiResponse.status == Status.COMPLETE) {
-        controller.responseExe = _exerciseByIdViewModel.apiResponse.data;
-
-        print(
-            'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
-        if (controller.responseExe!.data![0].exerciseType == "REPS") {
-          // toggleVideo();
-          return RepsScreen(
-            data: widget.data,
-            controller: controller,
-            workoutId: widget.workoutId,
-          );
-        } else if (controller.responseExe!.data![0].exerciseType == "TIME") {
-          return TimeScreen(
-            data: widget.data,
-            controller: controller,
-            workoutId: widget.workoutId,
-          );
-        } else if (controller.responseExe!.data![0].exerciseType ==
-            "WEIGHTED") {
-          return WeightedCounter(
-            data: widget.data,
-            controller: controller,
-            workoutId: widget.workoutId,
           );
         }
-        if (controller.responseExe!.data![0].exerciseType == "SUPERSET") {
-          return SuperSet(
-            data: widget.data,
-            controller: controller,
-            workoutId: widget.workoutId,
-          );
+        if (controller.apiResponse.status == Status.COMPLETE) {
+          controller.responseExe = _exerciseByIdViewModel.apiResponse.data;
+          // print(
+          //     'condition ===================== ${controllerUSD.exeIdCounter == controllerUSD.exerciseId.length}');
+          // print(
+          //     'id counter ===================== ${controllerUSD.exeIdCounter}');
+          // print(
+          //     'id length ===================== ${controllerUSD.exerciseId.length}');
+          // print(
+          //     'superset id  ===================== ${controllerUSD.supersetExerciseId}');
+          // print(
+          //     'exercise  id  ===================== ${controllerUSD.exerciseId}');
+          //
+          // print(
+          //     'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
+          if (controllerUSD.exeIdCounter == controllerUSD.exerciseId.length) {
+            if (controllerUSD.supersetExerciseId.isNotEmpty ||
+                controllerUSD.supersetExerciseId != []) {
+              return SuperSet(
+                data: widget.data,
+                controller: controller,
+                workoutId: widget.workoutId,
+              );
+            } else {
+              return ColoredBox(
+                color: ColorUtils.kBlack,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: ColorUtils.kTint,
+                  ),
+                ),
+              );
+            }
+          } else {
+            if (controller.responseExe!.data![0].exerciseType == "REPS") {
+              // toggleVideo();
+              return RepsScreen(
+                data: widget.data,
+                controller: controller,
+                workoutId: widget.workoutId,
+              );
+            } else if (controller.responseExe!.data![0].exerciseType ==
+                "TIME") {
+              return TimeScreen(
+                data: widget.data,
+                controller: controller,
+                workoutId: widget.workoutId,
+              );
+            } else if (controller.responseExe!.data![0].exerciseType ==
+                "WEIGHTED") {
+              return WeightedCounter(
+                data: widget.data,
+                controller: controller,
+                workoutId: widget.workoutId,
+              );
+            } else {
+              return ColoredBox(
+                color: ColorUtils.kBlack,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: ColorUtils.kTint,
+                  ),
+                ),
+              );
+            }
+          }
         } else {
           return ColoredBox(
             color: ColorUtils.kBlack,
@@ -132,16 +170,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
             ),
           );
         }
-      } else {
-        return ColoredBox(
-          color: ColorUtils.kBlack,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: ColorUtils.kTint,
-            ),
-          ),
-        );
-      }
+      });
     });
   }
 }
@@ -364,7 +393,6 @@ class _RepsScreenState extends State<RepsScreen> {
                       //         )),
                       //   ),
                       // ),
-
                       Container(
                         width: Get.width * 0.7,
                         child: Center(
@@ -414,27 +442,25 @@ class _RepsScreenState extends State<RepsScreen> {
                       SizedBox(
                         height: Get.height * 0.05,
                       ),
-                      GetBuilder<SaveUserCustomizedExerciseViewModel>(
-                          builder: (controllerSave) {
-                        return ListView.builder(
-                            physics: BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(
-                                top: 0,
-                                right: Get.width * .06,
-                                left: Get.width * .06),
-                            itemCount: int.parse(widget
-                                .controller!.responseExe!.data![0].exerciseSets
-                                .toString()),
-                            itemBuilder: (_, index) {
-                              return NoWeightedCounter(
-                                counter: int.parse(
-                                    '${widget.controller!.responseExe!.data![0].exerciseReps}'),
-                                repsNo:
-                                    '${widget.controller!.responseExe!.data![0].exerciseReps}',
-                              );
-                            });
-                      }),
+                      ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(
+                              top: 0,
+                              right: Get.width * .06,
+                              left: Get.width * .06),
+                          itemCount: int.parse(widget
+                              .controller!.responseExe!.data![0].exerciseSets
+                              .toString()),
+                          itemBuilder: (_, index) {
+                            return NoWeightedCounter(
+                              counter: int.parse(
+                                  '${widget.controller!.responseExe!.data![0].exerciseReps}'),
+                              repsNo:
+                                  '${widget.controller!.responseExe!.data![0].exerciseReps}',
+                            );
+                          }),
+
                       Spacer(),
                       Padding(
                         padding:
@@ -470,22 +496,30 @@ class _RepsScreenState extends State<RepsScreen> {
                                       widget.controller!.apiResponse.data;
                                 }
                               }
-                              if (_userWorkoutsDateViewModel.exeIdCounter ==
-                                  _userWorkoutsDateViewModel
-                                      .exerciseId.length) {
-                                Get.to(ShareProgressScreen(
-                                  exeData:
-                                      widget.controller!.responseExe!.data!,
-                                  data: widget.data,
-                                  workoutId: widget.workoutId,
-                                ));
-                                _userWorkoutsDateViewModel.isFirst = false;
+
+                              if (_userWorkoutsDateViewModel
+                                  .supersetExerciseId.isEmpty) {
+                                if (_userWorkoutsDateViewModel.exeIdCounter ==
+                                    _userWorkoutsDateViewModel
+                                        .exerciseId.length) {
+                                  Get.to(ShareProgressScreen(
+                                    exeData:
+                                        widget.controller!.responseExe!.data!,
+                                    data: widget.data,
+                                    workoutId: widget.workoutId,
+                                  ));
+                                  _userWorkoutsDateViewModel.isFirst = false;
+                                }
                               }
                             },
-                            name: widget.controller!.responseExe!.data![0]
-                                        .exerciseId ==
-                                    _userWorkoutsDateViewModel.exerciseId.last
-                                ? 'Save Exercise'
+                            name: _userWorkoutsDateViewModel
+                                    .supersetExerciseId.isEmpty
+                                ? widget.controller!.responseExe!.data![0]
+                                            .exerciseId ==
+                                        _userWorkoutsDateViewModel
+                                            .exerciseId.last
+                                    ? 'Save Exercise'
+                                    : 'Next Exercise'
                                 : 'Next Exercise'),
                       ),
                       SizedBox(
@@ -493,6 +527,7 @@ class _RepsScreenState extends State<RepsScreen> {
                       ),
                     ])
               : SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -627,22 +662,29 @@ class _RepsScreenState extends State<RepsScreen> {
                                         widget.controller!.apiResponse.data;
                                   }
                                 }
-                                if (_userWorkoutsDateViewModel.exeIdCounter ==
-                                    _userWorkoutsDateViewModel
-                                        .exerciseId.length) {
-                                  Get.to(ShareProgressScreen(
-                                    exeData:
-                                        widget.controller!.responseExe!.data!,
-                                    data: widget.data,
-                                    workoutId: widget.workoutId,
-                                  ));
-                                  _userWorkoutsDateViewModel.isFirst = false;
+                                if (_userWorkoutsDateViewModel
+                                    .supersetExerciseId.isEmpty) {
+                                  if (_userWorkoutsDateViewModel.exeIdCounter ==
+                                      _userWorkoutsDateViewModel
+                                          .exerciseId.length) {
+                                    Get.to(ShareProgressScreen(
+                                      exeData:
+                                          widget.controller!.responseExe!.data!,
+                                      data: widget.data,
+                                      workoutId: widget.workoutId,
+                                    ));
+                                    _userWorkoutsDateViewModel.isFirst = false;
+                                  }
                                 }
                               },
-                              name: widget.controller!.responseExe!.data![0]
-                                          .exerciseId ==
-                                      _userWorkoutsDateViewModel.exerciseId.last
-                                  ? 'Save Exercise'
+                              name: _userWorkoutsDateViewModel
+                                      .supersetExerciseId.isEmpty
+                                  ? widget.controller!.responseExe!.data![0]
+                                              .exerciseId ==
+                                          _userWorkoutsDateViewModel
+                                              .exerciseId.last
+                                      ? 'Save Exercise'
+                                      : 'Next Exercise'
                                   : 'Next Exercise'),
                         ),
                         SizedBox(
@@ -988,7 +1030,9 @@ class _TimeScreenState extends State<TimeScreen>
                 width: Get.height * .23,
                 margin: EdgeInsets.symmetric(vertical: 10),
                 child: SimpleTimer(
-                  duration: Duration(seconds: 10),
+                  duration: Duration(
+                      seconds: int.parse(
+                          "${widget.controller!.responseExe!.data![0].exerciseTime}")),
                   controller: _timerController,
                   timerStyle: _timerStyle,
                   progressTextFormatter: (format) {
@@ -1131,9 +1175,11 @@ class _TimeScreenState extends State<TimeScreen>
                         _userWorkoutsDateViewModel.isHold = false;
                       }
                     },
-                    name: widget.controller!.responseExe!.data![0].exerciseId ==
-                            _userWorkoutsDateViewModel.exerciseId.last
-                        ? 'Finish and Log Workout'
+                    name: _userWorkoutsDateViewModel.supersetExerciseId.isEmpty
+                        ? widget.controller!.responseExe!.data![0].exerciseId ==
+                                _userWorkoutsDateViewModel.exerciseId.last
+                            ? 'Save Exercise'
+                            : 'Next Exercise'
                         : 'Next Exercise'),
               ),
               SizedBox(
@@ -1173,6 +1219,8 @@ class WeightedCounter extends StatefulWidget {
 class _WeightedCounterState extends State<WeightedCounter> {
   // SaveUserCustomizedExerciseViewModel _customizedExerciseViewModel =
   //     Get.put(SaveUserCustomizedExerciseViewModel());
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
 
   @override
   void initState() {
@@ -1210,262 +1258,470 @@ class _WeightedCounterState extends State<WeightedCounter> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () async {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
+    return WillPopScope(
+      onWillPop: () async {
+        _userWorkoutsDateViewModel.getBackId(
+            counter: _userWorkoutsDateViewModel.exeIdCounter);
+        if (_userWorkoutsDateViewModel.exeIdCounter <
+            _userWorkoutsDateViewModel.exerciseId.length) {
+          await widget.controller!.getExerciseByIdDetails(
+              id: _userWorkoutsDateViewModel
+                  .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+          if (widget.controller!.apiResponse.status == Status.LOADING) {
+            Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (widget.controller!.apiResponse.status == Status.COMPLETE) {
+            widget.controller!.responseExe =
+                widget.controller!.apiResponse.data;
+          }
+        }
+        if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+          _userWorkoutsDateViewModel.isFirst = true;
+        }
+        if (_userWorkoutsDateViewModel.isFirst == true) {
+          if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+            Get.back();
+          }
+          if (_userWorkoutsDateViewModel.isHold == true) {
+            _userWorkoutsDateViewModel.isHold = false;
+            _userWorkoutsDateViewModel.isFirst = false;
+            Get.back();
+          } else {
+            _userWorkoutsDateViewModel.isHold = true;
+          }
+        }
+
+        return Future.value(false);
+      },
+      child: Scaffold(
         backgroundColor: ColorUtils.kBlack,
-        title: Text('${widget.controller!.responseExe!.data![0].exerciseTitle}',
-            style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.offAll(HomeScreen());
+        appBar: AppBar(
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () async {
+                _userWorkoutsDateViewModel.getBackId(
+                    counter: _userWorkoutsDateViewModel.exeIdCounter);
+                if (_userWorkoutsDateViewModel.exeIdCounter <
+                    _userWorkoutsDateViewModel.exerciseId.length) {
+                  await widget.controller!.getExerciseByIdDetails(
+                      id: _userWorkoutsDateViewModel
+                          .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+                  if (widget.controller!.apiResponse.status == Status.LOADING) {
+                    Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (widget.controller!.apiResponse.status ==
+                      Status.COMPLETE) {
+                    widget.controller!.responseExe =
+                        widget.controller!.apiResponse.data;
+                  }
+                }
+                if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+                  _userWorkoutsDateViewModel.isFirst = true;
+                }
+                if (_userWorkoutsDateViewModel.isFirst == true) {
+                  if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+                    print('back........1');
+                    print('greater one ........false call');
+
+                    Get.back();
+                  }
+                  if (_userWorkoutsDateViewModel.isHold == true) {
+                    print('back........2');
+                    print('hold true........call');
+
+                    _userWorkoutsDateViewModel.isHold = false;
+                    _userWorkoutsDateViewModel.isFirst = false;
+                    Get.back();
+                  } else {
+                    _userWorkoutsDateViewModel.isHold = true;
+                  }
+                }
               },
-              child: Text(
-                'Quit',
-                style: FontTextStyle.kTine16W400Roboto,
-              ))
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: Get.width * .06, vertical: Get.height * .02),
-            child: Column(
+              icon: Icon(
+                Icons.arrow_back_ios_sharp,
+                color: ColorUtils.kTint,
+              )),
+          backgroundColor: ColorUtils.kBlack,
+          title: Text(
+              '${widget.controller!.responseExe!.data![0].exerciseTitle}',
+              style: FontTextStyle.kWhite16BoldRoboto),
+          centerTitle: true,
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.offAll(HomeScreen());
+                },
+                child: Text(
+                  'Quit',
+                  style: FontTextStyle.kTine16W400Roboto,
+                ))
+          ],
+        ),
+        // body:
+        body: int.parse(widget.controller!.responseExe!.data![0].exerciseSets
+                    .toString()) <=
+                4
+            ? Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    width: Get.width * 0.7,
-                    child: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              '${widget.controller!.responseExe!.data![0].exerciseTitle}',
-                              style: FontTextStyle.kWhite24BoldRoboto,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 3,
-                              textAlign: TextAlign.center,
+                    Container(
+                      width: Get.width * 0.7,
+                      child: Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                '${widget.controller!.responseExe!.data![0].exerciseTitle}',
+                                style: FontTextStyle.kWhite24BoldRoboto,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () async {
-                              log('hello...');
-                            },
-                            child: Image.asset(
-                              AppIcons.play,
-                              height: Get.height * 0.03,
-                              width: Get.height * 0.03,
-                              color: ColorUtils.kTint,
+                            SizedBox(
+                              width: 10,
                             ),
-                          )
-                        ],
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(() => ExerciseDetailPage(
+                                    exerciseId: widget.controller!.responseExe!
+                                        .data![0].exerciseId!,
+                                    isFromExercise: true));
+                              },
+                              child: Image.asset(
+                                AppIcons.play,
+                                height: Get.height * 0.03,
+                                width: Get.height * 0.03,
+                                color: ColorUtils.kTint,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.015,
-                  ),
-                  Text(
-                      '${widget.controller!.responseExe!.data![0].exerciseSets} sets of ${widget.controller!.responseExe!.data![0].exerciseReps} reps',
-                      style: FontTextStyle.kLightGray16W300Roboto.copyWith(
-                          fontSize: Get.height * 0.023,
-                          color: Colors.white.withOpacity(0.8),
-                          fontWeight: FontWeight.w300)),
-                  SizedBox(
-                    child: ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: 3,
-                        separatorBuilder: (_, index) {
-                          return Container(
-                            alignment: Alignment.center,
-                            height: Get.height * .03,
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                                color: ColorUtils.kGray,
-                                borderRadius: BorderRadius.circular(6)),
-                            child: Text(
-                                "${widget.controller!.responseExe!.data![0].exerciseRest} Seconds Rest",
-                                style: FontTextStyle.kWhite17W400Roboto),
-                          );
-                        },
-                        itemBuilder: (_, index) {
-                          return Stack(
-                            alignment: Alignment.topRight,
+                    SizedBox(
+                      height: Get.height * 0.015,
+                    ),
+                    Text(
+                        '${widget.controller!.responseExe!.data![0].exerciseSets} sets of ${widget.controller!.responseExe!.data![0].exerciseReps} reps',
+                        style: FontTextStyle.kLightGray16W300Roboto.copyWith(
+                            fontSize: Get.height * 0.023,
+                            color: Colors.white.withOpacity(0.8),
+                            fontWeight: FontWeight.w300)),
+                    SizedBox(
+                      height: Get.height * 0.05,
+                    ),
+                    SizedBox(
+                      child: ListView.separated(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          padding: EdgeInsets.only(
+                              top: 0,
+                              right: Get.width * .06,
+                              left: Get.width * .06),
+                          itemCount: int.parse(widget
+                              .controller!.responseExe!.data![0].exerciseSets
+                              .toString()),
+                          separatorBuilder: (_, index) {
+                            return Container(
+                              alignment: Alignment.center,
+                              height: Get.height * .03,
+                              width: Get.width,
+                              decoration: BoxDecoration(
+                                  color: ColorUtils.kGray,
+                                  borderRadius: BorderRadius.circular(6)),
+                              child: Text(
+                                  "${widget.controller!.responseExe!.data![0].exerciseRest} Seconds Rest",
+                                  style: FontTextStyle.kWhite17W400Roboto),
+                            );
+                          },
+                          itemBuilder: (_, index) {
+                            return Stack(
+                              alignment: Alignment.topRight,
+                              children: [
+                                WeightedCounterCard(
+                                  counter: int.parse(
+                                      '${widget.controller!.responseExe!.data![0].exerciseReps}'),
+                                  repsNo:
+                                      '${widget.controller!.responseExe!.data![0].exerciseReps}',
+                                ),
+                                Positioned(
+                                  top: Get.height * .01,
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    height: Get.height * .027,
+                                    width: Get.height * .09,
+                                    decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                            colors: colors[0],
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter),
+                                        borderRadius: BorderRadius.only(
+                                            topRight: Radius.circular(6),
+                                            bottomLeft: Radius.circular(6))),
+                                    child: Text('RIR 0-1',
+                                        style: FontTextStyle.kWhite12BoldRoboto
+                                            .copyWith(
+                                                fontWeight: FontWeight.w500)),
+                                  ),
+                                )
+                              ],
+                            );
+                          }),
+                    ),
+                    // SizedBox(
+                    //   height: Get.height * 0.05,
+                    // ),
+                    Spacer(),
+                    // isShow == false
+                    //     ? SizedBox(height: Get.height * .25)
+                    //     : SizedBox(height: Get.height * .025),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: Get.width * .06),
+                      child: commonNavigationButton(
+                          onTap: () async {
+                            _userWorkoutsDateViewModel.getExeId(
+                                counter:
+                                    _userWorkoutsDateViewModel.exeIdCounter);
+                            if (_userWorkoutsDateViewModel.exeIdCounter <
+                                _userWorkoutsDateViewModel.exerciseId.length) {
+                              if (_userWorkoutsDateViewModel.exeIdCounter > 0) {
+                                _userWorkoutsDateViewModel.isGreaterOne = true;
+                                print(
+                                    "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                              }
+                              await widget.controller!.getExerciseByIdDetails(
+                                  id: _userWorkoutsDateViewModel.exerciseId[
+                                      _userWorkoutsDateViewModel.exeIdCounter]);
+                              if (widget.controller!.apiResponse.status ==
+                                  Status.LOADING) {
+                                Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              if (widget.controller!.apiResponse.status ==
+                                  Status.COMPLETE) {
+                                widget.controller!.responseExe =
+                                    widget.controller!.apiResponse.data;
+                              }
+                            }
+
+                            if (_userWorkoutsDateViewModel
+                                .supersetExerciseId.isEmpty) {
+                              if (_userWorkoutsDateViewModel.exeIdCounter ==
+                                  _userWorkoutsDateViewModel
+                                      .exerciseId.length) {
+                                Get.to(ShareProgressScreen(
+                                  exeData:
+                                      widget.controller!.responseExe!.data!,
+                                  data: widget.data,
+                                  workoutId: widget.workoutId,
+                                ));
+                                _userWorkoutsDateViewModel.isFirst = false;
+                              }
+                            }
+                          },
+                          name: _userWorkoutsDateViewModel
+                                  .supersetExerciseId.isEmpty
+                              ? widget.controller!.responseExe!.data![0]
+                                          .exerciseId ==
+                                      _userWorkoutsDateViewModel.exerciseId.last
+                                  ? 'Save Exercise'
+                                  : 'Next Exercise'
+                              : 'Next Exercise'),
+                    ),
+                    SizedBox(height: Get.height * .04),
+                  ])
+            : SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: Get.width * 0.7,
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              WeightedCounterCard(
-                                counter: int.parse(
-                                    '${widget.controller!.responseExe!.data![0].exerciseReps}'),
-                                repsNo:
-                                    '${widget.controller!.responseExe!.data![0].exerciseReps}',
+                              Flexible(
+                                child: Text(
+                                  '${widget.controller!.responseExe!.data![0].exerciseTitle}',
+                                  style: FontTextStyle.kWhite24BoldRoboto,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 3,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                              Positioned(
-                                top: Get.height * .01,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  height: Get.height * .027,
-                                  width: Get.height * .09,
-                                  decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                          colors: colors[index],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter),
-                                      borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(6),
-                                          bottomLeft: Radius.circular(6))),
-                                  child: Text('RIR 0-1',
-                                      style: FontTextStyle.kWhite12BoldRoboto
-                                          .copyWith(
-                                              fontWeight: FontWeight.w500)),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Get.to(() => ExerciseDetailPage(
+                                      exerciseId: widget.controller!
+                                          .responseExe!.data![0].exerciseId!,
+                                      isFromExercise: true));
+                                },
+                                child: Image.asset(
+                                  AppIcons.play,
+                                  height: Get.height * 0.03,
+                                  width: Get.height * 0.03,
+                                  color: ColorUtils.kTint,
                                 ),
                               )
                             ],
-                          );
-                        }),
-                  ),
-                  // isShow == false
-                  //     ? SizedBox(height: Get.height * .25)
-                  //     : SizedBox(height: Get.height * .025),
-                  commonNavigationButton(
-                      onTap: () async {
-                        //   print(
-                        //       'Save Exercise pressed!!!');
-                        //
-                        //   setState(() {
-                        //     loader = true;
-                        //   });
-                        //
-                        //   print(
-                        //       'loader ----------- $loader');
-                        //
-                        //   print(
-                        //       'counter out ----------------- $counterReps');
-                        //   if (counterReps <= 0) {
-                        //     Get.showSnackbar(GetSnackBar(
-                        //       message:
-                        //           'Please set reps more than 0',
-                        //       duration:
-                        //           Duration(seconds: 2),
-                        //     ));
-                        //   }
-                        //
-                        //   if (counterReps != 0 &&
-                        //       counterReps > 0) {
-                        //     print(
-                        //         'counter ----------------- $counterReps');
-                        //     SaveUserCustomizedExerciseRequestModel
-                        //         _request =
-                        //         SaveUserCustomizedExerciseRequestModel();
-                        //     _request.userId =
-                        //         PreferenceManager
-                        //             .getUId();
-                        //     _request.exerciseId =
-                        //         widget.data[0].exerciseId;
-                        //     _request.reps =
-                        //         '$counterReps';
-                        //     _request.isCompleted = '1';
-                        //
-                        //     await controllerSave
-                        //         .saveUserCustomizedExerciseViewModel(
-                        //             _request);
-                        //
-                        //     if (controllerSave
-                        //             .apiResponse.status ==
-                        //         Status.COMPLETE) {
-                        //       SaveUserCustomizedExerciseResponseModel
-                        //           responseSave =
-                        //           controllerSave
-                        //               .apiResponse.data;
-                        //
-                        //       setState(() {
-                        //         loader = false;
-                        //       });
-                        //       if (responseSave.success ==
-                        //               true &&
-                        //           responseSave.data !=
-                        //               null) {
-                        //         if ('${widget.data[0].exerciseVideo}'
-                        //             .contains(
-                        //                 'www.youtube.com')) {
-                        //           _youTubePlayerController
-                        //               ?.pause();
-                        //         } else {
-                        //           _videoPlayerController
-                        //               ?.pause();
-                        //           _chewieController
-                        //               ?.pause();
-                        //         }
-                        //
-                        //         Get.back();
-                        //         setState(() {
-                        //           counterReps = 0;
-                        //         });
-                        //         Get.showSnackbar(
-                        //             GetSnackBar(
-                        //           message:
-                        //               '${responseSave.msg}',
-                        //           duration: Duration(
-                        //               seconds: 2),
-                        //         ));
-                        //       } else if (responseSave
-                        //                   .msg ==
-                        //               null ||
-                        //           responseSave.msg ==
-                        //                   "" &&
-                        //               responseSave.data ==
-                        //                   null ||
-                        //           responseSave.data ==
-                        //               "") {
-                        //         setState(() {
-                        //           loader = false;
-                        //         });
-                        //         Get.showSnackbar(
-                        //             GetSnackBar(
-                        //           message:
-                        //               '${responseSave.msg}',
-                        //           duration: Duration(
-                        //               seconds: 2),
-                        //         ));
-                        //       }
-                        //     } else if (controllerSave
-                        //             .apiResponse.status ==
-                        //         Status.ERROR) {
-                        //       setState(() {
-                        //         loader = false;
-                        //       });
-                        //       Get.showSnackbar(
-                        //           GetSnackBar(
-                        //         message:
-                        //             'Something went wrong !!! please try again !!!',
-                        //         duration:
-                        //             Duration(seconds: 2),
-                        //       ));
-                        //     }
-                        //   }
-                      },
-                      name: 'Next Exercise'),
-                  SizedBox(height: Get.height * .04),
-                ]),
-          ),
-        ]),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: Get.height * 0.015,
+                      ),
+                      Text(
+                          '${widget.controller!.responseExe!.data![0].exerciseSets} sets of ${widget.controller!.responseExe!.data![0].exerciseReps} reps',
+                          style: FontTextStyle.kLightGray16W300Roboto.copyWith(
+                              fontSize: Get.height * 0.023,
+                              color: Colors.white.withOpacity(0.8),
+                              fontWeight: FontWeight.w300)),
+                      SizedBox(
+                        height: Get.height * 0.05,
+                      ),
+                      SizedBox(
+                        child: ListView.separated(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: int.parse(widget
+                                .controller!.responseExe!.data![0].exerciseSets
+                                .toString()),
+                            padding: EdgeInsets.only(
+                                top: 0,
+                                right: Get.width * .06,
+                                left: Get.width * .06),
+                            separatorBuilder: (_, index) {
+                              return Container(
+                                alignment: Alignment.center,
+                                height: Get.height * .03,
+                                width: Get.width,
+                                decoration: BoxDecoration(
+                                    color: ColorUtils.kGray,
+                                    borderRadius: BorderRadius.circular(6)),
+                                child: Text(
+                                    "${widget.controller!.responseExe!.data![0].exerciseRest} Seconds Rest",
+                                    style: FontTextStyle.kWhite17W400Roboto),
+                              );
+                            },
+                            itemBuilder: (_, index) {
+                              return Stack(
+                                alignment: Alignment.topRight,
+                                children: [
+                                  WeightedCounterCard(
+                                    counter: int.parse(
+                                        '${widget.controller!.responseExe!.data![0].exerciseReps}'),
+                                    repsNo:
+                                        '${widget.controller!.responseExe!.data![0].exerciseReps}',
+                                  ),
+                                  Positioned(
+                                    top: Get.height * .01,
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      height: Get.height * .027,
+                                      width: Get.height * .09,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                              colors: colors[0],
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter),
+                                          borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(6),
+                                              bottomLeft: Radius.circular(6))),
+                                      child: Text('RIR 0-1',
+                                          style: FontTextStyle
+                                              .kWhite12BoldRoboto
+                                              .copyWith(
+                                                  fontWeight: FontWeight.w500)),
+                                    ),
+                                  )
+                                ],
+                              );
+                            }),
+                      ),
+                      // isShow == false
+                      //     ? SizedBox(height: Get.height * .25)
+                      //     : SizedBox(height: Get.height * .025),
+                      SizedBox(
+                        height: Get.height * 0.07,
+                      ),
+                      Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: Get.width * .06),
+                        child: commonNavigationButton(
+                            onTap: () async {
+                              _userWorkoutsDateViewModel.getExeId(
+                                  counter:
+                                      _userWorkoutsDateViewModel.exeIdCounter);
+                              if (_userWorkoutsDateViewModel.exeIdCounter <
+                                  _userWorkoutsDateViewModel
+                                      .exerciseId.length) {
+                                if (_userWorkoutsDateViewModel.exeIdCounter >
+                                    0) {
+                                  _userWorkoutsDateViewModel.isGreaterOne =
+                                      true;
+                                  print(
+                                      "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                }
+                                await widget.controller!.getExerciseByIdDetails(
+                                    id: _userWorkoutsDateViewModel.exerciseId[
+                                        _userWorkoutsDateViewModel
+                                            .exeIdCounter]);
+                                if (widget.controller!.apiResponse.status ==
+                                    Status.LOADING) {
+                                  Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                                if (widget.controller!.apiResponse.status ==
+                                    Status.COMPLETE) {
+                                  widget.controller!.responseExe =
+                                      widget.controller!.apiResponse.data;
+                                }
+                              }
+
+                              if (_userWorkoutsDateViewModel
+                                  .supersetExerciseId.isEmpty) {
+                                if (_userWorkoutsDateViewModel.exeIdCounter ==
+                                    _userWorkoutsDateViewModel
+                                        .exerciseId.length) {
+                                  Get.to(ShareProgressScreen(
+                                    exeData:
+                                        widget.controller!.responseExe!.data!,
+                                    data: widget.data,
+                                    workoutId: widget.workoutId,
+                                  ));
+                                  _userWorkoutsDateViewModel.isFirst = false;
+                                }
+                              }
+                            },
+                            name: _userWorkoutsDateViewModel
+                                    .supersetExerciseId.isEmpty
+                                ? widget.controller!.responseExe!.data![0]
+                                            .exerciseId ==
+                                        _userWorkoutsDateViewModel
+                                            .exerciseId.last
+                                    ? 'Save Exercise'
+                                    : 'Next Exercise'
+                                : 'Next Exercise'),
+                      ),
+                      SizedBox(height: Get.height * .04),
+                    ]),
+              ),
       ),
     );
   }
@@ -1485,6 +1741,11 @@ class SuperSet extends StatefulWidget {
 
 class _SuperSetState extends State<SuperSet>
     with SingleTickerProviderStateMixin {
+  ExerciseByIdViewModel _exerciseByIdViewModel =
+      Get.put(ExerciseByIdViewModel());
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
+
   List<String> exeName = [
     "Dead Lift",
     "Pull-ups",
@@ -1516,286 +1777,787 @@ class _SuperSetState extends State<SuperSet>
     super.initState();
   }
 
+  apiCallSuperSet({int? index}) async {
+    await _exerciseByIdViewModel.getExerciseByIdDetails(
+        id: _userWorkoutsDateViewModel.supersetExerciseId[index!]);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
+    return WillPopScope(
+      onWillPop: () async {
+        _userWorkoutsDateViewModel.getBackId(
+            counter: _userWorkoutsDateViewModel.exeIdCounter);
+        if (_userWorkoutsDateViewModel.exeIdCounter <
+            _userWorkoutsDateViewModel.exerciseId.length) {
+          await widget.controller!.getExerciseByIdDetails(
+              id: _userWorkoutsDateViewModel
+                  .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+          if (widget.controller!.apiResponse.status == Status.LOADING) {
+            Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (widget.controller!.apiResponse.status == Status.COMPLETE) {
+            widget.controller!.responseExe =
+                widget.controller!.apiResponse.data;
+          }
+        }
+        if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+          _userWorkoutsDateViewModel.isFirst = true;
+        }
+        if (_userWorkoutsDateViewModel.isFirst == true) {
+          if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+            Get.back();
+          }
+          if (_userWorkoutsDateViewModel.isHold == true) {
+            _userWorkoutsDateViewModel.isHold = false;
+            _userWorkoutsDateViewModel.isFirst = false;
+            Get.back();
+          } else {
+            _userWorkoutsDateViewModel.isHold = true;
+          }
+        }
+        return Future.value(false);
+      },
+      child: Scaffold(
         backgroundColor: ColorUtils.kBlack,
-        title: Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.offAll(HomeScreen());
-              },
-              child: Text(
-                'Quit',
-                style: FontTextStyle.kTine16W400Roboto,
-              ))
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: SizedBox(
-          width: Get.width,
-          child: Column(children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: Get.height * .027),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Superset',
-                    style: FontTextStyle.kWhite24BoldRoboto
-                        .copyWith(fontSize: Get.height * .03),
-                  ),
-                  SizedBox(height: Get.height * .015),
-                  Text('3 rounds', style: FontTextStyle.kLightGray18W300Roboto),
-                  SizedBox(height: Get.height * .008),
-                  Text('30 secs rest between rounds',
-                      style: FontTextStyle.kLightGray18W300Roboto),
-                ],
-              ),
-            ),
-            Container(
-              height: Get.height * .055,
-              width: Get.width * .33,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: ColorUtilsGradient.kGrayGradient,
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  borderRadius: BorderRadius.circular(6)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Round', style: FontTextStyle.kWhite18BoldRoboto),
-                  SizedBox(width: Get.width * .02),
-                  CircleAvatar(
-                      radius: Get.height * .019,
-                      backgroundColor: ColorUtils.kTint,
-                      child: Text(
-                        '1',
-                        style: FontTextStyle.kBlack20BoldRoboto,
-                      )),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: Get.height * .03,
-                  left: Get.height * .025,
-                  right: Get.height * .025),
-              child: SizedBox(
-                width: Get.width,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: exeName.length,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (_, index) {
-                      return exeName[index] != "Foam Roll Chest"
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('${exeName[index]}',
-                                        style: FontTextStyle.kWhite24BoldRoboto
-                                            .copyWith(
-                                          fontSize: Get.height * .026,
-                                        )),
-                                    SizedBox(width: Get.width * .03),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Image.asset(
-                                        AppIcons.play,
-                                        height: Get.height * 0.03,
-                                        width: Get.height * 0.03,
-                                        color: ColorUtils.kTint,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: Get.height * .005),
-                                Text(
-                                  '10 reps',
-                                  style: FontTextStyle.kLightGray18W300Roboto,
-                                ),
-                                SizedBox(height: Get.height * .0075),
-                                CounterCard(counter: counter),
-                                Divider(
-                                    height: Get.height * .06,
-                                    color: ColorUtils.kLightGray)
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('${exeName[index]}',
-                                        style: FontTextStyle.kWhite24BoldRoboto
-                                            .copyWith(
-                                          fontSize: Get.height * .026,
-                                        )),
-                                    SizedBox(width: Get.width * .03),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Image.asset(
-                                        AppIcons.play,
-                                        height: Get.height * 0.03,
-                                        width: Get.height * 0.03,
-                                        color: ColorUtils.kTint,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: Get.height * .005),
-                                Text(
-                                  '30 seconds each side',
-                                  style: FontTextStyle.kLightGray18W300Roboto,
-                                ),
-                                SizedBox(height: Get.height * .0075),
-                                Center(
-                                    child: Container(
-                                  height: Get.height * 0.18,
-                                  width: Get.height * 0.18,
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  child: SimpleTimer(
-                                    duration: Duration(seconds: 30),
-                                    controller: _timerController,
-                                    timerStyle: _timerStyle,
-                                    progressTextFormatter: (format) {
-                                      return formattedTime(
-                                          timeInSecond: format.inSeconds);
-                                    },
-                                    backgroundColor: ColorUtils.kGray,
-                                    progressIndicatorColor: ColorUtils.kTint,
-                                    progressIndicatorDirection:
-                                        _progressIndicatorDirection,
-                                    progressTextCountDirection:
-                                        _progressTextCountDirection,
-                                    progressTextStyle: FontTextStyle
-                                        .kWhite24BoldRoboto
-                                        .copyWith(fontSize: Get.height * 0.025),
-                                    strokeWidth: 15,
-                                    onStart: () {},
-                                    onEnd: () {
-                                      _timerController!.stop();
-                                    },
-                                  ),
-                                )),
-                                SizedBox(
-                                  height: Get.height * 0.02,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        print('Start Pressed');
-                                        _timerController!.start();
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        height: Get.height * .047,
-                                        width: Get.width * .25,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            stops: [0.0, 1.0],
-                                            colors: ColorUtilsGradient
-                                                .kTintGradient,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Start',
-                                          style: FontTextStyle
-                                              .kBlack18w600Roboto
-                                              .copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: Get.height * 0.02),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: Get.width * 0.05),
-                                    GestureDetector(
-                                      onTap: () {
-                                        print('Reset pressed ');
+        appBar: AppBar(
+          elevation: 0,
+          leading: IconButton(
+              onPressed: () async {
+                _userWorkoutsDateViewModel.getBackId(
+                    counter: _userWorkoutsDateViewModel.exeIdCounter);
+                if (_userWorkoutsDateViewModel.exeIdCounter <
+                    _userWorkoutsDateViewModel.exerciseId.length) {
+                  await widget.controller!.getExerciseByIdDetails(
+                      id: _userWorkoutsDateViewModel
+                          .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+                  if (widget.controller!.apiResponse.status == Status.LOADING) {
+                    Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  if (widget.controller!.apiResponse.status ==
+                      Status.COMPLETE) {
+                    widget.controller!.responseExe =
+                        widget.controller!.apiResponse.data;
+                  }
+                }
+                if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+                  _userWorkoutsDateViewModel.isFirst = true;
+                }
+                if (_userWorkoutsDateViewModel.isFirst == true) {
+                  if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+                    print('back........1');
+                    print('greater one ........false call');
 
-                                        _timerController!.reset();
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        height: Get.height * .047,
-                                        width: Get.width * .25,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            border: Border.all(
-                                                color: ColorUtils.kTint,
-                                                width: 1.5)),
-                                        child: Text(
-                                          'Reset',
-                                          style:
-                                              FontTextStyle.kTine17BoldRoboto,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                    height: Get.height * .06,
-                                    color: ColorUtils.kLightGray)
-                              ],
-                            );
-                    }),
+                    Get.back();
+                  }
+                  if (_userWorkoutsDateViewModel.isHold == true) {
+                    print('back........2');
+                    print('hold true........call');
+
+                    _userWorkoutsDateViewModel.isHold = false;
+                    _userWorkoutsDateViewModel.isFirst = false;
+                    Get.back();
+                  } else {
+                    _userWorkoutsDateViewModel.isHold = true;
+                  }
+                }
+              },
+              icon: Icon(
+                Icons.arrow_back_ios_sharp,
+                color: ColorUtils.kTint,
+              )),
+          backgroundColor: ColorUtils.kBlack,
+          title: Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
+          centerTitle: true,
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Get.offAll(HomeScreen());
+                },
+                child: Text(
+                  'Quit',
+                  style: FontTextStyle.kTine16W400Roboto,
+                ))
+          ],
+        ),
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: SizedBox(
+            width: Get.width,
+            child: Column(children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: Get.height * .027),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Superset',
+                      style: FontTextStyle.kWhite24BoldRoboto
+                          .copyWith(fontSize: Get.height * .03),
+                    ),
+                    SizedBox(height: Get.height * .015),
+                    Text('3 rounds',
+                        style: FontTextStyle.kLightGray18W300Roboto),
+                    SizedBox(height: Get.height * .008),
+                    Text('30 secs rest between rounds',
+                        style: FontTextStyle.kLightGray18W300Roboto),
+                  ],
+                ),
               ),
-            ),
-            Container(
-                margin: EdgeInsets.only(
-                    top: Get.height * .01,
-                    bottom: Get.height * .04,
+              Container(
+                height: Get.height * .055,
+                width: Get.width * .33,
+                decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: ColorUtilsGradient.kGrayGradient,
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter),
+                    borderRadius: BorderRadius.circular(6)),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Round', style: FontTextStyle.kWhite18BoldRoboto),
+                    SizedBox(width: Get.width * .02),
+                    CircleAvatar(
+                        radius: Get.height * .019,
+                        backgroundColor: ColorUtils.kTint,
+                        child: Text(
+                          '1',
+                          style: FontTextStyle.kBlack20BoldRoboto,
+                        )),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                    top: Get.height * .03,
                     left: Get.height * .025,
                     right: Get.height * .025),
-                alignment: Alignment.center,
-                width: Get.width,
-                height: Get.height * .055,
-                decoration: BoxDecoration(
-                    color: ColorUtils.kSaperatedGray,
-                    borderRadius: BorderRadius.circular(6)),
-                child: Text(
-                  '30 second rest',
-                  style: FontTextStyle.kWhite17W400Roboto,
-                )),
-            Padding(
-                padding: EdgeInsets.only(
-                    left: Get.height * .03,
-                    right: Get.height * .03,
-                    bottom: Get.height * .05),
-                child: commonNavigationButton(
-                    name: "Next Round",
-                    onTap: () {
-                      Get.to(SuperSetSecondScreen());
-                    }))
-          ]),
+                child: SizedBox(
+                  width: Get.width,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount:
+                          _userWorkoutsDateViewModel.supersetExerciseId.length,
+                      // itemCount: exeName.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        // apiCallSuperSet(index: index);
+
+                        print(
+                            'index ================= ${_userWorkoutsDateViewModel.supersetExerciseId.length}');
+                        // _exerciseByIdViewModel.getExerciseByIdDetails(
+                        //     id: _userWorkoutsDateViewModel
+                        //         .supersetExerciseId[index]);
+                        // return SizedBox();
+                        return superSet(
+                            id: _userWorkoutsDateViewModel
+                                .supersetExerciseId[index]);
+                      }),
+                ),
+              ),
+              Container(
+                  margin: EdgeInsets.only(
+                      top: Get.height * .01,
+                      bottom: Get.height * .04,
+                      left: Get.height * .025,
+                      right: Get.height * .025),
+                  alignment: Alignment.center,
+                  width: Get.width,
+                  height: Get.height * .055,
+                  decoration: BoxDecoration(
+                      color: ColorUtils.kSaperatedGray,
+                      borderRadius: BorderRadius.circular(6)),
+                  child: Text(
+                    '30 second rest',
+                    style: FontTextStyle.kWhite17W400Roboto,
+                  )),
+              Padding(
+                  padding: EdgeInsets.only(
+                      left: Get.height * .03,
+                      right: Get.height * .03,
+                      bottom: Get.height * .05),
+                  child: commonNavigationButton(
+                      name: "Save Exercise",
+                      onTap: () {
+                        _timerController!.reset();
+
+                        // setState(() {
+                        //   totalRound = 0;
+                        // });
+                        Get.to(ShareProgressScreen(
+                          data: widget.data,
+                          exeData: widget.controller!.responseExe!.data!,
+                          workoutId: widget.workoutId,
+                        ));
+                      }))
+            ]),
+          ),
         ),
       ),
     );
   }
+
+  superSet({var id}) {
+    return FutureBuilder<ExerciseByIdResponseModel>(
+      future: ExerciseByIdRepo().exerciseByIdRepo(id: id),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          ExerciseByIdResponseModel response = snapshot.data!;
+
+          if (response.data![0].exerciseType == "REPS") {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text('${response.data![0].exerciseTitle}',
+                          style: FontTextStyle.kWhite24BoldRoboto.copyWith(
+                            fontSize: Get.height * .026,
+                          )),
+                    ),
+                    SizedBox(width: Get.width * .03),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => ExerciseDetailPage(
+                            exerciseId: id, isFromExercise: true));
+                      },
+                      child: Image.asset(
+                        AppIcons.play,
+                        height: Get.height * 0.03,
+                        width: Get.height * 0.03,
+                        color: ColorUtils.kTint,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Get.height * .005),
+                Text(
+                  '${response.data![0].exerciseReps} reps',
+                  style: FontTextStyle.kLightGray18W300Roboto,
+                ),
+                SizedBox(height: Get.height * .0075),
+                NoWeightedCounter(
+                    counter: int.parse("${response.data![0].exerciseReps}"),
+                    repsNo: "${response.data![0].exerciseReps}"),
+                Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
+              ],
+            );
+          } else if (response.data![0].exerciseType == "TIME") {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text('${response.data![0].exerciseTitle}',
+                          style: FontTextStyle.kWhite24BoldRoboto.copyWith(
+                            fontSize: Get.height * .026,
+                          )),
+                    ),
+                    SizedBox(width: Get.width * .03),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => ExerciseDetailPage(
+                            exerciseId: id, isFromExercise: true));
+                      },
+                      child: Image.asset(
+                        AppIcons.play,
+                        height: Get.height * 0.03,
+                        width: Get.height * 0.03,
+                        color: ColorUtils.kTint,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Get.height * .005),
+                Text(
+                  '${response.data![0].exerciseTime} seconds each side',
+                  style: FontTextStyle.kLightGray18W300Roboto,
+                ),
+                SizedBox(height: Get.height * .0075),
+                Center(
+                    child: Container(
+                  height: Get.height * 0.18,
+                  width: Get.height * 0.18,
+                  margin: EdgeInsets.symmetric(vertical: 10),
+                  child: SimpleTimer(
+                    duration: Duration(
+                        seconds:
+                            int.parse("${response.data![0].exerciseTime}")),
+                    controller: _timerController,
+                    timerStyle: _timerStyle,
+                    progressTextFormatter: (format) {
+                      return formattedTime(timeInSecond: format.inSeconds);
+                    },
+                    backgroundColor: ColorUtils.kGray,
+                    progressIndicatorColor: ColorUtils.kTint,
+                    progressIndicatorDirection: _progressIndicatorDirection,
+                    progressTextCountDirection: _progressTextCountDirection,
+                    progressTextStyle: FontTextStyle.kWhite24BoldRoboto
+                        .copyWith(fontSize: Get.height * 0.025),
+                    strokeWidth: 15,
+                    onStart: () {},
+                    onEnd: () {
+                      _timerController!.stop();
+                    },
+                  ),
+                )),
+                SizedBox(
+                  height: Get.height * 0.02,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        print('Start Pressed');
+                        _timerController!.start();
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: Get.height * .047,
+                        width: Get.width * .25,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(6),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            stops: [0.0, 1.0],
+                            colors: ColorUtilsGradient.kTintGradient,
+                          ),
+                        ),
+                        child: Text(
+                          'Start',
+                          style: FontTextStyle.kBlack18w600Roboto.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: Get.height * 0.02),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: Get.width * 0.05),
+                    GestureDetector(
+                      onTap: () {
+                        print('Reset pressed ');
+
+                        _timerController!.reset();
+                      },
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: Get.height * .047,
+                        width: Get.width * .25,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(
+                                color: ColorUtils.kTint, width: 1.5)),
+                        child: Text(
+                          'Reset',
+                          style: FontTextStyle.kTine17BoldRoboto,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
+              ],
+            );
+          } else if (response.data![0].exerciseType == "WEIGHTED") {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text('${response.data![0].exerciseTitle}',
+                          style: FontTextStyle.kWhite24BoldRoboto.copyWith(
+                            fontSize: Get.height * .026,
+                          )),
+                    ),
+                    SizedBox(width: Get.width * .03),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => ExerciseDetailPage(
+                            exerciseId: id, isFromExercise: true));
+                      },
+                      child: Image.asset(
+                        AppIcons.play,
+                        height: Get.height * 0.03,
+                        width: Get.height * 0.03,
+                        color: ColorUtils.kTint,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: Get.height * .005),
+                Text(
+                  '${response.data![0].exerciseReps} reps',
+                  style: FontTextStyle.kLightGray18W300Roboto,
+                ),
+                SizedBox(height: Get.height * .0075),
+                CounterCard(
+                  counter: 5,
+                ),
+                Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
+              ],
+            );
+          } else {
+            return SizedBox();
+          }
+        } else {
+          return SizedBox(
+            height: Get.height * .125,
+            width: Get.height * .125,
+            child: Center(
+              child: CircularProgressIndicator(color: ColorUtils.kTint),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  // GetBuilder<ExerciseByIdViewModel> superSet({var m}) {
+  //   _exerciseByIdViewModel.getExerciseByIdDetails(id: m);
+  //   return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
+  //     if (controller.apiResponse.status == Status.LOADING) {
+  //       return ColoredBox(
+  //         color: ColorUtils.kBlack,
+  //         child: Center(
+  //           child: CircularProgressIndicator(
+  //             color: ColorUtils.kTint,
+  //           ),
+  //         ),
+  //       );
+  //     }
+  //
+  //     if (controller.apiResponse.status == Status.COMPLETE) {
+  //       ExerciseByIdResponseModel response = controller.apiResponse.data;
+  //
+  //       if (response.data![0].exerciseType == "REPS") {
+  //         return Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Row(
+  //               children: [
+  //                 Text('${response.data![0].exerciseTitle}',
+  //                     style: FontTextStyle.kWhite24BoldRoboto.copyWith(
+  //                       fontSize: Get.height * .026,
+  //                     )),
+  //                 SizedBox(width: Get.width * .03),
+  //                 GestureDetector(
+  //                   onTap: () {},
+  //                   child: Image.asset(
+  //                     AppIcons.play,
+  //                     height: Get.height * 0.03,
+  //                     width: Get.height * 0.03,
+  //                     color: ColorUtils.kTint,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             SizedBox(height: Get.height * .005),
+  //             Text(
+  //               '10 reps',
+  //               style: FontTextStyle.kLightGray18W300Roboto,
+  //             ),
+  //             SizedBox(height: Get.height * .0075),
+  //             NoWeightedCounter(
+  //                 counter: int.parse("${response.data![0].exerciseReps}"),
+  //                 repsNo: '5'),
+  //             Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
+  //           ],
+  //         );
+  //
+  //       } else if (response.data![0].exerciseType == "TIME") {
+  //         return Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             Row(
+  //               children: [
+  //                 Text('${response.data![0].exerciseTitle}',
+  //                     style: FontTextStyle.kWhite24BoldRoboto.copyWith(
+  //                       fontSize: Get.height * .026,
+  //                     )),
+  //                 SizedBox(width: Get.width * .03),
+  //                 GestureDetector(
+  //                   onTap: () {},
+  //                   child: Image.asset(
+  //                     AppIcons.play,
+  //                     height: Get.height * 0.03,
+  //                     width: Get.height * 0.03,
+  //                     color: ColorUtils.kTint,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             SizedBox(height: Get.height * .005),
+  //             Text(
+  //               '30 seconds each side',
+  //               style: FontTextStyle.kLightGray18W300Roboto,
+  //             ),
+  //             SizedBox(height: Get.height * .0075),
+  //             Center(
+  //                 child: Container(
+  //               height: Get.height * 0.18,
+  //               width: Get.height * 0.18,
+  //               margin: EdgeInsets.symmetric(vertical: 10),
+  //               child: SimpleTimer(
+  //                 duration: Duration(seconds: 30),
+  //                 controller: _timerController,
+  //                 timerStyle: _timerStyle,
+  //                 progressTextFormatter: (format) {
+  //                   return formattedTime(timeInSecond: format.inSeconds);
+  //                 },
+  //                 backgroundColor: ColorUtils.kGray,
+  //                 progressIndicatorColor: ColorUtils.kTint,
+  //                 progressIndicatorDirection: _progressIndicatorDirection,
+  //                 progressTextCountDirection: _progressTextCountDirection,
+  //                 progressTextStyle: FontTextStyle.kWhite24BoldRoboto
+  //                     .copyWith(fontSize: Get.height * 0.025),
+  //                 strokeWidth: 15,
+  //                 onStart: () {},
+  //                 onEnd: () {
+  //                   _timerController!.stop();
+  //                 },
+  //               ),
+  //             )),
+  //             SizedBox(
+  //               height: Get.height * 0.02,
+  //             ),
+  //             Row(
+  //               mainAxisAlignment: MainAxisAlignment.center,
+  //               children: [
+  //                 GestureDetector(
+  //                   onTap: () {
+  //                     print('Start Pressed');
+  //                     _timerController!.start();
+  //                   },
+  //                   child: Container(
+  //                     alignment: Alignment.center,
+  //                     height: Get.height * .047,
+  //                     width: Get.width * .25,
+  //                     decoration: BoxDecoration(
+  //                       borderRadius: BorderRadius.circular(6),
+  //                       gradient: LinearGradient(
+  //                         begin: Alignment.topCenter,
+  //                         end: Alignment.bottomCenter,
+  //                         stops: [0.0, 1.0],
+  //                         colors: ColorUtilsGradient.kTintGradient,
+  //                       ),
+  //                     ),
+  //                     child: Text(
+  //                       'Start',
+  //                       style: FontTextStyle.kBlack18w600Roboto.copyWith(
+  //                           fontWeight: FontWeight.bold,
+  //                           fontSize: Get.height * 0.02),
+  //                     ),
+  //                   ),
+  //                 ),
+  //                 SizedBox(width: Get.width * 0.05),
+  //                 GestureDetector(
+  //                   onTap: () {
+  //                     print('Reset pressed ');
+  //
+  //                     _timerController!.reset();
+  //                   },
+  //                   child: Container(
+  //                     alignment: Alignment.center,
+  //                     height: Get.height * .047,
+  //                     width: Get.width * .25,
+  //                     decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(6),
+  //                         border:
+  //                             Border.all(color: ColorUtils.kTint, width: 1.5)),
+  //                     child: Text(
+  //                       'Reset',
+  //                       style: FontTextStyle.kTine17BoldRoboto,
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
+  //           ],
+  //         );
+  //       } else if (response.data![0].exerciseType == "WEIGHTED") {
+  //         return CounterCard(
+  //           counter: 5,
+  //         );
+  //       }
+  //     }
+  //     return SizedBox();
+  //     // });
+  //
+  //     // return exeName[index] != "Foam Roll Chest"
+  //     //     ?
+  //     // Column(
+  //     //         crossAxisAlignment: CrossAxisAlignment.start,
+  //     //         children: [
+  //     //           Row(
+  //     //             children: [
+  //     //               Text('${exeName[index]}',
+  //     //                   style: FontTextStyle
+  //     //                       .kWhite24BoldRoboto
+  //     //                       .copyWith(
+  //     //                     fontSize: Get.height * .026,
+  //     //                   )),
+  //     //               SizedBox(width: Get.width * .03),
+  //     //               GestureDetector(
+  //     //                 onTap: () {},
+  //     //                 child: Image.asset(
+  //     //                   AppIcons.play,
+  //     //                   height: Get.height * 0.03,
+  //     //                   width: Get.height * 0.03,
+  //     //                   color: ColorUtils.kTint,
+  //     //                 ),
+  //     //               ),
+  //     //             ],
+  //     //           ),
+  //     //           SizedBox(height: Get.height * .005),
+  //     //           Text(
+  //     //             '10 reps',
+  //     //             style: FontTextStyle.kLightGray18W300Roboto,
+  //     //           ),
+  //     //           SizedBox(height: Get.height * .0075),
+  //     //           CounterCard(counter: counter),
+  //     //           Divider(
+  //     //               height: Get.height * .06,
+  //     //               color: ColorUtils.kLightGray)
+  //     //         ],
+  //     //       )
+  //     //     : Column(
+  //     //         crossAxisAlignment: CrossAxisAlignment.start,
+  //     //         children: [
+  //     //           Row(
+  //     //             children: [
+  //     //               Text('${exeName[index]}',
+  //     //                   style: FontTextStyle
+  //     //                       .kWhite24BoldRoboto
+  //     //                       .copyWith(
+  //     //                     fontSize: Get.height * .026,
+  //     //                   )),
+  //     //               SizedBox(width: Get.width * .03),
+  //     //               GestureDetector(
+  //     //                 onTap: () {},
+  //     //                 child: Image.asset(
+  //     //                   AppIcons.play,
+  //     //                   height: Get.height * 0.03,
+  //     //                   width: Get.height * 0.03,
+  //     //                   color: ColorUtils.kTint,
+  //     //                 ),
+  //     //               ),
+  //     //             ],
+  //     //           ),
+  //     //           SizedBox(height: Get.height * .005),
+  //     //           Text(
+  //     //             '30 seconds each side',
+  //     //             style: FontTextStyle.kLightGray18W300Roboto,
+  //     //           ),
+  //     //           SizedBox(height: Get.height * .0075),
+  //     //           Center(
+  //     //               child: Container(
+  //     //             height: Get.height * 0.18,
+  //     //             width: Get.height * 0.18,
+  //     //             margin: EdgeInsets.symmetric(vertical: 10),
+  //     //             child: SimpleTimer(
+  //     //               duration: Duration(seconds: 30),
+  //     //               controller: _timerController,
+  //     //               timerStyle: _timerStyle,
+  //     //               progressTextFormatter: (format) {
+  //     //                 return formattedTime(
+  //     //                     timeInSecond: format.inSeconds);
+  //     //               },
+  //     //               backgroundColor: ColorUtils.kGray,
+  //     //               progressIndicatorColor: ColorUtils.kTint,
+  //     //               progressIndicatorDirection:
+  //     //                   _progressIndicatorDirection,
+  //     //               progressTextCountDirection:
+  //     //                   _progressTextCountDirection,
+  //     //               progressTextStyle: FontTextStyle
+  //     //                   .kWhite24BoldRoboto
+  //     //                   .copyWith(
+  //     //                       fontSize: Get.height * 0.025),
+  //     //               strokeWidth: 15,
+  //     //               onStart: () {},
+  //     //               onEnd: () {
+  //     //                 _timerController!.stop();
+  //     //               },
+  //     //             ),
+  //     //           )),
+  //     //           SizedBox(
+  //     //             height: Get.height * 0.02,
+  //     //           ),
+  //     //           Row(
+  //     //             mainAxisAlignment: MainAxisAlignment.center,
+  //     //             children: [
+  //     //               GestureDetector(
+  //     //                 onTap: () {
+  //     //                   print('Start Pressed');
+  //     //                   _timerController!.start();
+  //     //                 },
+  //     //                 child: Container(
+  //     //                   alignment: Alignment.center,
+  //     //                   height: Get.height * .047,
+  //     //                   width: Get.width * .25,
+  //     //                   decoration: BoxDecoration(
+  //     //                     borderRadius:
+  //     //                         BorderRadius.circular(6),
+  //     //                     gradient: LinearGradient(
+  //     //                       begin: Alignment.topCenter,
+  //     //                       end: Alignment.bottomCenter,
+  //     //                       stops: [0.0, 1.0],
+  //     //                       colors: ColorUtilsGradient
+  //     //                           .kTintGradient,
+  //     //                     ),
+  //     //                   ),
+  //     //                   child: Text(
+  //     //                     'Start',
+  //     //                     style: FontTextStyle
+  //     //                         .kBlack18w600Roboto
+  //     //                         .copyWith(
+  //     //                             fontWeight: FontWeight.bold,
+  //     //                             fontSize:
+  //     //                                 Get.height * 0.02),
+  //     //                   ),
+  //     //                 ),
+  //     //               ),
+  //     //               SizedBox(width: Get.width * 0.05),
+  //     //               GestureDetector(
+  //     //                 onTap: () {
+  //     //                   print('Reset pressed ');
+  //     //
+  //     //                   _timerController!.reset();
+  //     //                 },
+  //     //                 child: Container(
+  //     //                   alignment: Alignment.center,
+  //     //                   height: Get.height * .047,
+  //     //                   width: Get.width * .25,
+  //     //                   decoration: BoxDecoration(
+  //     //                       borderRadius:
+  //     //                           BorderRadius.circular(6),
+  //     //                       border: Border.all(
+  //     //                           color: ColorUtils.kTint,
+  //     //                           width: 1.5)),
+  //     //                   child: Text(
+  //     //                     'Reset',
+  //     //                     style:
+  //     //                         FontTextStyle.kTine17BoldRoboto,
+  //     //                   ),
+  //     //                 ),
+  //     //               ),
+  //     //             ],
+  //     //           ),
+  //     //           Divider(
+  //     //               height: Get.height * .06,
+  //     //               color: ColorUtils.kLightGray)
+  //     //         ],
+  //   });
+  // }
 }
 
 // ignore: must_be_immutable

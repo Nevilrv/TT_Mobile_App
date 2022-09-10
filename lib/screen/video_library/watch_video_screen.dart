@@ -488,7 +488,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                                       .videoDescription!
                                                                       .substring(
                                                                           0,
-                                                                          30) +
+                                                                          25) +
                                                                   ('...')
                                                               : response
                                                                   .data![index]

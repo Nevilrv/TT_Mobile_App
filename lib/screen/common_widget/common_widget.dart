@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
@@ -196,12 +195,6 @@ Html htmlToTextGoalSelected({String? data}) {
       ),
     },
   );
-}
-
-ClipRRect noDataLottie() {
-  return ClipRRect(
-      borderRadius: BorderRadius.circular(20),
-      child: Lottie.asset(AppImages.noData));
 }
 
 Widget noData() {
