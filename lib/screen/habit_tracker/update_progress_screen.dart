@@ -3,8 +3,6 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:percent_indicator/linear_percent_indicator.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/habit_tracker_request_model/get_habit_record_date_request_model.dart';
@@ -612,8 +610,8 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                               Text(
                                                 '${recordResponse!.data![index].habitName}'
                                                             .length >
-                                                        20
-                                                    ? '${recordResponse!.data![index].habitName!.substring(0, 19) + '..'}'
+                                                        16
+                                                    ? '${recordResponse!.data![index].habitName!.substring(0, 14) + '..'}'
                                                         .capitalizeFirst!
                                                     : '${recordResponse!.data![index].habitName}'
                                                         .capitalizeFirst!,

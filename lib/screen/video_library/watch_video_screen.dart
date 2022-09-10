@@ -474,21 +474,28 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        '${response.data![index].videoTitle}',
+                                                        '${response.data![index].videoTitle}'
+                                                                    .length >
+                                                                30
+                                                            ? '${response.data![index].videoTitle}'
+                                                                    .substring(
+                                                                        0, 28) +
+                                                                "..."
+                                                            : '${response.data![index].videoTitle}',
                                                         style: FontTextStyle
                                                             .kWhite17BoldRoboto,
                                                       ),
                                                       htmlToTextGrey(
                                                           data: '${response.data![index].videoDescription!}'
                                                                       .length >
-                                                                  30
+                                                                  25
                                                               ? response
                                                                       .data![
                                                                           index]
                                                                       .videoDescription!
                                                                       .substring(
                                                                           0,
-                                                                          25) +
+                                                                          23) +
                                                                   ('...')
                                                               : response
                                                                   .data![index]

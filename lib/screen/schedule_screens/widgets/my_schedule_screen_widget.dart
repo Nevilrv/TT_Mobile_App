@@ -89,6 +89,8 @@ Padding listViewTab(
                                   ),
                             trailing: InkWell(
                               onTap: () {
+                                log('-=-=-=--=-=-=-=-=-=-=-=-= Date > ${getEventForDay[index].date}');
+
                                 openBottomSheet(
                                     context: context,
                                     event: getEventForDay[index],
@@ -176,7 +178,7 @@ void openBottomSheet(
   Get.bottomSheet(
     Container(
       padding: const EdgeInsets.all(8),
-      height: Get.height * .5,
+      height: Get.height * .55,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(9.5), color: ColorUtils.kBlack),
       child: Column(
@@ -385,6 +387,11 @@ getExercisesId(String time) async {
       _userWorkoutsDateViewModel.supersetExerciseId.clear();
       _userWorkoutsDateViewModel.exerciseId.clear();
 
+      print(
+          'supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
+      print(
+          'exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+
       _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
 
       if (resp.data!.supersetExercisesIds! != [] ||
@@ -395,7 +402,10 @@ getExercisesId(String time) async {
         _userWorkoutsDateViewModel.supersetExerciseId = [];
       }
 
-      // _userWorkoutsDateViewModel.supersetExerciseId = ["2", "5", "7", "10"];
+      print(
+          'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
+      print(
+          'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
 
       await _exerciseByIdViewModel.getExerciseByIdDetails(
           id: _userWorkoutsDateViewModel
@@ -412,6 +422,7 @@ getExercisesId(String time) async {
           _workoutByIdViewModel.apiResponse.data;
 
       Get.to(() => WorkoutHomeScreen(
+            workoutId: workoutResponse.data![0].workoutId,
             exeData: exerciseResponse.data!,
             data: workoutResponse.data!,
           ));

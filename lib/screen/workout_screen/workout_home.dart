@@ -57,7 +57,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
     initializePlayer();
 
-    getExercisesId();
+    // getExercisesId();
   }
 
   @override
@@ -68,31 +68,30 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     super.dispose();
   }
 
-  getExercisesId() async {
-    print("called 123");
-    log("called 123");
-
-    await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
-        userId: PreferenceManager.getUId(),
-        date: DateTime.now().toString().split(" ").first);
-
-    if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      print("complete api call");
-      UserWorkoutsDateResponseModel resp =
-          _userWorkoutsDateViewModel.apiResponse.data;
-
-      log("--------------- dates ${resp.msg}");
-
-      _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
-
-      print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
-      // log("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
-
-      await _exerciseByIdViewModel.getExerciseByIdDetails(
-          id: _userWorkoutsDateViewModel
-              .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
-    }
-  }
+  // getExercisesId() async {
+  //   print("called 123");
+  //   log("called 123");
+  //
+  //   await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
+  //       userId: PreferenceManager.getUId(),
+  //       date: DateTime.now().toString().split(" ").first);
+  //
+  //   if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
+  //     print("complete api call");
+  //     UserWorkoutsDateResponseModel resp =
+  //         _userWorkoutsDateViewModel.apiResponse.data;
+  //
+  //     log("--------------- dates ${resp.msg}");
+  //
+  //     _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+  //
+  //     print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
+  //
+  //     await _exerciseByIdViewModel.getExerciseByIdDetails(
+  //         id: _userWorkoutsDateViewModel
+  //             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+  //   }
+  // }
 
   Future initializePlayer() async {
     youtubeVideoID() {
@@ -148,9 +147,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
-    print('is data comming ????? ${widget.data[0].workoutTitle}');
-
     if (widget.exeData.isNotEmpty) {
       String exerciseInstructions = '${widget.data[0].workoutDescription}';
       List<String> splitHTMLInstruction = exerciseInstructions.split('</li>');
@@ -360,6 +356,9 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                         if ('${widget.data[0].availableEquipments![index]}' !=
                                                             "No Equipment") {
                                                           return Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
                                                             children: [
                                                               SizedBox(
                                                                   width:
@@ -368,7 +367,8 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                               Padding(
                                                                 padding: EdgeInsets
                                                                     .only(
-                                                                        top: 3),
+                                                                        top:
+                                                                            39),
                                                                 child: Icon(
                                                                   Icons.circle,
                                                                   color: ColorUtils
@@ -460,20 +460,20 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                       name: 'Begin Warm-Up',
                                       onTap: () {
                                         // Get.to(SuperSetScreen());
-                                        Get.to(NoWeightExerciseScreen(
-                                          data: widget.data,
-                                          workoutId: widget.workoutId,
-                                        ));
+                                        Get.to(() => NoWeightExerciseScreen(
+                                              data: widget.data,
+                                              workoutId: widget.workoutId,
+                                            ));
 
                                         if (_userWorkoutsDateViewModel
                                                 .exeIdCounter ==
                                             _userWorkoutsDateViewModel
                                                 .exerciseId.length) {
-                                          Get.to(ShareProgressScreen(
-                                            exeData: responseExe.data!,
-                                            data: widget.data,
-                                            workoutId: widget.workoutId,
-                                          ));
+                                          Get.to(() => ShareProgressScreen(
+                                                exeData: responseExe.data!,
+                                                data: widget.data,
+                                                workoutId: widget.workoutId,
+                                              ));
                                         }
 
                                         setState(() {
@@ -770,20 +770,20 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                               commonNavigationButton(
                                   name: 'Begin Warm-Up',
                                   onTap: () {
-                                    Get.to(NoWeightExerciseScreen(
-                                      data: widget.data,
-                                      workoutId: widget.workoutId,
-                                    ));
+                                    Get.to(() => NoWeightExerciseScreen(
+                                          data: widget.data,
+                                          workoutId: widget.workoutId,
+                                        ));
 
                                     if (_userWorkoutsDateViewModel
                                             .exeIdCounter ==
                                         _userWorkoutsDateViewModel
                                             .exerciseId.length) {
-                                      Get.to(ShareProgressScreen(
-                                        exeData: responseExe.data!,
-                                        data: widget.data,
-                                        workoutId: widget.workoutId,
-                                      ));
+                                      Get.to(() => ShareProgressScreen(
+                                            exeData: responseExe.data!,
+                                            data: widget.data,
+                                            workoutId: widget.workoutId,
+                                          ));
                                     }
 
                                     setState(() {

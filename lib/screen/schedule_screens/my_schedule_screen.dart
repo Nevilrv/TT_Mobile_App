@@ -475,6 +475,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                         ),
                                                   trailing: InkWell(
                                                     onTap: () {
+                                                      print('HELLOOOOOO');
+                                                      print(
+                                                          'date>>>>><<<<<< ${scheduleResponse.data![index].date}');
+
                                                       openBottomSheet(
                                                           scheduleByDateViewModel:
                                                               controller,
@@ -497,46 +501,43 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                               scheduleResponse
                                                                   .data![index],
                                                           onPressedView: () {
-                                                            Get.to(PlanOverviewScreen(
-                                                                id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                            Get.to(() =>
+                                                                PlanOverviewScreen(
+                                                                    id: "${scheduleResponse.data![index].programData![0].workoutId}"));
                                                           },
                                                           onPressedEdit: () {
-                                                            Get.to(
+                                                            Get.to(() =>
                                                                 ProgramSetupPage(
-                                                              day: '1',
-                                                              workoutName:
-                                                                  scheduleResponse
+                                                                  day: '1',
+                                                                  workoutName: scheduleResponse
                                                                       .data![
                                                                           index]
                                                                       .programData![
                                                                           0]
                                                                       .workoutTitle,
-                                                              workoutId:
-                                                                  scheduleResponse
+                                                                  workoutId: scheduleResponse
                                                                       .data![
                                                                           index]
                                                                       .programData![
                                                                           0]
                                                                       .workoutId,
-                                                              exerciseId:
-                                                                  scheduleResponse
+                                                                  exerciseId: scheduleResponse
                                                                       .data![
                                                                           index]
                                                                       .programData![
                                                                           0]
                                                                       .exerciseId,
-                                                              programData:
-                                                                  scheduleResponse
+                                                                  programData: scheduleResponse
                                                                       .data![
                                                                           index]
                                                                       .programData,
-                                                              isEdit: true,
-                                                              workoutProgramId:
-                                                                  scheduleResponse
-                                                                      .data![
-                                                                          index]
-                                                                      .userProgramId,
-                                                            ));
+                                                                  isEdit: true,
+                                                                  workoutProgramId:
+                                                                      scheduleResponse
+                                                                          .data![
+                                                                              index]
+                                                                          .userProgramId,
+                                                                ));
                                                           });
                                                     },
                                                     child: Icon(
@@ -582,24 +583,45 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
   }
 
   getExercisesId(String time) async {
-    log("called 123");
-    log('hello........................3');
-    log('$time........................time');
+    print("called 123");
+    print('hello........................3');
+    print('$time........................time');
+    print('$time........................date');
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(), date: time);
 
     if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      log("complete api call");
+      print("complete api call");
       UserWorkoutsDateResponseModel resp =
           _userWorkoutsDateViewModel.apiResponse.data;
 
-      log("--------------- dates ${resp.msg}");
+      print("--------------- dates ${resp.msg}");
 
-      log("success ------------- true");
+      print("success ------------- true");
 
       if (resp.success == true) {
+        _userWorkoutsDateViewModel.supersetExerciseId.clear();
         _userWorkoutsDateViewModel.exerciseId.clear();
+
+        print(
+            'supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
+        print(
+            'exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+
         _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+
+        if (resp.data!.supersetExercisesIds! != [] ||
+            resp.data!.supersetExercisesIds!.isNotEmpty) {
+          _userWorkoutsDateViewModel.supersetExerciseId =
+              resp.data!.supersetExercisesIds!;
+        } else {
+          _userWorkoutsDateViewModel.supersetExerciseId = [];
+        }
+
+        print(
+            'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
+        print(
+            'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
 
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
@@ -615,13 +637,14 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
         WorkoutByIdResponseModel workoutResponse =
             _workoutByIdViewModel.apiResponse.data;
 
-        Get.to(WorkoutHomeScreen(
-          exeData: exerciseResponse.data!,
-          data: workoutResponse.data!,
-        ));
-        log('workoutResponse>>>>>>  ${workoutResponse.data}');
+        Get.to(() => WorkoutHomeScreen(
+              workoutId: workoutResponse.data![0].workoutId,
+              exeData: exerciseResponse.data!,
+              data: workoutResponse.data!,
+            ));
+        print('workoutResponse>>>>>>  ${workoutResponse.data}');
       } else {
-        log("success ------------- false");
+        print("success ------------- false");
       }
     }
   }

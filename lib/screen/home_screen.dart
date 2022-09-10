@@ -128,7 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
           _userWorkoutsDateViewModel.apiResponse.data;
 
       log("--------------- dates ${resp.data}");
-
       log("success ------------- true");
 
       if (resp.success == true) {
@@ -144,21 +143,15 @@ class _HomeScreenState extends State<HomeScreen> {
         } else {
           _userWorkoutsDateViewModel.supersetExerciseId = [];
         }
-
         // _userWorkoutsDateViewModel.supersetExerciseId = ["2", "5", "7", "10"];
-
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
                     .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??
                 '1');
-
         exerciseResponse = _exerciseByIdViewModel.apiResponse.data;
-
         await _workoutByIdViewModel.getWorkoutByIdDetails(
             id: resp.data!.workoutId ?? '1');
-
         workoutResponse = _workoutByIdViewModel.apiResponse.data;
-
         log('workoutResponse>>>>>>  ${workoutResponse!.data![0].workoutVideo}');
         setState(() {
           selected = true;
@@ -192,7 +185,6 @@ class _HomeScreenState extends State<HomeScreen> {
   //         DateTime.parse("${DateTime(now.year, now.month, now.day)}"))) {}
   //   }
   // }
-
   @override
   Widget build(BuildContext context) {
     log('hello........................4');
