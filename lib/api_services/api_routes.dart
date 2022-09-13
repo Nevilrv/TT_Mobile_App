@@ -13,6 +13,8 @@ class ApiRoutes {
   String videoViewsUrl = baseUrl + "/json/data_visit.php";
   String goalUrl = baseUrl + "/json/data_goals.php";
   String addUserHabitIdUrl = baseUrl + "/json/data_save_user_habits.php";
+  String updateStatusOfUserProgram =
+      baseUrl + "/json/data_save_user_program_date_status.php";
   String checkWorkoutProgramUrl =
       baseUrl + "/json/data_check_workout_program.php";
   String reportFourm = baseUrl + "/json/data_forum_report_abuse.php";

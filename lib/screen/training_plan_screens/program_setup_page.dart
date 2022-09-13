@@ -865,7 +865,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                         ColorUtils.kTint,
                                                     selectionRadius: 17,
                                                     selectionColor:
-                                                        Colors.transparent,
+                                                        ColorUtils.kTint,
                                                     minDate: DateTime.utc(
                                                         2019, 01, 01),
                                                     maxDate: DateTime.utc(
@@ -904,60 +904,60 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                     initialSelectedDates:
                                                         controllerWork
                                                             .defSelectedList,
-                                                    cellBuilder: (BuildContext
-                                                            context,
-                                                        DateRangePickerCellDetails
-                                                            details) {
-                                                      return Padding(
-                                                        padding:
-                                                            EdgeInsets.all(4),
-                                                        child: Container(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          decoration: BoxDecoration(
-                                                              gradient: controllerWork
-                                                                      .defSelectedList
-                                                                      .contains(
-                                                                          details
-                                                                              .date)
-                                                                  ? LinearGradient(
-                                                                      colors: ColorUtilsGradient
-                                                                          .kTintGradient,
-                                                                      begin: Alignment.topCenter,
-                                                                      end: Alignment.bottomCenter,
-                                                                      stops: [
-                                                                          0.0,
-                                                                          0.7
-                                                                        ])
-                                                                  : LinearGradient(
-                                                                      colors: [
-                                                                          Colors
-                                                                              .transparent,
-                                                                          Colors
-                                                                              .transparent
-                                                                        ]),
-                                                              shape: BoxShape
-                                                                  .circle),
-                                                          child: Text(
-                                                              details.date.day
-                                                                  .toString(),
-                                                              style: controllerWork
-                                                                      .defSelectedList
-                                                                      .contains(
-                                                                          details
-                                                                              .date)
-                                                                  ? FontTextStyle
-                                                                      .kBlack18w600Roboto
-                                                                  : DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
-                                                                          .isAfter(details
-                                                                              .date)
-                                                                      ? FontTextStyle
-                                                                          .kGrey18BoldRoboto
-                                                                      : FontTextStyle
-                                                                          .kWhite17W400Roboto),
-                                                        ),
-                                                      );
-                                                    },
+                                                    // cellBuilder: (BuildContext
+                                                    //         context,
+                                                    //     DateRangePickerCellDetails
+                                                    //         details) {
+                                                    //   return Padding(
+                                                    //     padding:
+                                                    //         EdgeInsets.all(4),
+                                                    //     child: Container(
+                                                    //       alignment:
+                                                    //           Alignment.center,
+                                                    //       decoration: BoxDecoration(
+                                                    //           gradient: controllerWork
+                                                    //                   .defSelectedList
+                                                    //                   .contains(
+                                                    //                       details
+                                                    //                           .date)
+                                                    //               ? LinearGradient(
+                                                    //                   colors: ColorUtilsGradient
+                                                    //                       .kTintGradient,
+                                                    //                   begin: Alignment.topCenter,
+                                                    //                   end: Alignment.bottomCenter,
+                                                    //                   stops: [
+                                                    //                       0.0,
+                                                    //                       0.7
+                                                    //                     ])
+                                                    //               : LinearGradient(
+                                                    //                   colors: [
+                                                    //                       Colors
+                                                    //                           .transparent,
+                                                    //                       Colors
+                                                    //                           .transparent
+                                                    //                     ]),
+                                                    //           shape: BoxShape
+                                                    //               .circle),
+                                                    //       child: Text(
+                                                    //           details.date.day
+                                                    //               .toString(),
+                                                    //           style: controllerWork
+                                                    //                   .defSelectedList
+                                                    //                   .contains(
+                                                    //                       details
+                                                    //                           .date)
+                                                    //               ? FontTextStyle
+                                                    //                   .kBlack18w600Roboto
+                                                    //               : DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day)
+                                                    //                       .isAfter(details
+                                                    //                           .date)
+                                                    //                   ? FontTextStyle
+                                                    //                       .kGrey18BoldRoboto
+                                                    //                   : FontTextStyle
+                                                    //                       .kWhite17W400Roboto),
+                                                    //     ),
+                                                    //   );
+                                                    // },
                                                     onSelectionChanged:
                                                         (DateRangePickerSelectionChangedArgs
                                                             args) async {
@@ -1118,6 +1118,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                               data: workResponse.data!,
                                                                               exeData: response.data!,
                                                                               workoutId: widget.workoutId,
+                                                                              date: DateTime.now().toString().split(' ').first,
                                                                             ));
                                                                             Get.showSnackbar(GetSnackBar(
                                                                               message: 'Your old workout ${workResponse.data![0].workoutTitle} is not removed from schedule',
@@ -1389,6 +1390,12 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                     workoutId:
                                                                         widget
                                                                             .workoutId,
+                                                                    date: DateTime
+                                                                            .now()
+                                                                        .toString()
+                                                                        .split(
+                                                                            ' ')
+                                                                        .first,
                                                                   ));
                                                                   widget.isEdit =
                                                                       false;

@@ -56,24 +56,9 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
     super.dispose();
   }
 
-  List<DateTime> missedExercises = [
-    DateTime.parse("2022-08-10 00:00:00.000"),
-    DateTime.parse("2022-08-11 00:00:00.000"),
-    DateTime.parse("2022-09-07 00:00:00.000"),
-    DateTime.parse("2022-09-08 00:00:00.000"),
-  ];
-
-  List completeExercise = [
-    DateTime.parse("2022-08-12 00:00:00.000"),
-    DateTime.parse("2022-08-30 00:00:00.000"),
-    DateTime.parse("2022-08-31 00:00:00.000"),
-  ];
-
   @override
   // ignore: must_call_super
   Widget build(BuildContext context) {
-    print('------------------------------------------- $missedExercises');
-
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
       appBar: AppBar(
@@ -96,9 +81,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
               controller.apiResponse.data;
 
           for (int i = 0; i < scheduleResponse.data!.length; i++) {
-            // print(
-            //     "-------------- date condition is ${scheduleResponse.data![i].programData!.isNotEmpty}");
-
             if (scheduleResponse.data![i].programData!.isNotEmpty) {
               if (controller.dayList.contains(
                   DateTime.parse('${scheduleResponse.data![i].date}'))) {
@@ -110,11 +92,44 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
               controller.allDates(date: controller.dayList);
             }
           }
+          controller.completeDate = [];
+          controller.pendingFutureDate = [];
+          controller.missedPastDate = [];
+          for (int i = 0; i < scheduleResponse.data!.length; i++) {
+            if (scheduleResponse.data![i].isCompleted == 'completed') {
+              controller.completeDate.contains(scheduleResponse.data![i].date)
+                  ? null
+                  : controller.completeDate.add(scheduleResponse.data![i].date);
+            } else {
+              var now = DateTime(
+                DateTime.now().year,
+                DateTime.now().month,
+                DateTime.now().day,
+              );
 
-          print('-------------------- selected day ${controller.selectedDay}');
+              var apiDate = DateTime.parse('${scheduleResponse.data![i].date}');
+
+              if (now.isAfter(apiDate)) {
+                // print('Before date >> ${scheduleResponse.data![i].date}');
+                controller.missedPastDate
+                        .contains(scheduleResponse.data![i].date)
+                    ? null
+                    : controller.missedPastDate
+                        .add(scheduleResponse.data![i].date);
+              } else {
+                controller.pendingFutureDate
+                        .contains(scheduleResponse.data![i].date)
+                    ? null
+                    : controller.pendingFutureDate
+                        .add(scheduleResponse.data![i].date);
+              }
+            }
+          }
+          // print('completeDate past >> ${controller.completeDate}');
+          // print('== Pending Future List >> ${missedFutureExercises}');
+          // print('== complete Future List >> ${completeExercise}');
+          // print('-------------------- selected day ${controller.selectedDay}');
           print('-------------------- DayList ${controller.dayList}');
-          print(
-              '-------------------- condition ${controller.dayList.contains(DateTime.parse('2022-08-30 00:00:00.000'))}');
 
           return DefaultTabController(
             length: 2,
@@ -295,8 +310,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                               //     : ColorUtils.kBlack,
                                               gradient: controller.dayList
                                                       .contains(details.date)
-                                                  ? completeExercise.contains(
-                                                          details.date)
+                                                  ? controller.completeDate
+                                                          .contains(details.date
+                                                              .toString()
+                                                              .split(' ')
+                                                              .first)
                                                       ? LinearGradient(
                                                           colors: ColorUtilsGradient.kGreenGradient,
                                                           begin: Alignment.topCenter,
@@ -305,8 +323,11 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                               0.0,
                                                               0.7
                                                             ])
-                                                      : missedExercises.contains(
-                                                              details.date)
+                                                      : controller.missedPastDate
+                                                              .contains(details.date
+                                                                  .toString()
+                                                                  .split(' ')
+                                                                  .first)
                                                           ? LinearGradient(
                                                               colors: ColorUtilsGradient.kRedGradient,
                                                               begin: Alignment.topCenter,
@@ -319,24 +340,25 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                               colors: ColorUtilsGradient.kTintGradient,
                                                               begin: Alignment.topCenter,
                                                               end: Alignment.bottomCenter,
-                                                              stops: [
-                                                                  0.0,
-                                                                  0.7
-                                                                ])
-                                                  : LinearGradient(colors: [
-                                                      Colors.transparent,
-                                                      Colors.transparent
-                                                    ]),
+                                                              stops: [0.0, 0.7])
+                                                  : LinearGradient(colors: [Colors.transparent, Colors.transparent]),
                                               shape: BoxShape.circle),
                                           child: Text(
                                             details.date.day.toString(),
                                             style: controller.dayList
                                                     .contains(details.date)
-                                                ? missedExercises.contains(
-                                                            details.date) ||
-                                                        completeExercise
-                                                            .contains(
-                                                                details.date)
+                                                ? controller.missedPastDate
+                                                            .contains(details
+                                                                .date
+                                                                .toString()
+                                                                .split(' ')
+                                                                .first) ||
+                                                        controller.completeDate
+                                                            .contains(details
+                                                                .date
+                                                                .toString()
+                                                                .split(' ')
+                                                                .first)
                                                     ? FontTextStyle
                                                         .kWhite17W400Roboto
                                                     : FontTextStyle
@@ -376,6 +398,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                               textStyle: FontTextStyle
                                                   .kWhite17W400Roboto),
                                     ),
+
                                     headerStyle: DateRangePickerHeaderStyle(
                                       textAlign: TextAlign.center,
                                       textStyle:
@@ -385,18 +408,51 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                     onSelectionChanged:
                                         (DateRangePickerSelectionChangedArgs
                                             args) {
-                                      setState(() {});
-                                      if (args.value.last !=
-                                          controller.dayList.last) {
-                                        controller.selectedDay =
-                                            args.value.last;
+                                      // setState(() {});
+
+                                      if (controller.openFlow) {
+                                        // controller.selectedDay = controller
+                                        //     .dayList
+                                        //     .where((element) =>
+                                        //         !args.value.contains(element))
+                                        //     .toList()
+                                        //     .first;
+
+                                        // if (args.value.last !=
+                                        //     controller.dayList.last) {
+                                        //   // print(
+                                        //   //     '---------------- > ${args.value.last}');
+                                        //   controller.selectedDay =
+                                        //       args.value.last;
+                                        //   controller.dateRangePickerController
+                                        //           .selectedDates =
+                                        //       controller.dayList;
+                                        // }
                                         controller.dateRangePickerController
                                             .selectedDates = controller.dayList;
-                                      }
-                                      controller.dateRangePickerController
-                                          .selectedDates = controller.dayList;
 
-                                      controller.selectedDay = args.value.last;
+                                        controller.selectedDay =
+                                            args.value.last;
+                                        print(
+                                            '---------------- > dayList ${controller.dayList.last}');
+                                      } else {
+                                        controller.selectedDay = controller
+                                            .dayList
+                                            .where((element) =>
+                                                !args.value.contains(element))
+                                            .toList()
+                                            .first;
+
+                                        controller.openFlow = true;
+                                      }
+
+                                      //   print(
+                                      //       '---------------- > dayList ${controller.dayList}');
+                                      //   print(
+                                      //       '---------------- > args value ${args.value}');
+                                      //
+                                      //   controller.openFlow = true;
+                                      // }
 
                                       args.value.clear();
                                       setState(() {});
@@ -492,10 +548,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                             print(
                                                                 'date>>>>> ${scheduleResponse.data![index].date}');
                                                             getExercisesId(
-                                                                scheduleResponse
-                                                                    .data![
-                                                                        index]
-                                                                    .date!);
+                                                              scheduleResponse
+                                                                  .data![index]
+                                                                  .date!,
+                                                            );
                                                           },
                                                           event:
                                                               scheduleResponse
@@ -607,8 +663,12 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
             'supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
         print(
             'exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+        print(
+            'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 
         _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+        _userWorkoutsDateViewModel.userProgramDateID =
+            resp.data!.userProgramDatesId!;
 
         if (resp.data!.supersetExercisesIds! != [] ||
             resp.data!.supersetExercisesIds!.isNotEmpty) {
@@ -622,6 +682,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
             'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
         print(
             'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+        print(
+            'NEXT userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
@@ -641,6 +703,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
               workoutId: workoutResponse.data![0].workoutId,
               exeData: exerciseResponse.data!,
               data: workoutResponse.data!,
+              date: _scheduleByDateViewModel.selectedDay
+                  .toString()
+                  .split(' ')
+                  .first,
             ));
         print('workoutResponse>>>>>>  ${workoutResponse.data}');
       } else {

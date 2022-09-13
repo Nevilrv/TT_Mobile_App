@@ -391,8 +391,12 @@ getExercisesId(String time) async {
           'supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
       print(
           'exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+      print(
+          'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 
       _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+      _userWorkoutsDateViewModel.userProgramDateID =
+          resp.data!.userProgramDatesId!;
 
       if (resp.data!.supersetExercisesIds! != [] ||
           resp.data!.supersetExercisesIds!.isNotEmpty) {
@@ -406,6 +410,8 @@ getExercisesId(String time) async {
           'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
       print(
           'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+      print(
+          'NEXT userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 
       await _exerciseByIdViewModel.getExerciseByIdDetails(
           id: _userWorkoutsDateViewModel
@@ -425,6 +431,7 @@ getExercisesId(String time) async {
             workoutId: workoutResponse.data![0].workoutId,
             exeData: exerciseResponse.data!,
             data: workoutResponse.data!,
+            date: time.split(' ').first,
           ));
       log('workoutResponse>>>>>>  ${workoutResponse.data}');
     } else {

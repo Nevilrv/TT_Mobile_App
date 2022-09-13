@@ -266,6 +266,7 @@ class Schedule {
     this.userProgramId,
     this.userId,
     this.date,
+    this.isCompleted,
     this.programData,
   });
 
@@ -273,6 +274,7 @@ class Schedule {
   String? userProgramId;
   String? userId;
   String? date;
+  String? isCompleted;
   List<ProgramSchedule>? programData;
 
   factory Schedule.fromJson(Map<String, dynamic> json) => Schedule(
@@ -280,6 +282,7 @@ class Schedule {
         userProgramId: json["user_program_id"],
         userId: json["user_id"],
         date: json["date"],
+        isCompleted: json["is_completed"],
         programData: List<ProgramSchedule>.from(
             json["program_data"].map((x) => ProgramSchedule.fromJson(x))),
       );
@@ -289,6 +292,7 @@ class Schedule {
         "user_program_id": userProgramId,
         "user_id": userId,
         "date": date,
+        "is_completed": isCompleted,
         "program_data": List<dynamic>.from(programData!.map((x) => x.toJson())),
       };
 }

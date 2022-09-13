@@ -22,12 +22,12 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(
-        Duration(seconds: 3),
+        Duration(seconds: 1),
         () => PreferenceManager.isGetLogin() == true
-            ? Get.off(HomeScreen(
-                id: PreferenceManager.getUId(),
-              ))
-            : Get.to(OnBoardingScreen()));
+            ? Get.off(() => HomeScreen(
+                  id: PreferenceManager.getUId(),
+                ))
+            : Get.to(() => OnBoardingScreen()));
   }
 
   @override

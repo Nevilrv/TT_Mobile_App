@@ -8,6 +8,7 @@ import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 class UserWorkoutsDateViewModel extends GetxController {
   List exerciseId = [];
   List supersetExerciseId = [];
+  String userProgramDateID = '';
   int exeIdCounter = 0;
   bool isHold = false;
   bool isFirst = false;

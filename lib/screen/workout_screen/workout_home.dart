@@ -30,9 +30,14 @@ class WorkoutHomeScreen extends StatefulWidget {
   List<ExerciseById> exeData;
   List<WorkoutById> data;
   final String? workoutId;
+  final String date;
 
   WorkoutHomeScreen(
-      {Key? key, required this.data, this.workoutId, required this.exeData})
+      {Key? key,
+      required this.data,
+      this.workoutId,
+      required this.exeData,
+      required this.date})
       : super(key: key);
 
   @override
@@ -56,8 +61,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     super.initState();
 
     initializePlayer();
-
-    // getExercisesId();
+    getExercisesId();
   }
 
   @override
@@ -68,30 +72,39 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     super.dispose();
   }
 
-  // getExercisesId() async {
-  //   print("called 123");
-  //   log("called 123");
-  //
-  //   await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
-  //       userId: PreferenceManager.getUId(),
-  //       date: DateTime.now().toString().split(" ").first);
-  //
-  //   if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-  //     print("complete api call");
-  //     UserWorkoutsDateResponseModel resp =
-  //         _userWorkoutsDateViewModel.apiResponse.data;
-  //
-  //     log("--------------- dates ${resp.msg}");
-  //
-  //     _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
-  //
-  //     print("list of ids ====== ${_userWorkoutsDateViewModel.exerciseId}");
-  //
-  //     await _exerciseByIdViewModel.getExerciseByIdDetails(
-  //         id: _userWorkoutsDateViewModel
-  //             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
-  //   }
-  // }
+  getExercisesId() async {
+    print("called 123");
+    print("called 123");
+    print(
+        'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
+
+    _userWorkoutsDateViewModel.supersetExerciseId.clear();
+    _userWorkoutsDateViewModel.exerciseId.clear();
+    _userWorkoutsDateViewModel.userProgramDateID = '';
+
+    await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
+        userId: PreferenceManager.getUId(), date: widget.date.split(' ').first);
+
+    print("complete api call");
+
+    UserWorkoutsDateResponseModel resp =
+        _userWorkoutsDateViewModel.apiResponse.data;
+
+    print("--------------- dates ${resp.msg}");
+
+    _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+    _userWorkoutsDateViewModel.supersetExerciseId =
+        resp.data!.supersetExercisesIds!;
+    _userWorkoutsDateViewModel.userProgramDateID =
+        resp.data!.userProgramDatesId!;
+
+    print(
+        'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
+
+    await _exerciseByIdViewModel.getExerciseByIdDetails(
+        id: _userWorkoutsDateViewModel
+            .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+  }
 
   Future initializePlayer() async {
     youtubeVideoID() {
@@ -367,8 +380,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                               Padding(
                                                                 padding: EdgeInsets
                                                                     .only(
-                                                                        top:
-                                                                            39),
+                                                                        top: 3),
                                                                 child: Icon(
                                                                   Icons.circle,
                                                                   color: ColorUtils
@@ -456,30 +468,39 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                   // htmlToTextGrey(data: finalHTMLTips[1]),
 
                                   SizedBox(height: Get.height * .03),
-                                  commonNavigationButton(
-                                      name: 'Begin Warm-Up',
-                                      onTap: () {
-                                        // Get.to(SuperSetScreen());
-                                        Get.to(() => NoWeightExerciseScreen(
-                                              data: widget.data,
-                                              workoutId: widget.workoutId,
-                                            ));
+                                  GetBuilder<UserWorkoutsDateViewModel>(
+                                      builder: (controller) {
+                                    return controller
+                                            .userProgramDateID.isNotEmpty
+                                        ? commonNavigationButton(
+                                            name: 'Begin Warm-Up',
+                                            onTap: () {
+                                              // Get.to(SuperSetScreen());
+                                              Get.to(() =>
+                                                  NoWeightExerciseScreen(
+                                                    data: widget.data,
+                                                    workoutId: widget.workoutId,
+                                                  ));
 
-                                        if (_userWorkoutsDateViewModel
-                                                .exeIdCounter ==
-                                            _userWorkoutsDateViewModel
-                                                .exerciseId.length) {
-                                          Get.to(() => ShareProgressScreen(
-                                                exeData: responseExe.data!,
-                                                data: widget.data,
-                                                workoutId: widget.workoutId,
-                                              ));
-                                        }
+                                              if (controller.exeIdCounter ==
+                                                  controller
+                                                      .exerciseId.length) {
+                                                Get.to(
+                                                    () => ShareProgressScreen(
+                                                          exeData:
+                                                              responseExe.data!,
+                                                          data: widget.data,
+                                                          workoutId:
+                                                              widget.workoutId,
+                                                        ));
+                                              }
 
-                                        setState(() {
-                                          watchVideo = false;
-                                        });
-                                      }),
+                                              setState(() {
+                                                watchVideo = false;
+                                              });
+                                            })
+                                        : SizedBox();
+                                  }),
                                   SizedBox(height: Get.height * .03),
                                   // commonNavigationButton(
                                   //     name: 'Back to Home',
@@ -767,29 +788,33 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                               // htmlToTextGrey(data: finalHTMLTips[1]),
 
                               SizedBox(height: Get.height * .03),
-                              commonNavigationButton(
-                                  name: 'Begin Warm-Up',
-                                  onTap: () {
-                                    Get.to(() => NoWeightExerciseScreen(
-                                          data: widget.data,
-                                          workoutId: widget.workoutId,
-                                        ));
+                              GetBuilder<UserWorkoutsDateViewModel>(
+                                  builder: (controller) {
+                                return controller.userProgramDateID.isNotEmpty
+                                    ? commonNavigationButton(
+                                        name: 'Begin Warm-Up',
+                                        onTap: () {
+                                          // Get.to(SuperSetScreen());
+                                          Get.to(() => NoWeightExerciseScreen(
+                                                data: widget.data,
+                                                workoutId: widget.workoutId,
+                                              ));
 
-                                    if (_userWorkoutsDateViewModel
-                                            .exeIdCounter ==
-                                        _userWorkoutsDateViewModel
-                                            .exerciseId.length) {
-                                      Get.to(() => ShareProgressScreen(
-                                            exeData: responseExe.data!,
-                                            data: widget.data,
-                                            workoutId: widget.workoutId,
-                                          ));
-                                    }
+                                          if (controller.exeIdCounter ==
+                                              controller.exerciseId.length) {
+                                            Get.to(() => ShareProgressScreen(
+                                                  exeData: responseExe.data!,
+                                                  data: widget.data,
+                                                  workoutId: widget.workoutId,
+                                                ));
+                                          }
 
-                                    setState(() {
-                                      watchVideo = false;
-                                    });
-                                  }),
+                                          setState(() {
+                                            watchVideo = false;
+                                          });
+                                        })
+                                    : SizedBox();
+                              }),
                               SizedBox(height: Get.height * .03),
                               // commonNavigationButton(
                               //     name: 'Back to Home',

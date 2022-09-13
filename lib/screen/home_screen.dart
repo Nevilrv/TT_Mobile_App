@@ -58,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _signInViewModel.initialized;
     dateApiCall();
     scheduleDateApiCall();
+
     // getExercisesId();
   }
 
@@ -87,6 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List tmpDateList = [];
   String? finalDate;
+  String? status;
   DateTime today = DateTime.now();
   dateApiCall() async {
     log('hello........................1');
@@ -112,6 +114,21 @@ class _HomeScreenState extends State<HomeScreen> {
         userId: PreferenceManager.getUId());
     ScheduleByDateResponseModel scheduleResp =
         _scheduleByDateViewModel.apiResponse.data;
+
+    for (int i = 0; i < scheduleResp.data!.length; i++) {
+      if (scheduleResp.data![i].programData!.isNotEmpty) {
+        if (scheduleResp.data![i].date!
+            .contains(DateTime.now().toString().split(" ").first)) {
+          status = scheduleResp.data![i].isCompleted;
+          _userWorkoutsDateViewModel.userProgramDateID =
+              scheduleResp.data![i].id!;
+          print(
+              'checkcheckcheckcheckcheckcheck = > ${scheduleResp.data![i].date} === ${status}');
+          print(
+              'checkcheckcheckcheckcheckcheck121121212121221212 = > ${_userWorkoutsDateViewModel.userProgramDateID}');
+        }
+      }
+    }
     scheduleResponse = scheduleResp;
   }
 
@@ -135,6 +152,10 @@ class _HomeScreenState extends State<HomeScreen> {
         _userWorkoutsDateViewModel.exerciseId.clear();
 
         _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+        _userWorkoutsDateViewModel.userProgramDateID =
+            resp.data!.userProgramDatesId!;
+
+        log('workoutResponse>>>>>>  ${_userWorkoutsDateViewModel.userProgramDateID}');
 
         if (resp.data!.supersetExercisesIds! != [] ||
             resp.data!.supersetExercisesIds!.isNotEmpty) {
@@ -176,15 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // checkDate() {
-  //   List a = [];
-  //   for (int i = 0; i < scheduleResponse!.data!.length; i++) {
-  //     a.add(scheduleResponse!.data![i].date);
-  //
-  //     if (a.contains(
-  //         DateTime.parse("${DateTime(now.year, now.month, now.day)}"))) {}
-  //   }
-  // }
+  checkDate() {}
+
   @override
   Widget build(BuildContext context) {
     log('hello........................4');
@@ -266,214 +280,275 @@ class _HomeScreenState extends State<HomeScreen> {
                         controllerWork.apiResponse.status == Status.COMPLETE) {
                       log('complete......................>>>');
 
-                      return !selected
-                          ? Container(
-                              height: Get.height * 0.22,
-                              width: Get.width * 0.99,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Color(0xff363636)),
-                              child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                      if (status == 'pending') {
+                        return Container(
+                          height: Get.height * 0.22,
+                          width: Get.width * 0.99,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xff363636)),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 20, bottom: 10, top: 20, right: 20),
+                                child: Text(
+                                  'Your Next Workout',
+                                  style: FontTextStyle.kWhite20BoldRoboto,
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 18, vertical: 8),
+                                child: Row(
                                   children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 20,
-                                          bottom: 10,
-                                          top: 20,
-                                          right: 20),
-                                      child: Text(
-                                        'No Workouts Scheduled',
-                                        style: FontTextStyle.kWhite20BoldRoboto,
+                                    Container(
+                                      height: Get.height * .12,
+                                      width: Get.width * .24,
+                                      decoration: BoxDecoration(
+                                        border:
+                                            Border.all(color: ColorUtils.kTint),
+                                        borderRadius: BorderRadius.circular(10),
                                       ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20),
-                                      child: Text(
-                                        'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
-                                        style: FontTextStyle.kWhite16W300Roboto,
-                                      ),
+                                      child: workoutResponse!
+                                                      .data![0].workoutImage ==
+                                                  null ||
+                                              workoutResponse!
+                                                      .data![0].workoutImage ==
+                                                  ""
+                                          ? Image.asset(
+                                              AppImages.logo,
+                                              scale: 3.5,
+                                            )
+                                          : ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              child: Image.network(
+                                                "${workoutResponse!.data![0].workoutImage}",
+                                                fit: BoxFit.fill,
+                                              ),
+                                            ),
                                     ),
                                     SizedBox(
-                                      height: Get.height * .03,
+                                      width: Get.width * .04,
                                     ),
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.05),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Get.to(TrainingPlanScreen());
-                                          setState(() {
-                                            oneTime = false;
-                                          });
-                                        },
-                                        child: Container(
-                                          height: Get.height * .05,
-                                          width: Get.width * .9,
-                                          decoration: BoxDecoration(
-                                              gradient: LinearGradient(
-                                                begin: Alignment.topCenter,
-                                                end: Alignment.bottomCenter,
-                                                stops: [0.0, 1.0],
-                                                colors: ColorUtilsGradient
-                                                    .kTintGradient,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              color: ColorUtils.kTint),
-                                          child: Center(
-                                              child: Text(
-                                            'Choose a Workout Plan',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black,
-                                                fontSize: Get.height * 0.02),
-                                          )),
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                            )
-                          : Container(
-                              height: Get.height * 0.22,
-                              width: Get.width * 0.99,
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10),
-                                  color: Color(0xff363636)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 20,
-                                        bottom: 10,
-                                        top: 20,
-                                        right: 20),
-                                    child: Text(
-                                      'Your Next Workout',
-                                      style: FontTextStyle.kWhite20BoldRoboto,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 18, vertical: 8),
-                                    child: Row(
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Container(
-                                          height: Get.height * .12,
-                                          width: Get.width * .24,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                                color: ColorUtils.kTint),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                        SizedBox(
+                                          width: Get.width * 0.5,
+                                          child: Text(
+                                            '${workoutResponse!.data![0].workoutTitle}',
+                                            style: FontTextStyle
+                                                .kWhite17BoldRoboto,
                                           ),
-                                          child: workoutResponse!.data![0]
-                                                          .workoutImage ==
-                                                      null ||
-                                                  workoutResponse!.data![0]
-                                                          .workoutImage ==
-                                                      ""
-                                              ? Image.asset(
-                                                  AppImages.logo,
-                                                  scale: 3.5,
-                                                )
-                                              : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  child: Image.network(
-                                                    "${workoutResponse!.data![0].workoutImage}",
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                ),
+                                        ),
+                                        Text(
+                                          '${Jiffy(DateTime.now()).format('EEEE, MMMM do')}',
+                                          style:
+                                              FontTextStyle.kGrey18BoldRoboto,
                                         ),
                                         SizedBox(
-                                          width: Get.width * .04,
+                                          height: Get.height * .01,
                                         ),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            SizedBox(
-                                              width: Get.width * 0.5,
-                                              child: Text(
-                                                '${workoutResponse!.data![0].workoutTitle}',
-                                                style: FontTextStyle
-                                                    .kWhite17BoldRoboto,
-                                              ),
-                                            ),
-                                            Text(
-                                              '${Jiffy(DateTime.now()).format('EEEE, MMMM do')}',
-                                              style: FontTextStyle
-                                                  .kGrey18BoldRoboto,
-                                            ),
-                                            SizedBox(
-                                              height: Get.height * .01,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                // Navigator.push(
-                                                //   context,
-                                                //   CustomMaterialPageRoute(
-                                                //     builder: (context) =>
-                                                //         WorkoutHomeScreen(
-                                                //       exeData:
-                                                //           exerciseResponse!
-                                                //               .data!,
-                                                //       data: workoutResponse!
-                                                //           .data!,
-                                                //     ),
-                                                //   ),
-                                                // );
-                                                Get.to(WorkoutHomeScreen(
-                                                  exeData:
-                                                      exerciseResponse!.data!,
-                                                  data: workoutResponse!.data!,
-                                                ));
-                                                setState(() {
-                                                  oneTime = false;
-                                                });
-                                              },
-                                              child: Container(
-                                                height: Get.height * 0.042,
-                                                width: Get.width * 0.5,
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                      stops: [0.0, 1.0],
-                                                      colors: ColorUtilsGradient
-                                                          .kTintGradient,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: ColorUtils.kTint),
-                                                child: Center(
-                                                    child: Text(
-                                                  'Start Workout',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Get.height * 0.02),
-                                                )),
-                                              ),
-                                            ),
-                                          ],
-                                        )
+                                        GestureDetector(
+                                          onTap: () {
+                                            // Navigator.push(
+                                            //   context,
+                                            //   CustomMaterialPageRoute(
+                                            //     builder: (context) =>
+                                            //         WorkoutHomeScreen(
+                                            //       exeData:
+                                            //           exerciseResponse!
+                                            //               .data!,
+                                            //       data: workoutResponse!
+                                            //           .data!,
+                                            //     ),
+                                            //   ),
+                                            // );
+                                            Get.to(WorkoutHomeScreen(
+                                              exeData: exerciseResponse!.data!,
+                                              data: workoutResponse!.data!,
+                                              date: DateTime.now()
+                                                  .toString()
+                                                  .split(' ')
+                                                  .first,
+                                            ));
+                                            setState(() {
+                                              oneTime = false;
+                                            });
+                                          },
+                                          child: Container(
+                                            height: Get.height * 0.042,
+                                            width: Get.width * 0.5,
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topCenter,
+                                                  end: Alignment.bottomCenter,
+                                                  stops: [0.0, 1.0],
+                                                  colors: ColorUtilsGradient
+                                                      .kTintGradient,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: ColorUtils.kTint),
+                                            child: Center(
+                                                child: Text(
+                                              'Start Workout',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontSize: Get.height * 0.02),
+                                            )),
+                                          ),
+                                        ),
                                       ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else if (status == 'completed') {
+                        return Container(
+                          height: Get.height * 0.22,
+                          width: Get.width * 0.99,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xff363636)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, bottom: 10, top: 20, right: 20),
+                                  child: Text(
+                                    'You did it very well today, Now take rest',
+                                    style: FontTextStyle.kWhite20BoldRoboto,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Text(
+                                    'A fit, healthy body—that is the best fashion statement.',
+                                    textAlign: TextAlign.center,
+                                    style: FontTextStyle.kWhite16W300Roboto,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * .025,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(TrainingPlanScreen());
+                                      setState(() {
+                                        oneTime = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: Get.height * .05,
+                                      width: Get.width * .9,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            stops: [0.0, 1.0],
+                                            colors: ColorUtilsGradient
+                                                .kTintGradient,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color: ColorUtils.kTint),
+                                      child: Center(
+                                          child: Text(
+                                        'Choose New Workout Plan',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: Get.height * 0.02),
+                                      )),
                                     ),
                                   ),
-                                ],
-                              ),
-                            );
+                                ),
+                              ]),
+                        );
+                      } else if (status!.isEmpty || status == '') {
+                        Container(
+                          height: Get.height * 0.22,
+                          width: Get.width * 0.99,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Color(0xff363636)),
+                          child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 20, bottom: 10, top: 20, right: 20),
+                                  child: Text(
+                                    'No Workouts Scheduled',
+                                    style: FontTextStyle.kWhite20BoldRoboto,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  child: Text(
+                                    'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                    style: FontTextStyle.kWhite16W300Roboto,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * .03,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Get.to(TrainingPlanScreen());
+                                      setState(() {
+                                        oneTime = false;
+                                      });
+                                    },
+                                    child: Container(
+                                      height: Get.height * .05,
+                                      width: Get.width * .9,
+                                      decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            stops: [0.0, 1.0],
+                                            colors: ColorUtilsGradient
+                                                .kTintGradient,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(6),
+                                          color: ColorUtils.kTint),
+                                      child: Center(
+                                          child: Text(
+                                        'Choose a Workout Plan',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: Get.height * 0.02),
+                                      )),
+                                    ),
+                                  ),
+                                ),
+                              ]),
+                        );
+                      }
                     }
                     return Container(
                       height: Get.height * 0.22,

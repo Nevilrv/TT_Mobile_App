@@ -8,6 +8,11 @@ import 'package:tcm/repo/schedule_repo/schedule_by_date_repo.dart';
 
 class ScheduleByDateViewModel extends GetxController {
   List<DateTime> dayList = [];
+  List missedPastDate = [];
+  List pendingFutureDate = [];
+  List completeDate = [];
+  bool openFlow = false;
+  List<DateTime> missedDates = [];
 
   DateTime selectedDay =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
