@@ -8,6 +8,7 @@ import 'package:tcm/model/response_model/training_plans_response_model/exercise_
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/training_plan_screens/exercise_detail_page.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
@@ -16,6 +17,7 @@ import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
 import 'package:tcm/viewModel/update_status_user_program_viewModel.dart';
@@ -47,9 +49,11 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   SaveUserCustomizedExerciseViewModel _customizedExerciseViewModel =
       Get.put(SaveUserCustomizedExerciseViewModel());
   int totalRound = 0;
-
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
   @override
   void initState() {
+    _connectivityCheckViewModel.startMonitoring();
     super.initState();
     initData();
   }
@@ -85,96 +89,104 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<UserWorkoutsDateViewModel>(builder: (controllerUSD) {
-      return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
-        if (controller.apiResponse.status == Status.LOADING) {
-          return ColoredBox(
-            color: ColorUtils.kBlack,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: ColorUtils.kTint,
-              ),
-            ),
-          );
-        }
-        if (controller.apiResponse.status == Status.COMPLETE) {
-          controller.responseExe = _exerciseByIdViewModel.apiResponse.data;
-          // print(
-          //     'condition ===================== ${controllerUSD.exeIdCounter == controllerUSD.exerciseId.length}');
-          // print(
-          //     'id counter ===================== ${controllerUSD.exeIdCounter}');
-          // print(
-          //     'id length ===================== ${controllerUSD.exerciseId.length}');
-          // print(
-          //     'superset id  ===================== ${controllerUSD.supersetExerciseId}');
-          // print(
-          //     'exercise  id  ===================== ${controllerUSD.exerciseId}');
-          //
-          // print(
-          //     'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
-          if (controllerUSD.exeIdCounter == controllerUSD.exerciseId.length) {
-            if (controllerUSD.supersetExerciseId.isNotEmpty ||
-                controllerUSD.supersetExerciseId != []) {
-              return SuperSet(
-                data: widget.data,
-                controller: controller,
-                workoutId: widget.workoutId,
-              );
-            } else {
-              return ColoredBox(
-                color: ColorUtils.kBlack,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorUtils.kTint,
-                  ),
-                ),
-              );
-            }
-          } else {
-            if (controller.responseExe!.data![0].exerciseType == "REPS") {
-              // toggleVideo();
-              return RepsScreen(
-                data: widget.data,
-                controller: controller,
-                workoutId: widget.workoutId,
-              );
-            } else if (controller.responseExe!.data![0].exerciseType ==
-                "TIME") {
-              return TimeScreen(
-                data: widget.data,
-                controller: controller,
-                workoutId: widget.workoutId,
-              );
-            } else if (controller.responseExe!.data![0].exerciseType ==
-                "WEIGHTED") {
-              return WeightedCounter(
-                data: widget.data,
-                controller: controller,
-                workoutId: widget.workoutId,
-              );
-            } else {
-              return ColoredBox(
-                color: ColorUtils.kBlack,
-                child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorUtils.kTint,
-                  ),
-                ),
-              );
-            }
-          }
-        } else {
-          return ColoredBox(
-            color: ColorUtils.kBlack,
-            child: Center(
-              child: CircularProgressIndicator(
-                color: ColorUtils.kTint,
-              ),
-            ),
-          );
-        }
-      });
-    });
+    return GetBuilder<ConnectivityCheckViewModel>(
+        builder: (control) => control.isOnline
+            ? GetBuilder<UserWorkoutsDateViewModel>(builder: (controllerUSD) {
+                return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
+                  if (controller.apiResponse.status == Status.LOADING) {
+                    return ColoredBox(
+                      color: ColorUtils.kBlack,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: ColorUtils.kTint,
+                        ),
+                      ),
+                    );
+                  }
+                  if (controller.apiResponse.status == Status.COMPLETE) {
+                    controller.responseExe =
+                        _exerciseByIdViewModel.apiResponse.data;
+                    // print(
+                    //     'condition ===================== ${controllerUSD.exeIdCounter == controllerUSD.exerciseId.length}');
+                    // print(
+                    //     'id counter ===================== ${controllerUSD.exeIdCounter}');
+                    // print(
+                    //     'id length ===================== ${controllerUSD.exerciseId.length}');
+                    // print(
+                    //     'superset id  ===================== ${controllerUSD.supersetExerciseId}');
+                    // print(
+                    //     'exercise  id  ===================== ${controllerUSD.exerciseId}');
+                    //
+                    // print(
+                    //     'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
+                    if (controllerUSD.exeIdCounter ==
+                        controllerUSD.exerciseId.length) {
+                      if (controllerUSD.supersetExerciseId.isNotEmpty ||
+                          controllerUSD.supersetExerciseId != []) {
+                        return SuperSet(
+                          data: widget.data,
+                          controller: controller,
+                          workoutId: widget.workoutId,
+                        );
+                      } else {
+                        return ColoredBox(
+                          color: ColorUtils.kBlack,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: ColorUtils.kTint,
+                            ),
+                          ),
+                        );
+                      }
+                    } else {
+                      if (controller.responseExe!.data![0].exerciseType ==
+                          "REPS") {
+                        // toggleVideo();
+                        return RepsScreen(
+                          data: widget.data,
+                          controller: controller,
+                          workoutId: widget.workoutId,
+                        );
+                      } else if (controller
+                              .responseExe!.data![0].exerciseType ==
+                          "TIME") {
+                        return TimeScreen(
+                          data: widget.data,
+                          controller: controller,
+                          workoutId: widget.workoutId,
+                        );
+                      } else if (controller
+                              .responseExe!.data![0].exerciseType ==
+                          "WEIGHTED") {
+                        return WeightedCounter(
+                          data: widget.data,
+                          controller: controller,
+                          workoutId: widget.workoutId,
+                        );
+                      } else {
+                        return ColoredBox(
+                          color: ColorUtils.kBlack,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: ColorUtils.kTint,
+                            ),
+                          ),
+                        );
+                      }
+                    }
+                  } else {
+                    return ColoredBox(
+                      color: ColorUtils.kBlack,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: ColorUtils.kTint,
+                        ),
+                      ),
+                    );
+                  }
+                });
+              })
+            : ConnectionCheckScreen());
   }
 }
 

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_crop/image_crop.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/utils/images.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'dart:async';
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
@@ -59,10 +61,12 @@ class _SetProfilePageState extends State<SetProfilePage> {
   }
 
   String? data;
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
   @override
   void initState() {
     super.initState();
-
+    _connectivityCheckViewModel.startMonitoring();
     if (widget.fname!.isEmpty) {
       widget.fname = 'john';
     }
@@ -91,113 +95,31 @@ class _SetProfilePageState extends State<SetProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-        title: Text('Profile Photo', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 2.5),
-            child: TextButton(
-                onPressed: () async {
-                  Get.to(ExperienceLevelPage(
-                      skippedImage: AppImages.logo,
-                      fname: widget.fname,
-                      lname: widget.lname,
-                      email: widget.email,
-                      pass: widget.pass,
-                      userName: widget.userName,
-                      gender: widget.gender,
-                      phone: widget.phone,
-                      weight: widget.weight,
-                      dob: widget.dob ?? '2000-1-1 00:00:00.000'));
-                  PreferenceManager.setProfilePic('');
-                },
-                child: Text(
-                  'Skip',
-                  style: FontTextStyle.kTine16W400Roboto,
-                )),
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            SizedBox(
-              height: Get.height * 0.06,
-            ),
-            Center(
-                child: Text(
-              'Add a profile photo',
-              style: FontTextStyle.kWhite24BoldRoboto,
-            )),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Get.width * 0.1, vertical: Get.height * 0.03),
-              child: Text(
-                  'This photo will be used inside this app and also on the forums site.',
-                  textAlign: TextAlign.center,
-                  style: FontTextStyle.kWhite17BoldRoboto),
-            ),
-            SizedBox(
-              height: Get.height * 0.08,
-            ),
-            Center(
-              child: Stack(
-                children: [
-                  widget.image == null
-                      ? CircleAvatar(
-                          radius: 120,
-                          backgroundColor: Color(0xff363636),
-                          child: ClipRRect(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(120),
-                                  border: Border.all(color: Colors.grey),
-                                  color: Color(0xff363636),
-                                  image: DecorationImage(
-                                    image: AssetImage(AppIcons.profile),
-                                  )),
-                            ),
-                          ),
-                        )
-                      : CircleAvatar(
-                          radius: 120,
-                          backgroundColor: Color(0xff363636),
-                          child: ClipRRect(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(120),
-                                  border: Border.all(color: Colors.grey),
-                                  color: Color(0xff363636),
-                                  image: DecorationImage(
-                                    image: FileImage(widget.image!),
-                                    fit: BoxFit.cover,
-                                  )),
-                            ),
-                          ),
-                        ),
-                  Positioned(
-                    top: 180,
-                    left: 160,
-                    child: FlatButton(
-                      onPressed: () async {
-                        pickImage().then((value) => Get.off(ProfileSizer(
-                              image: _image,
-                              id: widget.id,
+    return GetBuilder<ConnectivityCheckViewModel>(
+      builder: (control) => control.isOnline
+          ? Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+                title: Text('Profile Photo',
+                    style: FontTextStyle.kWhite16BoldRoboto),
+                centerTitle: true,
+                actions: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 2.5),
+                    child: TextButton(
+                        onPressed: () async {
+                          Get.to(ExperienceLevelPage(
+                              skippedImage: AppImages.logo,
                               fname: widget.fname,
                               lname: widget.lname,
                               email: widget.email,
@@ -206,147 +128,245 @@ class _SetProfilePageState extends State<SetProfilePage> {
                               gender: widget.gender,
                               phone: widget.phone,
                               weight: widget.weight,
-                              dob: widget.dob ?? '2000-1-1 00:00:00.000',
-                            )));
-                      },
-                      child: Container(
-                          alignment: Alignment.center,
-                          height: 50,
-                          width: 50,
-                          decoration: BoxDecoration(
-                            color: ColorUtils.kTint,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Icon(
-                            Icons.add,
-                            color: ColorUtils.kBlack,
-                            size: Get.height * .06,
-                          )),
-                    ),
-                  ),
+                              dob: widget.dob ?? '2000-1-1 00:00:00.000'));
+                          PreferenceManager.setProfilePic('');
+                        },
+                        child: Text(
+                          'Skip',
+                          style: FontTextStyle.kTine16W400Roboto,
+                        )),
+                  )
                 ],
               ),
-            ),
-            SizedBox(
-              height: Get.height * 0.1,
-            ),
-            loader == true
-                ? Center(
-                    child: CircularProgressIndicator(
-                    color: ColorUtils.kTint,
-                  ))
-                : Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
-                    child: GestureDetector(
-                      onTap: () {
-                        if (widget.image == "https://tcm.sataware.dev" ||
-                            widget.image == null) {
-                          Get.showSnackbar(GetSnackBar(
-                            message: 'please select image',
-                            duration: Duration(seconds: 1),
-                          ));
-                        } else {
-                          print("sent name==${widget.fname}");
-                          print("sent name==${widget.lname}");
-                          Get.to(ExperienceLevelPage(
-                            fname: widget.fname,
-                            lname: widget.lname,
-                            email: widget.email,
-                            pass: widget.pass,
-                            userName: widget.userName,
-                            gender: widget.gender,
-                            phone: widget.phone,
-                            weight: widget.weight,
-                            dob: widget.dob!.isEmpty
-                                ? '2000-1-1 00:00:00.000'
-                                : widget.dob,
-                            image: widget.image,
-                          ));
-                        }
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(bottom: 15),
-                        alignment: Alignment.center,
-                        height: Get.height * 0.06,
-                        width: Get.width * 0.9,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(50),
-                            color: ColorUtils.kTint),
-                        child: Text(
-                          'Next',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: Get.height * 0.02),
+              body: SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: Get.height * 0.06,
                         ),
-                      ),
-                    ),
-                    // child: GestureDetector(
-                    //   onTap: () async {
-                    //     setState(() {
-                    //       loader = true;
-                    //     });
-                    //     if (widget.image == "https://tcm.sataware.dev" ||
-                    //         widget.image == null) {
-                    //       Get.showSnackbar(GetSnackBar(
-                    //         message: 'please select image',
-                    //         duration: Duration(seconds: 1),
-                    //       ));
-                    //     } else {
-                    //       Map<String, dynamic> data = {
-                    //         'user_id': widget.id1,
-                    //         'profile_pic': await dio.MultipartFile.fromFile(
-                    //             widget.image!.path),
-                    //       };
-                    //
-                    //       Map<String, String> header = {
-                    //         'content-type': 'application/json'
-                    //       };
-                    //
-                    //       dio.FormData formData = dio.FormData.fromMap(data);
-                    //
-                    //       dio.Response result = await dio.Dio().post(
-                    //           'https://tcm.sataware.dev//json/data_user_profile.php',
-                    //           data: formData,
-                    //           options: dio.Options(headers: header));
-                    //
-                    //       if (result.data['success'] == true) {
-                    //         Get.showSnackbar(GetSnackBar(
-                    //           message: 'Add Profile Successfully',
-                    //           duration: Duration(seconds: 1),
-                    //         ));
-                    //
-                    //         Get.off(ExperienceLevelPage());
-                    //       } else {
-                    //         Center(
-                    //             child: CircularProgressIndicator(
-                    //           color: ColorUtils.kTint,
-                    //         ));
-                    //       }
-                    //     }
-                    //     // print('IMAGE UPLOAD ${widget.image!.path}');
-                    //   },
-                    //   child: Container(
-                    //     margin: EdgeInsets.only(bottom: 15),
-                    //     alignment: Alignment.center,
-                    //     height: Get.height * 0.06,
-                    //     width: Get.width * 0.9,
-                    //     decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(50),
-                    //         color: ColorUtils.kTint),
-                    //     child: Text(
-                    //       'Next',
-                    //       style: TextStyle(
-                    //           fontWeight: FontWeight.bold,
-                    //           color: Colors.black,
-                    //           fontSize: Get.height * 0.02),
-                    //     ),
-                    //   ),
-                    // ),
-                  ),
-          ]),
-        ),
-      ),
+                        Center(
+                            child: Text(
+                          'Add a profile photo',
+                          style: FontTextStyle.kWhite24BoldRoboto,
+                        )),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Get.width * 0.1,
+                              vertical: Get.height * 0.03),
+                          child: Text(
+                              'This photo will be used inside this app and also on the forums site.',
+                              textAlign: TextAlign.center,
+                              style: FontTextStyle.kWhite17BoldRoboto),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.08,
+                        ),
+                        Center(
+                          child: Stack(
+                            children: [
+                              widget.image == null
+                                  ? CircleAvatar(
+                                      radius: 120,
+                                      backgroundColor: Color(0xff363636),
+                                      child: ClipRRect(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(120),
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                              color: Color(0xff363636),
+                                              image: DecorationImage(
+                                                image: AssetImage(
+                                                    AppIcons.profile),
+                                              )),
+                                        ),
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 120,
+                                      backgroundColor: Color(0xff363636),
+                                      child: ClipRRect(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(120),
+                                              border: Border.all(
+                                                  color: Colors.grey),
+                                              color: Color(0xff363636),
+                                              image: DecorationImage(
+                                                image: FileImage(widget.image!),
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
+                                      ),
+                                    ),
+                              Positioned(
+                                top: 180,
+                                left: 160,
+                                child: FlatButton(
+                                  onPressed: () async {
+                                    pickImage()
+                                        .then((value) => Get.off(ProfileSizer(
+                                              image: _image,
+                                              id: widget.id,
+                                              fname: widget.fname,
+                                              lname: widget.lname,
+                                              email: widget.email,
+                                              pass: widget.pass,
+                                              userName: widget.userName,
+                                              gender: widget.gender,
+                                              phone: widget.phone,
+                                              weight: widget.weight,
+                                              dob: widget.dob ??
+                                                  '2000-1-1 00:00:00.000',
+                                            )));
+                                  },
+                                  child: Container(
+                                      alignment: Alignment.center,
+                                      height: 50,
+                                      width: 50,
+                                      decoration: BoxDecoration(
+                                        color: ColorUtils.kTint,
+                                        borderRadius: BorderRadius.circular(50),
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: ColorUtils.kBlack,
+                                        size: Get.height * .06,
+                                      )),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.1,
+                        ),
+                        loader == true
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                color: ColorUtils.kTint,
+                              ))
+                            : Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.width * 0.05),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (widget.image ==
+                                            "https://tcm.sataware.dev" ||
+                                        widget.image == null) {
+                                      Get.showSnackbar(GetSnackBar(
+                                        message: 'please select image',
+                                        duration: Duration(seconds: 1),
+                                      ));
+                                    } else {
+                                      print("sent name==${widget.fname}");
+                                      print("sent name==${widget.lname}");
+                                      Get.to(ExperienceLevelPage(
+                                        fname: widget.fname,
+                                        lname: widget.lname,
+                                        email: widget.email,
+                                        pass: widget.pass,
+                                        userName: widget.userName,
+                                        gender: widget.gender,
+                                        phone: widget.phone,
+                                        weight: widget.weight,
+                                        dob: widget.dob!.isEmpty
+                                            ? '2000-1-1 00:00:00.000'
+                                            : widget.dob,
+                                        image: widget.image,
+                                      ));
+                                    }
+                                  },
+                                  child: Container(
+                                    margin: EdgeInsets.only(bottom: 15),
+                                    alignment: Alignment.center,
+                                    height: Get.height * 0.06,
+                                    width: Get.width * 0.9,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(50),
+                                        color: ColorUtils.kTint),
+                                    child: Text(
+                                      'Next',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: Get.height * 0.02),
+                                    ),
+                                  ),
+                                ),
+                                // child: GestureDetector(
+                                //   onTap: () async {
+                                //     setState(() {
+                                //       loader = true;
+                                //     });
+                                //     if (widget.image == "https://tcm.sataware.dev" ||
+                                //         widget.image == null) {
+                                //       Get.showSnackbar(GetSnackBar(
+                                //         message: 'please select image',
+                                //         duration: Duration(seconds: 1),
+                                //       ));
+                                //     } else {
+                                //       Map<String, dynamic> data = {
+                                //         'user_id': widget.id1,
+                                //         'profile_pic': await dio.MultipartFile.fromFile(
+                                //             widget.image!.path),
+                                //       };
+                                //
+                                //       Map<String, String> header = {
+                                //         'content-type': 'application/json'
+                                //       };
+                                //
+                                //       dio.FormData formData = dio.FormData.fromMap(data);
+                                //
+                                //       dio.Response result = await dio.Dio().post(
+                                //           'https://tcm.sataware.dev//json/data_user_profile.php',
+                                //           data: formData,
+                                //           options: dio.Options(headers: header));
+                                //
+                                //       if (result.data['success'] == true) {
+                                //         Get.showSnackbar(GetSnackBar(
+                                //           message: 'Add Profile Successfully',
+                                //           duration: Duration(seconds: 1),
+                                //         ));
+                                //
+                                //         Get.off(ExperienceLevelPage());
+                                //       } else {
+                                //         Center(
+                                //             child: CircularProgressIndicator(
+                                //           color: ColorUtils.kTint,
+                                //         ));
+                                //       }
+                                //     }
+                                //     // print('IMAGE UPLOAD ${widget.image!.path}');
+                                //   },
+                                //   child: Container(
+                                //     margin: EdgeInsets.only(bottom: 15),
+                                //     alignment: Alignment.center,
+                                //     height: Get.height * 0.06,
+                                //     width: Get.width * 0.9,
+                                //     decoration: BoxDecoration(
+                                //         borderRadius: BorderRadius.circular(50),
+                                //         color: ColorUtils.kTint),
+                                //     child: Text(
+                                //       'Next',
+                                //       style: TextStyle(
+                                //           fontWeight: FontWeight.bold,
+                                //           color: Colors.black,
+                                //           fontSize: Get.height * 0.02),
+                                //     ),
+                                //   ),
+                                // ),
+                              ),
+                      ]),
+                ),
+              ),
+            )
+          : ConnectionCheckScreen(),
     );
   }
 

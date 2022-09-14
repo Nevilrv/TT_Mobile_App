@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:simple_timer/simple_timer.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/super_set_second_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
-import 'package:video_player/video_player.dart';
-import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import '../../viewModel/conecction_check_viewModel.dart';
 
 class SuperSetScreen extends StatefulWidget {
   const SuperSetScreen({Key? key}) : super(key: key);
@@ -44,291 +45,316 @@ class _SuperSetScreenState extends State<SuperSetScreen>
     return "$minute : $second";
   }
 
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
   @override
   void initState() {
-    // TODO: implement initState
+    _connectivityCheckViewModel.startMonitoring();
     _timerController = TimerController(this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-        title: Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-        actions: [
-          TextButton(
-              onPressed: () {
-                Get.offAll(HomeScreen());
-              },
-              child: Text(
-                'Quit',
-                style: FontTextStyle.kTine16W400Roboto,
-              ))
-        ],
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: SizedBox(
-          width: Get.width,
-          child: Column(children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: Get.height * .027),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Superset',
-                    style: FontTextStyle.kWhite24BoldRoboto
-                        .copyWith(fontSize: Get.height * .03),
-                  ),
-                  SizedBox(height: Get.height * .015),
-                  Text('3 rounds', style: FontTextStyle.kLightGray18W300Roboto),
-                  SizedBox(height: Get.height * .008),
-                  Text('30 secs rest between rounds',
-                      style: FontTextStyle.kLightGray18W300Roboto),
-                ],
-              ),
-            ),
-            Container(
-              height: Get.height * .055,
-              width: Get.width * .33,
-              decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: ColorUtilsGradient.kGrayGradient,
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  borderRadius: BorderRadius.circular(6)),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Round', style: FontTextStyle.kWhite18BoldRoboto),
-                  SizedBox(width: Get.width * .02),
-                  CircleAvatar(
-                      radius: Get.height * .019,
-                      backgroundColor: ColorUtils.kTint,
+    return GetBuilder<ConnectivityCheckViewModel>(
+      builder: (control) => control.isOnline
+          ? Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+                title:
+                    Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
+                centerTitle: true,
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Get.offAll(HomeScreen());
+                      },
                       child: Text(
-                        '1',
-                        style: FontTextStyle.kBlack20BoldRoboto,
-                      )),
+                        'Quit',
+                        style: FontTextStyle.kTine16W400Roboto,
+                      ))
                 ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: Get.height * .03,
-                  left: Get.height * .025,
-                  right: Get.height * .025),
-              child: SizedBox(
-                width: Get.width,
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: exeName.length,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemBuilder: (_, index) {
-                      return exeName[index] != "Foam Roll Chest"
-                          ? Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('${exeName[index]}',
-                                        style: FontTextStyle.kWhite24BoldRoboto
-                                            .copyWith(
-                                          fontSize: Get.height * .026,
-                                        )),
-                                    SizedBox(width: Get.width * .03),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Image.asset(
-                                        AppIcons.play,
-                                        height: Get.height * 0.03,
-                                        width: Get.height * 0.03,
-                                        color: ColorUtils.kTint,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: Get.height * .005),
-                                Text(
-                                  '10 reps',
-                                  style: FontTextStyle.kLightGray18W300Roboto,
-                                ),
-                                SizedBox(height: Get.height * .0075),
-                                CounterCard(counter: counter),
-                                Divider(
-                                    height: Get.height * .06,
-                                    color: ColorUtils.kLightGray)
-                              ],
-                            )
-                          : Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text('${exeName[index]}',
-                                        style: FontTextStyle.kWhite24BoldRoboto
-                                            .copyWith(
-                                          fontSize: Get.height * .026,
-                                        )),
-                                    SizedBox(width: Get.width * .03),
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Image.asset(
-                                        AppIcons.play,
-                                        height: Get.height * 0.03,
-                                        width: Get.height * 0.03,
-                                        color: ColorUtils.kTint,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: Get.height * .005),
-                                Text(
-                                  '30 seconds each side',
-                                  style: FontTextStyle.kLightGray18W300Roboto,
-                                ),
-                                SizedBox(height: Get.height * .0075),
-                                Center(
-                                    child: Container(
-                                  height: Get.height * 0.18,
-                                  width: Get.height * 0.18,
-                                  margin: EdgeInsets.symmetric(vertical: 10),
-                                  child: SimpleTimer(
-                                    duration: Duration(seconds: 30),
-                                    controller: _timerController,
-                                    timerStyle: _timerStyle,
-                                    progressTextFormatter: (format) {
-                                      return formatedTime(
-                                          timeInSecond: format.inSeconds);
-                                    },
-                                    backgroundColor: ColorUtils.kGray,
-                                    progressIndicatorColor: ColorUtils.kTint,
-                                    progressIndicatorDirection:
-                                        _progressIndicatorDirection,
-                                    progressTextCountDirection:
-                                        _progressTextCountDirection,
-                                    progressTextStyle: FontTextStyle
-                                        .kWhite24BoldRoboto
-                                        .copyWith(fontSize: Get.height * 0.025),
-                                    strokeWidth: 15,
-                                    onStart: () {},
-                                    onEnd: () {
-                                      _timerController!.stop();
-                                    },
-                                  ),
-                                )),
-                                SizedBox(
-                                  height: Get.height * 0.02,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        print('Start Pressed');
-                                        _timerController!.start();
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        height: Get.height * .047,
-                                        width: Get.width * .25,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            stops: [0.0, 1.0],
-                                            colors: ColorUtilsGradient
-                                                .kTintGradient,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Start',
-                                          style: FontTextStyle
-                                              .kBlack18w600Roboto
-                                              .copyWith(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: Get.height * 0.02),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: Get.width * 0.05),
-                                    GestureDetector(
-                                      onTap: () {
-                                        print('Reset pressed ');
-
-                                        _timerController!.reset();
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        height: Get.height * .047,
-                                        width: Get.width * .25,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            border: Border.all(
+              body: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
+                child: SizedBox(
+                  width: Get.width,
+                  child: Column(children: [
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: Get.height * .027),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Superset',
+                            style: FontTextStyle.kWhite24BoldRoboto
+                                .copyWith(fontSize: Get.height * .03),
+                          ),
+                          SizedBox(height: Get.height * .015),
+                          Text('3 rounds',
+                              style: FontTextStyle.kLightGray18W300Roboto),
+                          SizedBox(height: Get.height * .008),
+                          Text('30 secs rest between rounds',
+                              style: FontTextStyle.kLightGray18W300Roboto),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      height: Get.height * .055,
+                      width: Get.width * .33,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: ColorUtilsGradient.kGrayGradient,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.circular(6)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Round',
+                              style: FontTextStyle.kWhite18BoldRoboto),
+                          SizedBox(width: Get.width * .02),
+                          CircleAvatar(
+                              radius: Get.height * .019,
+                              backgroundColor: ColorUtils.kTint,
+                              child: Text(
+                                '1',
+                                style: FontTextStyle.kBlack20BoldRoboto,
+                              )),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: Get.height * .03,
+                          left: Get.height * .025,
+                          right: Get.height * .025),
+                      child: SizedBox(
+                        width: Get.width,
+                        child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: exeName.length,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemBuilder: (_, index) {
+                              return exeName[index] != "Foam Roll Chest"
+                                  ? Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text('${exeName[index]}',
+                                                style: FontTextStyle
+                                                    .kWhite24BoldRoboto
+                                                    .copyWith(
+                                                  fontSize: Get.height * .026,
+                                                )),
+                                            SizedBox(width: Get.width * .03),
+                                            GestureDetector(
+                                              onTap: () {},
+                                              child: Image.asset(
+                                                AppIcons.play,
+                                                height: Get.height * 0.03,
+                                                width: Get.height * 0.03,
                                                 color: ColorUtils.kTint,
-                                                width: 1.5)),
-                                        child: Text(
-                                          'Reset',
-                                          style:
-                                              FontTextStyle.kTine17BoldRoboto,
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Divider(
-                                    height: Get.height * .06,
-                                    color: ColorUtils.kLightGray)
-                              ],
-                            );
-                    }),
+                                        SizedBox(height: Get.height * .005),
+                                        Text(
+                                          '10 reps',
+                                          style: FontTextStyle
+                                              .kLightGray18W300Roboto,
+                                        ),
+                                        SizedBox(height: Get.height * .0075),
+                                        CounterCard(counter: counter),
+                                        Divider(
+                                            height: Get.height * .06,
+                                            color: ColorUtils.kLightGray)
+                                      ],
+                                    )
+                                  : Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text('${exeName[index]}',
+                                                style: FontTextStyle
+                                                    .kWhite24BoldRoboto
+                                                    .copyWith(
+                                                  fontSize: Get.height * .026,
+                                                )),
+                                            SizedBox(width: Get.width * .03),
+                                            GestureDetector(
+                                              onTap: () {},
+                                              child: Image.asset(
+                                                AppIcons.play,
+                                                height: Get.height * 0.03,
+                                                width: Get.height * 0.03,
+                                                color: ColorUtils.kTint,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: Get.height * .005),
+                                        Text(
+                                          '30 seconds each side',
+                                          style: FontTextStyle
+                                              .kLightGray18W300Roboto,
+                                        ),
+                                        SizedBox(height: Get.height * .0075),
+                                        Center(
+                                            child: Container(
+                                          height: Get.height * 0.18,
+                                          width: Get.height * 0.18,
+                                          margin: EdgeInsets.symmetric(
+                                              vertical: 10),
+                                          child: SimpleTimer(
+                                            duration: Duration(seconds: 30),
+                                            controller: _timerController,
+                                            timerStyle: _timerStyle,
+                                            progressTextFormatter: (format) {
+                                              return formatedTime(
+                                                  timeInSecond:
+                                                      format.inSeconds);
+                                            },
+                                            backgroundColor: ColorUtils.kGray,
+                                            progressIndicatorColor:
+                                                ColorUtils.kTint,
+                                            progressIndicatorDirection:
+                                                _progressIndicatorDirection,
+                                            progressTextCountDirection:
+                                                _progressTextCountDirection,
+                                            progressTextStyle: FontTextStyle
+                                                .kWhite24BoldRoboto
+                                                .copyWith(
+                                                    fontSize:
+                                                        Get.height * 0.025),
+                                            strokeWidth: 15,
+                                            onStart: () {},
+                                            onEnd: () {
+                                              _timerController!.stop();
+                                            },
+                                          ),
+                                        )),
+                                        SizedBox(
+                                          height: Get.height * 0.02,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                print('Start Pressed');
+                                                _timerController!.start();
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                height: Get.height * .047,
+                                                width: Get.width * .25,
+                                                decoration: BoxDecoration(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    stops: [0.0, 1.0],
+                                                    colors: ColorUtilsGradient
+                                                        .kTintGradient,
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'Start',
+                                                  style: FontTextStyle
+                                                      .kBlack18w600Roboto
+                                                      .copyWith(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: Get.height *
+                                                              0.02),
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: Get.width * 0.05),
+                                            GestureDetector(
+                                              onTap: () {
+                                                print('Reset pressed ');
+
+                                                _timerController!.reset();
+                                              },
+                                              child: Container(
+                                                alignment: Alignment.center,
+                                                height: Get.height * .047,
+                                                width: Get.width * .25,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            6),
+                                                    border: Border.all(
+                                                        color: ColorUtils.kTint,
+                                                        width: 1.5)),
+                                                child: Text(
+                                                  'Reset',
+                                                  style: FontTextStyle
+                                                      .kTine17BoldRoboto,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Divider(
+                                            height: Get.height * .06,
+                                            color: ColorUtils.kLightGray)
+                                      ],
+                                    );
+                            }),
+                      ),
+                    ),
+                    Container(
+                        margin: EdgeInsets.only(
+                            top: Get.height * .01,
+                            bottom: Get.height * .04,
+                            left: Get.height * .025,
+                            right: Get.height * .025),
+                        alignment: Alignment.center,
+                        width: Get.width,
+                        height: Get.height * .055,
+                        decoration: BoxDecoration(
+                            color: ColorUtils.kSaperatedGray,
+                            borderRadius: BorderRadius.circular(6)),
+                        child: Text(
+                          '30 second rest',
+                          style: FontTextStyle.kWhite17W400Roboto,
+                        )),
+                    Padding(
+                        padding: EdgeInsets.only(
+                            left: Get.height * .03,
+                            right: Get.height * .03,
+                            bottom: Get.height * .05),
+                        child: commonNavigationButton(
+                            name: "Next Round",
+                            onTap: () {
+                              Get.to(SuperSetSecondScreen());
+                            }))
+                  ]),
+                ),
               ),
-            ),
-            Container(
-                margin: EdgeInsets.only(
-                    top: Get.height * .01,
-                    bottom: Get.height * .04,
-                    left: Get.height * .025,
-                    right: Get.height * .025),
-                alignment: Alignment.center,
-                width: Get.width,
-                height: Get.height * .055,
-                decoration: BoxDecoration(
-                    color: ColorUtils.kSaperatedGray,
-                    borderRadius: BorderRadius.circular(6)),
-                child: Text(
-                  '30 second rest',
-                  style: FontTextStyle.kWhite17W400Roboto,
-                )),
-            Padding(
-                padding: EdgeInsets.only(
-                    left: Get.height * .03,
-                    right: Get.height * .03,
-                    bottom: Get.height * .05),
-                child: commonNavigationButton(
-                    name: "Next Round",
-                    onTap: () {
-                      Get.to(SuperSetSecondScreen());
-                    }))
-          ]),
-        ),
-      ),
+            )
+          : ConnectionCheckScreen(),
     );
   }
 }

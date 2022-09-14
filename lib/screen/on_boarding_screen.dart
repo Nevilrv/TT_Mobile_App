@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/signIn_screens.dart';
 import 'package:tcm/screen/sign_up.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
@@ -15,10 +17,19 @@ class OnBoardingScreen extends StatefulWidget {
 }
 
 class _OnBoardingScreenState extends State<OnBoardingScreen> {
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
+
   PageController _controller = PageController(
     initialPage: 0,
   );
   int index1 = 0;
+  @override
+  void initState() {
+    _connectivityCheckViewModel.startMonitoring();
+    super.initState();
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -27,52 +38,56 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                SizedBox(
-                  height: Get.height,
-                  child: PageView(
-                    controller: _controller,
-                    onPageChanged: (val) {
-                      setState(() {
-                        index1 = val;
-                      });
-                    },
-                    children: [
-                      pages(
-                          image: 'asset/images/page1.png',
-                          text:
-                              'Learn How To Burn Fat, Build Muscle, Get Stronger, and actually enjoy the process!',
-                          islogo: true),
-                      pages(
-                          image: 'asset/images/page2.png',
-                          text:
-                              'This is another blurb of text that hopefully will make people tap on the free trial button below.',
-                          islogo: false),
-                      pages(
-                          image: 'asset/images/page3.png',
-                          text:
-                              'Nutrition is another area you could mention here even if it is an upsell to coaching. Should still mention it?',
-                          islogo: false),
-                      pages(
-                          image: 'asset/images/page4.png',
-                          text:
-                              'This is the last page of the onboard flow. This is the final message to get people to signup. It’s do or die here.',
-                          islogo: false),
-                    ],
-                  ),
+    return GetBuilder<ConnectivityCheckViewModel>(
+      builder: (control) => control.isOnline
+          ? Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              body: SingleChildScrollView(
+                child: Stack(
+                  children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: Get.height,
+                          child: PageView(
+                            controller: _controller,
+                            onPageChanged: (val) {
+                              setState(() {
+                                index1 = val;
+                              });
+                            },
+                            children: [
+                              pages(
+                                  image: 'asset/images/page1.png',
+                                  text:
+                                      'Learn How To Burn Fat, Build Muscle, Get Stronger, and actually enjoy the process!',
+                                  islogo: true),
+                              pages(
+                                  image: 'asset/images/page2.png',
+                                  text:
+                                      'This is another blurb of text that hopefully will make people tap on the free trial button below.',
+                                  islogo: false),
+                              pages(
+                                  image: 'asset/images/page3.png',
+                                  text:
+                                      'Nutrition is another area you could mention here even if it is an upsell to coaching. Should still mention it?',
+                                  islogo: false),
+                              pages(
+                                  image: 'asset/images/page4.png',
+                                  text:
+                                      'This is the last page of the onboard flow. This is the final message to get people to signup. It’s do or die here.',
+                                  islogo: false),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    footerText(),
+                  ],
                 ),
-              ],
-            ),
-            footerText(),
-          ],
-        ),
-      ),
+              ),
+            )
+          : ConnectionCheckScreen(),
     );
   }
 

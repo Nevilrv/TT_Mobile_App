@@ -5,8 +5,10 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/video_library_viewModel/recent_video_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:vimeo_video_player/vimeo_video_player.dart';
@@ -28,14 +30,15 @@ class _RelatedVideoScreenState extends State<RelatedVideoScreen> {
   late YoutubePlayerController _youTubePlayerController;
   ChewieController? _chewieController;
   RecentVideoViewModel _recentVideoViewModel = Get.put(RecentVideoViewModel());
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
 
   @override
   void initState() {
     super.initState();
-
+    _connectivityCheckViewModel.startMonitoring();
     print(
         "-=-=-=-=-=-=-=-=-=- ${widget.data[widget.id].videoId} ----------- ${widget.data[widget.id].categoryId}");
-
     initializePlayer();
   }
 
@@ -92,194 +95,210 @@ class _RelatedVideoScreenState extends State<RelatedVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return '${widget.data[widget.id].videoUrl}'.contains('www.youtube.com')
-        ? YoutubePlayerBuilder(
-            onExitFullScreen: () {},
-            player: YoutubePlayer(
-              controller: _youTubePlayerController,
-              showVideoProgressIndicator: true,
-              width: Get.width,
-              progressIndicatorColor: ColorUtils.kTint,
-              progressColors: ProgressBarColors(
-                  handleColor: ColorUtils.kRed,
-                  playedColor: ColorUtils.kRed,
-                  backgroundColor: ColorUtils.kGray,
-                  bufferedColor: ColorUtils.kLightGray),
-            ),
-            builder: (context, player) {
-              return Scaffold(
-                backgroundColor: ColorUtils.kBlack,
-                appBar: AppBar(
-                  elevation: 0,
-                  leading: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_sharp,
-                        color: ColorUtils.kTint,
-                      )),
-                  backgroundColor: ColorUtils.kBlack,
-                  title: Text('Video Library',
-                      style: FontTextStyle.kWhite16BoldRoboto),
-                  centerTitle: true,
-                ),
-                body: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      Container(
-                          height: Get.height / 3,
-                          width: Get.width,
-                          child: Center(
-                            child: _youTubePlayerController != null ||
-                                    _youTubePlayerController != ''
-                                ? player
-                                : Center(
-                                    child: CircularProgressIndicator(
-                                    color: ColorUtils.kTint,
-                                  )),
-                          )),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 0,
-                            left: Get.width * .06,
-                            right: Get.width * .06),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('${widget.data[widget.id].videoTitle}',
-                                style: FontTextStyle.kWhite17BoldRoboto),
-                            SizedBox(height: Get.height * .008),
-                            htmlToText(
-                                data: widget.data[widget.id].videoDescription),
-                            SizedBox(height: Get.height * .02),
-                          ],
+    return GetBuilder<ConnectivityCheckViewModel>(
+      builder: (control) {
+        return control.isOnline
+            ? '${widget.data[widget.id].videoUrl}'.contains('www.youtube.com')
+                ? YoutubePlayerBuilder(
+                    onExitFullScreen: () {},
+                    player: YoutubePlayer(
+                      controller: _youTubePlayerController,
+                      showVideoProgressIndicator: true,
+                      width: Get.width,
+                      progressIndicatorColor: ColorUtils.kTint,
+                      progressColors: ProgressBarColors(
+                          handleColor: ColorUtils.kRed,
+                          playedColor: ColorUtils.kRed,
+                          backgroundColor: ColorUtils.kGray,
+                          bufferedColor: ColorUtils.kLightGray),
+                    ),
+                    builder: (context, player) {
+                      return Scaffold(
+                        backgroundColor: ColorUtils.kBlack,
+                        appBar: AppBar(
+                          elevation: 0,
+                          leading: IconButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios_sharp,
+                                color: ColorUtils.kTint,
+                              )),
+                          backgroundColor: ColorUtils.kBlack,
+                          title: Text('Video Library',
+                              style: FontTextStyle.kWhite16BoldRoboto),
+                          centerTitle: true,
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              );
-            },
-          )
-        : '${widget.data[widget.id].videoUrl}'.contains('https://vimeo.com/')
-            ? Scaffold(
-                backgroundColor: ColorUtils.kBlack,
-                appBar: AppBar(
-                  elevation: 0,
-                  leading: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_sharp,
-                        color: ColorUtils.kTint,
-                      )),
-                  backgroundColor: ColorUtils.kBlack,
-                  title: Text('Video Library',
-                      style: FontTextStyle.kWhite16BoldRoboto),
-                  centerTitle: true,
-                ),
-                body: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: Get.height / 2.75,
-                        width: Get.width,
-                        child: Center(
-                            child: VimeoVideoPlayer(
-                          vimeoPlayerModel: VimeoPlayerModel(
-                            url: widget.data[widget.id].videoUrl!,
-                            deviceOrientation: DeviceOrientation.portraitUp,
-                            systemUiOverlay: const [
-                              SystemUiOverlay.top,
-                              SystemUiOverlay.bottom,
+                        body: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              Container(
+                                  height: Get.height / 3,
+                                  width: Get.width,
+                                  child: Center(
+                                    child: _youTubePlayerController != null ||
+                                            _youTubePlayerController != ''
+                                        ? player
+                                        : Center(
+                                            child: CircularProgressIndicator(
+                                            color: ColorUtils.kTint,
+                                          )),
+                                  )),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: 0,
+                                    left: Get.width * .06,
+                                    right: Get.width * .06),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('${widget.data[widget.id].videoTitle}',
+                                        style:
+                                            FontTextStyle.kWhite17BoldRoboto),
+                                    SizedBox(height: Get.height * .008),
+                                    htmlToText(
+                                        data: widget
+                                            .data[widget.id].videoDescription),
+                                    SizedBox(height: Get.height * .02),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                        )),
-                      ),
-                      SizedBox(height: Get.height * .008),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: Get.height * 0.008,
-                            left: Get.width * .06,
-                            right: Get.width * .06),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('${widget.data[widget.id].videoTitle}',
-                                style: FontTextStyle.kWhite17BoldRoboto),
-                            SizedBox(height: Get.height * .008),
-                            htmlToText(
-                                data: widget.data[widget.id].videoDescription),
-                            SizedBox(height: Get.height * .02),
-                          ],
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            : Scaffold(
-                backgroundColor: ColorUtils.kBlack,
-                appBar: AppBar(
-                  elevation: 0,
-                  leading: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_sharp,
-                        color: ColorUtils.kTint,
-                      )),
-                  backgroundColor: ColorUtils.kBlack,
-                  title: Text('Video Library',
-                      style: FontTextStyle.kWhite16BoldRoboto),
-                  centerTitle: true,
-                ),
-                body: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(
-                    children: [
-                      Container(
-                        height: Get.height / 2.75,
-                        width: Get.width,
-                        child: Center(
-                          child: _chewieController != null &&
-                                  _chewieController!
-                                      .videoPlayerController.value.isInitialized
-                              ? Chewie(
-                                  controller: _chewieController!,
-                                )
-                              : Center(
-                                  child: CircularProgressIndicator(
-                                  color: ColorUtils.kTint,
+                      );
+                    },
+                  )
+                : '${widget.data[widget.id].videoUrl}'
+                        .contains('https://vimeo.com/')
+                    ? Scaffold(
+                        backgroundColor: ColorUtils.kBlack,
+                        appBar: AppBar(
+                          elevation: 0,
+                          leading: IconButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios_sharp,
+                                color: ColorUtils.kTint,
+                              )),
+                          backgroundColor: ColorUtils.kBlack,
+                          title: Text('Video Library',
+                              style: FontTextStyle.kWhite16BoldRoboto),
+                          centerTitle: true,
+                        ),
+                        body: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: Get.height / 2.75,
+                                width: Get.width,
+                                child: Center(
+                                    child: VimeoVideoPlayer(
+                                  vimeoPlayerModel: VimeoPlayerModel(
+                                    url: widget.data[widget.id].videoUrl!,
+                                    deviceOrientation:
+                                        DeviceOrientation.portraitUp,
+                                    systemUiOverlay: const [
+                                      SystemUiOverlay.top,
+                                      SystemUiOverlay.bottom,
+                                    ],
+                                  ),
                                 )),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: Get.height * 0.008,
-                            left: Get.width * .06,
-                            right: Get.width * .06),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('${widget.data[widget.id].videoTitle}',
-                                style: FontTextStyle.kWhite17BoldRoboto),
-                            SizedBox(height: Get.height * .008),
-                            htmlToText(
-                                data: widget.data[widget.id].videoDescription),
-                            SizedBox(height: Get.height * .02),
-                          ],
+                              ),
+                              SizedBox(height: Get.height * .008),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: Get.height * 0.008,
+                                    left: Get.width * .06,
+                                    right: Get.width * .06),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('${widget.data[widget.id].videoTitle}',
+                                        style:
+                                            FontTextStyle.kWhite17BoldRoboto),
+                                    SizedBox(height: Get.height * .008),
+                                    htmlToText(
+                                        data: widget
+                                            .data[widget.id].videoDescription),
+                                    SizedBox(height: Get.height * .02),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       )
-                    ],
-                  ),
-                ),
-              );
+                    : Scaffold(
+                        backgroundColor: ColorUtils.kBlack,
+                        appBar: AppBar(
+                          elevation: 0,
+                          leading: IconButton(
+                              onPressed: () {
+                                Get.back();
+                              },
+                              icon: Icon(
+                                Icons.arrow_back_ios_sharp,
+                                color: ColorUtils.kTint,
+                              )),
+                          backgroundColor: ColorUtils.kBlack,
+                          title: Text('Video Library',
+                              style: FontTextStyle.kWhite16BoldRoboto),
+                          centerTitle: true,
+                        ),
+                        body: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: Get.height / 2.75,
+                                width: Get.width,
+                                child: Center(
+                                  child: _chewieController != null &&
+                                          _chewieController!
+                                              .videoPlayerController
+                                              .value
+                                              .isInitialized
+                                      ? Chewie(
+                                          controller: _chewieController!,
+                                        )
+                                      : Center(
+                                          child: CircularProgressIndicator(
+                                          color: ColorUtils.kTint,
+                                        )),
+                                ),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(
+                                    top: Get.height * 0.008,
+                                    left: Get.width * .06,
+                                    right: Get.width * .06),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('${widget.data[widget.id].videoTitle}',
+                                        style:
+                                            FontTextStyle.kWhite17BoldRoboto),
+                                    SizedBox(height: Get.height * .008),
+                                    htmlToText(
+                                        data: widget
+                                            .data[widget.id].videoDescription),
+                                    SizedBox(height: Get.height * .02),
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      )
+            : ConnectionCheckScreen();
+      },
+    );
   }
 
   youtubeVideoID() {

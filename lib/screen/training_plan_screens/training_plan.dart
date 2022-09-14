@@ -7,10 +7,11 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/goal_res_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_filter_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
-import 'package:tcm/screen/common_widget/common_widget.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/goal_view_model.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_filter_viewModel.dart';
 
@@ -27,6 +28,8 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
   GoalViewModel _goalViewModel = Get.put(GoalViewModel());
   WorkoutByFilterViewModel _workoutByFilterViewModel =
       Get.put(WorkoutByFilterViewModel());
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
 
   String? goal = '1';
   String? duration = '3';
@@ -34,6 +37,8 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
 
   void initState() {
     super.initState();
+    _connectivityCheckViewModel.startMonitoring();
+
     _goalViewModel.goals();
     _workoutByFilterViewModel.getWorkoutByFilterDetails(
       isLoading: true,
@@ -51,133 +56,145 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-        title: Text('Training Plans', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: EdgeInsets.only(
-            left: Get.width * .05, right: Get.width * .05, top: 10),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(
-              'Filter By',
-              style: FontTextStyle.kWhite17BoldRoboto,
-            ),
-            SizedBox(
-              height: Get.height * 0.02,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                genderSwitch(),
-                selectedDays(),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              'FOCUS',
-              style: FontTextStyle.kGreyBoldRoboto,
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            focusCategory(),
-            SizedBox(
-              height: 20,
-            ),
-            GetBuilder<WorkoutByFilterViewModel>(
-              builder: (controller) {
-                if (controller.apiResponse.status == Status.LOADING) {
-                  return Center(
-                      child: Padding(
-                    padding: EdgeInsets.symmetric(vertical: Get.height * .26),
-                    child: CircularProgressIndicator(
-                      color: ColorUtils.kTint,
-                    ),
-                  ));
-                } else if (controller.apiResponse.status == Status.COMPLETE) {
-                  WorkoutByFilterResponseModel response =
-                      controller.apiResponse.data;
-                  return GetBuilder<GoalViewModel>(
-                    builder: (goalController) {
-                      if (goalController.apiResponse.status ==
-                          Status.COMPLETE) {
-                        GoalsResModel goalResponse =
-                            goalController.apiResponse.data;
-
-                        if (response.data!.isNotEmpty && response.data != []) {
-                          return ListView.builder(
-                              shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              itemCount: goalResponse.data!.length,
-                              itemBuilder: (_, index) {
-                                return focusSelected == index
-                                    ? focusTiles(
-                                        context: context,
-                                        workoutResponse: response,
-                                        goalsResModel: goalResponse)
-                                    : SizedBox();
-                              });
-
-                          // return Column(children: [
-                          //   focusSelected == 0
-                          //       ? buildMuscle(
-                          //           context: context,
-                          //           workoutResponse: response,
-                          //           goalsResModel: goalResponse)
-                          //       : SizedBox(),
-                          //   focusSelected == 1
-                          //       ? cardio(
-                          //           context: context,
-                          //           workoutResponse: response,
-                          //           goalsResModel: goalResponse)
-                          //       : SizedBox(),
-                          //   focusSelected == 2
-                          //       ? strength(
-                          //           context: context,
-                          //           workoutResponse: response,
-                          //           goalsResModel: goalResponse)
-                          //       : SizedBox(),
-                          // ]);
-                        } else {
-                          return Center(
-                            child: Text(
-                              'No data ',
-                              style: FontTextStyle.kTine17BoldRoboto,
-                            ),
-                          );
-                        }
-                      } else {
-                        return SizedBox();
-                      }
+    return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
+      return control.isOnline
+          ? Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () {
+                      Get.back();
                     },
-                  );
-                } else {
-                  return SizedBox();
-                }
-              },
-            ),
-          ]),
-        ),
-      ),
-    );
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+                title: Text('Training Plans',
+                    style: FontTextStyle.kWhite16BoldRoboto),
+                centerTitle: true,
+              ),
+              body: Padding(
+                padding: EdgeInsets.only(
+                    left: Get.width * .05, right: Get.width * .05, top: 10),
+                child: SingleChildScrollView(
+                  physics: BouncingScrollPhysics(),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Filter By',
+                          style: FontTextStyle.kWhite17BoldRoboto,
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.02,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            genderSwitch(),
+                            selectedDays(),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Text(
+                          'FOCUS',
+                          style: FontTextStyle.kGreyBoldRoboto,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        focusCategory(),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        GetBuilder<WorkoutByFilterViewModel>(
+                          builder: (controller) {
+                            if (controller.apiResponse.status ==
+                                Status.LOADING) {
+                              return Center(
+                                  child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: Get.height * .26),
+                                child: CircularProgressIndicator(
+                                  color: ColorUtils.kTint,
+                                ),
+                              ));
+                            } else if (controller.apiResponse.status ==
+                                Status.COMPLETE) {
+                              WorkoutByFilterResponseModel response =
+                                  controller.apiResponse.data;
+                              return GetBuilder<GoalViewModel>(
+                                builder: (goalController) {
+                                  if (goalController.apiResponse.status ==
+                                      Status.COMPLETE) {
+                                    GoalsResModel goalResponse =
+                                        goalController.apiResponse.data;
+
+                                    if (response.data!.isNotEmpty &&
+                                        response.data != []) {
+                                      return ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
+                                          itemCount: goalResponse.data!.length,
+                                          itemBuilder: (_, index) {
+                                            return focusSelected == index
+                                                ? focusTiles(
+                                                    context: context,
+                                                    workoutResponse: response,
+                                                    goalsResModel: goalResponse)
+                                                : SizedBox();
+                                          });
+
+                                      // return Column(children: [
+                                      //   focusSelected == 0
+                                      //       ? buildMuscle(
+                                      //           context: context,
+                                      //           workoutResponse: response,
+                                      //           goalsResModel: goalResponse)
+                                      //       : SizedBox(),
+                                      //   focusSelected == 1
+                                      //       ? cardio(
+                                      //           context: context,
+                                      //           workoutResponse: response,
+                                      //           goalsResModel: goalResponse)
+                                      //       : SizedBox(),
+                                      //   focusSelected == 2
+                                      //       ? strength(
+                                      //           context: context,
+                                      //           workoutResponse: response,
+                                      //           goalsResModel: goalResponse)
+                                      //       : SizedBox(),
+                                      // ]);
+                                    } else {
+                                      return Center(
+                                        child: Text(
+                                          'No data ',
+                                          style:
+                                              FontTextStyle.kTine17BoldRoboto,
+                                        ),
+                                      );
+                                    }
+                                  } else {
+                                    return SizedBox();
+                                  }
+                                },
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          },
+                        ),
+                      ]),
+                ),
+              ),
+            )
+          : ConnectionCheckScreen();
+    });
   }
 
   Widget focusTiles(

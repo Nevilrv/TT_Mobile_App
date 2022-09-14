@@ -16,12 +16,14 @@ import 'package:tcm/model/request_model/forum_request_model/like_forum_request_m
 import 'package:tcm/model/request_model/forum_request_model/search_forum_request_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
 
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import '../../api_services/api_response.dart';
@@ -44,12 +46,16 @@ class _ForumScreenState extends State<ForumScreen> {
   ForumViewModel forumViewModel = Get.put(ForumViewModel());
   GetAllForumsResponseModel response = GetAllForumsResponseModel();
   CarouselController carouselController = CarouselController();
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
   int _current = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _connectivityCheckViewModel.startMonitoring();
+
     forumViewModel.selectedMenu = 'All Posts'.obs;
     SearchForumRequestModel model = SearchForumRequestModel();
     model.title = '';
@@ -65,269 +71,291 @@ class _ForumScreenState extends State<ForumScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-        title: Text('Forums', style: FontTextStyle.kWhite16BoldRoboto),
-        centerTitle: true,
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: Get.height * 0.02, vertical: Get.height * 0.02),
-            child: Container(
-              decoration: BoxDecoration(
-                  color: ColorUtils.kSaperatedGray,
-                  borderRadius: BorderRadius.circular(10)),
-              height: Get.height * 0.05,
-              width: Get.width,
-              child: TextField(
-                  style: FontTextStyle.kWhite16W300Roboto,
-                  onTap: () async {
-                    forumViewModel.selectedMenu = 'All Posts'.obs;
-                    SearchForumRequestModel model1 = SearchForumRequestModel();
-                    model1.title = '';
-                    model1.userId = PreferenceManager.getUId();
-
-                    await forumViewModel.searchForumViewModel(model1);
-                  },
-                  onChanged: (value) async {
-                    forumViewModel.setAllPost(value);
-                    SearchForumRequestModel model = SearchForumRequestModel();
-                    model.title = value;
-                    model.userId = PreferenceManager.getUId();
-
-                    await forumViewModel.searchForumViewModel(model);
-                  },
-                  decoration: InputDecoration(
-                      hintText: 'Search',
-                      hintStyle: FontTextStyle.kLightGray16W300Roboto,
-                      border: InputBorder.none,
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: ColorUtils.kTint,
-                        size: Get.height * 0.03,
-                      ),
-                      suffixIcon: PopupMenuButton<Menu>(
-                          color: ColorUtils.kBlack,
-                          icon: Image.asset(
-                            AppImages.filter,
-                            fit: BoxFit.contain,
-                            color: ColorUtils.kTint,
-                            height: Get.height * 0.03,
-                            width: Get.height * 0.03,
-                          ),
-                          // Callback that sets the selected popup menu item.
-                          onSelected: (Menu item) async {
-                            if (item.name == 'HotPosts') {
-                              forumViewModel.selectedMenu = 'Hot Posts'.obs;
-                              // forumViewModel.setSelectedMenu('Hot Posts');
-
-                              await forumViewModel.getAllForumsViewModel(
-                                  filter: 'hot');
-                            } else if (item.name == 'PopularPosts') {
-                              forumViewModel.selectedMenu = 'Popular Posts'.obs;
-                              // forumViewModel.setSelectedMenu('Popular Posts');
-
-                              await forumViewModel.getAllForumsViewModel(
-                                  filter: 'popular');
-                            } else if (item.name == 'All') {
-                              forumViewModel.selectedMenu = 'All Posts'.obs;
-                              // forumViewModel.setSelectedMenu('All Posts');
-
-                              SearchForumRequestModel model =
-                                  SearchForumRequestModel();
-                              model.title = '';
-                              model.userId = PreferenceManager.getUId();
-
-                              await forumViewModel.searchForumViewModel(model);
-                            }
-                          },
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<Menu>>[
-                                PopupMenuItem<Menu>(
-                                  value: Menu.HotPosts,
-                                  child: Text(
-                                    'Hot Posts',
-                                    style: FontTextStyle.kWhite16W300Roboto,
-                                  ),
-                                ),
-                                PopupMenuItem<Menu>(
-                                  value: Menu.PopularPosts,
-                                  child: Text(
-                                    'Popular Posts',
-                                    style: FontTextStyle.kWhite16W300Roboto,
-                                  ),
-                                ),
-                                PopupMenuItem<Menu>(
-                                  value: Menu.All,
-                                  child: Text(
-                                    'All Posts',
-                                    style: FontTextStyle.kWhite16W300Roboto,
-                                  ),
-                                ),
-                              ]))),
-            ),
-          ),
-          Divider(
-            color: ColorUtils.kTint,
-            height: Get.height * .03,
-            thickness: 1,
-          ),
-          Obx(() {
-            return Padding(
-              padding: EdgeInsets.only(left: Get.height * 0.02),
-              child: Text(
-                '${forumViewModel.selectedMenu} : ',
-                style: FontTextStyle.kWhite17W400Roboto,
-              ),
-            );
-          }),
-          GetBuilder<ForumViewModel>(
-            builder: (controller) {
-              // print('_selectedMenu  ${controller.selectedMenu}');
-              if (forumViewModel.selectedMenu.value == 'All Posts') {
-                if (controller.searchApiResponse.status == Status.LOADING) {
-                  return Center(
-                      child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: CircularProgressIndicator(
-                      color: ColorUtils.kTint,
-                    ),
-                  ));
-                }
-                if (controller.searchApiResponse.status == Status.ERROR) {
-                  return Center(
-                      child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Server Error',
-                      style: FontTextStyle.kTine16W400Roboto,
-                    ),
-                  ));
-                }
-
-                response = controller.searchApiResponse.data;
-                controller.setLikeDisLike(response.data!);
-              } else {
-                if (controller.getAllForumsApiResponse.status ==
-                    Status.LOADING) {
-                  return Center(
-                      child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: CircularProgressIndicator(
-                      color: ColorUtils.kTint,
-                    ),
-                  ));
-                }
-                if (controller.getAllForumsApiResponse.status == Status.ERROR) {
-                  return Center(
-                      child: Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Text(
-                      'Server Error',
-                      style: FontTextStyle.kTine16W400Roboto,
-                    ),
-                  ));
-                }
-
-                response = controller.getAllForumsApiResponse.data;
-                controller.setLikeDisLike(response.data!);
-              }
-
-              if (response.data!.isEmpty) {
-                return Center(
-                    child: Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text(
-                    'No data found',
-                    style: FontTextStyle.kTine16W400Roboto,
-                  ),
-                ));
-              }
-              return Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Get.height * 0.02,
-                      vertical: Get.height * 0.02),
-                  child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: response.data!.length,
-                    itemBuilder: (context, index) {
-                      return response.data![index].postId == null
-                          ? SizedBox()
-                          : Column(
-                              children: [
-                                Container(
-                                  width: Get.width,
-                                  decoration: BoxDecoration(
-                                      color: ColorUtils.kSaperatedGray
-                                          .withOpacity(0.4),
-                                      borderRadius: BorderRadius.circular(7)),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: Get.height * 0.013,
-                                        vertical: Get.height * 0.013),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        boxHeader(
-                                            response: response,
-                                            index: index,
-                                            controller: controller),
-                                        SizedBox(height: Get.height * 0.01),
-                                        boxBody(
-                                            response: response, index: index),
-                                        SizedBox(height: Get.height * 0.02),
-                                        boxFooter(
-                                            response: response,
-                                            index: index,
-                                            controller: controller),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: Get.height * 0.02),
-                              ],
-                            );
+    return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
+      return control.isOnline
+          ? Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () {
+                      Get.back();
                     },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+                title: Text('Forums', style: FontTextStyle.kWhite16BoldRoboto),
+                centerTitle: true,
+              ),
+              body: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Get.height * 0.02,
+                        vertical: Get.height * 0.02),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          color: ColorUtils.kSaperatedGray,
+                          borderRadius: BorderRadius.circular(10)),
+                      height: Get.height * 0.05,
+                      width: Get.width,
+                      child: TextField(
+                          style: FontTextStyle.kWhite16W300Roboto,
+                          onTap: () async {
+                            forumViewModel.selectedMenu = 'All Posts'.obs;
+                            SearchForumRequestModel model1 =
+                                SearchForumRequestModel();
+                            model1.title = '';
+                            model1.userId = PreferenceManager.getUId();
+
+                            await forumViewModel.searchForumViewModel(model1);
+                          },
+                          onChanged: (value) async {
+                            forumViewModel.setAllPost(value);
+                            SearchForumRequestModel model =
+                                SearchForumRequestModel();
+                            model.title = value;
+                            model.userId = PreferenceManager.getUId();
+
+                            await forumViewModel.searchForumViewModel(model);
+                          },
+                          decoration: InputDecoration(
+                              hintText: 'Search',
+                              hintStyle: FontTextStyle.kLightGray16W300Roboto,
+                              border: InputBorder.none,
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: ColorUtils.kTint,
+                                size: Get.height * 0.03,
+                              ),
+                              suffixIcon: PopupMenuButton<Menu>(
+                                  color: ColorUtils.kBlack,
+                                  icon: Image.asset(
+                                    AppImages.filter,
+                                    fit: BoxFit.contain,
+                                    color: ColorUtils.kTint,
+                                    height: Get.height * 0.03,
+                                    width: Get.height * 0.03,
+                                  ),
+                                  // Callback that sets the selected popup menu item.
+                                  onSelected: (Menu item) async {
+                                    if (item.name == 'HotPosts') {
+                                      forumViewModel.selectedMenu =
+                                          'Hot Posts'.obs;
+                                      // forumViewModel.setSelectedMenu('Hot Posts');
+
+                                      await forumViewModel
+                                          .getAllForumsViewModel(filter: 'hot');
+                                    } else if (item.name == 'PopularPosts') {
+                                      forumViewModel.selectedMenu =
+                                          'Popular Posts'.obs;
+                                      // forumViewModel.setSelectedMenu('Popular Posts');
+
+                                      await forumViewModel
+                                          .getAllForumsViewModel(
+                                              filter: 'popular');
+                                    } else if (item.name == 'All') {
+                                      forumViewModel.selectedMenu =
+                                          'All Posts'.obs;
+                                      // forumViewModel.setSelectedMenu('All Posts');
+
+                                      SearchForumRequestModel model =
+                                          SearchForumRequestModel();
+                                      model.title = '';
+                                      model.userId = PreferenceManager.getUId();
+
+                                      await forumViewModel
+                                          .searchForumViewModel(model);
+                                    }
+                                  },
+                                  itemBuilder: (BuildContext context) =>
+                                      <PopupMenuEntry<Menu>>[
+                                        PopupMenuItem<Menu>(
+                                          value: Menu.HotPosts,
+                                          child: Text(
+                                            'Hot Posts',
+                                            style: FontTextStyle
+                                                .kWhite16W300Roboto,
+                                          ),
+                                        ),
+                                        PopupMenuItem<Menu>(
+                                          value: Menu.PopularPosts,
+                                          child: Text(
+                                            'Popular Posts',
+                                            style: FontTextStyle
+                                                .kWhite16W300Roboto,
+                                          ),
+                                        ),
+                                        PopupMenuItem<Menu>(
+                                          value: Menu.All,
+                                          child: Text(
+                                            'All Posts',
+                                            style: FontTextStyle
+                                                .kWhite16W300Roboto,
+                                          ),
+                                        ),
+                                      ]))),
+                    ),
+                  ),
+                  Divider(
+                    color: ColorUtils.kTint,
+                    height: Get.height * .03,
+                    thickness: 1,
+                  ),
+                  Obx(() {
+                    return Padding(
+                      padding: EdgeInsets.only(left: Get.height * 0.02),
+                      child: Text(
+                        '${forumViewModel.selectedMenu} : ',
+                        style: FontTextStyle.kWhite17W400Roboto,
+                      ),
+                    );
+                  }),
+                  GetBuilder<ForumViewModel>(
+                    builder: (controller) {
+                      // print('_selectedMenu  ${controller.selectedMenu}');
+                      if (forumViewModel.selectedMenu.value == 'All Posts') {
+                        if (controller.searchApiResponse.status ==
+                            Status.LOADING) {
+                          return Center(
+                              child: Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: CircularProgressIndicator(
+                              color: ColorUtils.kTint,
+                            ),
+                          ));
+                        }
+                        if (controller.searchApiResponse.status ==
+                            Status.ERROR) {
+                          return Center(
+                              child: Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'Server Error',
+                              style: FontTextStyle.kTine16W400Roboto,
+                            ),
+                          ));
+                        }
+
+                        response = controller.searchApiResponse.data;
+                        controller.setLikeDisLike(response.data!);
+                      } else {
+                        if (controller.getAllForumsApiResponse.status ==
+                            Status.LOADING) {
+                          return Center(
+                              child: Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: CircularProgressIndicator(
+                              color: ColorUtils.kTint,
+                            ),
+                          ));
+                        }
+                        if (controller.getAllForumsApiResponse.status ==
+                            Status.ERROR) {
+                          return Center(
+                              child: Padding(
+                            padding: EdgeInsets.only(top: 20),
+                            child: Text(
+                              'Server Error',
+                              style: FontTextStyle.kTine16W400Roboto,
+                            ),
+                          ));
+                        }
+
+                        response = controller.getAllForumsApiResponse.data;
+                        controller.setLikeDisLike(response.data!);
+                      }
+
+                      if (response.data!.isEmpty) {
+                        return Center(
+                            child: Padding(
+                          padding: EdgeInsets.only(top: 20),
+                          child: Text(
+                            'No data found',
+                            style: FontTextStyle.kTine16W400Roboto,
+                          ),
+                        ));
+                      }
+                      return Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Get.height * 0.02,
+                              vertical: Get.height * 0.02),
+                          child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            itemCount: response.data!.length,
+                            itemBuilder: (context, index) {
+                              return response.data![index].postId == null
+                                  ? SizedBox()
+                                  : Column(
+                                      children: [
+                                        Container(
+                                          width: Get.width,
+                                          decoration: BoxDecoration(
+                                              color: ColorUtils.kSaperatedGray
+                                                  .withOpacity(0.4),
+                                              borderRadius:
+                                                  BorderRadius.circular(7)),
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: Get.height * 0.013,
+                                                vertical: Get.height * 0.013),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                boxHeader(
+                                                    response: response,
+                                                    index: index,
+                                                    controller: controller),
+                                                SizedBox(
+                                                    height: Get.height * 0.01),
+                                                boxBody(
+                                                    response: response,
+                                                    index: index),
+                                                SizedBox(
+                                                    height: Get.height * 0.02),
+                                                boxFooter(
+                                                    response: response,
+                                                    index: index,
+                                                    controller: controller),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: Get.height * 0.02),
+                                      ],
+                                    );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  )
+                ],
+              ),
+              floatingActionButton: GestureDetector(
+                onTap: () {
+                  forumViewModel.selectedMenu = 'All Posts'.obs;
+
+                  Get.to(AddForumScreen());
+                },
+                child: CircleAvatar(
+                  backgroundColor: ColorUtils.kTint,
+                  radius: Get.height * 0.03,
+                  child: Icon(
+                    Icons.add,
+                    color: ColorUtils.kBlack,
+                    size: Get.height * 0.04,
                   ),
                 ),
-              );
-            },
-          )
-        ],
-      ),
-      floatingActionButton: GestureDetector(
-        onTap: () {
-          forumViewModel.selectedMenu = 'All Posts'.obs;
-
-          Get.to(AddForumScreen());
-        },
-        child: CircleAvatar(
-          backgroundColor: ColorUtils.kTint,
-          radius: Get.height * 0.03,
-          child: Icon(
-            Icons.add,
-            color: ColorUtils.kBlack,
-            size: Get.height * 0.04,
-          ),
-        ),
-      ),
-    );
+              ),
+            )
+          : ConnectionCheckScreen();
+    });
   }
 
   Widget boxBody(

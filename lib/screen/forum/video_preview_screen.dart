@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import '../../utils/ColorUtils.dart';
@@ -17,9 +19,13 @@ class VideoPreviewScreen extends StatefulWidget {
 class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
   @override
   void initState() {
     super.initState();
+    _connectivityCheckViewModel.startMonitoring();
+
     initializeVideoPlayer();
   }
 
@@ -52,31 +58,37 @@ class _VideoPreviewScreenState extends State<VideoPreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      appBar: AppBar(
-        elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Get.back();
-            },
-            icon: Icon(
-              Icons.arrow_back_ios_sharp,
-              color: ColorUtils.kTint,
-            )),
-        backgroundColor: ColorUtils.kBlack,
-      ),
-      body: Container(
-        child: Center(
-          child: chewieController != null &&
-                  chewieController!.videoPlayerController.value.isInitialized
-              ? Chewie(
-                  controller: chewieController!,
-                )
-              : Center(
-                  child: CircularProgressIndicator(color: ColorUtils.kTint)),
-        ),
-      ),
-    );
+    return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
+      return control.isOnline
+          ? Scaffold(
+              backgroundColor: ColorUtils.kBlack,
+              appBar: AppBar(
+                elevation: 0,
+                leading: IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                backgroundColor: ColorUtils.kBlack,
+              ),
+              body: Container(
+                child: Center(
+                  child: chewieController != null &&
+                          chewieController!
+                              .videoPlayerController.value.isInitialized
+                      ? Chewie(
+                          controller: chewieController!,
+                        )
+                      : Center(
+                          child: CircularProgressIndicator(
+                              color: ColorUtils.kTint)),
+                ),
+              ),
+            )
+          : ConnectionCheckScreen();
+    });
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:developer' as d;
@@ -22,9 +24,13 @@ class ForumVideoScreen extends StatefulWidget {
 class _ForumVideoScreenState extends State<ForumVideoScreen> {
   VideoPlayerController? videoPlayerController;
   ChewieController? chewieController;
+  ConnectivityCheckViewModel _connectivityCheckViewModel =
+      Get.put(ConnectivityCheckViewModel());
   @override
   void initState() {
     super.initState();
+    _connectivityCheckViewModel.startMonitoring();
+
     d.log('widget.video!>>>>>>Z${widget.video!}');
     initializeVideoPlayer();
   }
@@ -60,18 +66,25 @@ class _ForumVideoScreenState extends State<ForumVideoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Get.height * 0.23,
-      width: Get.width,
-      // color: Colors.red,
-      child: Center(
-        child: chewieController != null &&
-                chewieController!.videoPlayerController.value.isInitialized
-            ? Chewie(
-                controller: chewieController!,
-              )
-            : Center(child: CircularProgressIndicator(color: ColorUtils.kTint)),
-      ),
-    );
+    return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
+      return control.isOnline
+          ? Container(
+              height: Get.height * 0.23,
+              width: Get.width,
+              // color: Colors.red,
+              child: Center(
+                child: chewieController != null &&
+                        chewieController!
+                            .videoPlayerController.value.isInitialized
+                    ? Chewie(
+                        controller: chewieController!,
+                      )
+                    : Center(
+                        child:
+                            CircularProgressIndicator(color: ColorUtils.kTint)),
+              ),
+            )
+          : ConnectionCheckScreen();
+    });
   }
 }
