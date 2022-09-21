@@ -147,12 +147,32 @@ class _HomeScreenState extends State<HomeScreen> {
             resp.data!.supersetExercisesIds!.isNotEmpty) {
           _userWorkoutsDateViewModel.supersetExerciseId =
               resp.data!.supersetExercisesIds!;
-          _userWorkoutsDateViewModel.supersetRound = 4;
         } else {
           _userWorkoutsDateViewModel.supersetExerciseId = [];
-          _userWorkoutsDateViewModel.supersetRound = 0;
         }
-        // _userWorkoutsDateViewModel.supersetExerciseId = ["2", "5", "7", "10"];
+        if (resp.data!.restTime! != "" || resp.data!.restTime!.isNotEmpty) {
+          print('======= superset restTime ${resp.data!.restTime!}');
+
+          _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime!;
+          print(
+              'controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+        } else {
+          _userWorkoutsDateViewModel.supersetRestTime = "30";
+          print(
+              'else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+        }
+        if (resp.data!.round! != "" || resp.data!.round!.isNotEmpty) {
+          print('======= superset round ${resp.data!.round!}');
+          _userWorkoutsDateViewModel.supersetRound =
+              int.parse("${resp.data!.round!}");
+          print(
+              'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+        } else {
+          _userWorkoutsDateViewModel.supersetRound = 3;
+          print(
+              'else ======= superset Round ${_userWorkoutsDateViewModel.supersetRestTime}');
+        }
+        // _userWorkoutsDateViewModel.supersetExerciseId = ["4", "5", "6"];
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
                     .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??

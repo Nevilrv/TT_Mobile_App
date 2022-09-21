@@ -103,6 +103,29 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     _userWorkoutsDateViewModel.userProgramDateID =
         resp.data!.userProgramDatesId!;
 
+    if (resp.data!.restTime! != "" || resp.data!.restTime!.isNotEmpty) {
+      print('======= superset restTime ${resp.data!.restTime!}');
+
+      _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime!;
+      print(
+          'controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+    } else {
+      _userWorkoutsDateViewModel.supersetRestTime = "30";
+      print(
+          'else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+    }
+    if (resp.data!.round! != "" || resp.data!.round!.isNotEmpty) {
+      print('======= superset round ${resp.data!.round!}');
+      _userWorkoutsDateViewModel.supersetRound =
+          int.parse("${resp.data!.round!}");
+      print(
+          'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+    } else {
+      _userWorkoutsDateViewModel.supersetRound = 3;
+      print(
+          'else ======= superset Round ${_userWorkoutsDateViewModel.supersetRestTime}');
+    }
+
     print(
         'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 

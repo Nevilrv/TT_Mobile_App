@@ -46,6 +46,8 @@ class AppIcons {
   static const String facebook1 = 'asset/images/facebook1.png';
   static const String whatsapp = 'asset/images/whatsapp.png';
   static const String checked = 'asset/icons/checked.png';
+  static const String info = 'asset/icons/info.png';
+  static const String compareArrow = 'asset/icons/compare_arrow.png';
 
   static const String sms = "asset/images/sms.png";
   static const String more = "asset/images/more.png";

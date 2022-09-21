@@ -59,6 +59,11 @@ class FontTextStyle {
       fontSize: Get.height * 0.018,
       fontWeight: FontWeight.w300,
       fontFamily: 'Roboto');
+  static TextStyle kLightGray20W600Roboto = TextStyle(
+      color: ColorUtils.kLightGray,
+      fontSize: Get.height * 0.024,
+      fontWeight: FontWeight.w300,
+      fontFamily: 'Roboto');
   static TextStyle kLightGray18W300Roboto = TextStyle(
       color: ColorUtils.kLightGray,
       fontSize: Get.height * 0.02,

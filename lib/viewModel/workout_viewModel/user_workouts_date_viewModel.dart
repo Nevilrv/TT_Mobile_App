@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/workout_response_model/user_workouts_date_response_model.dart';
@@ -9,16 +11,67 @@ class UserWorkoutsDateViewModel extends GetxController {
   List exerciseId = [];
   List supersetExerciseId = [];
   int supersetRound = 0;
+  String supersetRestTime = "";
   int supersetCounter = 0;
   String userProgramDateID = '';
   int exeIdCounter = 0;
   bool isHold = false;
   bool isFirst = false;
   bool isGreaterOne = false;
+  TextEditingController? supersetWeight;
+  int currentValue = 0;
+  int responseTime = 0;
+  Timer? timer;
+  void startTimer() {
+    currentValue = 0;
+    timer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        print('responseTime--- $responseTime');
+        if (currentValue >= 0 && currentValue < responseTime) {
+          currentValue++;
+          print('count>>>>>$currentValue');
+          update();
+        } else {
+          currentValue = 0;
+          timer.cancel();
+          update();
+        }
+      },
+    );
+  }
+
+  int currentRestValue = 0;
+  int responseRestTime = 30;
+  Timer? resTimer;
+  void startRestTimer() {
+    resTimer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        if (currentRestValue >= 0 && currentRestValue < responseRestTime) {
+          currentRestValue++;
+
+          print('count>>>>>$currentRestValue');
+          update();
+        } else {
+          currentRestValue = 0;
+          resTimer!.cancel();
+          update();
+        }
+      },
+    );
+  }
 
   getSupersetRound() {
     if (supersetCounter < supersetRound) {
       supersetCounter++;
+    }
+    update();
+  }
+
+  getSupersetBackRound() {
+    if (0 < supersetCounter) {
+      supersetCounter--;
     }
     update();
   }

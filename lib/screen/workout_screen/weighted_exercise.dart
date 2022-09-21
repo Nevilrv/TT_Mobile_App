@@ -27,6 +27,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
       Get.put(SaveUserCustomizedExerciseViewModel());
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
+  TextEditingController? supersetWeight;
 
   @override
   void initState() {
@@ -182,6 +183,8 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                           alignment: Alignment.topRight,
                                           children: [
                                             WeightedCounterCard(
+                                              weight: widget
+                                                  .data[0].exerciseWeight!,
                                               counter: int.parse(
                                                   '${widget.data[0].exerciseReps}'),
                                               repsNo:

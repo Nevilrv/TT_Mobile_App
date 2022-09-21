@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:get/get.dart';
 import 'package:simple_timer/simple_timer.dart';
 import 'package:tcm/api_services/api_response.dart';
@@ -12,7 +14,6 @@ import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/training_plan_screens/exercise_detail_page.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
-import 'package:tcm/screen/workout_screen/super_set_second_screen.dart';
 import 'package:tcm/screen/workout_screen/widget/workout_widgets.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -106,18 +107,18 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                   if (controller.apiResponse.status == Status.COMPLETE) {
                     controller.responseExe =
                         _exerciseByIdViewModel.apiResponse.data;
-                    // print(
+                    // log(
                     //     'condition ===================== ${controllerUSD.exeIdCounter == controllerUSD.exerciseId.length}');
-                    // print(
+                    // log(
                     //     'id counter ===================== ${controllerUSD.exeIdCounter}');
-                    // print(
+                    // log(
                     //     'id length ===================== ${controllerUSD.exerciseId.length}');
-                    // print(
+                    // log(
                     //     'superset id  ===================== ${controllerUSD.supersetExerciseId}');
-                    // print(
+                    // log(
                     //     'exercise  id  ===================== ${controllerUSD.exerciseId}');
                     //
-                    // print(
+                    // log(
                     //     'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
                     if (controllerUSD.exeIdCounter ==
                         controllerUSD.exerciseId.length) {
@@ -238,13 +239,13 @@ class _RepsScreenState extends State<RepsScreen> {
   Widget build(BuildContext context) {
     return GestureDetector(
       // onHorizontalDragUpdate: (details) async {
-      //   print("hello ${details.localPosition}");
-      //   print("hello ${details.localPosition.dx}");
-      //   print("hello ${details.globalPosition.distance}");
+      //   log("hello ${details.localPosition}");
+      //   log("hello ${details.localPosition.dx}");
+      //   log("hello ${details.globalPosition.distance}");
       //
       //   if (details.localPosition.dx < 100.0) {
       //     //SWIPE FROM RIGHT DETECTION
-      //     print("hello ");
+      //     log("hello ");
       //     _userWorkoutsDateViewModel.getBackId(
       //         counter: _userWorkoutsDateViewModel.exeIdCounter);
       //     if (_userWorkoutsDateViewModel.exeIdCounter <
@@ -346,14 +347,14 @@ class _RepsScreenState extends State<RepsScreen> {
                   }
                   if (_userWorkoutsDateViewModel.isFirst == true) {
                     if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                      print('back........1');
-                      print('greater one ........false call');
+                      log('back........1');
+                      log('greater one ........false call');
 
                       Get.back();
                     }
                     if (_userWorkoutsDateViewModel.isHold == true) {
-                      print('back........2');
-                      print('hold true........call');
+                      log('back........2');
+                      log('hold true........call');
 
                       _userWorkoutsDateViewModel.isHold = false;
                       _userWorkoutsDateViewModel.isFirst = false;
@@ -470,7 +471,7 @@ class _RepsScreenState extends State<RepsScreen> {
                               .controller!.responseExe!.data![0].exerciseSets
                               .toString()),
                           itemBuilder: (_, index) {
-                            return NoWeightedCounter(
+                            return NoWeightedCounterCard(
                               counter: int.parse(
                                   '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                       .split("-")
@@ -497,8 +498,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                   UpdateStatusUserProgramRequestModel _request =
                                       UpdateStatusUserProgramRequestModel();
 
-                                  print(
-                                      'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                  log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                                   _request.userProgramDatesId =
                                       _userWorkoutsDateViewModel
@@ -556,8 +556,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         0) {
                                       _userWorkoutsDateViewModel.isGreaterOne =
                                           true;
-                                      print(
-                                          "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                      log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                     }
                                     await widget.controller!
                                         .getExerciseByIdDetails(
@@ -606,8 +605,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                       0) {
                                     _userWorkoutsDateViewModel.isGreaterOne =
                                         true;
-                                    print(
-                                        "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                    log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                   }
                                   await widget.controller!
                                       .getExerciseByIdDetails(
@@ -747,7 +745,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                   .responseExe!.data![0].exerciseSets
                                   .toString()),
                               itemBuilder: (_, index) {
-                                return NoWeightedCounter(
+                                return NoWeightedCounterCard(
                                     counter: int.parse(
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
@@ -776,8 +774,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         _request =
                                         UpdateStatusUserProgramRequestModel();
 
-                                    print(
-                                        'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                    log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                                     _request.userProgramDatesId =
                                         _userWorkoutsDateViewModel
@@ -838,8 +835,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                           0) {
                                         _userWorkoutsDateViewModel
                                             .isGreaterOne = true;
-                                        print(
-                                            "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                        log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                       }
                                       await widget.controller!
                                           .getExerciseByIdDetails(
@@ -891,8 +887,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         0) {
                                       _userWorkoutsDateViewModel.isGreaterOne =
                                           true;
-                                      print(
-                                          "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                      log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                     }
                                     await widget.controller!
                                         .getExerciseByIdDetails(
@@ -998,15 +993,15 @@ class _TimeScreenState extends State<TimeScreen>
     String time =
         '${_exerciseByIdViewModel.responseExe!.data![0].exerciseTime}';
     List<String> splittedTime = time.split(' ');
-    print('------------- ${splittedTime.first}');
+    log('------------- ${splittedTime.first}');
     int? timer;
     if (splittedTime.first.length == 1) {
       timer = int.parse(splittedTime.first) * 60;
-      print(' ----------  timer $timer');
+      log(' ----------  timer $timer');
       return timer;
     } else if (splittedTime.first.length >= 2) {
       timer = int.parse(splittedTime.first);
-      print('timer -==-=-=-=-=-= $timer');
+      log('timer -==-=-=-=-=-= $timer');
       return timer;
     }
   }
@@ -1029,13 +1024,13 @@ class _TimeScreenState extends State<TimeScreen>
   Widget build(BuildContext context) {
     return GestureDetector(
       // onHorizontalDragUpdate: (details) async {
-      //   print("hello ${details.localPosition}");
-      //   print("hello ${details.localPosition.dx}");
-      //   print("hello ${details.globalPosition.distance}");
+      //   log("hello ${details.localPosition}");
+      //   log("hello ${details.localPosition.dx}");
+      //   log("hello ${details.globalPosition.distance}");
       //
       //   if (details.localPosition.dx < 100.0) {
       //     //SWIPE FROM RIGHT DETECTION
-      //     print("hello ");
+      //     log("hello ");
       //
       //     _timerController!.reset();
       //     setState(() {
@@ -1153,11 +1148,11 @@ class _TimeScreenState extends State<TimeScreen>
                   }
                   if (_userWorkoutsDateViewModel.isFirst == true) {
                     if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                      print('back........1');
+                      log('back........1');
                       Get.back();
                     }
                     if (_userWorkoutsDateViewModel.isHold == true) {
-                      print('back........2');
+                      log('back........2');
                       Get.back();
 
                       _userWorkoutsDateViewModel.isHold = false;
@@ -1325,14 +1320,14 @@ class _TimeScreenState extends State<TimeScreen>
                 children: [
                   GestureDetector(
                     onTap: () {
-                      print('Start Pressed');
+                      log('Start Pressed');
                       if (totalRound !=
                           int.parse(widget
                               .controller!.responseExe!.data![0].exerciseSets
                               .toString())) {
                         _timerController!.start();
 
-                        print('controller.totalRound-------> $totalRound');
+                        log('controller.totalRound-------> $totalRound');
                       }
                     },
                     child: Container(
@@ -1359,7 +1354,7 @@ class _TimeScreenState extends State<TimeScreen>
                   SizedBox(width: Get.width * 0.05),
                   GestureDetector(
                     onTap: () {
-                      print('Reset pressed ');
+                      log('Reset pressed ');
                       setState(() {
                         totalRound = 0;
                       });
@@ -1401,8 +1396,7 @@ class _TimeScreenState extends State<TimeScreen>
                           UpdateStatusUserProgramRequestModel _request =
                               UpdateStatusUserProgramRequestModel();
 
-                          print(
-                              'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                          log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                           _request.userProgramDatesId =
                               _userWorkoutsDateViewModel.userProgramDateID;
@@ -1451,8 +1445,7 @@ class _TimeScreenState extends State<TimeScreen>
                               _userWorkoutsDateViewModel.exerciseId.length) {
                             if (_userWorkoutsDateViewModel.exeIdCounter > 0) {
                               _userWorkoutsDateViewModel.isGreaterOne = true;
-                              print(
-                                  "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                              log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                             }
                             await widget.controller!.getExerciseByIdDetails(
                                 id: _userWorkoutsDateViewModel.exerciseId[
@@ -1490,8 +1483,7 @@ class _TimeScreenState extends State<TimeScreen>
                             _userWorkoutsDateViewModel.exerciseId.length) {
                           if (_userWorkoutsDateViewModel.exeIdCounter > 0) {
                             _userWorkoutsDateViewModel.isGreaterOne = true;
-                            print(
-                                "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                            log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                           }
                           await widget.controller!.getExerciseByIdDetails(
                               id: _userWorkoutsDateViewModel.exerciseId[
@@ -1571,10 +1563,12 @@ class _WeightedCounterState extends State<WeightedCounter> {
       Get.put(UserWorkoutsDateViewModel());
   UpdateStatusUserProgramViewModel _updateStatusUserProgramViewModel =
       Get.put(UpdateStatusUserProgramViewModel());
+  String? weight;
 
   @override
   void initState() {
     super.initState();
+    weight = "${widget.controller!.responseExe!.data![0].exerciseWeight}";
   }
 
   @override
@@ -1600,14 +1594,10 @@ class _WeightedCounterState extends State<WeightedCounter> {
     });
   }
 
-  List colors = [
-    [Color(0xff057C00), Color(0xff045500)],
-    [Color(0xffFFA200), Color(0xff9E6400)],
-    [Color(0xffFF0000), Color(0xff8B0303)]
-  ];
-
   @override
   Widget build(BuildContext context) {
+    print('weightweightweightweight ==== > ${weight}');
+
     return WillPopScope(
       onWillPop: () async {
         _userWorkoutsDateViewModel.getBackId(
@@ -1780,16 +1770,63 @@ class _WeightedCounterState extends State<WeightedCounter> {
                               .controller!.responseExe!.data![0].exerciseSets
                               .toString()),
                           separatorBuilder: (_, index) {
-                            return Container(
-                              alignment: Alignment.center,
+                            var resRestTime =
+                                "${widget.controller!.responseExe!.data![0].exerciseRest}"
+                                    .toLowerCase();
+                            restValue() {
+                              if (resRestTime.contains('min')) {
+                                int min = int.parse(
+                                    "${widget.controller!.responseExe!.data![0].exerciseRest}"
+                                        .split("-")
+                                        .first);
+                                print('restResponseValue == $min');
+                                return double.parse("${min * 60}");
+                              } else if (resRestTime.contains('sec') ||
+                                  resRestTime.contains(" ")) {
+                                int sec = int.parse(
+                                    "${widget.controller!.responseExe!.data![0].exerciseRest}"
+                                        .split(" ")
+                                        .first
+                                        .split("-")
+                                        .first);
+                                print('restResponseValue split == $sec');
+
+                                return double.parse("$sec");
+                              } else {
+                                int sec = int.parse(
+                                    "${widget.controller!.responseExe!.data![0].exerciseRest}"
+                                        .split(" ")
+                                        .first);
+                                print('restResponseValue == $sec');
+
+                                return double.parse("$sec");
+                              }
+                            }
+
+                            /// 8000
+                            // return Container(
+                            //   alignment: Alignment.center,
+                            //   height: Get.height * .03,
+                            //   width: Get.width,
+                            //   decoration: BoxDecoration(
+                            //       color: ColorUtils.kGray,
+                            //       borderRadius: BorderRadius.circular(6)),
+                            //   child: Text(
+                            //       "${widget.controller!.responseExe!.data![0].exerciseRest} Rest",
+                            //       style: FontTextStyle.kWhite17W400Roboto),
+                            // );
+                            return WeightedProgressTimer(
+                              title: "${widget.controller!.responseExe!.data![0].exerciseRest}"
+                                          .toLowerCase()
+                                          .contains("sec") ||
+                                      "${widget.controller!.responseExe!.data![0].exerciseRest}"
+                                          .toLowerCase()
+                                          .contains("sec")
+                                  ? '${widget.controller!.responseExe!.data![0].exerciseRest} Rest'
+                                  : '${widget.controller!.responseExe!.data![0].exerciseRest} Rest',
+                              restResponseValue: restValue(),
                               height: Get.height * .03,
                               width: Get.width,
-                              decoration: BoxDecoration(
-                                  color: ColorUtils.kGray,
-                                  borderRadius: BorderRadius.circular(6)),
-                              child: Text(
-                                  "${widget.controller!.responseExe!.data![0].exerciseRest} Seconds Rest",
-                                  style: FontTextStyle.kWhite17W400Roboto),
                             );
                           },
                           itemBuilder: (_, index) {
@@ -1805,6 +1842,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                           .split("-")
                                           .first,
+                                  weight:
+                                      '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                                 ),
                                 Positioned(
                                   top: Get.height * .01,
@@ -1814,7 +1853,24 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                     width: Get.height * .09,
                                     decoration: BoxDecoration(
                                         gradient: LinearGradient(
-                                            colors: colors[0],
+                                            colors: widget
+                                                        .controller!
+                                                        .responseExe!
+                                                        .data![0]
+                                                        .exerciseColor ==
+                                                    "green"
+                                                ? ColorUtilsGradient
+                                                    .kGreenGradient
+                                                : widget
+                                                            .controller!
+                                                            .responseExe!
+                                                            .data![0]
+                                                            .exerciseColor ==
+                                                        "yellow"
+                                                    ? ColorUtilsGradient
+                                                        .kOrangeGradient
+                                                    : ColorUtilsGradient
+                                                        .kRedGradient,
                                             begin: Alignment.topCenter,
                                             end: Alignment.bottomCenter),
                                         borderRadius: BorderRadius.only(
@@ -2092,6 +2148,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
                                             .first,
+                                    weight:
+                                        '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                                   ),
                                   Positioned(
                                     top: Get.height * .01,
@@ -2101,7 +2159,24 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       width: Get.height * .09,
                                       decoration: BoxDecoration(
                                           gradient: LinearGradient(
-                                              colors: colors[0],
+                                              colors: widget
+                                                          .controller!
+                                                          .responseExe!
+                                                          .data![0]
+                                                          .exerciseColor ==
+                                                      "green"
+                                                  ? ColorUtilsGradient
+                                                      .kGreenGradient
+                                                  : widget
+                                                              .controller!
+                                                              .responseExe!
+                                                              .data![0]
+                                                              .exerciseColor ==
+                                                          "yellow"
+                                                      ? ColorUtilsGradient
+                                                          .kOrangeGradient
+                                                      : ColorUtilsGradient
+                                                          .kRedGradient,
                                               begin: Alignment.topCenter,
                                               end: Alignment.bottomCenter),
                                           borderRadius: BorderRadius.only(
@@ -2334,6 +2409,9 @@ class _SuperSetState extends State<SuperSet>
   int counter = 0;
   bool watchVideo = false;
   var a;
+  bool start = false;
+  bool isThere = true;
+
   TimerProgressTextCountDirection _progressTextCountDirection =
       TimerProgressTextCountDirection.count_down;
   TimerController? _timerController;
@@ -2341,12 +2419,27 @@ class _SuperSetState extends State<SuperSet>
   TimerProgressIndicatorDirection _progressIndicatorDirection =
       TimerProgressIndicatorDirection.clockwise;
 
+  // formattedTime({required int timeInSecond}) {
+  //   int sec = timeInSecond % 60;
+  //   int min = (timeInSecond / 60).floor();
+  //   String minute = min.toString().length == 0 ? "" : "$min" + " minutes";
+  //   String second = sec.toString().length == 0 ? "" : "$sec" + " seconds";
+  //   return "$minute $second";
+  // }
   formattedTime({required int timeInSecond}) {
+    // log('formattedTime >> ${120 % 60}');
+    // log('formattedTime >> ${120 / 60}');
     int sec = timeInSecond % 60;
     int min = (timeInSecond / 60).floor();
-    String minute = min.toString().length <= 1 ? "0$min" : "$min";
+    String minute = min.toString().length <= 1 ? "$min" : "$min";
     String second = sec.toString().length <= 1 ? "0$sec" : "$sec";
-    return "$minute : $second";
+    if (timeInSecond % 60 == 0) {
+      return "${(timeInSecond / 60).toString().split(".").first} minute";
+    } else if (timeInSecond >= 60) {
+      return "$minute : $second minute";
+    } else {
+      return "$timeInSecond second";
+    }
   }
 
   @override
@@ -2363,256 +2456,420 @@ class _SuperSetState extends State<SuperSet>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _userWorkoutsDateViewModel.getBackId(
-            counter: _userWorkoutsDateViewModel.exeIdCounter);
-        if (_userWorkoutsDateViewModel.exeIdCounter <
-            _userWorkoutsDateViewModel.exerciseId.length) {
-          await widget.controller!.getExerciseByIdDetails(
-              id: _userWorkoutsDateViewModel
-                  .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
-          if (widget.controller!.apiResponse.status == Status.LOADING) {
-            Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          if (widget.controller!.apiResponse.status == Status.COMPLETE) {
-            widget.controller!.responseExe =
-                widget.controller!.apiResponse.data;
-          }
-        }
-        if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
-          _userWorkoutsDateViewModel.isFirst = true;
-        }
-        if (_userWorkoutsDateViewModel.isFirst == true) {
-          if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-            Get.back();
-          }
-          if (_userWorkoutsDateViewModel.isHold == true) {
-            _userWorkoutsDateViewModel.isHold = false;
-            _userWorkoutsDateViewModel.isFirst = false;
-            Get.back();
-          } else {
-            _userWorkoutsDateViewModel.isHold = true;
-          }
-        }
-        return Future.value(false);
-      },
-      child: Scaffold(
-        backgroundColor: ColorUtils.kBlack,
-        appBar: AppBar(
-          elevation: 0,
-          leading: IconButton(
-              onPressed: () async {
-                _userWorkoutsDateViewModel.getBackId(
-                    counter: _userWorkoutsDateViewModel.exeIdCounter);
-                if (_userWorkoutsDateViewModel.exeIdCounter <
-                    _userWorkoutsDateViewModel.exerciseId.length) {
-                  await widget.controller!.getExerciseByIdDetails(
-                      id: _userWorkoutsDateViewModel
-                          .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
-                  if (widget.controller!.apiResponse.status == Status.LOADING) {
-                    Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  if (widget.controller!.apiResponse.status ==
-                      Status.COMPLETE) {
-                    widget.controller!.responseExe =
-                        widget.controller!.apiResponse.data;
-                  }
-                }
-                if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
-                  _userWorkoutsDateViewModel.isFirst = true;
-                }
-                if (_userWorkoutsDateViewModel.isFirst == true) {
-                  if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                    print('back........1');
-                    print('greater one ........false call');
-
-                    Get.back();
-                  }
-                  if (_userWorkoutsDateViewModel.isHold == true) {
-                    print('back........2');
-                    print('hold true........call');
-
-                    _userWorkoutsDateViewModel.isHold = false;
-                    _userWorkoutsDateViewModel.isFirst = false;
-                    Get.back();
-                  } else {
-                    _userWorkoutsDateViewModel.isHold = true;
-                  }
-                }
-              },
-              icon: Icon(
-                Icons.arrow_back_ios_sharp,
-                color: ColorUtils.kTint,
-              )),
-          backgroundColor: ColorUtils.kBlack,
-          title: Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
-          centerTitle: true,
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Get.offAll(HomeScreen());
-                },
-                child: Text(
-                  'Quit',
-                  style: FontTextStyle.kTine16W400Roboto,
-                ))
-          ],
-        ),
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: SizedBox(
-            width: Get.width,
-            child: Column(children: [
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: Get.height * .027),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Superset',
-                      style: FontTextStyle.kWhite24BoldRoboto
-                          .copyWith(fontSize: Get.height * .03),
-                    ),
-                    SizedBox(height: Get.height * .015),
-                    Text('3 rounds',
-                        style: FontTextStyle.kLightGray18W300Roboto),
-                    SizedBox(height: Get.height * .008),
-                    Text('30 secs rest between rounds',
-                        style: FontTextStyle.kLightGray18W300Roboto),
-                  ],
-                ),
-              ),
-              Container(
-                height: Get.height * .055,
-                width: Get.width * .33,
-                decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: ColorUtilsGradient.kGrayGradient,
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter),
-                    borderRadius: BorderRadius.circular(6)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Round', style: FontTextStyle.kWhite18BoldRoboto),
-                    SizedBox(width: Get.width * .02),
-                    CircleAvatar(
-                        radius: Get.height * .019,
-                        backgroundColor: ColorUtils.kTint,
-                        child: Text(
-                          '1',
-                          style: FontTextStyle.kBlack20BoldRoboto,
-                        )),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                    top: Get.height * .03,
-                    left: Get.height * .025,
-                    right: Get.height * .025),
-                child: SizedBox(
-                  width: Get.width,
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount:
-                          _userWorkoutsDateViewModel.supersetExerciseId.length,
-                      // itemCount: exeName.length,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        // apiCallSuperSet(index: index);
-                        print(
-                            'index ================= ${_userWorkoutsDateViewModel.supersetExerciseId.length}');
-                        // _exerciseByIdViewModel.getExerciseByIdDetails(
-                        //     id: _userWorkoutsDateViewModel
-                        //         .supersetExerciseId[index]);
-                        // return SizedBox();
-                        return superSet(
-                            id: _userWorkoutsDateViewModel
-                                .supersetExerciseId[index]);
-                      }),
-                ),
-              ),
-              Container(
-                  margin: EdgeInsets.only(
-                      top: Get.height * .01,
-                      bottom: Get.height * .04,
-                      left: Get.height * .025,
-                      right: Get.height * .025),
-                  alignment: Alignment.center,
-                  width: Get.width,
-                  height: Get.height * .055,
-                  decoration: BoxDecoration(
-                      color: ColorUtils.kSaperatedGray,
-                      borderRadius: BorderRadius.circular(6)),
-                  child: Text(
-                    '30 second rest',
-                    style: FontTextStyle.kWhite17W400Roboto,
-                  )),
-              Padding(
-                  padding: EdgeInsets.only(
-                      left: Get.height * .03,
-                      right: Get.height * .03,
-                      bottom: Get.height * .05),
-                  child: commonNavigationButton(
-                      name: "Save Exercise",
-                      onTap: () async {
-                        UpdateStatusUserProgramRequestModel _request =
-                            UpdateStatusUserProgramRequestModel();
-
-                        print(
-                            'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
-
-                        _request.userProgramDatesId =
-                            _userWorkoutsDateViewModel.userProgramDateID;
-
-                        await _updateStatusUserProgramViewModel
-                            .updateStatusUserProgramViewModel(_request);
-
-                        if (_updateStatusUserProgramViewModel
-                                .apiResponse.status ==
-                            Status.COMPLETE) {
-                          UpdateStatusUserProgramResponseModel response =
-                              _updateStatusUserProgramViewModel
-                                  .apiResponse.data;
-
-                          if (response.success == true) {
-                            _timerController!.reset();
-
-                            Get.showSnackbar(GetSnackBar(
-                              message: '${response.msg}',
-                              duration: Duration(milliseconds: 1500),
-                            ));
-
-                            Get.to(ShareProgressScreen(
+    return GetBuilder<UserWorkoutsDateViewModel>(
+      builder: (controllerUWD) {
+        return WillPopScope(
+          onWillPop: () async {
+            controllerUWD.getBackId(counter: controllerUWD.exeIdCounter);
+            if (controllerUWD.exeIdCounter < controllerUWD.exerciseId.length) {
+              await widget.controller!.getExerciseByIdDetails(
+                  id: controllerUWD.exerciseId[controllerUWD.exeIdCounter]);
+              if (widget.controller!.apiResponse.status == Status.LOADING) {
+                Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (widget.controller!.apiResponse.status == Status.COMPLETE) {
+                widget.controller!.responseExe =
+                    widget.controller!.apiResponse.data;
+              }
+            }
+            if (controllerUWD.exeIdCounter == 0) {
+              controllerUWD.isFirst = true;
+            }
+            if (controllerUWD.isFirst == true) {
+              if (controllerUWD.isGreaterOne == false) {
+                Get.back();
+              }
+              if (controllerUWD.isHold == true) {
+                controllerUWD.isHold = false;
+                controllerUWD.isFirst = false;
+                Get.back();
+              } else {
+                controllerUWD.isHold = true;
+              }
+            }
+            return Future.value(false);
+          },
+          child: Scaffold(
+            backgroundColor: ColorUtils.kBlack,
+            appBar: AppBar(
+              elevation: 0,
+              // leading: IconButton(
+              //     onPressed: () async {
+              //       log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
+              //       log('supersetRound ===================> ${controllerUWD.supersetRound}');
+              //       if (controllerUWD.supersetCounter == 0) {
+              //         // controllerUWD.getBackId(
+              //         //     counter: controllerUWD.exeIdCounter);
+              //         if (controllerUWD.exeIdCounter <
+              //             controllerUWD.exerciseId.length) {
+              //           await widget.controller!.getExerciseByIdDetails(
+              //               id: controllerUWD
+              //                   .exerciseId[controllerUWD.exeIdCounter]);
+              //           if (widget.controller!.apiResponse.status ==
+              //               Status.LOADING) {
+              //             Center(
+              //               child: CircularProgressIndicator(),
+              //             );
+              //           }
+              //           if (widget.controller!.apiResponse.status ==
+              //               Status.COMPLETE) {
+              //             widget.controller!.responseExe =
+              //                 widget.controller!.apiResponse.data;
+              //           }
+              //         }
+              //         Get.back();
+              //         controllerUWD.getSupersetBackRound();
+              //
+              //         // if (controllerUWD.exeIdCounter == 0) {
+              //         //   controllerUWD.isFirst = true;
+              //         // }
+              //         // if (controllerUWD.isFirst == true) {
+              //         //   if (controllerUWD.isGreaterOne == false) {
+              //         //     log('back........1');
+              //         //     log('greater one ........false call');
+              //         //
+              //         //     Get.back();
+              //         //   }
+              //         //   if (controllerUWD.isHold == true) {
+              //         //     log('back........2');
+              //         //     log('hold true........call');
+              //         //
+              //         //     controllerUWD.isHold = false;
+              //         //     controllerUWD.isFirst = false;
+              //         //     // _userWorkoutsDateViewModel.supersetRound = 0;
+              //         //     // _userWorkoutsDateViewModel.supersetCounter = 0;
+              //         //     Get.back();
+              //         //   } else {
+              //         //     controllerUWD.isHold = true;
+              //         //   }
+              //         // }
+              //       } else {
+              //         Navigator.pushReplacement(
+              //             context,
+              //             MaterialPageRoute(
+              //               builder: (context) => SuperSet(
+              //                 data: widget.data,
+              //                 controller: widget.controller,
+              //                 workoutId: widget.workoutId,
+              //               ),
+              //             ));
+              //         controllerUWD.getSupersetBackRound();
+              //         controllerUWD.resTimer!.cancel();
+              //         controllerUWD.currentRestValue = 0;
+              //       }
+              //
+              //     },
+              //     icon: Icon(
+              //       Icons.arrow_back_ios_sharp,
+              //       color: ColorUtils.kTint,
+              //     )),
+              leading: IconButton(
+                  onPressed: () async {
+                    if (_userWorkoutsDateViewModel.supersetCounter == 0) {
+                      print('Hello back ');
+                      _userWorkoutsDateViewModel.getSupersetBackRound();
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SuperSet(
                               data: widget.data,
-                              exeData: widget.controller!.responseExe!.data!,
+                              controller: widget.controller,
                               workoutId: widget.workoutId,
-                            ));
-                          } else if (response.success == false) {
-                            Get.showSnackbar(GetSnackBar(
-                              message: '${response.msg}',
-                              duration: Duration(milliseconds: 1500),
-                            ));
-                          }
-                        } else if (_updateStatusUserProgramViewModel
-                                .apiResponse.status ==
-                            Status.ERROR) {
-                          Get.showSnackbar(GetSnackBar(
-                            message: 'Something Went Wrong',
-                            duration: Duration(milliseconds: 1500),
+                            ),
                           ));
+                    } else {
+                      _userWorkoutsDateViewModel.getBackId(
+                          counter: _userWorkoutsDateViewModel.exeIdCounter);
+                      if (_userWorkoutsDateViewModel.exeIdCounter <
+                          _userWorkoutsDateViewModel.exerciseId.length) {
+                        await widget.controller!.getExerciseByIdDetails(
+                            id: _userWorkoutsDateViewModel.exerciseId[
+                                _userWorkoutsDateViewModel.exeIdCounter]);
+                        if (widget.controller!.apiResponse.status ==
+                            Status.LOADING) {
+                          Center(
+                            child: CircularProgressIndicator(),
+                          );
                         }
-                      }))
-            ]),
+                        if (widget.controller!.apiResponse.status ==
+                            Status.COMPLETE) {
+                          widget.controller!.responseExe =
+                              widget.controller!.apiResponse.data;
+                        }
+                      }
+                      if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+                        _userWorkoutsDateViewModel.isFirst = true;
+                      }
+                      if (_userWorkoutsDateViewModel.isFirst == true) {
+                        if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+                          print('back........1');
+                          print('greater one ........false call');
+
+                          Get.back();
+                        }
+                        if (_userWorkoutsDateViewModel.isHold == true) {
+                          print('back........2');
+                          print('hold true........call');
+
+                          _userWorkoutsDateViewModel.isHold = false;
+                          _userWorkoutsDateViewModel.isFirst = false;
+                          Get.back();
+                        } else {
+                          _userWorkoutsDateViewModel.isHold = true;
+                        }
+                      }
+                    }
+                  },
+                  icon: Icon(
+                    Icons.arrow_back_ios_sharp,
+                    color: ColorUtils.kTint,
+                  )),
+
+              backgroundColor: ColorUtils.kBlack,
+              title: Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
+              centerTitle: true,
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Get.offAll(HomeScreen());
+                    },
+                    child: Text(
+                      'Quit',
+                      style: FontTextStyle.kTine16W400Roboto,
+                    ))
+              ],
+            ),
+            body: SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              child: SizedBox(
+                width: Get.width,
+                child: Column(children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: Get.height * .027),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Superset',
+                          style: FontTextStyle.kWhite24BoldRoboto
+                              .copyWith(fontSize: Get.height * .03),
+                        ),
+                        SizedBox(height: Get.height * .015),
+                        Text('${controllerUWD.supersetRound} rounds',
+                            style: FontTextStyle.kLightGray18W300Roboto),
+                        SizedBox(height: Get.height * .008),
+                        Text(
+                            '${controllerUWD.supersetRestTime} secs rest between rounds',
+                            style: FontTextStyle.kLightGray18W300Roboto),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: Get.height * .055,
+                    width: Get.width * .33,
+                    decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 1.5),
+                        gradient: LinearGradient(
+                            colors: ColorUtilsGradient.kGrayGradient,
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        borderRadius: BorderRadius.circular(6)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Round', style: FontTextStyle.kWhite18BoldRoboto),
+                        SizedBox(width: Get.width * .02),
+                        CircleAvatar(
+                            radius: Get.height * .019,
+                            backgroundColor: ColorUtils.kTint,
+                            child: Text(
+                              '${controllerUWD.supersetCounter + 1}',
+                              style: FontTextStyle.kBlack20BoldRoboto,
+                            )),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: Get.height * .03,
+                        left: Get.height * .025,
+                        right: Get.height * .025),
+                    child: SizedBox(
+                      width: Get.width,
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: controllerUWD.supersetExerciseId.length,
+                          // itemCount: exeName.length,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            // apiCallSuperSet(index: index);
+                            log('index ================= ${controllerUWD.supersetExerciseId.length}');
+                            // _exerciseByIdViewModel.getExerciseByIdDetails(
+                            //     id: _userWorkoutsDateViewModel
+                            //         .supersetExerciseId[index]);
+                            // return SizedBox();
+                            return superSet(
+                                id: controllerUWD.supersetExerciseId[index]);
+                          }),
+                    ),
+                  ),
+                  controllerUWD.currentRestValue == 0
+                      ? GestureDetector(
+                          onTap: () {
+                            if (controllerUWD.currentValue > 0) {
+                              controllerUWD.currentValue = 0;
+                              controllerUWD.timer!.cancel();
+                            }
+                            controllerUWD.startRestTimer();
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.height * .025),
+                            child: Container(
+                                // margin: EdgeInsets.only(
+                                //     top: Get.height * .01,
+                                //     bottom: Get.height * .04,
+                                //     left: Get.height * .025,
+                                //     right: Get.height * .025),
+                                alignment: Alignment.center,
+                                width: Get.width,
+                                height: Get.height * .055,
+                                decoration: BoxDecoration(
+                                    color: ColorUtils.kSaperatedGray,
+                                    borderRadius: BorderRadius.circular(6)),
+                                child: Text(
+                                  '${controllerUWD.supersetRestTime} second rest',
+                                  style: FontTextStyle.kWhite17W400Roboto,
+                                )),
+                          ),
+                        )
+                      : Padding(
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Get.height * .025),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                // margin: EdgeInsets.only(
+                                //     top: Get.height * .01,
+                                //     bottom: Get.height * .01,
+                                //     left: Get.height * .025,
+                                //     right: Get.height * .025),
+                                width: Get.width,
+                                height: Get.height * .055,
+                                child: FAProgressBar(
+                                  animatedDuration: Duration(seconds: 1),
+                                  currentValue:
+                                      controllerUWD.currentRestValue.toDouble(),
+                                  backgroundColor: ColorUtils.kSaperatedGray,
+                                  progressColor: ColorUtils.kGreen,
+                                  maxValue: double.parse(
+                                      "${controllerUWD.supersetRestTime}"),
+                                ),
+                              ),
+                              Text(
+                                '${controllerUWD.supersetRestTime} second rest',
+                                style: FontTextStyle.kWhite17W400Roboto,
+                              )
+                            ],
+                          ),
+                        ),
+                  SizedBox(height: Get.height * .035),
+                  Padding(
+                      padding: EdgeInsets.only(
+                          left: Get.height * .03,
+                          right: Get.height * .03,
+                          bottom: Get.height * .05),
+                      child: commonNavigationButton(
+                          name: controllerUWD.supersetCounter !=
+                                  controllerUWD.supersetRound - 1
+                              ? "Next Round"
+                              : "Save Exercise",
+                          onTap: () async {
+                            controllerUWD.getSupersetRound();
+
+                            log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
+                            log('supersetRound ===================> ${controllerUWD.supersetRound}');
+
+                            if (controllerUWD.supersetCounter ==
+                                controllerUWD.supersetRound) {
+                              UpdateStatusUserProgramRequestModel _request =
+                                  UpdateStatusUserProgramRequestModel();
+
+                              log('user workout id check ====== > ${controllerUWD.userProgramDateID}');
+
+                              _request.userProgramDatesId =
+                                  controllerUWD.userProgramDateID;
+
+                              await _updateStatusUserProgramViewModel
+                                  .updateStatusUserProgramViewModel(_request);
+
+                              if (_updateStatusUserProgramViewModel
+                                      .apiResponse.status ==
+                                  Status.COMPLETE) {
+                                UpdateStatusUserProgramResponseModel response =
+                                    _updateStatusUserProgramViewModel
+                                        .apiResponse.data;
+
+                                if (response.success == true) {
+                                  _timerController!.reset();
+
+                                  Get.showSnackbar(GetSnackBar(
+                                    message: '${response.msg}',
+                                    duration: Duration(milliseconds: 1500),
+                                  ));
+
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ShareProgressScreen(
+                                          data: widget.data,
+                                          exeData: widget
+                                              .controller!.responseExe!.data!,
+                                          workoutId: widget.workoutId,
+                                        ),
+                                      ));
+                                  controllerUWD.resTimer!.cancel();
+                                  controllerUWD.currentRestValue = 0;
+
+                                  // Get.to();
+                                } else if (response.success == false) {
+                                  Get.showSnackbar(GetSnackBar(
+                                    message: '${response.msg}',
+                                    duration: Duration(milliseconds: 1500),
+                                  ));
+                                }
+                              } else if (_updateStatusUserProgramViewModel
+                                      .apiResponse.status ==
+                                  Status.ERROR) {
+                                Get.showSnackbar(GetSnackBar(
+                                  message: 'Something Went Wrong',
+                                  duration: Duration(milliseconds: 1500),
+                                ));
+                              }
+                            } else {
+                              Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SuperSet(
+                                      data: widget.data,
+                                      controller: widget.controller,
+                                      workoutId: widget.workoutId,
+                                    ),
+                                  ));
+                              controllerUWD.resTimer!.cancel();
+                              controllerUWD.currentRestValue = 0;
+                            }
+                          }))
+                ]),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -2622,7 +2879,11 @@ class _SuperSetState extends State<SuperSet>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           ExerciseByIdResponseModel response = snapshot.data!;
+          _userWorkoutsDateViewModel.supersetWeight =
+              TextEditingController(text: response.data![0].exerciseWeight);
 
+          log(' exerciseTitle == ${response.data![0].exerciseTitle}');
+          log('response exerciseTime== ${response.data![0].exerciseTime}');
           if (response.data![0].exerciseType == "REPS") {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2635,19 +2896,42 @@ class _SuperSetState extends State<SuperSet>
                             fontSize: Get.height * .026,
                           )),
                     ),
-                    SizedBox(width: Get.width * .03),
+                    Spacer(),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => ExerciseDetailPage(
                             exerciseId: id, isFromExercise: true));
                       },
                       child: Image.asset(
-                        AppIcons.play,
+                        AppIcons.info,
                         height: Get.height * 0.03,
                         width: Get.height * 0.03,
                         color: ColorUtils.kTint,
                       ),
                     ),
+                    SizedBox(width: Get.width * .03),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Image.asset(
+                        AppIcons.compareArrow,
+                        height: Get.height * 0.03,
+                        width: Get.height * 0.03,
+                        color: ColorUtils.kTint,
+                      ),
+                    ),
+                    // SizedBox(width: Get.width * .03),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Get.to(() => ExerciseDetailPage(
+                    //         exerciseId: id, isFromExercise: true));
+                    //   },
+                    //   child: Image.asset(
+                    //     AppIcons.play,
+                    //     height: Get.height * 0.03,
+                    //     width: Get.height * 0.03,
+                    //     color: ColorUtils.kTint,
+                    //   ),
+                    // ),
                   ],
                 ),
                 SizedBox(height: Get.height * .005),
@@ -2656,7 +2940,7 @@ class _SuperSetState extends State<SuperSet>
                   style: FontTextStyle.kLightGray18W300Roboto,
                 ),
                 SizedBox(height: Get.height * .0075),
-                NoWeightedCounter(
+                NoWeightedCounterCard(
                     counter: int.parse(
                         "${response.data![0].exerciseReps}".split("-").first),
                     repsNo:
@@ -2665,6 +2949,9 @@ class _SuperSetState extends State<SuperSet>
               ],
             );
           } else if (response.data![0].exerciseType == "TIME") {
+            _userWorkoutsDateViewModel.responseTime =
+                int.parse("${response.data![0].exerciseTime}");
+
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2676,14 +2963,24 @@ class _SuperSetState extends State<SuperSet>
                             fontSize: Get.height * .026,
                           )),
                     ),
-                    SizedBox(width: Get.width * .03),
+                    Spacer(),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => ExerciseDetailPage(
                             exerciseId: id, isFromExercise: true));
                       },
                       child: Image.asset(
-                        AppIcons.play,
+                        AppIcons.info,
+                        height: Get.height * 0.03,
+                        width: Get.height * 0.03,
+                        color: ColorUtils.kTint,
+                      ),
+                    ),
+                    SizedBox(width: Get.width * .03),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Image.asset(
+                        AppIcons.compareArrow,
                         height: Get.height * 0.03,
                         width: Get.height * 0.03,
                         color: ColorUtils.kTint,
@@ -2697,88 +2994,86 @@ class _SuperSetState extends State<SuperSet>
                   style: FontTextStyle.kLightGray18W300Roboto,
                 ),
                 SizedBox(height: Get.height * .0075),
-                Center(
-                    child: Container(
-                  height: Get.height * 0.18,
-                  width: Get.height * 0.18,
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  child: SimpleTimer(
-                    duration: Duration(
-                        seconds:
-                            int.parse("${response.data![0].exerciseTime}")),
-                    controller: _timerController,
-                    timerStyle: _timerStyle,
-                    progressTextFormatter: (format) {
-                      return formattedTime(timeInSecond: format.inSeconds);
-                    },
-                    backgroundColor: ColorUtils.kGray,
-                    progressIndicatorColor: ColorUtils.kTint,
-                    progressIndicatorDirection: _progressIndicatorDirection,
-                    progressTextCountDirection: _progressTextCountDirection,
-                    progressTextStyle: FontTextStyle.kWhite24BoldRoboto
-                        .copyWith(fontSize: Get.height * 0.025),
-                    strokeWidth: 15,
-                    onStart: () {},
-                    onEnd: () {
-                      _timerController!.stop();
-                    },
-                  ),
-                )),
-                SizedBox(
-                  height: Get.height * 0.02,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        print('Start Pressed');
-                        _timerController!.start();
-                      },
-                      child: Container(
+                // Center(
+                //     child: Container(
+                //   height: Get.height * 0.18,
+                //   width: Get.height * 0.18,
+                //   margin: EdgeInsets.symmetric(vertical: 10),
+                //   child: SimpleTimer(
+                //     duration: Duration(
+                //         seconds:
+                //             int.parse("${response.data![0].exerciseTime}")),
+                //     controller: _timerController,
+                //     timerStyle: _timerStyle,
+                //     progressTextFormatter: (format) {
+                //       return formattedTime(timeInSecond: format.inSeconds);
+                //     },
+                //     backgroundColor: ColorUtils.kGray,
+                //     progressIndicatorColor: ColorUtils.kTint,
+                //     progressIndicatorDirection: _progressIndicatorDirection,
+                //     progressTextCountDirection: _progressTextCountDirection,
+                //     progressTextStyle: FontTextStyle.kWhite24BoldRoboto
+                //         .copyWith(fontSize: Get.height * 0.025),
+                //     strokeWidth: 15,
+                //     onStart: () {},
+                //     onEnd: () {
+                //       _timerController!.stop();
+                //     },
+                //   ),
+                // )),
+
+                _userWorkoutsDateViewModel.currentValue == 0
+                    ? Container(
                         alignment: Alignment.center,
-                        height: Get.height * .047,
-                        width: Get.width * .25,
+                        height: Get.height * .1,
+                        width: Get.width,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: [0.0, 1.0],
-                            colors: ColorUtilsGradient.kTintGradient,
+                            border: Border.all(color: Colors.black, width: 1.5),
+                            gradient: LinearGradient(
+                                colors: ColorUtilsGradient.kGrayGradient,
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter),
+                            borderRadius: BorderRadius.circular(6)),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_userWorkoutsDateViewModel.currentRestValue >
+                                0) {
+                              _userWorkoutsDateViewModel.timer!.cancel();
+                            } else
+                              _userWorkoutsDateViewModel.startTimer();
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: Get.height * .05,
+                            width: Get.width * .65,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: ColorUtilsGradient.kTintGradient,
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter),
+                                borderRadius: BorderRadius.circular(6)),
+                            child: Text(
+                              "Start ${formattedTime(timeInSecond: int.parse("${response.data![0].exerciseTime}"))} timer",
+                              style: FontTextStyle.kBlack18w600Roboto,
+                            ),
                           ),
                         ),
-                        child: Text(
-                          'Start',
-                          style: FontTextStyle.kBlack18w600Roboto.copyWith(
-                              fontWeight: FontWeight.bold,
-                              fontSize: Get.height * 0.02),
+                      )
+                    : SizedBox(
+                        height: Get.height * .1,
+                        width: Get.width,
+                        child: FAProgressBar(
+                          size: 70,
+                          currentValue: _userWorkoutsDateViewModel.currentValue
+                              .toDouble(),
+                          backgroundColor: ColorUtils.kGray,
+                          animatedDuration: Duration(microseconds: 800),
+                          progressColor: ColorUtils.kGreen,
+                          maxValue:
+                              double.parse("${response.data![0].exerciseTime}"),
                         ),
                       ),
-                    ),
-                    SizedBox(width: Get.width * 0.05),
-                    GestureDetector(
-                      onTap: () {
-                        print('Reset pressed ');
 
-                        _timerController!.reset();
-                      },
-                      child: Container(
-                        alignment: Alignment.center,
-                        height: Get.height * .047,
-                        width: Get.width * .25,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(6),
-                            border: Border.all(
-                                color: ColorUtils.kTint, width: 1.5)),
-                        child: Text(
-                          'Reset',
-                          style: FontTextStyle.kTine17BoldRoboto,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
                 Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
               ],
             );
@@ -2794,14 +3089,24 @@ class _SuperSetState extends State<SuperSet>
                             fontSize: Get.height * .026,
                           )),
                     ),
-                    SizedBox(width: Get.width * .03),
+                    Spacer(),
                     GestureDetector(
                       onTap: () {
                         Get.to(() => ExerciseDetailPage(
                             exerciseId: id, isFromExercise: true));
                       },
                       child: Image.asset(
-                        AppIcons.play,
+                        AppIcons.info,
+                        height: Get.height * 0.03,
+                        width: Get.height * 0.03,
+                        color: ColorUtils.kTint,
+                      ),
+                    ),
+                    SizedBox(width: Get.width * .03),
+                    GestureDetector(
+                      onTap: () {},
+                      child: Image.asset(
+                        AppIcons.compareArrow,
                         height: Get.height * 0.03,
                         width: Get.height * 0.03,
                         color: ColorUtils.kTint,
@@ -2815,15 +3120,49 @@ class _SuperSetState extends State<SuperSet>
                   style: FontTextStyle.kLightGray18W300Roboto,
                 ),
                 SizedBox(height: Get.height * .0075),
-                WeightedCounterCard(
-                  counter: int.parse(
-                      '${widget.controller!.responseExe!.data![0].exerciseReps}'
-                          .split("-")
-                          .first),
-                  repsNo:
-                      '${widget.controller!.responseExe!.data![0].exerciseReps}'
-                          .split("-")
-                          .first,
+                Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    WeightedCounterCard(
+                      weight:
+                          '${widget.controller!.responseExe!.data![0].exerciseWeight}',
+                      counter: int.parse(
+                          '${widget.controller!.responseExe!.data![0].exerciseReps}'
+                              .split("-")
+                              .first),
+                      repsNo:
+                          '${widget.controller!.responseExe!.data![0].exerciseReps}'
+                              .split("-")
+                              .first,
+                    ),
+                    Positioned(
+                      top: Get.height * .01,
+                      child: Container(
+                        alignment: Alignment.center,
+                        height: Get.height * .027,
+                        width: Get.height * .09,
+                        decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                                colors: widget.controller!.responseExe!.data![0]
+                                            .exerciseColor ==
+                                        "green"
+                                    ? ColorUtilsGradient.kGreenGradient
+                                    : widget.controller!.responseExe!.data![0]
+                                                .exerciseColor ==
+                                            "yellow"
+                                        ? ColorUtilsGradient.kOrangeGradient
+                                        : ColorUtilsGradient.kRedGradient,
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(6),
+                                bottomLeft: Radius.circular(6))),
+                        child: Text('RIR 0-1',
+                            style: FontTextStyle.kWhite12BoldRoboto
+                                .copyWith(fontWeight: FontWeight.w500)),
+                      ),
+                    )
+                  ],
                 ),
                 Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
               ],
@@ -2843,7 +3182,6 @@ class _SuperSetState extends State<SuperSet>
       },
     );
   }
-
   // GetBuilder<ExerciseByIdViewModel> superSet({var m}) {
   //   _exerciseByIdViewModel.getExerciseByIdDetails(id: m);
   //   return GetBuilder<ExerciseByIdViewModel>(builder: (controller) {
@@ -2957,7 +3295,7 @@ class _SuperSetState extends State<SuperSet>
   //               children: [
   //                 GestureDetector(
   //                   onTap: () {
-  //                     print('Start Pressed');
+  //                     log('Start Pressed');
   //                     _timerController!.start();
   //                   },
   //                   child: Container(
@@ -2984,7 +3322,7 @@ class _SuperSetState extends State<SuperSet>
   //                 SizedBox(width: Get.width * 0.05),
   //                 GestureDetector(
   //                   onTap: () {
-  //                     print('Reset pressed ');
+  //                     log('Reset pressed ');
   //
   //                     _timerController!.reset();
   //                   },
@@ -3120,7 +3458,7 @@ class _SuperSetState extends State<SuperSet>
   //     //             children: [
   //     //               GestureDetector(
   //     //                 onTap: () {
-  //     //                   print('Start Pressed');
+  //     //                   log('Start Pressed');
   //     //                   _timerController!.start();
   //     //                 },
   //     //                 child: Container(
@@ -3152,7 +3490,7 @@ class _SuperSetState extends State<SuperSet>
   //     //               SizedBox(width: Get.width * 0.05),
   //     //               GestureDetector(
   //     //                 onTap: () {
-  //     //                   print('Reset pressed ');
+  //     //                   log('Reset pressed ');
   //     //
   //     //                   _timerController!.reset();
   //     //                 },
@@ -3182,137 +3520,136 @@ class _SuperSetState extends State<SuperSet>
   //   });
   // }
 }
-
 // ignore: must_be_immutable
-class CounterCard extends StatefulWidget {
-  int counter;
-
-  CounterCard({Key? key, required this.counter}) : super(key: key);
-
-  @override
-  State<CounterCard> createState() => _CounterCardState();
-}
-
-class _CounterCardState extends State<CounterCard> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
-      child: Stack(
-        alignment: Alignment.topRight,
-        children: [
-          Container(
-            height: Get.height * .1,
-            width: Get.width,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: ColorUtilsGradient.kGrayGradient,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.circular(6)),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    if (widget.counter > 0) widget.counter--;
-                  });
-                  print('minus ${widget.counter}');
-                },
-                child: CircleAvatar(
-                  radius: Get.height * .025,
-                  backgroundColor: ColorUtils.kTint,
-                  child: Icon(Icons.remove, color: ColorUtils.kBlack),
-                ),
-              ),
-              SizedBox(width: Get.width * .08),
-              RichText(
-                  text: TextSpan(
-                      text: '${widget.counter} ',
-                      style: widget.counter == 0
-                          ? FontTextStyle.kWhite24BoldRoboto
-                              .copyWith(color: ColorUtils.kGray)
-                          : FontTextStyle.kWhite24BoldRoboto,
-                      children: [
-                    TextSpan(
-                        text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
-                  ])),
-              SizedBox(width: Get.width * .08),
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    widget.counter++;
-                  });
-                  print('plus ${widget.counter}');
-                },
-                child: CircleAvatar(
-                  radius: Get.height * .025,
-                  backgroundColor: ColorUtils.kTint,
-                  child: Icon(Icons.add, color: ColorUtils.kBlack),
-                ),
-              ),
-              VerticalDivider(
-                width: Get.width * .08,
-                thickness: 1.25,
-                color: ColorUtils.kBlack,
-                indent: Get.height * .015,
-                endIndent: Get.height * .015,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        child: TextField(
-                          style: widget.counter == 0
-                              ? FontTextStyle.kWhite24BoldRoboto
-                                  .copyWith(color: ColorUtils.kGray)
-                              : FontTextStyle.kWhite24BoldRoboto,
-                          keyboardType: TextInputType.number,
-                          maxLength: 3,
-                          cursorColor: ColorUtils.kTint,
-                          decoration: InputDecoration(
-                              hintText: '0',
-                              counterText: '',
-                              semanticCounterText: '',
-                              hintStyle: FontTextStyle.kWhite24BoldRoboto
-                                  .copyWith(color: ColorUtils.kGray),
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.transparent)),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.transparent))),
-                        ),
-                      ),
-                      Text('lbs', style: FontTextStyle.kWhite17W400Roboto),
-                    ],
-                  ),
-                  SizedBox(),
-                ],
-              ),
-            ]),
-          ),
-          Container(
-            alignment: Alignment.center,
-            height: Get.height * .027,
-            width: Get.height * .09,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    colors: ColorUtilsGradient.kGreenGradient,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(6),
-                    bottomLeft: Radius.circular(6))),
-            child: Text('RIR 0-1',
-                style: FontTextStyle.kWhite12BoldRoboto
-                    .copyWith(fontWeight: FontWeight.w500)),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class CounterCard extends StatefulWidget {
+//   int counter;
+//
+//   CounterCard({Key? key, required this.counter}) : super(key: key);
+//
+//   @override
+//   State<CounterCard> createState() => _CounterCardState();
+// }
+//
+// class _CounterCardState extends State<CounterCard> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
+//       child: Stack(
+//         alignment: Alignment.topRight,
+//         children: [
+//           Container(
+//             height: Get.height * .1,
+//             width: Get.width,
+//             decoration: BoxDecoration(
+//                 gradient: LinearGradient(
+//                     colors: ColorUtilsGradient.kGrayGradient,
+//                     begin: Alignment.topCenter,
+//                     end: Alignment.bottomCenter),
+//                 borderRadius: BorderRadius.circular(6)),
+//             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+//               InkWell(
+//                 onTap: () {
+//                   setState(() {
+//                     if (widget.counter > 0) widget.counter--;
+//                   });
+//                   log('minus ${widget.counter}');
+//                 },
+//                 child: CircleAvatar(
+//                   radius: Get.height * .025,
+//                   backgroundColor: ColorUtils.kTint,
+//                   child: Icon(Icons.remove, color: ColorUtils.kBlack),
+//                 ),
+//               ),
+//               SizedBox(width: Get.width * .08),
+//               RichText(
+//                   text: TextSpan(
+//                       text: '${widget.counter} ',
+//                       style: widget.counter == 0
+//                           ? FontTextStyle.kWhite24BoldRoboto
+//                               .copyWith(color: ColorUtils.kGray)
+//                           : FontTextStyle.kWhite24BoldRoboto,
+//                       children: [
+//                     TextSpan(
+//                         text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
+//                   ])),
+//               SizedBox(width: Get.width * .08),
+//               InkWell(
+//                 onTap: () {
+//                   setState(() {
+//                     widget.counter++;
+//                   });
+//                   log('plus ${widget.counter}');
+//                 },
+//                 child: CircleAvatar(
+//                   radius: Get.height * .025,
+//                   backgroundColor: ColorUtils.kTint,
+//                   child: Icon(Icons.add, color: ColorUtils.kBlack),
+//                 ),
+//               ),
+//               VerticalDivider(
+//                 width: Get.width * .08,
+//                 thickness: 1.25,
+//                 color: ColorUtils.kBlack,
+//                 indent: Get.height * .015,
+//                 endIndent: Get.height * .015,
+//               ),
+//               Column(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   SizedBox(height: 10),
+//                   Row(
+//                     children: [
+//                       SizedBox(
+//                         width: 40,
+//                         child: TextField(
+//                           style: widget.counter == 0
+//                               ? FontTextStyle.kWhite24BoldRoboto
+//                                   .copyWith(color: ColorUtils.kGray)
+//                               : FontTextStyle.kWhite24BoldRoboto,
+//                           keyboardType: TextInputType.number,
+//                           maxLength: 3,
+//                           cursorColor: ColorUtils.kTint,
+//                           decoration: InputDecoration(
+//                               hintText: '0',
+//                               counterText: '',
+//                               semanticCounterText: '',
+//                               hintStyle: FontTextStyle.kWhite24BoldRoboto
+//                                   .copyWith(color: ColorUtils.kGray),
+//                               enabledBorder: UnderlineInputBorder(
+//                                   borderSide:
+//                                       BorderSide(color: Colors.transparent)),
+//                               focusedBorder: UnderlineInputBorder(
+//                                   borderSide:
+//                                       BorderSide(color: Colors.transparent))),
+//                         ),
+//                       ),
+//                       Text('lbs', style: FontTextStyle.kWhite17W400Roboto),
+//                     ],
+//                   ),
+//                   SizedBox(),
+//                 ],
+//               ),
+//             ]),
+//           ),
+//           Container(
+//             alignment: Alignment.center,
+//             height: Get.height * .027,
+//             width: Get.height * .09,
+//             decoration: BoxDecoration(
+//                 gradient: LinearGradient(
+//                     colors: ColorUtilsGradient.kGreenGradient,
+//                     begin: Alignment.topCenter,
+//                     end: Alignment.bottomCenter),
+//                 borderRadius: BorderRadius.only(
+//                     topRight: Radius.circular(6),
+//                     bottomLeft: Radius.circular(6))),
+//             child: Text('RIR 0-1',
+//                 style: FontTextStyle.kWhite12BoldRoboto
+//                     .copyWith(fontWeight: FontWeight.w500)),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

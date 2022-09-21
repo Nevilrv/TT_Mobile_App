@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:get/get.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -6,18 +9,29 @@ import 'package:tcm/utils/font_styles.dart';
 class WeightedCounterCard extends StatefulWidget {
   int counter;
   String repsNo;
+  String weight;
 
-  WeightedCounterCard({
-    Key? key,
-    required this.counter,
-    required this.repsNo,
-  }) : super(key: key);
+  WeightedCounterCard(
+      {Key? key,
+      required this.counter,
+      required this.repsNo,
+      required this.weight})
+      : super(key: key);
 
   @override
   State<WeightedCounterCard> createState() => _WeightedCounterCardState();
 }
 
 class _WeightedCounterCardState extends State<WeightedCounterCard> {
+  TextEditingController? _weight;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _weight = TextEditingController(text: widget.weight);
+  }
+
   @override
   Widget build(BuildContext context) {
     int repsCounter = int.parse(widget.repsNo.toString());
@@ -28,6 +42,7 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
         height: Get.height * .1,
         width: Get.width,
         decoration: BoxDecoration(
+            border: Border.all(color: ColorUtils.kBlack, width: 2),
             gradient: LinearGradient(
                 colors: ColorUtilsGradient.kGrayGradient,
                 begin: Alignment.topCenter,
@@ -104,6 +119,7 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
                   SizedBox(
                     width: 40,
                     child: TextField(
+                      controller: _weight,
                       style: widget.counter == 0
                           ? FontTextStyle.kWhite24BoldRoboto
                               .copyWith(color: ColorUtils.kGray)
@@ -137,18 +153,18 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
   }
 }
 
-class NoWeightedCounter extends StatefulWidget {
+class NoWeightedCounterCard extends StatefulWidget {
   int counter;
   String repsNo;
 
-  NoWeightedCounter({Key? key, required this.counter, required this.repsNo})
+  NoWeightedCounterCard({Key? key, required this.counter, required this.repsNo})
       : super(key: key);
 
   @override
-  State<NoWeightedCounter> createState() => _NoWeightedCounterState();
+  State<NoWeightedCounterCard> createState() => _NoWeightedCounterCardState();
 }
 
-class _NoWeightedCounterState extends State<NoWeightedCounter> {
+class _NoWeightedCounterCardState extends State<NoWeightedCounterCard> {
   @override
   Widget build(BuildContext context) {
     int repsCounter = int.parse(widget.repsNo.toString());
@@ -159,6 +175,7 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
         height: Get.height * .1,
         width: Get.width,
         decoration: BoxDecoration(
+            border: Border.all(color: ColorUtils.kBlack, width: 2),
             gradient: LinearGradient(
                 colors: ColorUtilsGradient.kGrayGradient,
                 begin: Alignment.topCenter,
@@ -202,7 +219,8 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
               onTap: () {
                 setState(() {
                   setState(() {
-                    if (widget.counter < repsCounter) widget.counter++;
+                    // if (widget.counter < repsCounter)
+                    widget.counter++;
                   });
                 });
               },
@@ -221,5 +239,86 @@ class _NoWeightedCounterState extends State<NoWeightedCounter> {
         ]),
       ),
     );
+  }
+}
+
+class WeightedProgressTimer extends StatefulWidget {
+  final double restResponseValue;
+  final height;
+  final width;
+  final String title;
+
+  const WeightedProgressTimer(
+      {Key? key,
+      required this.restResponseValue,
+      this.height,
+      this.width,
+      required this.title})
+      : super(key: key);
+  @override
+  _WeightedProgressTimerState createState() => _WeightedProgressTimerState();
+}
+
+class _WeightedProgressTimerState extends State<WeightedProgressTimer> {
+  int currentValue = 0;
+  Timer? resTimer;
+  void startRestTimer() {
+    resTimer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        if (currentValue >= 0 && currentValue < widget.restResponseValue) {
+          setState(() {
+            currentValue++;
+            print('count>>>>>$currentValue');
+          });
+        } else {
+          print('Timer Cancel');
+          setState(() {
+            currentValue = 0;
+            resTimer!.cancel();
+          });
+        }
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return currentValue == 0
+        ? GestureDetector(
+            onTap: () {
+              startRestTimer();
+            },
+            child: Container(
+              alignment: Alignment.center,
+              height: widget.height ?? Get.height * .055,
+              width: widget.width ?? Get.width,
+              decoration: BoxDecoration(
+                  color: ColorUtils.kGray,
+                  borderRadius: BorderRadius.circular(6)),
+              child:
+                  Text(widget.title, style: FontTextStyle.kWhite17W400Roboto),
+            ),
+          )
+        : Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: widget.width ?? Get.width,
+                height: widget.height ?? Get.height * .055,
+                child: FAProgressBar(
+                  animatedDuration: Duration(seconds: 1),
+                  currentValue: currentValue.toDouble(),
+                  backgroundColor: ColorUtils.kSaperatedGray,
+                  progressColor: ColorUtils.kGreen,
+                  maxValue: widget.restResponseValue,
+                ),
+              ),
+              Text(
+                widget.title,
+                style: FontTextStyle.kWhite17W400Roboto,
+              )
+            ],
+          );
   }
 }

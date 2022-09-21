@@ -97,19 +97,22 @@ class UserWorkoutsDateResponseModel {
 }
 
 class Data {
-  Data({
-    this.userProgramDatesId,
-    this.workoutId,
-    this.date,
-    this.exercisesIds,
-    this.supersetExercisesIds,
-  });
+  Data(
+      {this.userProgramDatesId,
+      this.workoutId,
+      this.date,
+      this.exercisesIds,
+      this.supersetExercisesIds,
+      this.restTime,
+      this.round});
 
   String? userProgramDatesId;
   String? workoutId;
   String? date;
   List<String>? exercisesIds;
   List<dynamic>? supersetExercisesIds;
+  dynamic restTime;
+  dynamic round;
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
         userProgramDatesId: json["user_program_dates_id"],
@@ -118,6 +121,8 @@ class Data {
         exercisesIds: List<String>.from(json["exercises_ids"].map((x) => x)),
         supersetExercisesIds:
             List<dynamic>.from(json["superset_exercises_ids"].map((x) => x)),
+        restTime: json["rest_time"],
+        round: json["round"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -127,5 +132,7 @@ class Data {
         "exercises_ids": List<dynamic>.from(exercisesIds!.map((x) => x)),
         "superset_exercises_ids":
             List<dynamic>.from(supersetExercisesIds!.map((x) => x)),
+        "rest_time": restTime,
+        "round": round,
       };
 }

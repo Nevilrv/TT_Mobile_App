@@ -219,7 +219,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                 userSelectedDate.toString().split(" ");
                             finalDate = tmpDateList[0];
                             return Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 InkWell(
                                   onTap: () async {
@@ -244,7 +244,6 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                           'date counter ----------------- $userSelectedDate');
                                     }).then((value) => preCompleteHabit());
                                     // _habitViewModel.tmpHabitUpdatesList.clear();
-
                                     // setState(() {});
                                   },
                                   child: Icon(
@@ -253,7 +252,6 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                     size: Get.height * .03,
                                   ),
                                 ),
-                                SizedBox(width: Get.height * .04),
                                 InkWell(
                                   onTap: () {
                                     DatePicker.showDatePicker(context,
@@ -308,7 +306,6 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                       '${Jiffy(userSelectedDate).format('EEEE, MMMM do')}',
                                       style: FontTextStyle.kWhite20BoldRoboto),
                                 ),
-                                SizedBox(width: Get.height * .04),
                                 InkWell(
                                   onTap: () async {
                                     dateIncrement();
@@ -316,12 +313,10 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                         () async {
                                       GetHabitRecordDateRequestModel _request =
                                           GetHabitRecordDateRequestModel();
-
                                       _request.userId =
                                           PreferenceManager.getUId();
                                       print(
                                           "date increment ---------------- $finalDate");
-
                                       _request.date = finalDate;
                                       await _getHabitRecordDateViewModel
                                           .getHabitRecordDateViewModel(
@@ -329,7 +324,6 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                       gh.GetHabitRecordDateResponseModel resp =
                                           _getHabitRecordDateViewModel
                                               .apiResponse.data;
-
                                       recordResponse = resp;
                                       print(
                                           'date counter ----------------- $userSelectedDate');

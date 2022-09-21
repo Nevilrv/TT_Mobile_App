@@ -11,7 +11,7 @@ class HabitViewModel extends GetxController {
   List tmpHabitUpdatesList = [];
   double? percent = 0;
 
-  String selectedBodyIllu = AppImages.body_illustration[0];
+  // String selectedBodyIllu = AppImages.body_illustration[0];
 
   DateTime defDate = DateTime.now();
   DateTime? userSelectedDate = DateTime.now();
@@ -19,43 +19,43 @@ class HabitViewModel extends GetxController {
   progressCounter({int? selectedHabitListLength, int? totalListLength}) {
     percent = 100 * selectedHabitListLength! / totalListLength!;
 
-    if (percent == 0) {
-      print('percent ======= $percent');
-      return selectedBodyIllu = AppImages.body_illustration[0];
-      update();
-    } else if (percent! <= 12.5) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[1];
-      update();
-    } else if (percent! <= 25) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[2];
-      update();
-    } else if (percent! <= 37.5) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[3];
-      update();
-    } else if (percent! <= 50) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[4];
-      update();
-    } else if (percent! <= 62.5) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[5];
-      update();
-    } else if (percent! <= 75) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[6];
-      update();
-    } else if (percent! <= 87.5) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[7];
-      update();
-    } else if (percent! <= 100) {
-      print('percent ======= $percent');
-      selectedBodyIllu = AppImages.body_illustration[8];
-      update();
-    }
+    // if (percent == 0) {
+    //   print('percent ======= $percent');
+    //   return selectedBodyIllu = AppImages.body_illustration[0];
+    //   update();
+    // } else if (percent! <= 12.5) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[1];
+    //   update();
+    // } else if (percent! <= 25) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[2];
+    //   update();
+    // } else if (percent! <= 37.5) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[3];
+    //   update();
+    // } else if (percent! <= 50) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[4];
+    //   update();
+    // } else if (percent! <= 62.5) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[5];
+    //   update();
+    // } else if (percent! <= 75) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[6];
+    //   update();
+    // } else if (percent! <= 87.5) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[7];
+    //   update();
+    // } else if (percent! <= 100) {
+    //   print('percent ======= $percent');
+    //   selectedBodyIllu = AppImages.body_illustration[8];
+    //   update();
+    // }
     print('percent ---- $percent');
     print('totalListLength ---- $totalListLength');
     update();

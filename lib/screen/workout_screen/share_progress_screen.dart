@@ -154,6 +154,8 @@ class _ShareProgressScreenState extends State<ShareProgressScreen> {
                             onTap: () async {
                               Get.offAll(HomeScreen());
                               _userWorkoutsDateViewModel.exeIdCounter = 0;
+                              _userWorkoutsDateViewModel.supersetRound = 0;
+                              _userWorkoutsDateViewModel.supersetCounter = 0;
 
                               // UpdateStatusUserProgramRequestModel _request =
                               //     UpdateStatusUserProgramRequestModel();
