@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/custom_packages/vimeo_video_player/vimeo_video_player.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/check_workout_program_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/check_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
@@ -18,7 +19,6 @@ import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/check_workout_program_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:video_player/video_player.dart';
-import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ExerciseDetailPage extends StatefulWidget {
@@ -535,16 +535,14 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                                   width: Get.width,
                                   child: Center(
                                     child: VimeoVideoPlayer(
-                                      vimeoPlayerModel: VimeoPlayerModel(
-                                        // url: 'https://vimeo.com/336812686',
-                                        url: response.data![0].exerciseVideo!,
-                                        deviceOrientation:
-                                            DeviceOrientation.portraitUp,
-                                        systemUiOverlay: const [
-                                          SystemUiOverlay.top,
-                                          SystemUiOverlay.bottom,
-                                        ],
-                                      ),
+                                      // url: 'https://vimeo.com/336812686',
+                                      url: response.data![0].exerciseVideo!,
+                                      deviceOrientation:
+                                          DeviceOrientation.portraitUp,
+                                      systemUiOverlay: const [
+                                        SystemUiOverlay.top,
+                                        SystemUiOverlay.bottom,
+                                      ],
                                     ),
                                   ),
                                 ),

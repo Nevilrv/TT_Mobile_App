@@ -8,6 +8,7 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/all_categories_response_model.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/video_library/video_single_cat_screen.dart';
 import 'package:tcm/screen/video_library/watch_video_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
@@ -35,8 +36,8 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
 
   void initState() {
     super.initState();
-    _connectivityCheckViewModel.startMonitoring();
 
+    _connectivityCheckViewModel.startMonitoring();
     // _allVideoViewModel.getVideoDetails();
     _allCategoriesViewModel.getCategoriesDetails();
     _allVideoViewModel.getVideoDetails();
@@ -44,7 +45,7 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
 
   void dispose() {
     super.dispose();
-    _allVideoViewModel.dispose();
+    // _allVideoViewModel.dispose();
   }
 
   List videoCatId = [];
@@ -60,6 +61,7 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                 leading: IconButton(
                     onPressed: () {
                       Get.back();
+                      // Get.offAll(HomeScreen());
                     },
                     icon: Icon(
                       Icons.arrow_back_ios_sharp,

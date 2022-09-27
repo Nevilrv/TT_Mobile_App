@@ -73,6 +73,15 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                 elevation: 0,
                 leading: IconButton(
                     onPressed: () {
+                      _scheduleByDateViewModel.selectedDay = DateTime(
+                          DateTime.now().year,
+                          DateTime.now().month,
+                          DateTime.now().day);
+                      _scheduleByDateViewModel.dayList.clear();
+
+                      _scheduleByDateViewModel
+                          .dateRangePickerController.selectedDates!
+                          .clear();
                       Get.back();
                     },
                     icon: Icon(

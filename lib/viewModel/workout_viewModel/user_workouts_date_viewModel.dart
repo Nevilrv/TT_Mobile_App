@@ -9,7 +9,9 @@ import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 
 class UserWorkoutsDateViewModel extends GetxController {
   List exerciseId = [];
+  List tmpExerciseId = [];
   List supersetExerciseId = [];
+  List warmUpId = [];
   int supersetRound = 0;
   String supersetRestTime = "";
   int supersetCounter = 0;
@@ -22,6 +24,11 @@ class UserWorkoutsDateViewModel extends GetxController {
   int currentValue = 0;
   int responseTime = 0;
   Timer? timer;
+  List repsList = [];
+  // List repsList = [12, 15, 18, 20];
+  // List weightList = ["80", "85", "70", "65"];
+  List weightList = [];
+
   void startTimer() {
     currentValue = 0;
     timer = Timer.periodic(

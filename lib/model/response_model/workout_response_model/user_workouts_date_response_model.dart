@@ -103,6 +103,7 @@ class Data {
       this.date,
       this.exercisesIds,
       this.supersetExercisesIds,
+      this.selectedWarmup,
       this.restTime,
       this.round});
 
@@ -111,6 +112,7 @@ class Data {
   String? date;
   List<String>? exercisesIds;
   List<dynamic>? supersetExercisesIds;
+  List<dynamic>? selectedWarmup;
   dynamic restTime;
   dynamic round;
 
@@ -121,6 +123,8 @@ class Data {
         exercisesIds: List<String>.from(json["exercises_ids"].map((x) => x)),
         supersetExercisesIds:
             List<dynamic>.from(json["superset_exercises_ids"].map((x) => x)),
+        selectedWarmup:
+            List<String>.from(json["selected_warmup"].map((x) => x)),
         restTime: json["rest_time"],
         round: json["round"],
       );
@@ -132,6 +136,7 @@ class Data {
         "exercises_ids": List<dynamic>.from(exercisesIds!.map((x) => x)),
         "superset_exercises_ids":
             List<dynamic>.from(supersetExercisesIds!.map((x) => x)),
+        "selected_warmup": List<dynamic>.from(selectedWarmup!.map((x) => x)),
         "rest_time": restTime,
         "round": round,
       };

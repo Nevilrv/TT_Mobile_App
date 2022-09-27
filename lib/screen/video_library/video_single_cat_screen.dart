@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';

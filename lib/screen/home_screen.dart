@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -123,10 +125,15 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       }
     }
+
+    log('status ================ > ${status}');
+
     scheduleResponse = scheduleResp;
   }
 
   getExercisesId() async {
+    // log("helloo");
+
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(),
         date: today.toString().split(" ").first);
@@ -150,29 +157,43 @@ class _HomeScreenState extends State<HomeScreen> {
         } else {
           _userWorkoutsDateViewModel.supersetExerciseId = [];
         }
-        if (resp.data!.restTime! != "" || resp.data!.restTime!.isNotEmpty) {
-          print('======= superset restTime ${resp.data!.restTime!}');
+        log('controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+
+        if (resp.data!.selectedWarmup! != [] &&
+            resp.data!.selectedWarmup!.isNotEmpty) {
+          // log('======= superset round ${resp.data!.round!.runtimeType}');
+          // if (resp.data!.round!.isNotEmpty) {
+          _userWorkoutsDateViewModel.warmUpId = resp.data!.selectedWarmup!;
+          log('controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+          // }
+        } else {
+          _userWorkoutsDateViewModel.warmUpId = [];
+          log('else ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+        }
+
+        if (resp.data!.restTime! != "" && resp.data!.restTime!.isNotEmpty) {
+          log('======= superset restTime======= superset restTime======= superset restTime ${resp.data!.restTime!.runtimeType}');
+          log('======= superset restTime ${resp.data!.restTime!}');
 
           _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime!;
-          print(
-              'controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+          log('controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
         } else {
           _userWorkoutsDateViewModel.supersetRestTime = "30";
-          print(
-              'else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+          log('else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
         }
-        if (resp.data!.round! != "" || resp.data!.round!.isNotEmpty) {
-          print('======= superset round ${resp.data!.round!}');
+        if (resp.data!.round! != "" && resp.data!.round!.isNotEmpty) {
+          // log('======= superset round ${resp.data!.round!.runtimeType}');
+          // if (resp.data!.round!.isNotEmpty) {
           _userWorkoutsDateViewModel.supersetRound =
               int.parse("${resp.data!.round!}");
-          print(
-              'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+          log('controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+          // }
         } else {
           _userWorkoutsDateViewModel.supersetRound = 3;
-          print(
-              'else ======= superset Round ${_userWorkoutsDateViewModel.supersetRestTime}');
+          log('else ======= superset Round ${_userWorkoutsDateViewModel.supersetRestTime}');
         }
-        // _userWorkoutsDateViewModel.supersetExerciseId = ["4", "5", "6"];
+        // _userWorkoutsDateViewModel.warmUpId = ["75", "76", "77"];
+
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
                     .exerciseId[_userWorkoutsDateViewModel.exeIdCounter] ??

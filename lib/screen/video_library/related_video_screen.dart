@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:tcm/custom_packages/vimeo_video_player/vimeo_video_player.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/screen/video_library/watch_video_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/video_library_viewModel/recent_video_viewModel.dart';
 import 'package:video_player/video_player.dart';
-import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import '../../example.dart';
 import '../../model/response_model/video_library_response_model/recent_video_response_model.dart';
+import '../../custom_packages/vimeo_video_player/vimeo_controller.dart';
 
 class RelatedVideoScreen extends StatefulWidget {
   final int id;
@@ -32,6 +35,7 @@ class _RelatedVideoScreenState extends State<RelatedVideoScreen> {
   RecentVideoViewModel _recentVideoViewModel = Get.put(RecentVideoViewModel());
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
+  VimeoController _vimeoController = Get.put(VimeoController());
 
   @override
   void initState() {
@@ -179,7 +183,12 @@ class _RelatedVideoScreenState extends State<RelatedVideoScreen> {
                           elevation: 0,
                           leading: IconButton(
                               onPressed: () {
+                                _vimeoController.videoPause();
                                 Get.back();
+
+                                /*Get.off(WatchVideoScreen(
+                                    id: _vimeoController.index,
+                                    data: _vimeoController.res));*/
                               },
                               icon: Icon(
                                 Icons.arrow_back_ios_sharp,
@@ -199,15 +208,13 @@ class _RelatedVideoScreenState extends State<RelatedVideoScreen> {
                                 width: Get.width,
                                 child: Center(
                                     child: VimeoVideoPlayer(
-                                  vimeoPlayerModel: VimeoPlayerModel(
-                                    url: widget.data[widget.id].videoUrl!,
-                                    deviceOrientation:
-                                        DeviceOrientation.portraitUp,
-                                    systemUiOverlay: const [
-                                      SystemUiOverlay.top,
-                                      SystemUiOverlay.bottom,
-                                    ],
-                                  ),
+                                  url: widget.data[widget.id].videoUrl!,
+                                  deviceOrientation:
+                                      DeviceOrientation.portraitUp,
+                                  systemUiOverlay: const [
+                                    SystemUiOverlay.top,
+                                    SystemUiOverlay.bottom,
+                                  ],
                                 )),
                               ),
                               SizedBox(height: Get.height * .008),

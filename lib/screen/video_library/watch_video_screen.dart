@@ -5,19 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/custom_packages/vimeo_video_player/vimeo_video_player.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/model/response_model/video_library_response_model/recent_video_response_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/video_library/related_video_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
-import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/video_library_viewModel/recent_video_viewModel.dart';
+import 'package:tcm/custom_packages/vimeo_video_player/vimeo_controller.dart';
 import 'package:video_player/video_player.dart';
-import 'package:vimeo_video_player/vimeo_video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class WatchVideoScreen extends StatefulWidget {
@@ -46,9 +45,13 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
   // VideoDislikeViewModel _videoDislikeViewModel =
   //     Get.put(VideoDislikeViewModel());
 
+  VimeoController _vimeoController = Get.put(VimeoController());
   @override
   void initState() {
     super.initState();
+    _vimeoController.res = widget.data;
+    _vimeoController.index = widget.id;
+
     _connectivityCheckViewModel.startMonitoring();
 
     print(
@@ -355,7 +358,9 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                           elevation: 0,
                           leading: IconButton(
                               onPressed: () {
+                                _vimeoController.videoPause();
                                 Get.back();
+                                // Get.off(VideoLibraryScreen());
                               },
                               icon: Icon(
                                 Icons.arrow_back_ios_sharp,
@@ -386,15 +391,13 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                 width: Get.width,
                                 child: Center(
                                   child: VimeoVideoPlayer(
-                                    vimeoPlayerModel: VimeoPlayerModel(
-                                      url: widget.data[widget.id].videoUrl!,
-                                      deviceOrientation:
-                                          DeviceOrientation.portraitUp,
-                                      systemUiOverlay: const [
-                                        SystemUiOverlay.top,
-                                        SystemUiOverlay.bottom,
-                                      ],
-                                    ),
+                                    url: widget.data[widget.id].videoUrl!,
+                                    deviceOrientation:
+                                        DeviceOrientation.portraitUp,
+                                    systemUiOverlay: const [
+                                      SystemUiOverlay.top,
+                                      SystemUiOverlay.bottom,
+                                    ],
                                   ),
                                 ),
                               ),
@@ -457,6 +460,16 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                               itemBuilder: (_, index) {
                                                 return GestureDetector(
                                                   onTap: () {
+                                                    print(
+                                                        'data :  ${response.data!}');
+                                                    print('id :  ${index}');
+
+                                                    ///852
+                                                    _vimeoController
+                                                        .videoPause();
+                                                    // _videoPlayerController
+                                                    //     .pause();
+
                                                     Get.to(RelatedVideoScreen(
                                                       data: response.data!,
                                                       id: index,

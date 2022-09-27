@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:get/get.dart';
@@ -41,7 +42,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
       Get.put(ExerciseByIdViewModel());
   UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
       Get.put(UserWorkoutsDateViewModel());
-
   // TimerStyle _timerStyle = TimerStyle.ring;
   // TimerProgressIndicatorDirection _progressIndicatorDirection =
   //     TimerProgressIndicatorDirection.clockwise;
@@ -52,6 +52,15 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   int totalRound = 0;
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
+  SharedAxisTransitionType? _transitionType =
+      SharedAxisTransitionType.horizontal;
+
+  void _updateTransitionType(SharedAxisTransitionType? newType) {
+    setState(() {
+      _transitionType = newType;
+    });
+  }
+
   @override
   void initState() {
     _connectivityCheckViewModel.startMonitoring();
@@ -72,8 +81,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
       _exerciseByIdViewModel.responseExe =
           _exerciseByIdViewModel.apiResponse.data;
     }
-    _customizedExerciseViewModel.counterReps = int.parse(
-        '${_exerciseByIdViewModel.responseExe!.data![0].exerciseReps}');
+    // _customizedExerciseViewModel.counterReps = int.parse(
+    //     '${_exerciseByIdViewModel.responseExe!.data![0].exerciseReps}');
   }
 
   int currPlayIndex = 0;
@@ -124,10 +133,26 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                         controllerUSD.exerciseId.length) {
                       if (controllerUSD.supersetExerciseId.isNotEmpty ||
                           controllerUSD.supersetExerciseId != []) {
-                        return SuperSet(
-                          data: widget.data,
-                          controller: controller,
-                          workoutId: widget.workoutId,
+                        return PageTransitionSwitcher(
+                          duration: Duration(milliseconds: 500),
+                          transitionBuilder: (
+                            Widget child,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                          ) {
+                            return SharedAxisTransition(
+                              fillColor: ColorUtils.kBlack,
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: _transitionType!,
+                              child: child,
+                            );
+                          },
+                          child: SuperSet(
+                            data: widget.data,
+                            controller: controller,
+                            workoutId: widget.workoutId,
+                          ),
                         );
                       } else {
                         return ColoredBox(
@@ -143,26 +168,74 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                       if (controller.responseExe!.data![0].exerciseType ==
                           "REPS") {
                         // toggleVideo();
-                        return RepsScreen(
-                          data: widget.data,
-                          controller: controller,
-                          workoutId: widget.workoutId,
+                        return PageTransitionSwitcher(
+                          duration: Duration(milliseconds: 500),
+                          transitionBuilder: (
+                            Widget child,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                          ) {
+                            return SharedAxisTransition(
+                              fillColor: ColorUtils.kBlack,
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: _transitionType!,
+                              child: child,
+                            );
+                          },
+                          child: RepsScreen(
+                            data: widget.data,
+                            controller: controller,
+                            workoutId: widget.workoutId,
+                          ),
                         );
                       } else if (controller
                               .responseExe!.data![0].exerciseType ==
                           "TIME") {
-                        return TimeScreen(
-                          data: widget.data,
-                          controller: controller,
-                          workoutId: widget.workoutId,
+                        return PageTransitionSwitcher(
+                          duration: Duration(milliseconds: 500),
+                          transitionBuilder: (
+                            Widget child,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                          ) {
+                            return SharedAxisTransition(
+                              fillColor: ColorUtils.kBlack,
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: _transitionType!,
+                              child: child,
+                            );
+                          },
+                          child: TimeScreen(
+                            data: widget.data,
+                            controller: controller,
+                            workoutId: widget.workoutId,
+                          ),
                         );
                       } else if (controller
                               .responseExe!.data![0].exerciseType ==
                           "WEIGHTED") {
-                        return WeightedCounter(
-                          data: widget.data,
-                          controller: controller,
-                          workoutId: widget.workoutId,
+                        return PageTransitionSwitcher(
+                          duration: Duration(milliseconds: 500),
+                          transitionBuilder: (
+                            Widget child,
+                            Animation<double> animation,
+                            Animation<double> secondaryAnimation,
+                          ) {
+                            return SharedAxisTransition(
+                              fillColor: ColorUtils.kBlack,
+                              animation: animation,
+                              secondaryAnimation: secondaryAnimation,
+                              transitionType: _transitionType!,
+                              child: child,
+                            );
+                          },
+                          child: WeightedCounter(
+                            data: widget.data,
+                            controller: controller,
+                            workoutId: widget.workoutId,
+                          ),
                         );
                       } else {
                         return ColoredBox(
@@ -233,6 +306,25 @@ class _RepsScreenState extends State<RepsScreen> {
     // TODO: implement initState
     // initializePlayer();
     super.initState();
+    // repsLoop();
+  }
+
+  repsLoop() {
+    // if (_userWorkoutsDateViewModel.repsList.isEmpty) {
+    //   _userWorkoutsDateViewModel.repsList.clear();
+    // }
+    _userWorkoutsDateViewModel.repsList.clear();
+
+    for (int i = 0;
+        i <
+            int.parse(
+                "${widget.controller!.responseExe!.data![0].exerciseSets!}");
+        i++) {
+      _userWorkoutsDateViewModel.repsList.add(int.parse(
+          "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
+    }
+
+    // log('============= > ${_userWorkoutsDateViewModel.repsList}');
   }
 
   @override
@@ -347,14 +439,14 @@ class _RepsScreenState extends State<RepsScreen> {
                   }
                   if (_userWorkoutsDateViewModel.isFirst == true) {
                     if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                      log('back........1');
-                      log('greater one ........false call');
+                      // log('back........1');
+                      // log('greater one ........false call');
 
                       Get.back();
                     }
                     if (_userWorkoutsDateViewModel.isHold == true) {
-                      log('back........2');
-                      log('hold true........call');
+                      // log('back........2');
+                      // log('hold true........call');
 
                       _userWorkoutsDateViewModel.isHold = false;
                       _userWorkoutsDateViewModel.isFirst = false;
@@ -369,7 +461,9 @@ class _RepsScreenState extends State<RepsScreen> {
                   color: ColorUtils.kTint,
                 )),
             backgroundColor: ColorUtils.kBlack,
-            title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
+            title: Text(
+                '${widget.controller!.responseExe!.data![0].exerciseTitle}',
+                style: FontTextStyle.kWhite16BoldRoboto),
             centerTitle: true,
             actions: [
               TextButton(
@@ -438,7 +532,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                       isFromExercise: true));
                                 },
                                 child: Image.asset(
-                                  AppIcons.play,
+                                  AppIcons.info,
                                   height: Get.height * 0.03,
                                   width: Get.height * 0.03,
                                   color: ColorUtils.kTint,
@@ -472,17 +566,19 @@ class _RepsScreenState extends State<RepsScreen> {
                               .toString()),
                           itemBuilder: (_, index) {
                             return NoWeightedCounterCard(
+                              index: index,
                               counter: int.parse(
                                   '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                       .split("-")
                                       .first),
+                              // counter:
+                              //     _userWorkoutsDateViewModel.repsList[index],
                               repsNo:
                                   '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                       .split("-")
                                       .first,
                             );
                           }),
-
                       Spacer(),
                       Padding(
                         padding:
@@ -498,7 +594,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                   UpdateStatusUserProgramRequestModel _request =
                                       UpdateStatusUserProgramRequestModel();
 
-                                  log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                  // log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                                   _request.userProgramDatesId =
                                       _userWorkoutsDateViewModel
@@ -556,7 +652,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         0) {
                                       _userWorkoutsDateViewModel.isGreaterOne =
                                           true;
-                                      log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                      // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                     }
                                     await widget.controller!
                                         .getExerciseByIdDetails(
@@ -605,7 +701,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                       0) {
                                     _userWorkoutsDateViewModel.isGreaterOne =
                                         true;
-                                    log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                    // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                   }
                                   await widget.controller!
                                       .getExerciseByIdDetails(
@@ -709,7 +805,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         isFromExercise: true));
                                   },
                                   child: Image.asset(
-                                    AppIcons.play,
+                                    AppIcons.info,
                                     height: Get.height * 0.03,
                                     width: Get.height * 0.03,
                                     color: ColorUtils.kTint,
@@ -746,6 +842,9 @@ class _RepsScreenState extends State<RepsScreen> {
                                   .toString()),
                               itemBuilder: (_, index) {
                                 return NoWeightedCounterCard(
+                                    index: index,
+                                    // counter: _userWorkoutsDateViewModel
+                                    //     .repsList[index],
                                     counter: int.parse(
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
@@ -774,7 +873,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         _request =
                                         UpdateStatusUserProgramRequestModel();
 
-                                    log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                    // log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                                     _request.userProgramDatesId =
                                         _userWorkoutsDateViewModel
@@ -835,7 +934,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                           0) {
                                         _userWorkoutsDateViewModel
                                             .isGreaterOne = true;
-                                        log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                        // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                       }
                                       await widget.controller!
                                           .getExerciseByIdDetails(
@@ -887,7 +986,7 @@ class _RepsScreenState extends State<RepsScreen> {
                                         0) {
                                       _userWorkoutsDateViewModel.isGreaterOne =
                                           true;
-                                      log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                      // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                     }
                                     await widget.controller!
                                         .getExerciseByIdDetails(
@@ -993,15 +1092,15 @@ class _TimeScreenState extends State<TimeScreen>
     String time =
         '${_exerciseByIdViewModel.responseExe!.data![0].exerciseTime}';
     List<String> splittedTime = time.split(' ');
-    log('------------- ${splittedTime.first}');
+    // log('------------- ${splittedTime.first}');
     int? timer;
     if (splittedTime.first.length == 1) {
       timer = int.parse(splittedTime.first) * 60;
-      log(' ----------  timer $timer');
+      // log(' ----------  timer $timer');
       return timer;
     } else if (splittedTime.first.length >= 2) {
       timer = int.parse(splittedTime.first);
-      log('timer -==-=-=-=-=-= $timer');
+      // log('timer -==-=-=-=-=-= $timer');
       return timer;
     }
   }
@@ -1148,11 +1247,11 @@ class _TimeScreenState extends State<TimeScreen>
                   }
                   if (_userWorkoutsDateViewModel.isFirst == true) {
                     if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                      log('back........1');
+                      // log('back........1');
                       Get.back();
                     }
                     if (_userWorkoutsDateViewModel.isHold == true) {
-                      log('back........2');
+                      // log('back........2');
                       Get.back();
 
                       _userWorkoutsDateViewModel.isHold = false;
@@ -1167,7 +1266,9 @@ class _TimeScreenState extends State<TimeScreen>
                   color: ColorUtils.kTint,
                 )),
             backgroundColor: ColorUtils.kBlack,
-            title: Text('Warm-Up', style: FontTextStyle.kWhite16BoldRoboto),
+            title: Text(
+                '${widget.controller!.responseExe!.data![0].exerciseTitle}',
+                style: FontTextStyle.kWhite16BoldRoboto),
             centerTitle: true,
             actions: [
               TextButton(
@@ -1243,7 +1344,7 @@ class _TimeScreenState extends State<TimeScreen>
                               isFromExercise: true));
                         },
                         child: Image.asset(
-                          AppIcons.play,
+                          AppIcons.info,
                           height: Get.height * 0.03,
                           width: Get.height * 0.03,
                           color: ColorUtils.kTint,
@@ -1320,14 +1421,14 @@ class _TimeScreenState extends State<TimeScreen>
                 children: [
                   GestureDetector(
                     onTap: () {
-                      log('Start Pressed');
+                      // log('Start Pressed');
                       if (totalRound !=
                           int.parse(widget
                               .controller!.responseExe!.data![0].exerciseSets
                               .toString())) {
                         _timerController!.start();
 
-                        log('controller.totalRound-------> $totalRound');
+                        // log('controller.totalRound-------> $totalRound');
                       }
                     },
                     child: Container(
@@ -1354,7 +1455,7 @@ class _TimeScreenState extends State<TimeScreen>
                   SizedBox(width: Get.width * 0.05),
                   GestureDetector(
                     onTap: () {
-                      log('Reset pressed ');
+                      // log('Reset pressed ');
                       setState(() {
                         totalRound = 0;
                       });
@@ -1396,7 +1497,7 @@ class _TimeScreenState extends State<TimeScreen>
                           UpdateStatusUserProgramRequestModel _request =
                               UpdateStatusUserProgramRequestModel();
 
-                          log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                          // log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                           _request.userProgramDatesId =
                               _userWorkoutsDateViewModel.userProgramDateID;
@@ -1445,7 +1546,7 @@ class _TimeScreenState extends State<TimeScreen>
                               _userWorkoutsDateViewModel.exerciseId.length) {
                             if (_userWorkoutsDateViewModel.exeIdCounter > 0) {
                               _userWorkoutsDateViewModel.isGreaterOne = true;
-                              log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                              // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                             }
                             await widget.controller!.getExerciseByIdDetails(
                                 id: _userWorkoutsDateViewModel.exerciseId[
@@ -1483,7 +1584,7 @@ class _TimeScreenState extends State<TimeScreen>
                             _userWorkoutsDateViewModel.exerciseId.length) {
                           if (_userWorkoutsDateViewModel.exeIdCounter > 0) {
                             _userWorkoutsDateViewModel.isGreaterOne = true;
-                            log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                            // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                           }
                           await widget.controller!.getExerciseByIdDetails(
                               id: _userWorkoutsDateViewModel.exerciseId[
@@ -1491,7 +1592,8 @@ class _TimeScreenState extends State<TimeScreen>
                           if (widget.controller!.apiResponse.status ==
                               Status.LOADING) {
                             Center(
-                              child: CircularProgressIndicator(),
+                              child: CircularProgressIndicator(
+                                  color: ColorUtils.kTint),
                             );
                           }
                           if (widget.controller!.apiResponse.status ==
@@ -1569,6 +1671,33 @@ class _WeightedCounterState extends State<WeightedCounter> {
   void initState() {
     super.initState();
     weight = "${widget.controller!.responseExe!.data![0].exerciseWeight}";
+    // weightedLoop();
+  }
+
+  weightedLoop() {
+    // if (_userWorkoutsDateViewModel.repsList.isEmpty) {
+    //   _userWorkoutsDateViewModel.repsList.clear();
+    // }
+    // if (_userWorkoutsDateViewModel.weightList.isEmpty) {
+    //   _userWorkoutsDateViewModel.weightList.clear();
+    // }
+    _userWorkoutsDateViewModel.repsList.clear();
+    _userWorkoutsDateViewModel.weightList.clear();
+
+    for (int i = 0;
+        i <
+            int.parse(
+                "${widget.controller!.responseExe!.data![0].exerciseSets!}");
+        i++) {
+      _userWorkoutsDateViewModel.repsList.add(int.parse(
+          "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
+      // log("============================ > ${widget.controller!.responseExe!.data![0].exerciseReps!}");
+      _userWorkoutsDateViewModel.weightList
+          .add("${widget.controller!.responseExe!.data![0].exerciseWeight!}");
+    }
+
+    // log('============= > ${_userWorkoutsDateViewModel.repsList}');
+    // log('============= > ${_userWorkoutsDateViewModel.weightList}');
   }
 
   @override
@@ -1596,7 +1725,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
 
   @override
   Widget build(BuildContext context) {
-    print('weightweightweightweight ==== > ${weight}');
+    // log('weightweightweightweight ==== > $weight');
 
     return WillPopScope(
       onWillPop: () async {
@@ -1637,6 +1766,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
       },
       child: Scaffold(
         backgroundColor: ColorUtils.kBlack,
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
@@ -1664,14 +1794,14 @@ class _WeightedCounterState extends State<WeightedCounter> {
                 }
                 if (_userWorkoutsDateViewModel.isFirst == true) {
                   if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                    print('back........1');
-                    print('greater one ........false call');
+                    // log('back........1');
+                    // log('greater one ........false call');
 
                     Get.back();
                   }
                   if (_userWorkoutsDateViewModel.isHold == true) {
-                    print('back........2');
-                    print('hold true........call');
+                    // log('back........2');
+                    // log('hold true........call');
 
                     _userWorkoutsDateViewModel.isHold = false;
                     _userWorkoutsDateViewModel.isFirst = false;
@@ -1736,7 +1866,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                     isFromExercise: true));
                               },
                               child: Image.asset(
-                                AppIcons.play,
+                                AppIcons.info,
                                 height: Get.height * 0.03,
                                 width: Get.height * 0.03,
                                 color: ColorUtils.kTint,
@@ -1779,7 +1909,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                     "${widget.controller!.responseExe!.data![0].exerciseRest}"
                                         .split("-")
                                         .first);
-                                print('restResponseValue == $min');
+                                // log('restResponseValue == $min');
                                 return double.parse("${min * 60}");
                               } else if (resRestTime.contains('sec') ||
                                   resRestTime.contains(" ")) {
@@ -1789,7 +1919,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                         .first
                                         .split("-")
                                         .first);
-                                print('restResponseValue split == $sec');
+                                // log('restResponseValue split == $sec');
 
                                 return double.parse("$sec");
                               } else {
@@ -1797,7 +1927,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                     "${widget.controller!.responseExe!.data![0].exerciseRest}"
                                         .split(" ")
                                         .first);
-                                print('restResponseValue == $sec');
+                                // log('restResponseValue == $sec');
 
                                 return double.parse("$sec");
                               }
@@ -1838,10 +1968,15 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                           .split("-")
                                           .first),
+                                  index: index,
+                                  // counter: _userWorkoutsDateViewModel
+                                  //     .repsList[index],
                                   repsNo:
                                       '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                           .split("-")
                                           .first,
+                                  // weight: _userWorkoutsDateViewModel
+                                  //     .weightList[index],
                                   weight:
                                       '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                                 ),
@@ -1906,8 +2041,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                 UpdateStatusUserProgramRequestModel _request =
                                     UpdateStatusUserProgramRequestModel();
 
-                                print(
-                                    'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                // log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                                 _request.userProgramDatesId =
                                     _userWorkoutsDateViewModel
@@ -1962,8 +2096,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       0) {
                                     _userWorkoutsDateViewModel.isGreaterOne =
                                         true;
-                                    print(
-                                        "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                    // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                   }
                                   await widget.controller!
                                       .getExerciseByIdDetails(
@@ -2010,8 +2143,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                     0) {
                                   _userWorkoutsDateViewModel.isGreaterOne =
                                       true;
-                                  print(
-                                      "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                  // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                 }
                                 await widget.controller!.getExerciseByIdDetails(
                                     id: _userWorkoutsDateViewModel.exerciseId[
@@ -2089,7 +2221,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       isFromExercise: true));
                                 },
                                 child: Image.asset(
-                                  AppIcons.play,
+                                  AppIcons.info,
                                   height: Get.height * 0.03,
                                   width: Get.height * 0.03,
                                   color: ColorUtils.kTint,
@@ -2144,10 +2276,15 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
                                             .first),
+                                    index: index,
+                                    // counter: _userWorkoutsDateViewModel
+                                    //     .repsList[index],
                                     repsNo:
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
                                             .first,
+                                    // weight: _userWorkoutsDateViewModel
+                                    //     .weightList[index],
                                     weight:
                                         '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                                   ),
@@ -2213,8 +2350,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                   UpdateStatusUserProgramRequestModel _request =
                                       UpdateStatusUserProgramRequestModel();
 
-                                  print(
-                                      'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                  // log('user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
 
                                   _request.userProgramDatesId =
                                       _userWorkoutsDateViewModel
@@ -2272,8 +2408,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                         0) {
                                       _userWorkoutsDateViewModel.isGreaterOne =
                                           true;
-                                      print(
-                                          "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                      // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                     }
                                     await widget.controller!
                                         .getExerciseByIdDetails(
@@ -2322,8 +2457,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       0) {
                                     _userWorkoutsDateViewModel.isGreaterOne =
                                         true;
-                                    print(
-                                        "--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                    log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                   }
                                   await widget.controller!
                                       .getExerciseByIdDetails(
@@ -2460,34 +2594,70 @@ class _SuperSetState extends State<SuperSet>
       builder: (controllerUWD) {
         return WillPopScope(
           onWillPop: () async {
-            controllerUWD.getBackId(counter: controllerUWD.exeIdCounter);
-            if (controllerUWD.exeIdCounter < controllerUWD.exerciseId.length) {
-              await widget.controller!.getExerciseByIdDetails(
-                  id: controllerUWD.exerciseId[controllerUWD.exeIdCounter]);
-              if (widget.controller!.apiResponse.status == Status.LOADING) {
-                Center(
-                  child: CircularProgressIndicator(),
-                );
+            // log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
+            // log('supersetRound ===================> ${controllerUWD.supersetRound}');
+            if (controllerUWD.supersetCounter == 0) {
+              controllerUWD.getBackId(counter: controllerUWD.exeIdCounter);
+              if (controllerUWD.exeIdCounter <
+                  controllerUWD.exerciseId.length) {
+                await widget.controller!.getExerciseByIdDetails(
+                    id: controllerUWD.exerciseId[controllerUWD.exeIdCounter]);
+                if (widget.controller!.apiResponse.status == Status.LOADING) {
+                  Center(
+                    child: CircularProgressIndicator(),
+                  );
+                }
+                if (widget.controller!.apiResponse.status == Status.COMPLETE) {
+                  widget.controller!.responseExe =
+                      widget.controller!.apiResponse.data;
+                }
               }
-              if (widget.controller!.apiResponse.status == Status.COMPLETE) {
-                widget.controller!.responseExe =
-                    widget.controller!.apiResponse.data;
-              }
-            }
-            if (controllerUWD.exeIdCounter == 0) {
-              controllerUWD.isFirst = true;
-            }
-            if (controllerUWD.isFirst == true) {
-              if (controllerUWD.isGreaterOne == false) {
-                Get.back();
-              }
-              if (controllerUWD.isHold == true) {
-                controllerUWD.isHold = false;
-                controllerUWD.isFirst = false;
-                Get.back();
-              } else {
-                controllerUWD.isHold = true;
-              }
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NoWeightExerciseScreen(
+                      data: widget.data,
+                      workoutId: widget.workoutId,
+                    ),
+                  ));
+              controllerUWD.getSupersetBackRound();
+
+              // if (controllerUWD.exeIdCounter == 0) {
+              //   controllerUWD.isFirst = true;
+              // }
+              // if (controllerUWD.isFirst == true) {
+              //   if (controllerUWD.isGreaterOne == false) {
+              //     log('back........1');
+              //     log('greater one ........false call');
+              //
+              //     Get.back();
+              //   }
+              //   if (controllerUWD.isHold == true) {
+              //     log('back........2');
+              //     log('hold true........call');
+              //
+              //     controllerUWD.isHold = false;
+              //     controllerUWD.isFirst = false;
+              //     // _userWorkoutsDateViewModel.supersetRound = 0;
+              //     // _userWorkoutsDateViewModel.supersetCounter = 0;
+              //     Get.back();
+              //   } else {
+              //     controllerUWD.isHold = true;
+              //   }
+              // }
+            } else {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => SuperSet(
+                      data: widget.data,
+                      controller: widget.controller,
+                      workoutId: widget.workoutId,
+                    ),
+                  ));
+              controllerUWD.getSupersetBackRound();
+              controllerUWD.resTimer!.cancel();
+              controllerUWD.currentRestValue = 0;
             }
             return Future.value(false);
           },
@@ -2495,98 +2665,18 @@ class _SuperSetState extends State<SuperSet>
             backgroundColor: ColorUtils.kBlack,
             appBar: AppBar(
               elevation: 0,
-              // leading: IconButton(
-              //     onPressed: () async {
-              //       log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
-              //       log('supersetRound ===================> ${controllerUWD.supersetRound}');
-              //       if (controllerUWD.supersetCounter == 0) {
-              //         // controllerUWD.getBackId(
-              //         //     counter: controllerUWD.exeIdCounter);
-              //         if (controllerUWD.exeIdCounter <
-              //             controllerUWD.exerciseId.length) {
-              //           await widget.controller!.getExerciseByIdDetails(
-              //               id: controllerUWD
-              //                   .exerciseId[controllerUWD.exeIdCounter]);
-              //           if (widget.controller!.apiResponse.status ==
-              //               Status.LOADING) {
-              //             Center(
-              //               child: CircularProgressIndicator(),
-              //             );
-              //           }
-              //           if (widget.controller!.apiResponse.status ==
-              //               Status.COMPLETE) {
-              //             widget.controller!.responseExe =
-              //                 widget.controller!.apiResponse.data;
-              //           }
-              //         }
-              //         Get.back();
-              //         controllerUWD.getSupersetBackRound();
-              //
-              //         // if (controllerUWD.exeIdCounter == 0) {
-              //         //   controllerUWD.isFirst = true;
-              //         // }
-              //         // if (controllerUWD.isFirst == true) {
-              //         //   if (controllerUWD.isGreaterOne == false) {
-              //         //     log('back........1');
-              //         //     log('greater one ........false call');
-              //         //
-              //         //     Get.back();
-              //         //   }
-              //         //   if (controllerUWD.isHold == true) {
-              //         //     log('back........2');
-              //         //     log('hold true........call');
-              //         //
-              //         //     controllerUWD.isHold = false;
-              //         //     controllerUWD.isFirst = false;
-              //         //     // _userWorkoutsDateViewModel.supersetRound = 0;
-              //         //     // _userWorkoutsDateViewModel.supersetCounter = 0;
-              //         //     Get.back();
-              //         //   } else {
-              //         //     controllerUWD.isHold = true;
-              //         //   }
-              //         // }
-              //       } else {
-              //         Navigator.pushReplacement(
-              //             context,
-              //             MaterialPageRoute(
-              //               builder: (context) => SuperSet(
-              //                 data: widget.data,
-              //                 controller: widget.controller,
-              //                 workoutId: widget.workoutId,
-              //               ),
-              //             ));
-              //         controllerUWD.getSupersetBackRound();
-              //         controllerUWD.resTimer!.cancel();
-              //         controllerUWD.currentRestValue = 0;
-              //       }
-              //
-              //     },
-              //     icon: Icon(
-              //       Icons.arrow_back_ios_sharp,
-              //       color: ColorUtils.kTint,
-              //     )),
               leading: IconButton(
                   onPressed: () async {
-                    if (_userWorkoutsDateViewModel.supersetCounter == 0) {
-                      print('Hello back ');
-                      _userWorkoutsDateViewModel.getSupersetBackRound();
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SuperSet(
-                              data: widget.data,
-                              controller: widget.controller,
-                              workoutId: widget.workoutId,
-                            ),
-                          ));
-                    } else {
-                      _userWorkoutsDateViewModel.getBackId(
-                          counter: _userWorkoutsDateViewModel.exeIdCounter);
-                      if (_userWorkoutsDateViewModel.exeIdCounter <
-                          _userWorkoutsDateViewModel.exerciseId.length) {
+                    // log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
+                    // log('supersetRound ===================> ${controllerUWD.supersetRound}');
+                    if (controllerUWD.supersetCounter == 0) {
+                      controllerUWD.getBackId(
+                          counter: controllerUWD.exeIdCounter);
+                      if (controllerUWD.exeIdCounter <
+                          controllerUWD.exerciseId.length) {
                         await widget.controller!.getExerciseByIdDetails(
-                            id: _userWorkoutsDateViewModel.exerciseId[
-                                _userWorkoutsDateViewModel.exeIdCounter]);
+                            id: controllerUWD
+                                .exerciseId[controllerUWD.exeIdCounter]);
                         if (widget.controller!.apiResponse.status ==
                             Status.LOADING) {
                           Center(
@@ -2599,34 +2689,119 @@ class _SuperSetState extends State<SuperSet>
                               widget.controller!.apiResponse.data;
                         }
                       }
-                      if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
-                        _userWorkoutsDateViewModel.isFirst = true;
-                      }
-                      if (_userWorkoutsDateViewModel.isFirst == true) {
-                        if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                          print('back........1');
-                          print('greater one ........false call');
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NoWeightExerciseScreen(
+                              data: widget.data,
+                              workoutId: widget.workoutId,
+                            ),
+                          ));
+                      controllerUWD.getSupersetBackRound();
 
-                          Get.back();
-                        }
-                        if (_userWorkoutsDateViewModel.isHold == true) {
-                          print('back........2');
-                          print('hold true........call');
-
-                          _userWorkoutsDateViewModel.isHold = false;
-                          _userWorkoutsDateViewModel.isFirst = false;
-                          Get.back();
-                        } else {
-                          _userWorkoutsDateViewModel.isHold = true;
-                        }
-                      }
+                      // if (controllerUWD.exeIdCounter == 0) {
+                      //   controllerUWD.isFirst = true;
+                      // }
+                      // if (controllerUWD.isFirst == true) {
+                      //   if (controllerUWD.isGreaterOne == false) {
+                      //     log('back........1');
+                      //     log('greater one ........false call');
+                      //
+                      //     Get.back();
+                      //   }
+                      //   if (controllerUWD.isHold == true) {
+                      //     log('back........2');
+                      //     log('hold true........call');
+                      //
+                      //     controllerUWD.isHold = false;
+                      //     controllerUWD.isFirst = false;
+                      //     // _userWorkoutsDateViewModel.supersetRound = 0;
+                      //     // _userWorkoutsDateViewModel.supersetCounter = 0;
+                      //     Get.back();
+                      //   } else {
+                      //     controllerUWD.isHold = true;
+                      //   }
+                      // }
+                    } else {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SuperSet(
+                              data: widget.data,
+                              controller: widget.controller,
+                              workoutId: widget.workoutId,
+                            ),
+                          ));
+                      controllerUWD.getSupersetBackRound();
+                      controllerUWD.resTimer!.cancel();
+                      controllerUWD.currentRestValue = 0;
                     }
                   },
                   icon: Icon(
                     Icons.arrow_back_ios_sharp,
                     color: ColorUtils.kTint,
                   )),
-
+              // leading: IconButton(
+              //     onPressed: () async {
+              //       if (_userWorkoutsDateViewModel.supersetCounter == 0) {
+              //         log('Hello back ');
+              //         _userWorkoutsDateViewModel.getSupersetBackRound();
+              //         Navigator.pushReplacement(
+              //             context,
+              //             MaterialPageRoute(
+              //               builder: (context) => SuperSet(
+              //                 data: widget.data,
+              //                 controller: widget.controller,
+              //                 workoutId: widget.workoutId,
+              //               ),
+              //             ));
+              //       } else {
+              //         _userWorkoutsDateViewModel.getBackId(
+              //             counter: _userWorkoutsDateViewModel.exeIdCounter);
+              //         if (_userWorkoutsDateViewModel.exeIdCounter <
+              //             _userWorkoutsDateViewModel.exerciseId.length) {
+              //           await widget.controller!.getExerciseByIdDetails(
+              //               id: _userWorkoutsDateViewModel.exerciseId[
+              //                   _userWorkoutsDateViewModel.exeIdCounter]);
+              //           if (widget.controller!.apiResponse.status ==
+              //               Status.LOADING) {
+              //             Center(
+              //               child: CircularProgressIndicator(),
+              //             );
+              //           }
+              //           if (widget.controller!.apiResponse.status ==
+              //               Status.COMPLETE) {
+              //             widget.controller!.responseExe =
+              //                 widget.controller!.apiResponse.data;
+              //           }
+              //         }
+              //         if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+              //           _userWorkoutsDateViewModel.isFirst = true;
+              //         }
+              //         if (_userWorkoutsDateViewModel.isFirst == true) {
+              //           if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+              //             log('back........1');
+              //             log('greater one ........false call');
+              //
+              //             Get.back();
+              //           }
+              //           if (_userWorkoutsDateViewModel.isHold == true) {
+              //             log('back........2');
+              //             log('hold true........call');
+              //
+              //             _userWorkoutsDateViewModel.isHold = false;
+              //             _userWorkoutsDateViewModel.isFirst = false;
+              //             Get.back();
+              //           } else {
+              //             _userWorkoutsDateViewModel.isHold = true;
+              //           }
+              //         }
+              //       }
+              //     },
+              //     icon: Icon(
+              //       Icons.arrow_back_ios_sharp,
+              //       color: ColorUtils.kTint,
+              //     )),
               backgroundColor: ColorUtils.kBlack,
               title: Text('Superset', style: FontTextStyle.kWhite16BoldRoboto),
               centerTitle: true,
@@ -2705,7 +2880,7 @@ class _SuperSetState extends State<SuperSet>
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             // apiCallSuperSet(index: index);
-                            log('index ================= ${controllerUWD.supersetExerciseId.length}');
+                            // log('index ================= ${controllerUWD.supersetExerciseId.length}');
                             // _exerciseByIdViewModel.getExerciseByIdDetails(
                             //     id: _userWorkoutsDateViewModel
                             //         .supersetExerciseId[index]);
@@ -2783,22 +2958,21 @@ class _SuperSetState extends State<SuperSet>
                           right: Get.height * .03,
                           bottom: Get.height * .05),
                       child: commonNavigationButton(
-                          name: controllerUWD.supersetCounter !=
+                          name: controllerUWD.supersetCounter ==
                                   controllerUWD.supersetRound - 1
-                              ? "Next Round"
-                              : "Save Exercise",
+                              ? "Save Exercise"
+                              : "Next Round",
                           onTap: () async {
+                            // log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
+                            // log('supersetRound ===================> ${controllerUWD.supersetRound}');
                             controllerUWD.getSupersetRound();
-
-                            log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
-                            log('supersetRound ===================> ${controllerUWD.supersetRound}');
 
                             if (controllerUWD.supersetCounter ==
                                 controllerUWD.supersetRound) {
                               UpdateStatusUserProgramRequestModel _request =
                                   UpdateStatusUserProgramRequestModel();
 
-                              log('user workout id check ====== > ${controllerUWD.userProgramDateID}');
+                              // log('user workout id check ====== > ${controllerUWD.userProgramDateID}');
 
                               _request.userProgramDatesId =
                                   controllerUWD.userProgramDateID;
@@ -2820,6 +2994,8 @@ class _SuperSetState extends State<SuperSet>
                                     message: '${response.msg}',
                                     duration: Duration(milliseconds: 1500),
                                   ));
+
+                                  controllerUWD.getSupersetBackRound();
 
                                   Navigator.push(
                                       context,
@@ -2882,8 +3058,8 @@ class _SuperSetState extends State<SuperSet>
           _userWorkoutsDateViewModel.supersetWeight =
               TextEditingController(text: response.data![0].exerciseWeight);
 
-          log(' exerciseTitle == ${response.data![0].exerciseTitle}');
-          log('response exerciseTime== ${response.data![0].exerciseTime}');
+          // log(' exerciseTitle == ${response.data![0].exerciseTitle}');
+          // log('response exerciseTime== ${response.data![0].exerciseTime}');
           if (response.data![0].exerciseType == "REPS") {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -2926,7 +3102,7 @@ class _SuperSetState extends State<SuperSet>
                     //         exerciseId: id, isFromExercise: true));
                     //   },
                     //   child: Image.asset(
-                    //     AppIcons.play,
+                    //     AppIcons.info,
                     //     height: Get.height * 0.03,
                     //     width: Get.height * 0.03,
                     //     color: ColorUtils.kTint,
@@ -2941,6 +3117,7 @@ class _SuperSetState extends State<SuperSet>
                 ),
                 SizedBox(height: Get.height * .0075),
                 NoWeightedCounterCard(
+                    index: 0,
                     counter: int.parse(
                         "${response.data![0].exerciseReps}".split("-").first),
                     repsNo:
@@ -3130,6 +3307,9 @@ class _SuperSetState extends State<SuperSet>
                           '${widget.controller!.responseExe!.data![0].exerciseReps}'
                               .split("-")
                               .first),
+                      // weight: _userWorkoutsDateViewModel.weightList[0],
+                      index: 0,
+                      // counter: _userWorkoutsDateViewModel.repsList[0],
                       repsNo:
                           '${widget.controller!.responseExe!.data![0].exerciseReps}'
                               .split("-")
@@ -3213,7 +3393,7 @@ class _SuperSetState extends State<SuperSet>
   //                 GestureDetector(
   //                   onTap: () {},
   //                   child: Image.asset(
-  //                     AppIcons.play,
+  //                     AppIcons.info,
   //                     height: Get.height * 0.03,
   //                     width: Get.height * 0.03,
   //                     color: ColorUtils.kTint,
@@ -3248,7 +3428,7 @@ class _SuperSetState extends State<SuperSet>
   //                 GestureDetector(
   //                   onTap: () {},
   //                   child: Image.asset(
-  //                     AppIcons.play,
+  //                     AppIcons.info,
   //                     height: Get.height * 0.03,
   //                     width: Get.height * 0.03,
   //                     color: ColorUtils.kTint,
@@ -3371,7 +3551,7 @@ class _SuperSetState extends State<SuperSet>
   //     //               GestureDetector(
   //     //                 onTap: () {},
   //     //                 child: Image.asset(
-  //     //                   AppIcons.play,
+  //     //                   AppIcons.info,
   //     //                   height: Get.height * 0.03,
   //     //                   width: Get.height * 0.03,
   //     //                   color: ColorUtils.kTint,
@@ -3406,7 +3586,7 @@ class _SuperSetState extends State<SuperSet>
   //     //               GestureDetector(
   //     //                 onTap: () {},
   //     //                 child: Image.asset(
-  //     //                   AppIcons.play,
+  //     //                   AppIcons.info,
   //     //                   height: Get.height * 0.03,
   //     //                   width: Get.height * 0.03,
   //     //                   color: ColorUtils.kTint,

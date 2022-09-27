@@ -1,10 +1,7 @@
 import 'dart:developer';
-import 'dart:io';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
@@ -15,17 +12,13 @@ import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/workout_screen/no_weight_exercise_screen.dart';
 import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
-import 'package:tcm/screen/workout_screen/super_set_screen.dart';
-import 'package:tcm/screen/workout_screen/time_based_exercise_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
-import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-
 import '../../viewModel/conecction_check_viewModel.dart';
 
 // ignore: must_be_immutable
@@ -50,10 +43,8 @@ class WorkoutHomeScreen extends StatefulWidget {
 class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
-
   UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
       Get.put(UserWorkoutsDateViewModel());
-
   VideoPlayerController? _videoPlayerController;
   YoutubePlayerController? _youTubePlayerController;
 
@@ -64,7 +55,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
   void initState() {
     _connectivityCheckViewModel.startMonitoring();
     super.initState();
-
     initializePlayer();
     getExercisesId();
   }
@@ -78,7 +68,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
   }
 
   getExercisesId() async {
-    print("called 123");
     print("called 123");
     print(
         'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
@@ -98,10 +87,25 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     print("--------------- dates ${resp.msg}");
 
     _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+    _userWorkoutsDateViewModel.tmpExerciseId = resp.data!.exercisesIds!;
     _userWorkoutsDateViewModel.supersetExerciseId =
         resp.data!.supersetExercisesIds!;
     _userWorkoutsDateViewModel.userProgramDateID =
         resp.data!.userProgramDatesId!;
+
+    if (resp.data!.selectedWarmup! != [] &&
+        resp.data!.selectedWarmup!.isNotEmpty) {
+      // print('======= superset round ${resp.data!.round!.runtimeType}');
+      // if (resp.data!.round!.isNotEmpty) {
+      _userWorkoutsDateViewModel.warmUpId = resp.data!.selectedWarmup!;
+      print(
+          'controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+      // }
+    } else {
+      _userWorkoutsDateViewModel.warmUpId = [];
+      print(
+          'else ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+    }
 
     if (resp.data!.restTime! != "" || resp.data!.restTime!.isNotEmpty) {
       print('======= superset restTime ${resp.data!.restTime!}');
@@ -128,6 +132,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
     print(
         'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
+    // _userWorkoutsDateViewModel.warmUpId = ["75", "76", "77"];
 
     await _exerciseByIdViewModel.getExerciseByIdDetails(
         id: _userWorkoutsDateViewModel
@@ -530,42 +535,172 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                           //     itemBuilder: (_, index) =>
                                           //         ),
                                           // htmlToTextGrey(data: finalHTMLTips[1]),
-
                                           SizedBox(height: Get.height * .03),
+
                                           GetBuilder<UserWorkoutsDateViewModel>(
                                               builder: (controller) {
+                                            // log('================ ?> ${controller.warmUpId.isNotEmpty}');
+
                                             return controller.userProgramDateID
                                                     .isNotEmpty
-                                                ? commonNavigationButton(
-                                                    name: 'Begin Warm-Up',
-                                                    onTap: () {
-                                                      // Get.to(SuperSetScreen());
-                                                      Get.to(() =>
-                                                          NoWeightExerciseScreen(
-                                                            data: widget.data,
-                                                            workoutId: widget
-                                                                .workoutId,
-                                                          ));
+                                                ? Column(
+                                                    children: [
+                                                      controller.warmUpId
+                                                                  .isNotEmpty &&
+                                                              controller
+                                                                      .warmUpId !=
+                                                                  []
+                                                          ? commonNavigationButton(
+                                                              name:
+                                                                  "Begin Warm-Up",
+                                                              onTap: () {
+                                                                // log("hello warm up");
+                                                                // log("hello warm up id ${controller.warmUpId}");
+                                                                // log("hello exerciseId up Z${controller.exerciseId}");
+                                                                if (controller
+                                                                    .warmUpId
+                                                                    .isNotEmpty) {
+                                                                  for (int i =
+                                                                          0;
+                                                                      i <
+                                                                          controller
+                                                                              .warmUpId
+                                                                              .length;
+                                                                      i++) {
+                                                                    if (controller
+                                                                            .exerciseId
+                                                                            .contains(controller.warmUpId[i]) ==
+                                                                        false) {
+                                                                      controller
+                                                                          .exerciseId
+                                                                          .insert(
+                                                                              i,
+                                                                              controller.warmUpId[i]);
+                                                                    }
+                                                                  }
+                                                                }
+                                                                // log("hello exerciseId up Z for loop ${controller.exerciseId}");
+                                                                Get.to(
+                                                                    () =>
+                                                                        NoWeightExerciseScreen(
+                                                                          data:
+                                                                              widget.data,
+                                                                          workoutId:
+                                                                              widget.workoutId,
+                                                                        ),
+                                                                    transition:
+                                                                        Transition
+                                                                            .rightToLeft);
 
-                                                      if (controller
-                                                              .exeIdCounter ==
-                                                          controller.exerciseId
-                                                              .length) {
-                                                        Get.to(() =>
-                                                            ShareProgressScreen(
-                                                              exeData:
-                                                                  responseExe
-                                                                      .data!,
-                                                              data: widget.data,
-                                                              workoutId: widget
-                                                                  .workoutId,
-                                                            ));
-                                                      }
+                                                                if (controller
+                                                                        .exeIdCounter ==
+                                                                    controller
+                                                                        .exerciseId
+                                                                        .length) {
+                                                                  Get.to(
+                                                                      () =>
+                                                                          ShareProgressScreen(
+                                                                            exeData:
+                                                                                responseExe.data!,
+                                                                            data:
+                                                                                widget.data,
+                                                                            workoutId:
+                                                                                widget.workoutId,
+                                                                          ),
+                                                                      transition:
+                                                                          Transition
+                                                                              .rightToLeft);
+                                                                }
 
-                                                      setState(() {
-                                                        watchVideo = false;
-                                                      });
-                                                    })
+                                                                setState(() {
+                                                                  watchVideo =
+                                                                      false;
+                                                                });
+                                                                // log("warm up added ${controller.exerciseId}");
+                                                              })
+                                                          : SizedBox(),
+                                                      controller.warmUpId
+                                                                  .isNotEmpty &&
+                                                              controller
+                                                                      .warmUpId !=
+                                                                  []
+                                                          ? SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      .03)
+                                                          : SizedBox(),
+                                                      commonNavigationButton(
+                                                          name: 'Start Workout',
+                                                          onTap: () {
+                                                            for (int i = 0;
+                                                                i <
+                                                                    controller
+                                                                        .warmUpId
+                                                                        .length;
+                                                                i++) {
+                                                              if (controller
+                                                                  .exerciseId
+                                                                  .contains(
+                                                                      controller
+                                                                              .warmUpId[
+                                                                          i])) {
+                                                                controller
+                                                                    .exerciseId
+                                                                    .removeAt(
+                                                                        0);
+                                                              }
+                                                            }
+
+                                                            // Get.to(SuperSetScreen());
+                                                            // controller
+                                                            //     .exerciseId
+                                                            //     .clear();
+                                                            //
+                                                            // controller
+                                                            //         .exerciseId =
+                                                            //     controller
+                                                            //         .tmpExerciseId;
+                                                            // log("warm up added ${controller.exerciseId}");
+
+                                                            Get.to(
+                                                                () =>
+                                                                    NoWeightExerciseScreen(
+                                                                      data: widget
+                                                                          .data,
+                                                                      workoutId:
+                                                                          widget
+                                                                              .workoutId,
+                                                                    ),
+                                                                transition:
+                                                                    Transition
+                                                                        .rightToLeft);
+
+                                                            if (controller
+                                                                    .exeIdCounter ==
+                                                                controller
+                                                                    .exerciseId
+                                                                    .length) {
+                                                              Get.to(
+                                                                  () =>
+                                                                      ShareProgressScreen(
+                                                                        exeData:
+                                                                            responseExe.data!,
+                                                                        data: widget
+                                                                            .data,
+                                                                        workoutId:
+                                                                            widget.workoutId,
+                                                                      ),
+                                                                  transition:
+                                                                      Transition
+                                                                          .rightToLeft);
+                                                            }
+                                                            setState(() {
+                                                              watchVideo =
+                                                                  false;
+                                                            });
+                                                          }),
+                                                    ],
+                                                  )
                                                 : SizedBox();
                                           }),
                                           SizedBox(height: Get.height * .03),
@@ -909,36 +1044,163 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                       SizedBox(height: Get.height * .03),
                                       GetBuilder<UserWorkoutsDateViewModel>(
                                           builder: (controller) {
+                                        // log("======================= ?>${controller.warmUpId.isNotEmpty}");
                                         return controller
                                                 .userProgramDateID.isNotEmpty
-                                            ? commonNavigationButton(
-                                                name: 'Begin Warm-Up',
-                                                onTap: () {
-                                                  // Get.to(SuperSetScreen());
-                                                  Get.to(() =>
-                                                      NoWeightExerciseScreen(
-                                                        data: widget.data,
-                                                        workoutId:
-                                                            widget.workoutId,
-                                                      ));
+                                            ? Column(
+                                                children: [
+                                                  controller.warmUpId
+                                                              .isNotEmpty &&
+                                                          controller.warmUpId !=
+                                                              []
+                                                      ? commonNavigationButton(
+                                                          name: "Begin Warm-Up",
+                                                          onTap: () {
+                                                            // log("hello warm up");
+                                                            // log("hello warm up id ${controller.warmUpId}");
+                                                            // log("hello exerciseId up Z${controller.exerciseId}");
 
-                                                  if (controller.exeIdCounter ==
-                                                      controller
-                                                          .exerciseId.length) {
-                                                    Get.to(() =>
-                                                        ShareProgressScreen(
-                                                          exeData:
-                                                              responseExe.data!,
-                                                          data: widget.data,
-                                                          workoutId:
-                                                              widget.workoutId,
-                                                        ));
-                                                  }
+                                                            if (controller
+                                                                .warmUpId
+                                                                .isNotEmpty) {
+                                                              for (int i = 0;
+                                                                  i <
+                                                                      controller
+                                                                          .warmUpId
+                                                                          .length;
+                                                                  i++) {
+                                                                if (controller
+                                                                        .exerciseId
+                                                                        .contains(
+                                                                            controller.warmUpId[i]) ==
+                                                                    false) {
+                                                                  controller
+                                                                      .exerciseId
+                                                                      .insert(
+                                                                          i,
+                                                                          controller
+                                                                              .warmUpId[i]);
+                                                                }
+                                                              }
+                                                            }
+                                                            // log("hello exerciseId up Z for loop ${controller.exerciseId}");
 
-                                                  setState(() {
-                                                    watchVideo = false;
-                                                  });
-                                                })
+                                                            Get.to(
+                                                                () =>
+                                                                    NoWeightExerciseScreen(
+                                                                      data: widget
+                                                                          .data,
+                                                                      workoutId:
+                                                                          widget
+                                                                              .workoutId,
+                                                                    ),
+                                                                transition:
+                                                                    Transition
+                                                                        .rightToLeft);
+
+                                                            if (controller
+                                                                    .exeIdCounter ==
+                                                                controller
+                                                                    .exerciseId
+                                                                    .length) {
+                                                              Get.to(
+                                                                  () =>
+                                                                      ShareProgressScreen(
+                                                                        exeData:
+                                                                            responseExe.data!,
+                                                                        data: widget
+                                                                            .data,
+                                                                        workoutId:
+                                                                            widget.workoutId,
+                                                                      ),
+                                                                  transition:
+                                                                      Transition
+                                                                          .rightToLeft);
+                                                            }
+
+                                                            setState(() {
+                                                              watchVideo =
+                                                                  false;
+                                                            });
+                                                            // log("warm up added ${controller.exerciseId}");
+                                                          })
+                                                      : SizedBox(),
+                                                  controller.warmUpId
+                                                              .isNotEmpty &&
+                                                          controller.warmUpId !=
+                                                              []
+                                                      ? SizedBox(
+                                                          height:
+                                                              Get.height * .03)
+                                                      : SizedBox(),
+                                                  commonNavigationButton(
+                                                      name: 'Start Workout',
+                                                      onTap: () {
+                                                        for (int i = 0;
+                                                            i <
+                                                                controller
+                                                                    .warmUpId
+                                                                    .length;
+                                                            i++) {
+                                                          if (controller
+                                                              .exerciseId
+                                                              .contains(controller
+                                                                      .warmUpId[
+                                                                  i])) {
+                                                            controller
+                                                                .exerciseId
+                                                                .removeAt(0);
+                                                          }
+                                                        }
+
+                                                        // Get.to(SuperSetScreen());
+                                                        // controller
+                                                        //     .exerciseId
+                                                        //     .clear();
+                                                        //
+                                                        // controller
+                                                        //         .exerciseId =
+                                                        //     controller
+                                                        //         .tmpExerciseId;
+                                                        // log("warm up added ${controller.exerciseId}");
+
+                                                        Get.to(
+                                                            () =>
+                                                                NoWeightExerciseScreen(
+                                                                  data: widget
+                                                                      .data,
+                                                                  workoutId: widget
+                                                                      .workoutId,
+                                                                ),
+                                                            transition: Transition
+                                                                .rightToLeft);
+
+                                                        if (controller
+                                                                .exeIdCounter ==
+                                                            controller
+                                                                .exerciseId
+                                                                .length) {
+                                                          Get.to(
+                                                              () =>
+                                                                  ShareProgressScreen(
+                                                                    exeData:
+                                                                        responseExe
+                                                                            .data!,
+                                                                    data: widget
+                                                                        .data,
+                                                                    workoutId:
+                                                                        widget
+                                                                            .workoutId,
+                                                                  ),
+                                                              transition: Transition
+                                                                  .rightToLeft);
+                                                        }
+                                                        setState(() {
+                                                          watchVideo = false;
+                                                        });
+                                                      }),
+                                                ],
+                                              )
                                             : SizedBox();
                                       }),
                                       SizedBox(height: Get.height * .03),

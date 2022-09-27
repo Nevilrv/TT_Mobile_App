@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tcm/api_services/api_response.dart';
-import 'package:tcm/model/request_model/update_status_user_program_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
-import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
-
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
@@ -62,144 +58,147 @@ class _ShareProgressScreenState extends State<ShareProgressScreen> {
       },
       child: GetBuilder<ConnectivityCheckViewModel>(
         builder: (control) => control.isOnline
-            ? Scaffold(
-                backgroundColor: ColorUtils.kBlack,
-                appBar: AppBar(
-                  elevation: 0,
-                  leading: IconButton(
-                      onPressed: () {
-                        Get.back();
-                        if (_userWorkoutsDateViewModel
-                            .supersetExerciseId.isEmpty) {
-                          _userWorkoutsDateViewModel.getBackId(
-                              counter: _userWorkoutsDateViewModel.exeIdCounter);
-                        }
-
-                        // _workoutBaseExerciseViewModel.exeIdCounter = 0;
-                        // _workoutBaseExerciseViewModel.isHold = false;
-                        // _workoutBaseExerciseViewModel.isFirst = false;
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_sharp,
-                        color: ColorUtils.kTint,
-                      )),
+            ? GetBuilder<UserWorkoutsDateViewModel>(builder: (controllerUWD) {
+                return Scaffold(
                   backgroundColor: ColorUtils.kBlack,
-                  title: Text('TRAINING SESSION',
-                      style: FontTextStyle.kWhite16BoldRoboto),
-                  centerTitle: true,
-                ),
-                body: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: Get.width * 0.06,
-                      vertical: Get.height * 0.015),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: Get.width * 0.06),
-                          child: SizedBox(
-                            height: Get.height * .75,
-                            child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Text(
-                                    'COMPLETE',
-                                    style: FontTextStyle.kWhite24BoldRoboto
-                                        .copyWith(
-                                      fontSize: Get.height * 0.032,
-                                    ),
-                                  ),
-                                  Container(
-                                    height: Get.height * .33,
-                                    width: Get.width * .5,
-                                    child: Image.asset(
-                                      AppImages.workoutProgress,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  Text(
-                                    AppText.shareProgressSuccess,
-                                    style: FontTextStyle.kWhite20BoldRoboto
-                                        .copyWith(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: Get.height * .022),
-                                    maxLines: 4,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  Text(
-                                    '',
-                                    style: FontTextStyle.kWhite24BoldRoboto
-                                        .copyWith(fontSize: Get.height * 0.023),
-                                    maxLines: 4,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  SizedBox(
-                                    width: Get.width * .5,
-                                    child: commonNavigationButton(
-                                        name: 'Share',
-                                        onTap: () {
-                                          Get.to(ShareSheetScreen(),
-                                              transition: Transition.downToUp);
-                                          // shareBottomSheet();
-                                        }),
-                                  ),
-                                ]),
-                          ),
-                        ),
-                        commonNavigationButton(
-                            name: 'Finish',
-                            onTap: () async {
-                              Get.offAll(HomeScreen());
-                              _userWorkoutsDateViewModel.exeIdCounter = 0;
-                              _userWorkoutsDateViewModel.supersetRound = 0;
-                              _userWorkoutsDateViewModel.supersetCounter = 0;
+                  appBar: AppBar(
+                    elevation: 0,
+                    leading: IconButton(
+                        onPressed: () {
+                          if (controllerUWD.supersetExerciseId.isEmpty) {
+                            controllerUWD.getBackId(
+                                counter: controllerUWD.exeIdCounter);
+                          }
+                          Navigator.pop(context);
 
-                              // UpdateStatusUserProgramRequestModel _request =
-                              //     UpdateStatusUserProgramRequestModel();
-                              //
-                              // print(
-                              //     'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
-                              //
-                              // _request.userProgramDatesId =
-                              //     _userWorkoutsDateViewModel.userProgramDateID;
-                              //
-                              // await _updateStatusUserProgramViewModel
-                              //     .updateStatusUserProgramViewModel(_request);
-                              //
-                              // if (_updateStatusUserProgramViewModel
-                              //         .apiResponse.status ==
-                              //     Status.COMPLETE) {
-                              //   UpdateStatusUserProgramResponseModel response =
-                              //       _updateStatusUserProgramViewModel.apiResponse.data;
-                              //
-                              //   if (response.success == true) {
-                              //
-                              //
-                              //     Get.showSnackbar(GetSnackBar(
-                              //       message: '${response.msg}',
-                              //       duration: Duration(milliseconds: 1500),
-                              //     ));
-                              //   } else if (response.success == false) {
-                              //     Get.showSnackbar(GetSnackBar(
-                              //       message: '${response.msg}',
-                              //       duration: Duration(milliseconds: 1500),
-                              //     ));
-                              //   }
-                              // } else if (_updateStatusUserProgramViewModel
-                              //         .apiResponse.status ==
-                              //     Status.ERROR) {
-                              //   Get.showSnackbar(GetSnackBar(
-                              //     message: 'Something Went Wrong',
-                              //     duration: Duration(milliseconds: 1500),
-                              //   ));
-                              // }
-                            })
-                      ]),
-                ),
-              )
+                          // _workoutBaseExerciseViewModel.exeIdCounter = 0;
+                          // _workoutBaseExerciseViewModel.isHold = false;
+                          // _workoutBaseExerciseViewModel.isFirst = false;
+                        },
+                        icon: Icon(
+                          Icons.arrow_back_ios_sharp,
+                          color: ColorUtils.kTint,
+                        )),
+                    backgroundColor: ColorUtils.kBlack,
+                    title: Text('TRAINING SESSION',
+                        style: FontTextStyle.kWhite16BoldRoboto),
+                    centerTitle: true,
+                  ),
+                  body: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: Get.width * 0.06,
+                        vertical: Get.height * 0.015),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: Get.width * 0.06),
+                            child: SizedBox(
+                              height: Get.height * .75,
+                              child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Text(
+                                      'COMPLETE',
+                                      style: FontTextStyle.kWhite24BoldRoboto
+                                          .copyWith(
+                                        fontSize: Get.height * 0.032,
+                                      ),
+                                    ),
+                                    Container(
+                                      height: Get.height * .33,
+                                      width: Get.width * .5,
+                                      child: Image.asset(
+                                        AppImages.workoutProgress,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Text(
+                                      AppText.shareProgressSuccess,
+                                      style: FontTextStyle.kWhite20BoldRoboto
+                                          .copyWith(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: Get.height * .022),
+                                      maxLines: 4,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      '',
+                                      style: FontTextStyle.kWhite24BoldRoboto
+                                          .copyWith(
+                                              fontSize: Get.height * 0.023),
+                                      maxLines: 4,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    SizedBox(
+                                      width: Get.width * .5,
+                                      child: commonNavigationButton(
+                                          name: 'Share',
+                                          onTap: () {
+                                            Get.to(ShareSheetScreen(),
+                                                transition:
+                                                    Transition.downToUp);
+                                            // shareBottomSheet();
+                                          }),
+                                    ),
+                                  ]),
+                            ),
+                          ),
+                          commonNavigationButton(
+                              name: 'Finish',
+                              onTap: () async {
+                                Get.offAll(HomeScreen());
+                                controllerUWD.exeIdCounter = 0;
+                                controllerUWD.supersetRound = 0;
+                                controllerUWD.supersetCounter = 0;
+
+                                // UpdateStatusUserProgramRequestModel _request =
+                                //     UpdateStatusUserProgramRequestModel();
+                                //
+                                // print(
+                                //     'user workout id check ====== > ${_userWorkoutsDateViewModel.userProgramDateID}');
+                                //
+                                // _request.userProgramDatesId =
+                                //     _userWorkoutsDateViewModel.userProgramDateID;
+                                //
+                                // await _updateStatusUserProgramViewModel
+                                //     .updateStatusUserProgramViewModel(_request);
+                                //
+                                // if (_updateStatusUserProgramViewModel
+                                //         .apiResponse.status ==
+                                //     Status.COMPLETE) {
+                                //   UpdateStatusUserProgramResponseModel response =
+                                //       _updateStatusUserProgramViewModel.apiResponse.data;
+                                //
+                                //   if (response.success == true) {
+                                //
+                                //
+                                //     Get.showSnackbar(GetSnackBar(
+                                //       message: '${response.msg}',
+                                //       duration: Duration(milliseconds: 1500),
+                                //     ));
+                                //   } else if (response.success == false) {
+                                //     Get.showSnackbar(GetSnackBar(
+                                //       message: '${response.msg}',
+                                //       duration: Duration(milliseconds: 1500),
+                                //     ));
+                                //   }
+                                // } else if (_updateStatusUserProgramViewModel
+                                //         .apiResponse.status ==
+                                //     Status.ERROR) {
+                                //   Get.showSnackbar(GetSnackBar(
+                                //     message: 'Something Went Wrong',
+                                //     duration: Duration(milliseconds: 1500),
+                                //   ));
+                                // }
+                              })
+                        ]),
+                  ),
+                );
+              })
             : ConnectionCheckScreen(),
       ),
     );

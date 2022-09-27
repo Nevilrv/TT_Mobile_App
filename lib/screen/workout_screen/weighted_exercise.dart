@@ -183,6 +183,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                           alignment: Alignment.topRight,
                                           children: [
                                             WeightedCounterCard(
+                                              index: 0,
                                               weight: widget
                                                   .data[0].exerciseWeight!,
                                               counter: int.parse(
