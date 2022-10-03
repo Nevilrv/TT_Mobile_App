@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
@@ -126,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    log('status ================ > ${status}');
+    // log('status ================ > ${status}');
 
     scheduleResponse = scheduleResp;
   }
@@ -157,40 +158,40 @@ class _HomeScreenState extends State<HomeScreen> {
         } else {
           _userWorkoutsDateViewModel.supersetExerciseId = [];
         }
-        log('controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+        // log('controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
 
         if (resp.data!.selectedWarmup! != [] &&
             resp.data!.selectedWarmup!.isNotEmpty) {
           // log('======= superset round ${resp.data!.round!.runtimeType}');
           // if (resp.data!.round!.isNotEmpty) {
           _userWorkoutsDateViewModel.warmUpId = resp.data!.selectedWarmup!;
-          log('controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+          // log('controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
           // }
         } else {
           _userWorkoutsDateViewModel.warmUpId = [];
-          log('else ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
+          // log('else ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
         }
 
         if (resp.data!.restTime! != "" && resp.data!.restTime!.isNotEmpty) {
-          log('======= superset restTime======= superset restTime======= superset restTime ${resp.data!.restTime!.runtimeType}');
-          log('======= superset restTime ${resp.data!.restTime!}');
+          // log('======= superset restTime======= superset restTime======= superset restTime ${resp.data!.restTime!.runtimeType}');
+          // log('======= superset restTime ${resp.data!.restTime!}');
 
           _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime!;
-          log('controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+          // log('controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
         } else {
           _userWorkoutsDateViewModel.supersetRestTime = "30";
-          log('else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+          // log('else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
         }
         if (resp.data!.round! != "" && resp.data!.round!.isNotEmpty) {
           // log('======= superset round ${resp.data!.round!.runtimeType}');
           // if (resp.data!.round!.isNotEmpty) {
           _userWorkoutsDateViewModel.supersetRound =
               int.parse("${resp.data!.round!}");
-          log('controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+          // log('controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
           // }
         } else {
           _userWorkoutsDateViewModel.supersetRound = 3;
-          log('else ======= superset Round ${_userWorkoutsDateViewModel.supersetRestTime}');
+          // log('else ======= superset Round ${_userWorkoutsDateViewModel.supersetRestTime}');
         }
         // _userWorkoutsDateViewModel.warmUpId = ["75", "76", "77"];
 
@@ -294,9 +295,107 @@ class _HomeScreenState extends State<HomeScreen> {
                                     Status.LOADING ||
                                 controllerWork.apiResponse.status ==
                                     Status.LOADING) {
-                              return Center(
-                                  child: CircularProgressIndicator(
-                                      color: ColorUtils.kTint));
+                              return Shimmer.fromColors(
+                                  baseColor: Color(0xff363636),
+                                  highlightColor:
+                                      ColorUtils.kTint.withOpacity(.3),
+                                  enabled: true,
+                                  child: Container(
+                                    height: Get.height * 0.22,
+                                    width: Get.width * 0.99,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              bottom: 10,
+                                              top: 20,
+                                              right: 20),
+                                          child: Container(
+                                              height: Get.height * .02,
+                                              width: Get.height * .2,
+                                              color: ColorUtils.kTint
+                                                  .withOpacity(.2)),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 18, vertical: 8),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                height: Get.height * .12,
+                                                width: Get.width * .24,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color:
+                                                            ColorUtils.kTint),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: ColorUtils.kTint
+                                                        .withOpacity(.2)),
+                                              ),
+                                              SizedBox(
+                                                width: Get.width * .04,
+                                              ),
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Container(
+                                                    height: Get.height * 0.018,
+                                                    width: Get.width * 0.5,
+                                                    color: ColorUtils.kTint
+                                                        .withOpacity(.2),
+                                                  ),
+                                                  SizedBox(
+                                                    height: Get.height * .007,
+                                                  ),
+                                                  Container(
+                                                    height: Get.height * 0.02,
+                                                    width: Get.width * .2,
+                                                    color: ColorUtils.kTint
+                                                        .withOpacity(.2),
+                                                  ),
+                                                  SizedBox(
+                                                    height: Get.height * .01,
+                                                  ),
+                                                  Container(
+                                                    height: Get.height * 0.042,
+                                                    width: Get.width * 0.5,
+                                                    decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          stops: [0.0, 1.0],
+                                                          colors:
+                                                              ColorUtilsGradient
+                                                                  .kTintGradient,
+                                                        ),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        color:
+                                                            ColorUtils.kTint),
+                                                  ),
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ));
                             }
 
                             if (controllerExe.apiResponse.status ==

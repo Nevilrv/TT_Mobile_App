@@ -48,12 +48,21 @@ class _ShareProgressScreenState extends State<ShareProgressScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Get.back();
-        if (_userWorkoutsDateViewModel.supersetExerciseId.isEmpty) {
+        _userWorkoutsDateViewModel.exeIdCounter =
+            _userWorkoutsDateViewModel.exerciseId.length;
+
+        print(
+            "====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
+        if (_userWorkoutsDateViewModel.supersetExerciseId.isEmpty ||
+            _userWorkoutsDateViewModel.supersetCounter == 0) {
+          _userWorkoutsDateViewModel.exeIdCounter =
+              _userWorkoutsDateViewModel.exerciseId.length;
           _userWorkoutsDateViewModel.getBackId(
               counter: _userWorkoutsDateViewModel.exeIdCounter);
+          print('Hello counter minus WillPop');
         }
-
+        Get.back();
         return Future.value(true);
       },
       child: GetBuilder<ConnectivityCheckViewModel>(
@@ -65,15 +74,23 @@ class _ShareProgressScreenState extends State<ShareProgressScreen> {
                     elevation: 0,
                     leading: IconButton(
                         onPressed: () {
-                          if (controllerUWD.supersetExerciseId.isEmpty) {
+                          print(
+                              "====================== exeIdCounter > ${controllerUWD.exerciseId.length}");
+
+                          print(
+                              "====================== exeIdCounter > ${controllerUWD.exeIdCounter}");
+                          if (controllerUWD.supersetExerciseId.isEmpty ||
+                              controllerUWD.supersetCounter == 0) {
+                            controllerUWD.exeIdCounter =
+                                _userWorkoutsDateViewModel.exerciseId.length;
                             controllerUWD.getBackId(
                                 counter: controllerUWD.exeIdCounter);
+                            print('Hello counter minus');
                           }
-                          Navigator.pop(context);
+                          Get.back();
 
-                          // _workoutBaseExerciseViewModel.exeIdCounter = 0;
-                          // _workoutBaseExerciseViewModel.isHold = false;
-                          // _workoutBaseExerciseViewModel.isFirst = false;
+                          // controllerUWD.isHold = false;
+                          // controllerUWD.isFirst = false;
                         },
                         icon: Icon(
                           Icons.arrow_back_ios_sharp,
@@ -154,7 +171,6 @@ class _ShareProgressScreenState extends State<ShareProgressScreen> {
                                 controllerUWD.exeIdCounter = 0;
                                 controllerUWD.supersetRound = 0;
                                 controllerUWD.supersetCounter = 0;
-
                                 // UpdateStatusUserProgramRequestModel _request =
                                 //     UpdateStatusUserProgramRequestModel();
                                 //

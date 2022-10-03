@@ -306,7 +306,7 @@ class _RepsScreenState extends State<RepsScreen> {
     // TODO: implement initState
     // initializePlayer();
     super.initState();
-    // repsLoop();
+    repsLoop();
   }
 
   repsLoop() {
@@ -314,7 +314,6 @@ class _RepsScreenState extends State<RepsScreen> {
     //   _userWorkoutsDateViewModel.repsList.clear();
     // }
     _userWorkoutsDateViewModel.repsList.clear();
-
     for (int i = 0;
         i <
             int.parse(
@@ -323,8 +322,7 @@ class _RepsScreenState extends State<RepsScreen> {
       _userWorkoutsDateViewModel.repsList.add(int.parse(
           "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
     }
-
-    // log('============= > ${_userWorkoutsDateViewModel.repsList}');
+    log('============= > ${_userWorkoutsDateViewModel.repsList}');
   }
 
   @override
@@ -374,6 +372,8 @@ class _RepsScreenState extends State<RepsScreen> {
       // },
       child: WillPopScope(
         onWillPop: () async {
+          log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
           _userWorkoutsDateViewModel.getBackId(
               counter: _userWorkoutsDateViewModel.exeIdCounter);
           if (_userWorkoutsDateViewModel.exeIdCounter <
@@ -396,17 +396,19 @@ class _RepsScreenState extends State<RepsScreen> {
           }
           if (_userWorkoutsDateViewModel.isFirst == true) {
             if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+              // log('back 11111111111111111');
+              _userWorkoutsDateViewModel.isGreaterOne = true;
               Get.back();
             }
             if (_userWorkoutsDateViewModel.isHold == true) {
               _userWorkoutsDateViewModel.isHold = false;
               _userWorkoutsDateViewModel.isFirst = false;
+              // log('back 22222222222222');
               Get.back();
             } else {
               _userWorkoutsDateViewModel.isHold = true;
             }
           }
-
           return Future.value(false);
         },
         child: Scaffold(
@@ -415,6 +417,8 @@ class _RepsScreenState extends State<RepsScreen> {
             elevation: 0,
             leading: IconButton(
                 onPressed: () async {
+                  log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
                   _userWorkoutsDateViewModel.getBackId(
                       counter: _userWorkoutsDateViewModel.exeIdCounter);
                   if (_userWorkoutsDateViewModel.exeIdCounter <
@@ -441,7 +445,8 @@ class _RepsScreenState extends State<RepsScreen> {
                     if (_userWorkoutsDateViewModel.isGreaterOne == false) {
                       // log('back........1');
                       // log('greater one ........false call');
-
+                      // log('back 11111111111111111');
+                      _userWorkoutsDateViewModel.isGreaterOne = true;
                       Get.back();
                     }
                     if (_userWorkoutsDateViewModel.isHold == true) {
@@ -450,6 +455,8 @@ class _RepsScreenState extends State<RepsScreen> {
 
                       _userWorkoutsDateViewModel.isHold = false;
                       _userWorkoutsDateViewModel.isFirst = false;
+                      // log('back 22222222222222222');
+
                       Get.back();
                     } else {
                       _userWorkoutsDateViewModel.isHold = true;
@@ -1178,6 +1185,8 @@ class _TimeScreenState extends State<TimeScreen>
           setState(() {
             totalRound = 0;
           });
+          log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
           _userWorkoutsDateViewModel.getBackId(
               counter: _userWorkoutsDateViewModel.exeIdCounter);
           if (_userWorkoutsDateViewModel.exeIdCounter <
@@ -1200,6 +1209,8 @@ class _TimeScreenState extends State<TimeScreen>
           }
           if (_userWorkoutsDateViewModel.isFirst == true) {
             if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+              _userWorkoutsDateViewModel.isGreaterOne = true;
+
               Get.back();
             }
             if (_userWorkoutsDateViewModel.isHold == true) {
@@ -1222,6 +1233,7 @@ class _TimeScreenState extends State<TimeScreen>
                   setState(() {
                     totalRound = 0;
                   });
+                  log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
 
                   _userWorkoutsDateViewModel.getBackId(
                       counter: _userWorkoutsDateViewModel.exeIdCounter);
@@ -1248,6 +1260,8 @@ class _TimeScreenState extends State<TimeScreen>
                   if (_userWorkoutsDateViewModel.isFirst == true) {
                     if (_userWorkoutsDateViewModel.isGreaterOne == false) {
                       // log('back........1');
+                      _userWorkoutsDateViewModel.isGreaterOne = true;
+
                       Get.back();
                     }
                     if (_userWorkoutsDateViewModel.isHold == true) {
@@ -1671,7 +1685,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
   void initState() {
     super.initState();
     weight = "${widget.controller!.responseExe!.data![0].exerciseWeight}";
-    // weightedLoop();
+    weightedLoop();
   }
 
   weightedLoop() {
@@ -1691,9 +1705,13 @@ class _WeightedCounterState extends State<WeightedCounter> {
         i++) {
       _userWorkoutsDateViewModel.repsList.add(int.parse(
           "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
-      // log("============================ > ${widget.controller!.responseExe!.data![0].exerciseReps!}");
-      _userWorkoutsDateViewModel.weightList
-          .add("${widget.controller!.responseExe!.data![0].exerciseWeight!}");
+      if (widget.controller!.responseExe!.data![0].exerciseWeight! == "" &&
+          widget.controller!.responseExe!.data![0].exerciseWeight!.isEmpty) {
+        _userWorkoutsDateViewModel.weightList.add("0");
+      } else {
+        _userWorkoutsDateViewModel.weightList
+            .add("${widget.controller!.responseExe!.data![0].exerciseWeight!}");
+      }
     }
 
     // log('============= > ${_userWorkoutsDateViewModel.repsList}');
@@ -1729,6 +1747,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
 
     return WillPopScope(
       onWillPop: () async {
+        log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
         _userWorkoutsDateViewModel.getBackId(
             counter: _userWorkoutsDateViewModel.exeIdCounter);
         if (_userWorkoutsDateViewModel.exeIdCounter <
@@ -1751,6 +1771,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
         }
         if (_userWorkoutsDateViewModel.isFirst == true) {
           if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+            _userWorkoutsDateViewModel.isGreaterOne = true;
+
             Get.back();
           }
           if (_userWorkoutsDateViewModel.isHold == true) {
@@ -1771,6 +1793,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
           elevation: 0,
           leading: IconButton(
               onPressed: () async {
+                log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
                 _userWorkoutsDateViewModel.getBackId(
                     counter: _userWorkoutsDateViewModel.exeIdCounter);
                 if (_userWorkoutsDateViewModel.exeIdCounter <
@@ -1796,6 +1820,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                   if (_userWorkoutsDateViewModel.isGreaterOne == false) {
                     // log('back........1');
                     // log('greater one ........false call');
+                    _userWorkoutsDateViewModel.isGreaterOne = true;
 
                     Get.back();
                   }
@@ -2457,7 +2482,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       0) {
                                     _userWorkoutsDateViewModel.isGreaterOne =
                                         true;
-                                    log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
+                                    // log("--------------------- > ${_userWorkoutsDateViewModel.isGreaterOne}");
                                   }
                                   await widget.controller!
                                       .getExerciseByIdDetails(
@@ -2596,6 +2621,8 @@ class _SuperSetState extends State<SuperSet>
           onWillPop: () async {
             // log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
             // log('supersetRound ===================> ${controllerUWD.supersetRound}');
+            log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
             if (controllerUWD.supersetCounter == 0) {
               controllerUWD.getBackId(counter: controllerUWD.exeIdCounter);
               if (controllerUWD.exeIdCounter <
@@ -2669,6 +2696,8 @@ class _SuperSetState extends State<SuperSet>
                   onPressed: () async {
                     // log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
                     // log('supersetRound ===================> ${controllerUWD.supersetRound}');
+                    log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
                     if (controllerUWD.supersetCounter == 0) {
                       controllerUWD.getBackId(
                           counter: controllerUWD.exeIdCounter);

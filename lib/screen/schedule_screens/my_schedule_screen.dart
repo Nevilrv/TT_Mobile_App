@@ -73,15 +73,15 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                 elevation: 0,
                 leading: IconButton(
                     onPressed: () {
-                      _scheduleByDateViewModel.selectedDay = DateTime(
-                          DateTime.now().year,
-                          DateTime.now().month,
-                          DateTime.now().day);
-                      _scheduleByDateViewModel.dayList.clear();
-
-                      _scheduleByDateViewModel
-                          .dateRangePickerController.selectedDates!
-                          .clear();
+                      // _scheduleByDateViewModel.selectedDay = DateTime(
+                      //     DateTime.now().year,
+                      //     DateTime.now().month,
+                      //     DateTime.now().day);
+                      // _scheduleByDateViewModel.dayList.clear();
+                      //
+                      // _scheduleByDateViewModel
+                      //     .dateRangePickerController.selectedDates!
+                      //     .clear();
                       Get.back();
                     },
                     icon: Icon(
@@ -103,6 +103,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                       if (controller.dayList.contains(DateTime.parse(
                           '${scheduleResponse.data![i].date}'))) {
                       } else {
+                        ///888
+                        // controller.dayList = [];
                         controller.dayList.add(DateTime.parse(
                             '${scheduleResponse.data![i].date}'));
                       }
@@ -456,6 +458,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                               controller.selectedDay =
                                                   args.value.last;
                                               args.value.clear();
+
                                               setState(() {});
                                             },
                                           ),
@@ -512,105 +515,99 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                           NeverScrollableScrollPhysics(),
                                                       itemBuilder: (_, index1) {
                                                         return ListTile(
-                                                          title: Text(
-                                                            scheduleResponse
-                                                                .data![index]
-                                                                .programData![
-                                                                    index1]
-                                                                .workoutTitle!,
-                                                            style: FontTextStyle
-                                                                .kWhite17BoldRoboto,
-                                                          ),
-                                                          subtitle: scheduleResponse
-                                                                      .data![
-                                                                          index]
-                                                                      .programData![
-                                                                          0]
-                                                                      .exerciseTitle ==
-                                                                  null
-                                                              ? SizedBox()
-                                                              : Text(
-                                                                  '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
-                                                                      " - " +
-                                                                      ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
-                                                                  style: FontTextStyle
-                                                                      .kLightGray16W300Roboto,
-                                                                ),
-                                                          trailing: InkWell(
-                                                            onTap: () {
-                                                              print(
-                                                                  'HELLOOOOOO');
-                                                              print(
-                                                                  'date>>>>><<<<<< ${scheduleResponse.data![index].date}');
-
-                                                              openBottomSheet(
-                                                                  scheduleByDateViewModel:
-                                                                      controller,
-                                                                  removeWorkoutProgramViewModel:
-                                                                      _removeWorkoutProgramViewModel,
-                                                                  context:
-                                                                      context,
-                                                                  date: scheduleResponse
-                                                                      .data![
-                                                                          index]
-                                                                      .date,
-                                                                  onPressedStart:
-                                                                      () {
-                                                                    print(
-                                                                        'date>>>>> ${scheduleResponse.data![index].date}');
-                                                                    getExercisesId(
-                                                                      scheduleResponse
-                                                                          .data![
-                                                                              index]
-                                                                          .date!,
-                                                                    );
-                                                                  },
-                                                                  event: scheduleResponse
-                                                                          .data![
-                                                                      index],
-                                                                  onPressedView:
-                                                                      () {
-                                                                    Get.to(() =>
-                                                                        PlanOverviewScreen(
-                                                                            id: "${scheduleResponse.data![index].programData![0].workoutId}"));
-                                                                  },
-                                                                  onPressedEdit:
-                                                                      () {
-                                                                    Get.to(() =>
-                                                                        ProgramSetupPage(
-                                                                          day:
-                                                                              '1',
-                                                                          workoutName: scheduleResponse
-                                                                              .data![index]
-                                                                              .programData![0]
-                                                                              .workoutTitle,
-                                                                          workoutId: scheduleResponse
-                                                                              .data![index]
-                                                                              .programData![0]
-                                                                              .workoutId,
-                                                                          exerciseId: scheduleResponse
-                                                                              .data![index]
-                                                                              .programData![0]
-                                                                              .exerciseId,
-                                                                          programData: scheduleResponse
-                                                                              .data![index]
-                                                                              .programData,
-                                                                          isEdit:
-                                                                              true,
-                                                                          workoutProgramId: scheduleResponse
-                                                                              .data![index]
-                                                                              .userProgramId,
-                                                                        ));
-                                                                  });
-                                                            },
-                                                            child: Icon(
-                                                              Icons
-                                                                  .more_horiz_sharp,
-                                                              color: ColorUtils
-                                                                  .kTint,
+                                                            title: Text(
+                                                              scheduleResponse
+                                                                  .data![index]
+                                                                  .programData![
+                                                                      index1]
+                                                                  .workoutTitle!,
+                                                              style: FontTextStyle
+                                                                  .kWhite17BoldRoboto,
                                                             ),
-                                                          ),
-                                                        );
+                                                            subtitle: scheduleResponse
+                                                                        .data![
+                                                                            index]
+                                                                        .programData![
+                                                                            0]
+                                                                        .exerciseTitle ==
+                                                                    null
+                                                                ? SizedBox()
+                                                                : Text(
+                                                                    '${scheduleResponse.data![index].programData![0].exerciseTitle}' +
+                                                                        " - " +
+                                                                        ' ${scheduleResponse.data![index].programData![0].exerciseTitle} ',
+                                                                    style: FontTextStyle
+                                                                        .kLightGray16W300Roboto,
+                                                                  ),
+                                                            trailing: InkWell(
+                                                              onTap: () {
+                                                                print(
+                                                                    'HELLOOOOOO');
+                                                                print(
+                                                                    'date>>>>><<<<< ${scheduleResponse.data![index].date}');
+
+                                                                openBottomSheet(
+                                                                    scheduleByDateViewModel:
+                                                                        controller,
+                                                                    removeWorkoutProgramViewModel:
+                                                                        _removeWorkoutProgramViewModel,
+                                                                    context:
+                                                                        context,
+                                                                    date: scheduleResponse
+                                                                        .data![
+                                                                            index]
+                                                                        .date,
+                                                                    // onPressedStart:
+                                                                    //     () {
+                                                                    //   print(
+                                                                    //       'date>>>>> ${scheduleResponse.data![index].date}');
+                                                                    //
+                                                                    //   // Get.back();
+                                                                    //   getExercisesId(
+                                                                    //     scheduleResponse
+                                                                    //         .data![index]
+                                                                    //         .date!,
+                                                                    //   );
+                                                                    // },
+
+                                                                    event: scheduleResponse
+                                                                            .data![
+                                                                        index],
+                                                                    onPressedView:
+                                                                        () {
+                                                                      Get.to(() =>
+                                                                          PlanOverviewScreen(
+                                                                              id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                                    },
+                                                                    onPressedEdit:
+                                                                        () {
+                                                                      Get.to(() =>
+                                                                          ProgramSetupPage(
+                                                                            day:
+                                                                                '1',
+                                                                            workoutName:
+                                                                                scheduleResponse.data![index].programData![0].workoutTitle,
+                                                                            workoutId:
+                                                                                scheduleResponse.data![index].programData![0].workoutId,
+                                                                            exerciseId:
+                                                                                scheduleResponse.data![index].programData![0].exerciseId,
+                                                                            programData:
+                                                                                scheduleResponse.data![index].programData,
+                                                                            isEdit:
+                                                                                true,
+                                                                            workoutProgramId:
+                                                                                scheduleResponse.data![index].userProgramId,
+                                                                          ));
+                                                                    });
+                                                              },
+                                                              child: Icon(
+                                                                Icons
+                                                                    .more_horiz_sharp,
+                                                                color:
+                                                                    ColorUtils
+                                                                        .kTint,
+                                                              ),
+                                                            ));
                                                       });
                                                 } else {
                                                   return SizedBox();
@@ -650,21 +647,21 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
   }
 
   getExercisesId(String time) async {
-    print("called 123");
-    print('hello........................3');
-    print('$time........................time');
-    print('$time........................date');
+    // print("called 123");
+    // print('hello........................3');
+    // print('$time........................time');
+    // print('$time........................date');
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(), date: time);
 
     if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      print("complete api call");
+      // print("complete api call");
       UserWorkoutsDateResponseModel resp =
           _userWorkoutsDateViewModel.apiResponse.data;
 
-      print("--------------- dates ${resp.msg}");
-
-      print("success ------------- true");
+      // print("--------------- dates ${resp.msg}");
+      //
+      // print("success ------------- true");
 
       if (resp.success == true) {
         _userWorkoutsDateViewModel.supersetExerciseId.clear();
@@ -689,12 +686,12 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
           _userWorkoutsDateViewModel.supersetExerciseId = [];
         }
 
-        print(
-            'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
-        print(
-            'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
-        print(
-            'NEXT userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
+        // print(
+        //     'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
+        // print(
+        //     'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
+        // print(
+        //     'NEXT userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel
@@ -709,7 +706,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
 
         WorkoutByIdResponseModel workoutResponse =
             _workoutByIdViewModel.apiResponse.data;
-
+        print('Workout id === ${workoutResponse.data![0].workoutId}');
         Get.to(() => WorkoutHomeScreen(
               workoutId: workoutResponse.data![0].workoutId,
               exeData: exerciseResponse.data!,
@@ -719,7 +716,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                   .split(' ')
                   .first,
             ));
-        print('workoutResponse>>>>>>  ${workoutResponse.data}');
+        // print('workoutResponse>>>>>>  ${workoutResponse.data}');
       } else {
         print("success ------------- false");
       }

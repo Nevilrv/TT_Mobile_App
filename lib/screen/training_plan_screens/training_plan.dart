@@ -209,23 +209,22 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
           if (workoutResponse.data!.isNotEmpty &&
               workoutResponse.data != null) {
             print(
-                "workoutResponse.data![index] ==== ${workoutResponse.data![index].workoutId}");
-            // if (int.parse("${workoutResponse.data![index].workoutId}") % 2 ==
-            //     0) {
-            //   print(
-            //       "workoutResponse.data![index] ==== inside ${workoutResponse.data![index].workoutId}");
-            return selectedFocus(
-                text: '${workoutResponse.data![index].workoutTitle}',
-                image: '${workoutResponse.data![index].workoutImage}',
-                scheduled: workoutResponse.data![index].scheduled,
-                onTap: () {
-                  Get.to(PlanOverviewScreen(
-                    id: '${workoutResponse.data![index].workoutId}',
-                  ));
-                });
-            // } else {
-            //   return SizedBox();
-            // }
+                "workoutResponse.data![index] ==== ${workoutResponse.data![index].status}");
+            if ("${workoutResponse.data![index].status}" == "1") {
+              print(
+                  "workoutResponse.data![index] ==== inside ${workoutResponse.data![index].status}");
+              return selectedFocus(
+                  text: '${workoutResponse.data![index].workoutTitle}',
+                  image: '${workoutResponse.data![index].workoutImage}',
+                  scheduled: workoutResponse.data![index].scheduled,
+                  onTap: () {
+                    Get.to(PlanOverviewScreen(
+                      id: '${workoutResponse.data![index].workoutId}',
+                    ));
+                  });
+            } else {
+              return SizedBox();
+            }
           } else {
             return Center(
                 child: Text(

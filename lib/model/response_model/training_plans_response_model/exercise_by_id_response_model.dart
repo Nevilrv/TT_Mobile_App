@@ -74,7 +74,7 @@ class ExerciseById {
   String? exerciseMeasurement;
   String? exerciseImage;
   String? exerciseVideoType;
-  String? exerciseVideo;
+  dynamic exerciseVideo;
   String? exerciseTips;
   dynamic exerciseInstructions;
   String? isFavorite;

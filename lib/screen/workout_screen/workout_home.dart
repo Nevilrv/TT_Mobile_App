@@ -579,18 +579,12 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                     }
                                                                   }
                                                                 }
+
+                                                                setState(() {
+                                                                  watchVideo =
+                                                                      false;
+                                                                });
                                                                 // log("hello exerciseId up Z for loop ${controller.exerciseId}");
-                                                                Get.to(
-                                                                    () =>
-                                                                        NoWeightExerciseScreen(
-                                                                          data:
-                                                                              widget.data,
-                                                                          workoutId:
-                                                                              widget.workoutId,
-                                                                        ),
-                                                                    transition:
-                                                                        Transition
-                                                                            .rightToLeft);
 
                                                                 if (controller
                                                                         .exeIdCounter ==
@@ -611,11 +605,18 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                           Transition
                                                                               .rightToLeft);
                                                                 }
+                                                                Get.to(
+                                                                    () =>
+                                                                        NoWeightExerciseScreen(
+                                                                          data:
+                                                                              widget.data,
+                                                                          workoutId:
+                                                                              widget.workoutId,
+                                                                        ),
+                                                                    transition:
+                                                                        Transition
+                                                                            .rightToLeft);
 
-                                                                setState(() {
-                                                                  watchVideo =
-                                                                      false;
-                                                                });
                                                                 // log("warm up added ${controller.exerciseId}");
                                                               })
                                                           : SizedBox(),
@@ -650,6 +651,10 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                         0);
                                                               }
                                                             }
+                                                            setState(() {
+                                                              watchVideo =
+                                                                  false;
+                                                            });
 
                                                             // Get.to(SuperSetScreen());
                                                             // controller
@@ -661,19 +666,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                             //     controller
                                                             //         .tmpExerciseId;
                                                             // log("warm up added ${controller.exerciseId}");
-
-                                                            Get.to(
-                                                                () =>
-                                                                    NoWeightExerciseScreen(
-                                                                      data: widget
-                                                                          .data,
-                                                                      workoutId:
-                                                                          widget
-                                                                              .workoutId,
-                                                                    ),
-                                                                transition:
-                                                                    Transition
-                                                                        .rightToLeft);
 
                                                             if (controller
                                                                     .exeIdCounter ==
@@ -694,10 +686,18 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                       Transition
                                                                           .rightToLeft);
                                                             }
-                                                            setState(() {
-                                                              watchVideo =
-                                                                  false;
-                                                            });
+                                                            Get.to(
+                                                                () =>
+                                                                    NoWeightExerciseScreen(
+                                                                      data: widget
+                                                                          .data,
+                                                                      workoutId:
+                                                                          widget
+                                                                              .workoutId,
+                                                                    ),
+                                                                transition:
+                                                                    Transition
+                                                                        .rightToLeft);
                                                           }),
                                                     ],
                                                   )

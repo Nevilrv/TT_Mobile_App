@@ -47,7 +47,8 @@ class WorkoutByFilter {
       this.workoutImage,
       this.goalTitle,
       this.levelTitle,
-      this.scheduled});
+      this.scheduled,
+      this.status});
 
   String? workoutId;
   String? workoutTitle;
@@ -59,6 +60,7 @@ class WorkoutByFilter {
   String? goalTitle;
   String? levelTitle;
   dynamic scheduled;
+  dynamic status;
 
   factory WorkoutByFilter.fromJson(Map<String, dynamic> json) =>
       WorkoutByFilter(
@@ -72,6 +74,7 @@ class WorkoutByFilter {
         goalTitle: json["goal_title"],
         levelTitle: json["level_title"],
         scheduled: json["scheduled"],
+        status: json["status"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -85,5 +88,6 @@ class WorkoutByFilter {
         "goal_title": goalTitle,
         "level_title": levelTitle,
         "scheduled": scheduled,
+        "status": status,
       };
 }

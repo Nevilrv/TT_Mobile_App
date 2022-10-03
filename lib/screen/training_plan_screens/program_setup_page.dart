@@ -122,7 +122,6 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
         warningmsg = '${resConflict.msg}';
 
         print('-------------- msg${resConflict.msg}');
-
         print('conflict called on week days');
         print('conflict called -=--=-=-=-=-=-=-=-=-=-=-==--=-=');
 
@@ -410,7 +409,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
     if (widget.isEdit == true) {
       initialDisplayDate =
           DateTime.parse('${widget.programData![0].programStartDate}');
-      print("initial display date ${initialDisplayDate}");
+      print("initial display date $initialDisplayDate");
     } else {
       initialDisplayDate = DateTime.now();
     }

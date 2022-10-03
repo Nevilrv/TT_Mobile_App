@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -91,33 +92,46 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                   scale: 2,
                                 ),
                               )
-                            : ClipRRect(
-                                borderRadius: BorderRadius.circular(120),
-                                child: Image.network(
-                                  PreferenceManager.getProfilePic(),
-                                  fit: BoxFit.fill,
-                                  loadingBuilder: (BuildContext context,
-                                      Widget child,
-                                      ImageChunkEvent? loadingProgress) {
-                                    if (loadingProgress == null) {
-                                      return child;
-                                    }
-                                    return Center(
-                                      child: CircularProgressIndicator(
-                                        color: ColorUtils.kTint,
-                                        value: loadingProgress
-                                                    .expectedTotalBytes !=
-                                                null
-                                            ? loadingProgress
-                                                    .cumulativeBytesLoaded /
-                                                loadingProgress
-                                                    .expectedTotalBytes!
-                                            : null,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
+                            : PreferenceManager.getProfilePic() == null
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                        color: ColorUtils.kTint),
+                                  )
+                                : ClipRRect(
+                                    borderRadius: BorderRadius.circular(120),
+                                    child: CachedNetworkImage(
+                                      imageUrl:
+                                          PreferenceManager.getProfilePic(),
+
+                                      fit: BoxFit.fill,
+
+                                      progressIndicatorBuilder: (context, url,
+                                              downloadProgress) =>
+                                          CircularProgressIndicator(
+                                              value: downloadProgress.progress,
+                                              color: ColorUtils.kTint),
+                                      // loadingBuilder: (BuildContext context,
+                                      //     Widget child,
+                                      //     ImageChunkEvent?
+                                      //         loadingProgress) {
+                                      //   if (loadingProgress == null) {
+                                      //     return child;
+                                      //   }
+                                      //   return Center(
+                                      //     child: CircularProgressIndicator(
+                                      //         color: ColorUtils.kTint,
+                                      //         value: loadingProgress
+                                      //                     .expectedTotalBytes !=
+                                      //                 null
+                                      //             ? loadingProgress
+                                      //                     .cumulativeBytesLoaded /
+                                      //                 loadingProgress
+                                      //                     .expectedTotalBytes!
+                                      //             : null),
+                                      //   );
+                                      // },
+                                    ),
+                                  ),
                       ),
                     ),
                   ),
