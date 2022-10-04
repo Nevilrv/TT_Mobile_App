@@ -303,6 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Container(
                                     height: Get.height * 0.22,
                                     width: Get.width * 0.99,
+                                    // color: Color(0xff363636),
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(10),
                                     ),
@@ -1053,7 +1054,7 @@ class _HomeScreenState extends State<HomeScreen> {
             height: Get.height * .03,
           ),
           bild(
-              image: AppIcons.calender,
+              image: AppIcons.calendar,
               text: 'Schedule',
               onTap: () {
                 Get.to(MyScheduleScreen());

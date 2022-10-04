@@ -107,23 +107,29 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
           'else ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
     }
 
-    if (resp.data!.restTime! != "" || resp.data!.restTime!.isNotEmpty) {
-      print('======= superset restTime ${resp.data!.restTime!}');
-
-      _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime!;
-      print(
-          'controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+    if (resp.data!.restTime != "" && resp.data!.restTime != null) {
+      try {
+        _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime;
+        print(
+            'controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+      } catch (e) {
+        _userWorkoutsDateViewModel.supersetRestTime = "30";
+      }
     } else {
       _userWorkoutsDateViewModel.supersetRestTime = "30";
       print(
           'else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
     }
-    if (resp.data!.round! != "" || resp.data!.round!.isNotEmpty) {
-      print('======= superset round ${resp.data!.round!}');
-      _userWorkoutsDateViewModel.supersetRound =
-          int.parse("${resp.data!.round!}");
-      print(
-          'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+    if (resp.data!.round != "" && resp.data!.round != null) {
+      print('======= superset round ${resp.data!.round}');
+      try {
+        _userWorkoutsDateViewModel.supersetRound =
+            int.parse("${resp.data!.round!}");
+        print(
+            'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
+      } catch (e) {
+        _userWorkoutsDateViewModel.supersetRound = 0;
+      }
     } else {
       _userWorkoutsDateViewModel.supersetRound = 3;
       print(

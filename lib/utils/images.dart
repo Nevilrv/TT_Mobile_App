@@ -51,7 +51,7 @@ class AppIcons {
 
   static const String sms = "asset/images/sms.png";
   static const String more = "asset/images/more.png";
-  static const String calender = 'asset/icons/calender.png';
+  static const String calendar = 'asset/icons/calendar.png';
   static const String dumbell = "asset/icons/dumbell.png";
   static const String forum = "asset/icons/forum.png";
   static const String instagram = "asset/icons/instagram.png";

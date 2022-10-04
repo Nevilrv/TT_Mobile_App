@@ -10,7 +10,7 @@ Widget shimmerLoading() {
       child: TextButton(
         onPressed: null,
         child: Text(
-          "Start Workout",
+          "Loading...",
           style: FontTextStyle.kTint24W400Roboto,
         ),
       ),

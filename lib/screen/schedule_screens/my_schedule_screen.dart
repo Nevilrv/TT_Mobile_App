@@ -569,7 +569,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                                     //         .date!,
                                                                     //   );
                                                                     // },
-
                                                                     event: scheduleResponse
                                                                             .data![
                                                                         index],

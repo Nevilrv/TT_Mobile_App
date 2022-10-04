@@ -361,7 +361,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                           children: [
                                                             Image.asset(
                                                                 AppIcons
-                                                                    .calender,
+                                                                    .calendar,
                                                                 height: 15,
                                                                 width: 15),
                                                             SizedBox(width: 5),
@@ -782,7 +782,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                     Row(
                                                       children: [
                                                         Image.asset(
-                                                            AppIcons.calender,
+                                                            AppIcons.calendar,
                                                             height: 15,
                                                             width: 15,
                                                             color: ColorUtils
@@ -1210,7 +1210,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                     Row(
                                                       children: [
                                                         Image.asset(
-                                                            AppIcons.calender,
+                                                            AppIcons.calendar,
                                                             height: 15,
                                                             width: 15,
                                                             color: ColorUtils
@@ -1620,7 +1620,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                       children: [
                         Row(
                           children: [
-                            Image.asset(AppIcons.calender,
+                            Image.asset(AppIcons.calendar,
                                 height: 15, width: 15),
                             SizedBox(width: 5),
                             Text('${response.data![0].workoutDuration} WEEKS',
