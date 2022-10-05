@@ -39,12 +39,12 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
     super.initState();
 
     _weight = TextEditingController(text: widget.weight);
+
+    print('_weight ====================== > $_weight');
   }
 
   @override
   Widget build(BuildContext context) {
-    int repsCounter = int.parse(widget.repsNo.toString());
-
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: Container(

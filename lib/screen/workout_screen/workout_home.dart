@@ -128,7 +128,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
         print(
             'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
       } catch (e) {
-        _userWorkoutsDateViewModel.supersetRound = 0;
+        _userWorkoutsDateViewModel.supersetRound = 1;
       }
     } else {
       _userWorkoutsDateViewModel.supersetRound = 3;
@@ -223,7 +223,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                     Status.COMPLETE) {
                   ExerciseByIdResponseModel responseExe =
                       _exerciseByIdViewModel.apiResponse.data;
-
                   print(
                       "exe date --------- ${responseExe.data![0].exerciseType}");
 
@@ -246,7 +245,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                           builder: (context, player) {
                             return WillPopScope(
                               onWillPop: () async {
-                                print('xyz');
                                 Get.offAll(HomeScreen());
                                 return true;
                               },

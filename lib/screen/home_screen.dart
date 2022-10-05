@@ -127,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
 
-    // log('status ================ > ${status}');
+    log('status ================ > ${status}');
 
     scheduleResponse = scheduleResp;
   }
@@ -172,21 +172,27 @@ class _HomeScreenState extends State<HomeScreen> {
           // log('else ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
         }
 
-        if (resp.data!.restTime! != "" && resp.data!.restTime!.isNotEmpty) {
-          // log('======= superset restTime======= superset restTime======= superset restTime ${resp.data!.restTime!.runtimeType}');
-          // log('======= superset restTime ${resp.data!.restTime!}');
-
-          _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime!;
-          // log('controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+        if (resp.data!.restTime != "" && resp.data!.restTime != null) {
+          try {
+            _userWorkoutsDateViewModel.supersetRestTime = resp.data!.restTime;
+            // print(
+            //     'controller ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
+          } catch (e) {
+            _userWorkoutsDateViewModel.supersetRestTime = "30";
+          }
         } else {
           _userWorkoutsDateViewModel.supersetRestTime = "30";
           // log('else ======= superset restTime ${_userWorkoutsDateViewModel.supersetRestTime}');
         }
-        if (resp.data!.round! != "" && resp.data!.round!.isNotEmpty) {
+        if (resp.data!.round != "" && resp.data!.round != null) {
           // log('======= superset round ${resp.data!.round!.runtimeType}');
           // if (resp.data!.round!.isNotEmpty) {
-          _userWorkoutsDateViewModel.supersetRound =
-              int.parse("${resp.data!.round!}");
+          try {
+            _userWorkoutsDateViewModel.supersetRound =
+                int.parse("${resp.data!.round!}");
+          } catch (e) {
+            _userWorkoutsDateViewModel.supersetRound = 1;
+          }
           // log('controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
           // }
         } else {
