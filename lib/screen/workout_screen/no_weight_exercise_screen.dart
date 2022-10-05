@@ -69,8 +69,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   }
 
   initData() async {
-    print(
-        '_userWorkoutsDateViewModel id >>> ${_userWorkoutsDateViewModel.exerciseId}');
     await _exerciseByIdViewModel.getExerciseByIdDetails(
         id: _userWorkoutsDateViewModel
             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
@@ -80,10 +78,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
       );
     }
     if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
-      print('Data add in responseExe');
       _exerciseByIdViewModel.responseExe =
           _exerciseByIdViewModel.apiResponse.data;
-      print('call');
     }
     // _customizedExerciseViewModel.counterReps = int.parse(
     //     '${_exerciseByIdViewModel.responseExe!.data![0].exerciseReps}');
@@ -103,8 +99,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('DATA >>>> ${widget.data}');
-    print('WorkoutId >>>> ${widget.workoutId}');
     return GetBuilder<ConnectivityCheckViewModel>(
         builder: (control) => control.isOnline
             ? GetBuilder<UserWorkoutsDateViewModel>(builder: (controllerUSD) {
@@ -122,6 +116,7 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                   if (controller.apiResponse.status == Status.COMPLETE) {
                     controller.responseExe =
                         _exerciseByIdViewModel.apiResponse.data;
+
                     // log(
                     //     'condition ===================== ${controllerUSD.exeIdCounter == controllerUSD.exerciseId.length}');
                     // log(
@@ -137,8 +132,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                     //     'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
                     if (controllerUSD.exeIdCounter ==
                         controllerUSD.exerciseId.length) {
-                      print('Super Set call >>>>>>>>>');
-                      // print('exeIdCounter >>> ${controllerUSD.exeIdCounter}');
                       if (controllerUSD.supersetExerciseId.isNotEmpty ||
                           controllerUSD.supersetExerciseId != []) {
                         return PageTransitionSwitcher(
@@ -173,11 +166,6 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                         );
                       }
                     } else {
-                      print(
-                          'exeIdCounter else >>> ${controllerUSD.exeIdCounter}');
-                      print('exeId else >>> ${controllerUSD.exerciseId}');
-                      print(
-                          'exerciseType >>> ${controller.responseExe!.data![0].exerciseType}');
                       if (controller.responseExe!.data![0].exerciseType ==
                           "REPS") {
                         // toggleVideo();
@@ -301,8 +289,8 @@ class RepsScreen extends StatefulWidget {
 }
 
 class _RepsScreenState extends State<RepsScreen> {
-  ExerciseByIdViewModel _exerciseByIdViewModel =
-      Get.put(ExerciseByIdViewModel());
+  // ExerciseByIdViewModel _exerciseByIdViewModel =
+  //     Get.put(ExerciseByIdViewModel());
   UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
       Get.put(UserWorkoutsDateViewModel());
   UpdateStatusUserProgramViewModel _updateStatusUserProgramViewModel =
@@ -316,7 +304,7 @@ class _RepsScreenState extends State<RepsScreen> {
 
   @override
   void initState() {
-    // _exerciseByIdViewModel.getExerciseByIdDetails(id: '75');
+    // TODO: implement initState
     // initializePlayer();
     super.initState();
     repsLoop();
@@ -326,22 +314,33 @@ class _RepsScreenState extends State<RepsScreen> {
     // if (_userWorkoutsDateViewModel.repsList.isEmpty) {
     //   _userWorkoutsDateViewModel.repsList.clear();
     // }
+    // widget.controller!.responseExe!.data![0].exerciseSets
+    print('lenght   ${widget.controller!.responseExe!.data![0].exerciseSets!}');
+    widget.controller!.responseExe!.data![0].exerciseSets = '0';
+    widget.controller!.responseExe!.data!.forEach((element) {
+      print('befor ${element.exerciseTitle}');
+    });
+
     _userWorkoutsDateViewModel.repsList.clear();
-    for (int i = 0;
-        i <
-            int.parse(
-                "${widget.controller!.responseExe!.data![0].exerciseSets!}");
-        i++) {
-      _userWorkoutsDateViewModel.repsList.add(int.parse(
-          "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
+    try {
+      for (int i = 0;
+          i <
+              int.parse(
+                  "${widget.controller!.responseExe!.data![0].exerciseSets!}");
+          i++) {
+        _userWorkoutsDateViewModel.repsList.add(int.parse(
+            "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
+      }
+    } catch (e) {
+      _userWorkoutsDateViewModel.repsList = [3, 3, 3];
     }
-    log('============= > ${_userWorkoutsDateViewModel.repsList}');
+    log('============= f> ${_userWorkoutsDateViewModel.repsList}');
+    print(
+        'true g false ${int.parse(widget.controller!.responseExe!.data![0].exerciseSets.toString()) <= 4}');
   }
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'exerciseId >>>> ${widget.controller!.responseExe!.data![0].exerciseId}');
     return GestureDetector(
       // onHorizontalDragUpdate: (details) async {
       //   log("hello ${details.localPosition}");
@@ -428,79 +427,7 @@ class _RepsScreenState extends State<RepsScreen> {
         },
         child: Scaffold(
           backgroundColor: ColorUtils.kBlack,
-          appBar: AppBar(
-            elevation: 0,
-            leading: IconButton(
-                onPressed: () async {
-                  log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
-
-                  _userWorkoutsDateViewModel.getBackId(
-                      counter: _userWorkoutsDateViewModel.exeIdCounter);
-                  if (_userWorkoutsDateViewModel.exeIdCounter <
-                      _userWorkoutsDateViewModel.exerciseId.length) {
-                    await widget.controller!.getExerciseByIdDetails(
-                        id: _userWorkoutsDateViewModel.exerciseId[
-                            _userWorkoutsDateViewModel.exeIdCounter]);
-                    if (widget.controller!.apiResponse.status ==
-                        Status.LOADING) {
-                      Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-                    if (widget.controller!.apiResponse.status ==
-                        Status.COMPLETE) {
-                      widget.controller!.responseExe =
-                          widget.controller!.apiResponse.data;
-                    }
-                  }
-                  if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
-                    _userWorkoutsDateViewModel.isFirst = true;
-                  }
-                  if (_userWorkoutsDateViewModel.isFirst == true) {
-                    if (_userWorkoutsDateViewModel.isGreaterOne == false) {
-                      // log('back........1');
-                      // log('greater one ........false call');
-                      // log('back 11111111111111111');
-                      _userWorkoutsDateViewModel.isGreaterOne = true;
-                      Get.back();
-                    }
-                    if (_userWorkoutsDateViewModel.isHold == true) {
-                      // log('back........2');
-                      // log('hold true........call');
-
-                      _userWorkoutsDateViewModel.isHold = false;
-                      _userWorkoutsDateViewModel.isFirst = false;
-                      // log('back 22222222222222222');
-
-                      Get.back();
-                    } else {
-                      _userWorkoutsDateViewModel.isHold = true;
-                    }
-                  }
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios_sharp,
-                  color: ColorUtils.kTint,
-                )),
-            backgroundColor: ColorUtils.kBlack,
-            title: Text(
-                '${widget.controller!.responseExe!.data![0].exerciseTitle}',
-                style: FontTextStyle.kWhite16BoldRoboto),
-            centerTitle: true,
-            actions: [
-              TextButton(
-                  onPressed: () {
-                    Get.offAll(HomeScreen());
-                    _userWorkoutsDateViewModel.exeIdCounter = 0;
-                    _userWorkoutsDateViewModel.isHold = false;
-                    _userWorkoutsDateViewModel.isFirst = false;
-                  },
-                  child: Text(
-                    'Quit',
-                    style: FontTextStyle.kTine16W400Roboto,
-                  ))
-            ],
-          ),
+          appBar: appBarWidget(),
           body: int.parse(widget.controller!.responseExe!.data![0].exerciseSets
                       .toString()) <=
                   4
@@ -607,6 +534,8 @@ class _RepsScreenState extends State<RepsScreen> {
                             EdgeInsets.symmetric(horizontal: Get.width * .06),
                         child: commonNavigationButton(
                             onTap: () async {
+                              _userWorkoutsDateViewModel.clearList();
+
                               if (_userWorkoutsDateViewModel
                                   .supersetExerciseId.isEmpty) {
                                 if (widget.controller!.responseExe!.data![0]
@@ -885,6 +814,8 @@ class _RepsScreenState extends State<RepsScreen> {
                               EdgeInsets.symmetric(horizontal: Get.width * .06),
                           child: commonNavigationButton(
                               onTap: () async {
+                                _userWorkoutsDateViewModel.clearList();
+
                                 if (_userWorkoutsDateViewModel
                                     .supersetExerciseId.isEmpty) {
                                   if (widget.controller!.responseExe!.data![0]
@@ -1064,6 +995,79 @@ class _RepsScreenState extends State<RepsScreen> {
                 ),
         ),
       ),
+    );
+  }
+
+  AppBar appBarWidget() {
+    return AppBar(
+      elevation: 0,
+      leading: IconButton(
+          onPressed: () async {
+            log("====================== exeIdCounter > ${_userWorkoutsDateViewModel.exeIdCounter}");
+
+            _userWorkoutsDateViewModel.getBackId(
+                counter: _userWorkoutsDateViewModel.exeIdCounter);
+            if (_userWorkoutsDateViewModel.exeIdCounter <
+                _userWorkoutsDateViewModel.exerciseId.length) {
+              await widget.controller!.getExerciseByIdDetails(
+                  id: _userWorkoutsDateViewModel
+                      .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
+              if (widget.controller!.apiResponse.status == Status.LOADING) {
+                Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              if (widget.controller!.apiResponse.status == Status.COMPLETE) {
+                widget.controller!.responseExe =
+                    widget.controller!.apiResponse.data;
+              }
+            }
+            if (_userWorkoutsDateViewModel.exeIdCounter == 0) {
+              _userWorkoutsDateViewModel.isFirst = true;
+            }
+            if (_userWorkoutsDateViewModel.isFirst == true) {
+              if (_userWorkoutsDateViewModel.isGreaterOne == false) {
+                // log('back........1');
+                // log('greater one ........false call');
+                // log('back 11111111111111111');
+                _userWorkoutsDateViewModel.isGreaterOne = true;
+                Get.back();
+              }
+              if (_userWorkoutsDateViewModel.isHold == true) {
+                // log('back........2');
+                // log('hold true........call');
+
+                _userWorkoutsDateViewModel.isHold = false;
+                _userWorkoutsDateViewModel.isFirst = false;
+                // log('back 22222222222222222');
+
+                Get.back();
+              } else {
+                _userWorkoutsDateViewModel.isHold = true;
+              }
+            }
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_sharp,
+            color: ColorUtils.kTint,
+          )),
+      backgroundColor: ColorUtils.kBlack,
+      title: Text('${widget.controller!.responseExe!.data![0].exerciseTitle}',
+          style: FontTextStyle.kWhite16BoldRoboto),
+      centerTitle: true,
+      actions: [
+        TextButton(
+            onPressed: () {
+              Get.offAll(HomeScreen());
+              _userWorkoutsDateViewModel.exeIdCounter = 0;
+              _userWorkoutsDateViewModel.isHold = false;
+              _userWorkoutsDateViewModel.isFirst = false;
+            },
+            child: Text(
+              'Quit',
+              style: FontTextStyle.kTine16W400Roboto,
+            ))
+      ],
     );
   }
 }
@@ -1513,6 +1517,8 @@ class _TimeScreenState extends State<TimeScreen>
                 width: Get.width * 0.9,
                 child: commonNavigationButton(
                     onTap: () async {
+                      _userWorkoutsDateViewModel.clearList();
+
                       _timerController!.reset();
 
                       setState(() {
@@ -1712,26 +1718,30 @@ class _WeightedCounterState extends State<WeightedCounter> {
     // }
     _userWorkoutsDateViewModel.repsList.clear();
     _userWorkoutsDateViewModel.weightList.clear();
-    log('fghjk >>> ${widget.controller!.responseExe!.data![0].exerciseWeight!}');
-    log('fghjk >>> ${widget.controller!.responseExe!.data![0].exerciseSets}');
-    for (int i = 0;
-        i <
-            int.parse(
-                "${widget.controller!.responseExe!.data![0].exerciseSets!}");
-        i++) {
-      _userWorkoutsDateViewModel.repsList.add(int.parse(
-          "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
-      if (widget.controller!.responseExe!.data![0].exerciseWeight! == "" &&
-          widget.controller!.responseExe!.data![0].exerciseWeight!.isEmpty) {
-        _userWorkoutsDateViewModel.weightList.add("0");
-      } else {
-        _userWorkoutsDateViewModel.weightList
-            .add("${widget.controller!.responseExe!.data![0].exerciseWeight!}");
+
+    try {
+      for (int i = 0;
+          i <
+              int.parse(
+                  "${widget.controller!.responseExe!.data![0].exerciseSets!}");
+          i++) {
+        _userWorkoutsDateViewModel.repsList.add(int.parse(
+            "${widget.controller!.responseExe!.data![0].exerciseReps!}"));
+        if (widget.controller!.responseExe!.data![0].exerciseWeight! == "" &&
+            widget.controller!.responseExe!.data![0].exerciseWeight!.isEmpty) {
+          _userWorkoutsDateViewModel.weightList.add("0");
+        } else {
+          _userWorkoutsDateViewModel.weightList.add(
+              "${widget.controller!.responseExe!.data![0].exerciseWeight!}");
+        }
       }
+    } catch (e) {
+      _userWorkoutsDateViewModel.repsList = [2, 2, 2];
+      _userWorkoutsDateViewModel.weightList = ["12", "12", "12"];
     }
 
-    log('============= > ${_userWorkoutsDateViewModel.repsList}');
-    log('============= > ${_userWorkoutsDateViewModel.weightList}');
+    // log('============= > ${_userWorkoutsDateViewModel.repsList}');
+    // log('============= > ${_userWorkoutsDateViewModel.weightList}');
   }
 
   @override
@@ -1982,6 +1992,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                               }
                             }
 
+                            /// 8000
                             // return Container(
                             //   alignment: Alignment.center,
                             //   height: Get.height * .03,
@@ -1993,37 +2004,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                             //       "${widget.controller!.responseExe!.data![0].exerciseRest} Rest",
                             //       style: FontTextStyle.kWhite17W400Roboto),
                             // );
-                            // for (int i = 0;
-                            //     i <
-                            //         int.parse(widget.controller!.responseExe!
-                            //             .data![0].exerciseSets
-                            //             .toString());
-                            //     i++) {
-                            //   restTimer?.add(Timer.periodic(
-                            //     // resTimer = Timer.periodic(
-                            //     Duration(seconds: 1),
-                            //     (timer) {
-                            //       if (currentValue >= 0 &&
-                            //           currentValue < restValue()) {
-                            //         setState(() {
-                            //           currentValue++;
-                            //           print('count>>>>>$currentValue');
-                            //         });
-                            //       } else {
-                            //         print('Timer Cancel');
-                            //         setState(() {
-                            //           currentValue = 0;
-                            //           // widget.resTimer!.cancel();
-                            //           // resTimer!.cancel();
-                            //         });
-                            //       }
-                            //     },
-                            //   ));
-                            // }
-                            // ;
-                            // print('>>>>>length  ${restTimer!.length}');
                             return WeightedProgressTimer(
-                              // resTimer: restTimer![index],
                               title: "${widget.controller!.responseExe!.data![0].exerciseRest}"
                                           .toLowerCase()
                                           .contains("sec") ||
@@ -2060,10 +2041,10 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                       '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                           .split("-")
                                           .first,
-                                  // weight: _userWorkoutsDateViewModel
-                                  //     .weightList[index],
-                                  weight:
-                                      '${widget.controller!.responseExe!.data![0].exerciseWeight}',
+                                  weight: _userWorkoutsDateViewModel
+                                      .weightList[index],
+                                  // weight:
+                                  //     '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                                 ),
                                 Positioned(
                                   top: Get.height * .01,
@@ -2120,7 +2101,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
                           EdgeInsets.symmetric(horizontal: Get.width * .06),
                       child: commonNavigationButton(
                           onTap: () async {
-                            // _userWorkoutsDateViewModel.newTimer!.cancel();
+                            _userWorkoutsDateViewModel.clearList();
+
                             if (_userWorkoutsDateViewModel
                                 .supersetExerciseId.isEmpty) {
                               if (widget.controller!.responseExe!.data![0]
@@ -2378,10 +2360,10 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
                                             .first,
-                                    // weight: _userWorkoutsDateViewModel
-                                    //     .weightList[index],
-                                    weight:
-                                        '${widget.controller!.responseExe!.data![0].exerciseWeight}',
+                                    weight: _userWorkoutsDateViewModel
+                                        .weightList[index],
+                                    // weight:
+                                    //     '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                                   ),
                                   Positioned(
                                     top: Get.height * .01,
@@ -2436,6 +2418,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
                             EdgeInsets.symmetric(horizontal: Get.width * .06),
                         child: commonNavigationButton(
                             onTap: () async {
+                              _userWorkoutsDateViewModel.clearList();
+
                               if (_userWorkoutsDateViewModel
                                   .supersetExerciseId.isEmpty) {
                                 if (widget.controller!.responseExe!.data![0]
@@ -3064,6 +3048,8 @@ class _SuperSetState extends State<SuperSet>
                           onTap: () async {
                             // log('supersetCounter ===================> ${controllerUWD.supersetCounter}');
                             // log('supersetRound ===================> ${controllerUWD.supersetRound}');
+                            controllerUWD.clearList();
+
                             controllerUWD.getSupersetRound();
 
                             if (controllerUWD.supersetCounter ==

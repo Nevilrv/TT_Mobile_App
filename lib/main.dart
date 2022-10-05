@@ -5,8 +5,6 @@ import 'package:get_storage/get_storage.dart';
 
 import 'package:tcm/screen/splash_screen.dart';
 
-import 'screen/workout_screen/amrap_screen.dart';
-
 void main() async {
   ///ne
   await GetStorage.init();

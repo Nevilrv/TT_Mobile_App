@@ -42,8 +42,6 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
 
   @override
   Widget build(BuildContext context) {
-    int repsCounter = int.parse(widget.repsNo.toString());
-
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: Container(

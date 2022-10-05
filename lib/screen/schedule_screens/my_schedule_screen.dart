@@ -69,30 +69,7 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
       return control.isOnline
           ? Scaffold(
               backgroundColor: ColorUtils.kBlack,
-              appBar: AppBar(
-                elevation: 0,
-                leading: IconButton(
-                    onPressed: () {
-                      // _scheduleByDateViewModel.selectedDay = DateTime(
-                      //     DateTime.now().year,
-                      //     DateTime.now().month,
-                      //     DateTime.now().day);
-                      // _scheduleByDateViewModel.dayList.clear();
-                      //
-                      // _scheduleByDateViewModel
-                      //     .dateRangePickerController.selectedDates!
-                      //     .clear();
-                      Get.back();
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_sharp,
-                      color: ColorUtils.kTint,
-                    )),
-                backgroundColor: ColorUtils.kBlack,
-                title: Text('My Schedule',
-                    style: FontTextStyle.kWhite16BoldRoboto),
-                centerTitle: true,
-              ),
+              appBar: appBarWidget(),
               body: GetBuilder<ScheduleByDateViewModel>(builder: (controller) {
                 if (controller.apiResponse.status == Status.COMPLETE) {
                   ScheduleByDateResponseModel scheduleResponse =
@@ -642,6 +619,32 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
             )
           : ConnectionCheckScreen();
     });
+  }
+
+  AppBar appBarWidget() {
+    return AppBar(
+      elevation: 0,
+      leading: IconButton(
+          onPressed: () {
+            // _scheduleByDateViewModel.selectedDay = DateTime(
+            //     DateTime.now().year,
+            //     DateTime.now().month,
+            //     DateTime.now().day);
+            // _scheduleByDateViewModel.dayList.clear();
+            //
+            // _scheduleByDateViewModel
+            //     .dateRangePickerController.selectedDates!
+            //     .clear();
+            Get.back();
+          },
+          icon: Icon(
+            Icons.arrow_back_ios_sharp,
+            color: ColorUtils.kTint,
+          )),
+      backgroundColor: ColorUtils.kBlack,
+      title: Text('My Schedule', style: FontTextStyle.kWhite16BoldRoboto),
+      centerTitle: true,
+    );
   }
 
   getExercisesId(String time) async {

@@ -236,7 +236,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                     Status.COMPLETE) {
                   ExerciseByIdResponseModel responseExe =
                       _exerciseByIdViewModel.apiResponse.data;
-
                   print(
                       "exe date --------- ${responseExe.data![0].exerciseType}");
 
@@ -259,7 +258,6 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                           builder: (context, player) {
                             return WillPopScope(
                               onWillPop: () async {
-                                print('xyz');
                                 Get.offAll(HomeScreen());
                                 return true;
                               },

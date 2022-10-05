@@ -30,6 +30,11 @@ class UserWorkoutsDateViewModel extends GetxController {
   // List repsList = [12, 15, 18, 20];
   // List weightList = ["80", "85", "70", "65"];
   List weightList = [];
+  clearList() {
+    repsList.clear();
+    weightList.clear();
+    update();
+  }
 
   void startTimer() {
     currentValue = 0;
