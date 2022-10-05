@@ -69,6 +69,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
   }
 
   initData() async {
+    print(
+        '_userWorkoutsDateViewModel id >>> ${_userWorkoutsDateViewModel.exerciseId}');
     await _exerciseByIdViewModel.getExerciseByIdDetails(
         id: _userWorkoutsDateViewModel
             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
@@ -78,8 +80,10 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
       );
     }
     if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
+      print('Data add in responseExe');
       _exerciseByIdViewModel.responseExe =
           _exerciseByIdViewModel.apiResponse.data;
+      print('call');
     }
     // _customizedExerciseViewModel.counterReps = int.parse(
     //     '${_exerciseByIdViewModel.responseExe!.data![0].exerciseReps}');
@@ -99,6 +103,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('DATA >>>> ${widget.data}');
+    print('WorkoutId >>>> ${widget.workoutId}');
     return GetBuilder<ConnectivityCheckViewModel>(
         builder: (control) => control.isOnline
             ? GetBuilder<UserWorkoutsDateViewModel>(builder: (controllerUSD) {
@@ -131,6 +137,8 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                     //     'controller.responseExe!.data![0].exerciseType ${controller.responseExe!.data![0].exerciseType}');
                     if (controllerUSD.exeIdCounter ==
                         controllerUSD.exerciseId.length) {
+                      print('Super Set call >>>>>>>>>');
+                      // print('exeIdCounter >>> ${controllerUSD.exeIdCounter}');
                       if (controllerUSD.supersetExerciseId.isNotEmpty ||
                           controllerUSD.supersetExerciseId != []) {
                         return PageTransitionSwitcher(
@@ -165,6 +173,11 @@ class _NoWeightExerciseScreenState extends State<NoWeightExerciseScreen> {
                         );
                       }
                     } else {
+                      print(
+                          'exeIdCounter else >>> ${controllerUSD.exeIdCounter}');
+                      print('exeId else >>> ${controllerUSD.exerciseId}');
+                      print(
+                          'exerciseType >>> ${controller.responseExe!.data![0].exerciseType}');
                       if (controller.responseExe!.data![0].exerciseType ==
                           "REPS") {
                         // toggleVideo();
@@ -288,8 +301,8 @@ class RepsScreen extends StatefulWidget {
 }
 
 class _RepsScreenState extends State<RepsScreen> {
-  // ExerciseByIdViewModel _exerciseByIdViewModel =
-  //     Get.put(ExerciseByIdViewModel());
+  ExerciseByIdViewModel _exerciseByIdViewModel =
+      Get.put(ExerciseByIdViewModel());
   UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
       Get.put(UserWorkoutsDateViewModel());
   UpdateStatusUserProgramViewModel _updateStatusUserProgramViewModel =
@@ -303,7 +316,7 @@ class _RepsScreenState extends State<RepsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
+    // _exerciseByIdViewModel.getExerciseByIdDetails(id: '75');
     // initializePlayer();
     super.initState();
     repsLoop();
@@ -327,6 +340,8 @@ class _RepsScreenState extends State<RepsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'exerciseId >>>> ${widget.controller!.responseExe!.data![0].exerciseId}');
     return GestureDetector(
       // onHorizontalDragUpdate: (details) async {
       //   log("hello ${details.localPosition}");
@@ -1697,7 +1712,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
     // }
     _userWorkoutsDateViewModel.repsList.clear();
     _userWorkoutsDateViewModel.weightList.clear();
-
+    log('fghjk >>> ${widget.controller!.responseExe!.data![0].exerciseWeight!}');
+    log('fghjk >>> ${widget.controller!.responseExe!.data![0].exerciseSets}');
     for (int i = 0;
         i <
             int.parse(
@@ -1714,8 +1730,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
       }
     }
 
-    // log('============= > ${_userWorkoutsDateViewModel.repsList}');
-    // log('============= > ${_userWorkoutsDateViewModel.weightList}');
+    log('============= > ${_userWorkoutsDateViewModel.repsList}');
+    log('============= > ${_userWorkoutsDateViewModel.weightList}');
   }
 
   @override
@@ -1741,8 +1757,13 @@ class _WeightedCounterState extends State<WeightedCounter> {
     });
   }
 
+  List<TextEditingController> _controller = [];
+  List? restTimer;
+  int currentValue = 0;
+
   @override
   Widget build(BuildContext context) {
+    weightedLoop();
     // log('weightweightweightweight ==== > $weight');
 
     return WillPopScope(
@@ -1772,12 +1793,14 @@ class _WeightedCounterState extends State<WeightedCounter> {
         if (_userWorkoutsDateViewModel.isFirst == true) {
           if (_userWorkoutsDateViewModel.isGreaterOne == false) {
             _userWorkoutsDateViewModel.isGreaterOne = true;
+            _controller.clear();
 
             Get.back();
           }
           if (_userWorkoutsDateViewModel.isHold == true) {
             _userWorkoutsDateViewModel.isHold = false;
             _userWorkoutsDateViewModel.isFirst = false;
+            _controller.clear();
             Get.back();
           } else {
             _userWorkoutsDateViewModel.isHold = true;
@@ -1821,7 +1844,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                     // log('back........1');
                     // log('greater one ........false call');
                     _userWorkoutsDateViewModel.isGreaterOne = true;
-
+                    _controller.clear();
                     Get.back();
                   }
                   if (_userWorkoutsDateViewModel.isHold == true) {
@@ -1830,6 +1853,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
 
                     _userWorkoutsDateViewModel.isHold = false;
                     _userWorkoutsDateViewModel.isFirst = false;
+                    _controller.clear();
                     Get.back();
                   } else {
                     _userWorkoutsDateViewModel.isHold = true;
@@ -1958,7 +1982,6 @@ class _WeightedCounterState extends State<WeightedCounter> {
                               }
                             }
 
-                            /// 8000
                             // return Container(
                             //   alignment: Alignment.center,
                             //   height: Get.height * .03,
@@ -1970,7 +1993,37 @@ class _WeightedCounterState extends State<WeightedCounter> {
                             //       "${widget.controller!.responseExe!.data![0].exerciseRest} Rest",
                             //       style: FontTextStyle.kWhite17W400Roboto),
                             // );
+                            // for (int i = 0;
+                            //     i <
+                            //         int.parse(widget.controller!.responseExe!
+                            //             .data![0].exerciseSets
+                            //             .toString());
+                            //     i++) {
+                            //   restTimer?.add(Timer.periodic(
+                            //     // resTimer = Timer.periodic(
+                            //     Duration(seconds: 1),
+                            //     (timer) {
+                            //       if (currentValue >= 0 &&
+                            //           currentValue < restValue()) {
+                            //         setState(() {
+                            //           currentValue++;
+                            //           print('count>>>>>$currentValue');
+                            //         });
+                            //       } else {
+                            //         print('Timer Cancel');
+                            //         setState(() {
+                            //           currentValue = 0;
+                            //           // widget.resTimer!.cancel();
+                            //           // resTimer!.cancel();
+                            //         });
+                            //       }
+                            //     },
+                            //   ));
+                            // }
+                            // ;
+                            // print('>>>>>length  ${restTimer!.length}');
                             return WeightedProgressTimer(
+                              // resTimer: restTimer![index],
                               title: "${widget.controller!.responseExe!.data![0].exerciseRest}"
                                           .toLowerCase()
                                           .contains("sec") ||
@@ -1985,10 +2038,17 @@ class _WeightedCounterState extends State<WeightedCounter> {
                             );
                           },
                           itemBuilder: (_, index) {
+                            for (int i = 0;
+                                i <
+                                    int.parse(widget.controller!.responseExe!
+                                        .data![0].exerciseSets
+                                        .toString());
+                                i++) _controller.add(TextEditingController());
                             return Stack(
                               alignment: Alignment.topRight,
                               children: [
                                 WeightedCounterCard(
+                                  editingController: _controller[index],
                                   counter: int.parse(
                                       '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                           .split("-")
@@ -2012,30 +2072,32 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                     height: Get.height * .027,
                                     width: Get.height * .09,
                                     decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                            colors: widget
-                                                        .controller!
-                                                        .responseExe!
-                                                        .data![0]
-                                                        .exerciseColor ==
-                                                    "green"
-                                                ? ColorUtilsGradient
-                                                    .kGreenGradient
-                                                : widget
-                                                            .controller!
-                                                            .responseExe!
-                                                            .data![0]
-                                                            .exerciseColor ==
-                                                        "yellow"
-                                                    ? ColorUtilsGradient
-                                                        .kOrangeGradient
-                                                    : ColorUtilsGradient
-                                                        .kRedGradient,
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter),
-                                        borderRadius: BorderRadius.only(
-                                            topRight: Radius.circular(6),
-                                            bottomLeft: Radius.circular(6))),
+                                      gradient: LinearGradient(
+                                          colors: widget
+                                                      .controller!
+                                                      .responseExe!
+                                                      .data![0]
+                                                      .exerciseColor ==
+                                                  "green"
+                                              ? ColorUtilsGradient
+                                                  .kGreenGradient
+                                              : widget
+                                                          .controller!
+                                                          .responseExe!
+                                                          .data![0]
+                                                          .exerciseColor ==
+                                                      "yellow"
+                                                  ? ColorUtilsGradient
+                                                      .kOrangeGradient
+                                                  : ColorUtilsGradient
+                                                      .kRedGradient,
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter),
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(6),
+                                        bottomLeft: Radius.circular(6),
+                                      ),
+                                    ),
                                     child: Text('RIR 0-1',
                                         style: FontTextStyle.kWhite12BoldRoboto
                                             .copyWith(
@@ -2058,6 +2120,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                           EdgeInsets.symmetric(horizontal: Get.width * .06),
                       child: commonNavigationButton(
                           onTap: () async {
+                            // _userWorkoutsDateViewModel.newTimer!.cancel();
                             if (_userWorkoutsDateViewModel
                                 .supersetExerciseId.isEmpty) {
                               if (widget.controller!.responseExe!.data![0]
@@ -2293,10 +2356,17 @@ class _WeightedCounterState extends State<WeightedCounter> {
                               );
                             },
                             itemBuilder: (_, index) {
+                              for (int i = 0;
+                                  i <
+                                      int.parse(widget.controller!.responseExe!
+                                          .data![0].exerciseSets
+                                          .toString());
+                                  i++) _controller.add(TextEditingController());
                               return Stack(
                                 alignment: Alignment.topRight,
                                 children: [
                                   WeightedCounterCard(
+                                    editingController: _controller[index],
                                     counter: int.parse(
                                         '${widget.controller!.responseExe!.data![0].exerciseReps}'
                                             .split("-")
@@ -3330,6 +3400,8 @@ class _SuperSetState extends State<SuperSet>
                   alignment: Alignment.topRight,
                   children: [
                     WeightedCounterCard(
+                      editingController:
+                          _userWorkoutsDateViewModel.supersetWeight!,
                       weight:
                           '${widget.controller!.responseExe!.data![0].exerciseWeight}',
                       counter: int.parse(

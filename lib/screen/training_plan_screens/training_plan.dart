@@ -8,6 +8,7 @@ import 'package:tcm/model/response_model/goal_res_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_filter_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -64,7 +65,9 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                 elevation: 0,
                 leading: IconButton(
                     onPressed: () {
-                      Get.back();
+                      Get.offAll(HomeScreen(
+                        id: PreferenceManager.getUId(),
+                      ));
                     },
                     icon: Icon(
                       Icons.arrow_back_ios_sharp,

@@ -7,10 +7,10 @@ import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.da
 import 'package:get/get.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 
 class WeightedCounterCard extends StatefulWidget {
+  TextEditingController editingController;
   int counter;
   int index;
   String repsNo;
@@ -19,6 +19,7 @@ class WeightedCounterCard extends StatefulWidget {
   WeightedCounterCard({
     Key? key,
     required this.counter,
+    required this.editingController,
     required this.repsNo,
     required this.weight,
     required this.index,
@@ -29,16 +30,14 @@ class WeightedCounterCard extends StatefulWidget {
 }
 
 class _WeightedCounterCardState extends State<WeightedCounterCard> {
-  TextEditingController? _weight;
+  // TextEditingController? _weight;
   UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
       Get.put(UserWorkoutsDateViewModel());
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
-    _weight = TextEditingController(text: widget.weight);
+    widget.editingController = TextEditingController(text: widget.weight);
   }
 
   @override
@@ -132,40 +131,46 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
               SizedBox(height: 10),
               Row(
                 children: [
-                  SizedBox(
-                    width: 40,
-                    child: TextField(
-                      controller: _weight,
-                      style: widget.counter == 0
-                          ? FontTextStyle.kWhite24BoldRoboto
-                              .copyWith(color: ColorUtils.kGray)
-                          : FontTextStyle.kWhite24BoldRoboto,
-                      keyboardType: TextInputType.numberWithOptions(
-                          decimal: true, signed: true),
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      maxLength: 3,
-                      cursorColor: ColorUtils.kTint,
-                      onChanged: (value) {
-                        if (value.isEmpty) value = "0";
-                        _userWorkoutsDateViewModel.weightList
-                            .removeAt(widget.index);
-                        _userWorkoutsDateViewModel.weightList
-                            .insert(widget.index, value);
-                        log("===============> ${_userWorkoutsDateViewModel.weightList}");
-                      },
-                      decoration: InputDecoration(
-                          hintText: '0',
-                          counterText: '',
-                          semanticCounterText: '',
-                          hintStyle: FontTextStyle.kWhite24BoldRoboto
-                              .copyWith(color: ColorUtils.kGray),
-                          enabledBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.transparent)),
-                          focusedBorder: UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.transparent))),
-                    ),
+                  GetBuilder<UserWorkoutsDateViewModel>(
+                    builder: (controller) {
+                      return SizedBox(
+                        width: 40,
+                        child: TextField(
+                          controller: widget.editingController,
+                          style: widget.counter == 0
+                              ? FontTextStyle.kWhite24BoldRoboto
+                                  .copyWith(color: ColorUtils.kGray)
+                              : FontTextStyle.kWhite24BoldRoboto,
+                          keyboardType: TextInputType.numberWithOptions(
+                              decimal: true, signed: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly
+                          ],
+                          maxLength: 3,
+                          cursorColor: ColorUtils.kTint,
+                          onChanged: (value) {
+                            if (value.isEmpty) value = "0";
+                            _userWorkoutsDateViewModel.weightList
+                                .removeAt(widget.index);
+                            _userWorkoutsDateViewModel.weightList
+                                .insert(widget.index, value);
+                            log("===============> ${_userWorkoutsDateViewModel.weightList}");
+                          },
+                          decoration: InputDecoration(
+                              hintText: '0',
+                              counterText: '',
+                              semanticCounterText: '',
+                              hintStyle: FontTextStyle.kWhite24BoldRoboto
+                                  .copyWith(color: ColorUtils.kGray),
+                              enabledBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent)),
+                              focusedBorder: UnderlineInputBorder(
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent))),
+                        ),
+                      );
+                    },
                   ),
                   Text('lbs', style: FontTextStyle.kWhite17W400Roboto),
                 ],
@@ -284,23 +289,30 @@ class WeightedProgressTimer extends StatefulWidget {
   final height;
   final width;
   final String title;
+  // Timer? resTimer;
 
-  const WeightedProgressTimer(
-      {Key? key,
-      required this.restResponseValue,
-      this.height,
-      this.width,
-      required this.title})
-      : super(key: key);
+  WeightedProgressTimer({
+    Key? key,
+    required this.restResponseValue,
+    this.height,
+    this.width,
+    required this.title,
+    // required this.resTimer
+  }) : super(key: key);
   @override
   _WeightedProgressTimerState createState() => _WeightedProgressTimerState();
 }
 
 class _WeightedProgressTimerState extends State<WeightedProgressTimer> {
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
+  // Timer? resTimer;
   int currentValue = 0;
-  Timer? resTimer;
   void startRestTimer() {
-    resTimer = Timer.periodic(
+    // widget.resTimer = Timer.periodic(
+    // resTimer =
+
+    _userWorkoutsDateViewModel.newTimer = Timer.periodic(
       Duration(seconds: 1),
       (timer) {
         if (currentValue >= 0 && currentValue < widget.restResponseValue) {
@@ -312,11 +324,21 @@ class _WeightedProgressTimerState extends State<WeightedProgressTimer> {
           print('Timer Cancel');
           setState(() {
             currentValue = 0;
-            resTimer!.cancel();
+            // widget.resTimer!.cancel();
+            // resTimer!.cancel();
+            _userWorkoutsDateViewModel.newTimer!.cancel();
           });
         }
       },
     );
+  }
+
+  @override
+  void dispose() {
+    // widget.resTimer!.cancel();
+    // resTimer!.cancel();
+    // _userWorkoutsDateViewModel.newTimer!.cancel();
+    super.dispose();
   }
 
   @override

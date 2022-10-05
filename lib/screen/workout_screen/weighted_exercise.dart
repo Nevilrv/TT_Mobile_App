@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
@@ -15,9 +14,7 @@ import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exerc
 
 class WeightExerciseScreen extends StatefulWidget {
   List<ExerciseById> data;
-
   WeightExerciseScreen({Key? key, required this.data}) : super(key: key);
-
   @override
   State<WeightExerciseScreen> createState() => _WeightExerciseScreenState();
 }
@@ -63,6 +60,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
     [Color(0xffFFA200), Color(0xff9E6400)],
     [Color(0xffFF0000), Color(0xff8B0303)]
   ];
+  List<TextEditingController> _controller = [];
 
   @override
   Widget build(BuildContext context) {
@@ -77,6 +75,7 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                   elevation: 0,
                   leading: IconButton(
                       onPressed: () async {
+                        _controller.clear();
                         Get.back();
                       },
                       icon: Icon(
@@ -164,6 +163,9 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                       shrinkWrap: true,
                                       itemCount: 3,
                                       separatorBuilder: (_, index) {
+                                        for (int i = 0; i < 3; i++)
+                                          _controller
+                                              .add(TextEditingController());
                                         return Container(
                                           alignment: Alignment.center,
                                           height: Get.height * .03,
@@ -183,6 +185,8 @@ class _WeightExerciseScreenState extends State<WeightExerciseScreen> {
                                           alignment: Alignment.topRight,
                                           children: [
                                             WeightedCounterCard(
+                                              editingController:
+                                                  _controller[index],
                                               index: 0,
                                               weight: widget
                                                   .data[0].exerciseWeight!,

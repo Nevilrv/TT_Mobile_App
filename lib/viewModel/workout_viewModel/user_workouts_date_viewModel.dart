@@ -8,6 +8,7 @@ import 'package:tcm/model/response_model/workout_response_model/user_workouts_da
 import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 
 class UserWorkoutsDateViewModel extends GetxController {
+  // TextEditingController textEditingController = TextEditingController();
   List exerciseId = [];
   List tmpExerciseId = [];
   List supersetExerciseId = [];
@@ -21,6 +22,7 @@ class UserWorkoutsDateViewModel extends GetxController {
   bool isFirst = false;
   bool isGreaterOne = false;
   TextEditingController? supersetWeight;
+  Timer? newTimer;
   int currentValue = 0;
   int responseTime = 0;
   Timer? timer;

@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -75,6 +76,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     _userWorkoutsDateViewModel.supersetExerciseId.clear();
     _userWorkoutsDateViewModel.exerciseId.clear();
     _userWorkoutsDateViewModel.userProgramDateID = '';
+    _userWorkoutsDateViewModel.warmUpId.isEmpty;
 
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(), date: widget.date.split(' ').first);
@@ -84,9 +86,10 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     UserWorkoutsDateResponseModel resp =
         _userWorkoutsDateViewModel.apiResponse.data;
 
-    print("--------------- dates ${resp.msg}");
+    print("---------------exercisesIds dates ${resp.data!.exercisesIds!}");
 
     _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
+    print('exerciseIds >>>>> ${_userWorkoutsDateViewModel.exerciseId}');
     _userWorkoutsDateViewModel.tmpExerciseId = resp.data!.exercisesIds!;
     _userWorkoutsDateViewModel.supersetExerciseId =
         resp.data!.supersetExercisesIds!;
@@ -97,7 +100,11 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
         resp.data!.selectedWarmup!.isNotEmpty) {
       // print('======= superset round ${resp.data!.round!.runtimeType}');
       // if (resp.data!.round!.isNotEmpty) {
-      _userWorkoutsDateViewModel.warmUpId = resp.data!.selectedWarmup!;
+      try {
+        _userWorkoutsDateViewModel.warmUpId = resp.data!.selectedWarmup!;
+      } catch (e) {
+        _userWorkoutsDateViewModel.warmUpId = [];
+      }
       print(
           'controller ======= superset warmUpId ${_userWorkoutsDateViewModel.warmUpId}');
       // }
@@ -128,7 +135,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
         print(
             'controller ======= superset round ${_userWorkoutsDateViewModel.supersetRound}');
       } catch (e) {
-        _userWorkoutsDateViewModel.supersetRound = 0;
+        _userWorkoutsDateViewModel.supersetRound = 1;
       }
     } else {
       _userWorkoutsDateViewModel.supersetRound = 3;
@@ -139,7 +146,10 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
     print(
         'userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
     // _userWorkoutsDateViewModel.warmUpId = ["75", "76", "77"];
-
+    print(
+        'exerciseId >>> ${_userWorkoutsDateViewModel.exerciseId[_userWorkoutsDateViewModel.exeIdCounter]}');
+    print('LIST >> . ${_userWorkoutsDateViewModel.exerciseId}');
+    print('exeIdCounter >>> ${_userWorkoutsDateViewModel.exeIdCounter}');
     await _exerciseByIdViewModel.getExerciseByIdDetails(
         id: _userWorkoutsDateViewModel
             .exerciseId[_userWorkoutsDateViewModel.exeIdCounter]);
@@ -199,6 +209,9 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('build called');
+    // print('Data >>>> ${widget.data}');
+    // print('workoutId >>> ${widget.workoutId}');
     if (widget.exeData.isNotEmpty) {
       String exerciseInstructions = '${widget.data[0].workoutDescription}';
       List<String> splitHTMLInstruction = exerciseInstructions.split('</li>');
@@ -560,9 +573,9 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                               name:
                                                                   "Begin Warm-Up",
                                                               onTap: () {
-                                                                // log("hello warm up");
-                                                                // log("hello warm up id ${controller.warmUpId}");
-                                                                // log("hello exerciseId up Z${controller.exerciseId}");
+                                                                log("hello warm up");
+                                                                log("hello warm up id ${controller.warmUpId}");
+                                                                log("hello exerciseId up Z${controller.exerciseId}");
                                                                 if (controller
                                                                     .warmUpId
                                                                     .isNotEmpty) {
@@ -573,10 +586,12 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                               .warmUpId
                                                                               .length;
                                                                       i++) {
+                                                                    /// warm up 8000
                                                                     if (controller
                                                                             .exerciseId
                                                                             .contains(controller.warmUpId[i]) ==
                                                                         false) {
+                                                                      /// warm up data add in mix exerciseId list(warm up & exercised both data)
                                                                       controller
                                                                           .exerciseId
                                                                           .insert(
@@ -585,7 +600,8 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                                                     }
                                                                   }
                                                                 }
-
+                                                                print(
+                                                                    'exerciseId>>>> ${controller.exerciseId}');
                                                                 setState(() {
                                                                   watchVideo =
                                                                       false;
@@ -1050,7 +1066,7 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
                                       SizedBox(height: Get.height * .03),
                                       GetBuilder<UserWorkoutsDateViewModel>(
                                           builder: (controller) {
-                                        // log("======================= ?>${controller.warmUpId.isNotEmpty}");
+                                        // log("======================= ?>${controller.  warmUpId.isNotEmpty}");
                                         return controller
                                                 .userProgramDateID.isNotEmpty
                                             ? Column(

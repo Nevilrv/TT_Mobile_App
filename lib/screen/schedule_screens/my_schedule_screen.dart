@@ -103,7 +103,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                       if (controller.dayList.contains(DateTime.parse(
                           '${scheduleResponse.data![i].date}'))) {
                       } else {
-                        ///888
                         // controller.dayList = [];
                         controller.dayList.add(DateTime.parse(
                             '${scheduleResponse.data![i].date}'));
