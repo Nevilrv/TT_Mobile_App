@@ -217,106 +217,79 @@ void openBottomSheet(
                 } else {
                   _userWorkoutsDateViewModel.supersetExerciseId = [];
                 }
-                return
-                    // scheduleByDateViewModel!.completeDate
-                    //       .contains(date.toString().split(' ').first)
-                    //   ? TextButton(
-                    //       onPressed: null,
-                    //       child: Text(
-                    //         "This workout is Completed",
-                    //         style: FontTextStyle.kTint24W400Roboto,
-                    //       ))
-                    //   :
-                    FutureBuilder(
-                  future: UserWorkoutsDateRepo().userWorkoutsDateRepo(
-                      userId: PreferenceManager.getUId(),
-                      date: date.split(" ").first),
-                  builder: (BuildContext context,
-                      AsyncSnapshot<UserWorkoutsDateResponseModel> snapshot) {
-                    // scheduleByDateViewModel!.isLoadingTrue();
-                    if (snapshot.hasData) {
-                      _userWorkoutsDateViewModel.exerciseId =
-                          snapshot.data!.data!.exercisesIds!;
-                      _userWorkoutsDateViewModel.userProgramDateID =
-                          snapshot.data!.data!.userProgramDatesId!;
-                      if (snapshot.data!.data!.supersetExercisesIds! != [] ||
-                          snapshot
-                              .data!.data!.supersetExercisesIds!.isNotEmpty) {
-                        _userWorkoutsDateViewModel.supersetExerciseId =
-                            snapshot.data!.data!.supersetExercisesIds!;
-                      } else {
-                        _userWorkoutsDateViewModel.supersetExerciseId = [];
-                      }
-                      log('work out ava ${_userWorkoutsDateViewModel.exerciseId}');
-                      log('work out runtimeType ${_userWorkoutsDateViewModel.exerciseId.runtimeType}');
-                      return _userWorkoutsDateViewModel.exerciseId.isEmpty
-                          ? TextButton(
-                              onPressed: null,
-                              child: Text(
-                                "This workout is not Available",
-                                style: FontTextStyle.kTint24W400Roboto,
-                              ))
-                          : FutureBuilder(
-                              future: ExerciseByIdRepo().exerciseByIdRepo(
-                                  id: _userWorkoutsDateViewModel.exerciseId[
-                                      _userWorkoutsDateViewModel.exeIdCounter]),
-                              builder: (BuildContext context,
-                                  AsyncSnapshot<ExerciseByIdResponseModel>
-                                      snapshotExercise) {
-                                if (snapshotExercise.hasData) {
-                                  var idData =
-                                      snapshot.data!.data!.workoutId ?? "2";
-                                  print(
-                                      'workoutId$idData >>> ${snapshot.data!.data!.workoutId}');
-                                  return FutureBuilder(
-                                    future: WorkoutByIdRepo().workoutByIdRepo(
-                                        id: snapshot.data!.data!.workoutId),
-                                    builder: (BuildContext context,
-                                        AsyncSnapshot<WorkoutByIdResponseModel>
-                                            snapshotWorkOut) {
-                                      if (snapshotWorkOut.hasData) {
-                                        return TextButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      WorkoutHomeScreen(
-                                                    workoutId: snapshotWorkOut
-                                                        .data!
-                                                        .data![0]
-                                                        .workoutId,
-                                                    exeData: snapshotExercise
-                                                        .data!.data!,
-                                                    data: snapshotWorkOut
-                                                        .data!.data!,
-                                                    date: date.split(' ').first,
-                                                  ),
+
+                /// Completed workout(Green)
+                return scheduleByDateViewModel!.completeDate
+                        .contains(date.toString().split(' ').first)
+                    ? TextButton(
+                        onPressed: null,
+                        child: Text(
+                          "This workout is Completed",
+                          style: FontTextStyle.kTint24W400Roboto,
+                        ))
+                    : _userWorkoutsDateViewModel.exerciseId.isEmpty
+                        ? TextButton(
+                            onPressed: null,
+                            child: Text(
+                              "This workout is not Available",
+                              style: FontTextStyle.kTint24W400Roboto,
+                            ))
+                        : FutureBuilder(
+                            future: ExerciseByIdRepo().exerciseByIdRepo(
+                                id: _userWorkoutsDateViewModel.exerciseId[
+                                        _userWorkoutsDateViewModel
+                                            .exeIdCounter] ??
+                                    "1"),
+                            builder: (BuildContext context,
+                                AsyncSnapshot<ExerciseByIdResponseModel>
+                                    snapshotExercise) {
+                              if (snapshotExercise.hasData) {
+                                var idData =
+                                    snapshot.data!.data!.workoutId ?? "1";
+                                print(
+                                    'workoutId$idData >>> ${snapshot.data!.data!.workoutId}');
+                                return FutureBuilder(
+                                  future: WorkoutByIdRepo().workoutByIdRepo(
+                                      id: snapshot.data!.data!.workoutId),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<WorkoutByIdResponseModel>
+                                          snapshotWorkOut) {
+                                    if (snapshotWorkOut.hasData) {
+                                      return TextButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    WorkoutHomeScreen(
+                                                  workoutId: snapshotWorkOut
+                                                      .data!.data![0].workoutId,
+                                                  exeData: snapshotExercise
+                                                      .data!.data!,
+                                                  data: snapshotWorkOut
+                                                      .data!.data!,
+                                                  date: date.split(' ').first,
                                                 ),
-                                              );
-                                            },
-                                            child: Text(
-                                              'Start Workout',
-                                              style: FontTextStyle
-                                                  .kTint24W400Roboto,
-                                            ));
-                                        ;
-                                      } else {
-                                        return shimmerLoading();
-                                      }
-                                    },
-                                  );
-                                } else {
-                                  // scheduleByDateViewModel.isLoadingFalse();
-                                  return shimmerLoading();
-                                }
-                              },
-                            );
-                    } else {
-                      return shimmerLoading();
-                    }
-                  },
-                );
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            'Start Workout',
+                                            style:
+                                                FontTextStyle.kTint24W400Roboto,
+                                          ));
+                                      ;
+                                    } else {
+                                      return shimmerLoading();
+                                    }
+                                  },
+                                );
+                              } else {
+                                // scheduleByDateViewModel.isLoadingFalse();
+                                return shimmerLoading();
+                              }
+                            },
+                          );
               } else {
                 return shimmerLoading();
               }

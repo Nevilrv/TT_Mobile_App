@@ -304,7 +304,6 @@ class _RepsScreenState extends State<RepsScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     // initializePlayer();
     super.initState();
     repsLoop();
@@ -316,7 +315,7 @@ class _RepsScreenState extends State<RepsScreen> {
     // }
     // widget.controller!.responseExe!.data![0].exerciseSets
     print('lenght   ${widget.controller!.responseExe!.data![0].exerciseSets!}');
-    widget.controller!.responseExe!.data![0].exerciseSets = '0';
+    // widget.controller!.responseExe!.data![0].exerciseSets = '0';
     widget.controller!.responseExe!.data!.forEach((element) {
       print('befor ${element.exerciseTitle}');
     });
@@ -1992,7 +1991,6 @@ class _WeightedCounterState extends State<WeightedCounter> {
                               }
                             }
 
-                            /// 8000
                             // return Container(
                             //   alignment: Alignment.center,
                             //   height: Get.height * .03,
@@ -2102,9 +2100,13 @@ class _WeightedCounterState extends State<WeightedCounter> {
                       child: commonNavigationButton(
                           onTap: () async {
                             _userWorkoutsDateViewModel.clearList();
+                            print(
+                                'exerciseId ??? ${_userWorkoutsDateViewModel.exerciseId}');
 
                             if (_userWorkoutsDateViewModel
                                 .supersetExerciseId.isEmpty) {
+                              _controller.clear();
+
                               if (widget.controller!.responseExe!.data![0]
                                       .exerciseId ==
                                   _userWorkoutsDateViewModel.exerciseId.last) {
@@ -2203,6 +2205,10 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                 }
                               }
                             } else {
+                              print(
+                                  'exerciseId ??? ${_userWorkoutsDateViewModel.exerciseId}');
+                              _controller.clear();
+
                               _userWorkoutsDateViewModel.getExeId(
                                   counter:
                                       _userWorkoutsDateViewModel.exeIdCounter);
@@ -2419,6 +2425,7 @@ class _WeightedCounterState extends State<WeightedCounter> {
                         child: commonNavigationButton(
                             onTap: () async {
                               _userWorkoutsDateViewModel.clearList();
+                              _controller.clear();
 
                               if (_userWorkoutsDateViewModel
                                   .supersetExerciseId.isEmpty) {
@@ -2514,6 +2521,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                             .exeIdCounter ==
                                         _userWorkoutsDateViewModel
                                             .exerciseId.length) {
+                                      _controller.clear();
+
                                       Get.to(ShareProgressScreen(
                                         exeData: widget
                                             .controller!.responseExe!.data!,
@@ -2562,6 +2571,8 @@ class _WeightedCounterState extends State<WeightedCounter> {
                                   if (_userWorkoutsDateViewModel.exeIdCounter ==
                                       _userWorkoutsDateViewModel
                                           .exerciseId.length) {
+                                    _controller.clear();
+
                                     Get.to(ShareProgressScreen(
                                       exeData:
                                           widget.controller!.responseExe!.data!,

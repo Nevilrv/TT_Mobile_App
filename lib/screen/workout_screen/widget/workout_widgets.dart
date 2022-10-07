@@ -302,15 +302,15 @@ class WeightedProgressTimer extends StatefulWidget {
 }
 
 class _WeightedProgressTimerState extends State<WeightedProgressTimer> {
-  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
-      Get.put(UserWorkoutsDateViewModel());
-  // Timer? resTimer;
+  // UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+  //     Get.put(UserWorkoutsDateViewModel());
+  Timer? resTimer;
   int currentValue = 0;
   void startRestTimer() {
     // widget.resTimer = Timer.periodic(
     // resTimer =
 
-    _userWorkoutsDateViewModel.newTimer = Timer.periodic(
+    resTimer = Timer.periodic(
       Duration(seconds: 1),
       (timer) {
         if (currentValue >= 0 && currentValue < widget.restResponseValue) {
@@ -324,7 +324,7 @@ class _WeightedProgressTimerState extends State<WeightedProgressTimer> {
             currentValue = 0;
             // widget.resTimer!.cancel();
             // resTimer!.cancel();
-            _userWorkoutsDateViewModel.newTimer!.cancel();
+            resTimer!.cancel();
           });
         }
       },
@@ -334,7 +334,7 @@ class _WeightedProgressTimerState extends State<WeightedProgressTimer> {
   @override
   void dispose() {
     // widget.resTimer!.cancel();
-    // resTimer!.cancel();
+    resTimer!.cancel();
     // _userWorkoutsDateViewModel.newTimer!.cancel();
     super.dispose();
   }
