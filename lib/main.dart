@@ -5,6 +5,8 @@ import 'package:get_storage/get_storage.dart';
 
 import 'package:tcm/screen/splash_screen.dart';
 
+import 'delete_file.dart';
+
 void main() async {
   await GetStorage.init();
 
@@ -20,6 +22,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      // home: DeleteFile(),
       home: SplashScreen(),
 
       // home: YoutubePlayerDemoApp(),

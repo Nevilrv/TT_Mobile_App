@@ -204,7 +204,6 @@ void openBottomSheet(
                 date: date!.split(" ").first),
             builder: (BuildContext context,
                 AsyncSnapshot<UserWorkoutsDateResponseModel> snapshot) {
-              /// isLoading
               // scheduleByDateViewModel!.isLoadingTrue();
               if (snapshot.hasData) {
                 _userWorkoutsDateViewModel.exerciseId =
@@ -233,7 +232,6 @@ void openBottomSheet(
                         builder: (BuildContext context,
                             AsyncSnapshot<UserWorkoutsDateResponseModel>
                                 snapshot) {
-                          /// isLoading
                           // scheduleByDateViewModel!.isLoadingTrue();
                           if (snapshot.hasData) {
                             _userWorkoutsDateViewModel.exerciseId =
@@ -317,7 +315,6 @@ void openBottomSheet(
                                           },
                                         );
                                       } else {
-                                        /// isLoading
                                         // scheduleByDateViewModel.isLoadingFalse();
 
                                         return shimmerLoading();

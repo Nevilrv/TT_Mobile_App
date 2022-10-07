@@ -316,7 +316,7 @@ class _RepsScreenState extends State<RepsScreen> {
     // }
     // widget.controller!.responseExe!.data![0].exerciseSets
     print('lenght   ${widget.controller!.responseExe!.data![0].exerciseSets!}');
-    widget.controller!.responseExe!.data![0].exerciseSets = '0';
+    // widget.controller!.responseExe!.data![0].exerciseSets = '0';
     widget.controller!.responseExe!.data!.forEach((element) {
       print('befor ${element.exerciseTitle}');
     });
@@ -343,6 +343,8 @@ class _RepsScreenState extends State<RepsScreen> {
   Widget build(BuildContext context) {
     print(
         'need to be clear${widget.controller!.responseExe!.data![0].exerciseSets!.length}');
+    // print(
+    //     'exerciseSets >>> ${widget.controller!.responseExe!.data![0].exerciseSets}');
     return GestureDetector(
       // onHorizontalDragUpdate: (details) async {
       //   log("hello ${details.localPosition}");
