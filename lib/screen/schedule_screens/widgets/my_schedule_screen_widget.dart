@@ -204,6 +204,7 @@ void openBottomSheet(
                 date: date!.split(" ").first),
             builder: (BuildContext context,
                 AsyncSnapshot<UserWorkoutsDateResponseModel> snapshot) {
+              /// isLoading
               // scheduleByDateViewModel!.isLoadingTrue();
               if (snapshot.hasData) {
                 _userWorkoutsDateViewModel.exerciseId =
@@ -217,8 +218,6 @@ void openBottomSheet(
                 } else {
                   _userWorkoutsDateViewModel.supersetExerciseId = [];
                 }
-
-                /// Completed workout(Green)
                 return scheduleByDateViewModel!.completeDate
                         .contains(date.toString().split(' ').first)
                     ? TextButton(

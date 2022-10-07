@@ -6,6 +6,8 @@ import 'package:tcm/screen/New/bottom_sheet.dart';
 
 import 'package:tcm/screen/splash_screen.dart';
 
+import 'delete_file.dart';
+
 void main() async {
   ///ne
   await GetStorage.init();
@@ -22,8 +24,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: SplashScreen(),
-      home: bottomSheet(),
+      // home: DeleteFile(),
+      home: SplashScreen(),
 
       // home: YoutubePlayerDemoApp(),
     );
