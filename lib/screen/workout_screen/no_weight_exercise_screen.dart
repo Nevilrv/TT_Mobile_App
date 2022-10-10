@@ -521,10 +521,10 @@ class _RepsScreenState extends State<RepsScreen> {
                                       .first),
                               // counter:
                               //     _userWorkoutsDateViewModel.repsList[index],
-                              repsNo:
-                                  '${widget.controller!.responseExe!.data![0].exerciseReps}'
-                                      .split("-")
-                                      .first,
+                              // repsNo:
+                              //     '${widget.controller!.responseExe!.data![0].exerciseReps}'
+                              //         .split("-")
+                              //         .first,
                             );
                           }),
                       Spacer(),
@@ -792,17 +792,18 @@ class _RepsScreenState extends State<RepsScreen> {
                                   .toString()),
                               itemBuilder: (_, index) {
                                 return NoWeightedCounterCard(
-                                    index: index,
-                                    // counter: _userWorkoutsDateViewModel
-                                    //     .repsList[index],
-                                    counter: int.parse(
-                                        '${widget.controller!.responseExe!.data![0].exerciseReps}'
-                                            .split("-")
-                                            .first),
-                                    repsNo:
-                                        '${widget.controller!.responseExe!.data![0].exerciseReps}'
-                                            .split("-")
-                                            .first);
+                                  index: index,
+                                  // counter: _userWorkoutsDateViewModel
+                                  //     .repsList[index],
+                                  counter: int.parse(
+                                      '${widget.controller!.responseExe!.data![0].exerciseReps}'
+                                          .split("-")
+                                          .first),
+                                  // repsNo:
+                                  //     '${widget.controller!.responseExe!.data![0].exerciseReps}'
+                                  //         .split("-")
+                                  //         .first
+                                );
                               });
                         }),
                         SizedBox(
@@ -3213,11 +3214,10 @@ class _SuperSetState extends State<SuperSet>
                 ),
                 SizedBox(height: Get.height * .0075),
                 NoWeightedCounterCard(
-                    index: 0,
-                    counter: int.parse(
-                        "${response.data![0].exerciseReps}".split("-").first),
-                    repsNo:
-                        "${response.data![0].exerciseReps}".split("-").first),
+                  index: 0,
+                  counter: int.parse(
+                      "${response.data![0].exerciseReps}".split("-").first),
+                ),
                 Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
               ],
             );

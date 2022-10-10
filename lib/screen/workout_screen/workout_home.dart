@@ -90,8 +90,8 @@ class _WorkoutHomeScreenState extends State<WorkoutHomeScreen> {
 
     _userWorkoutsDateViewModel.exerciseId = resp.data!.exercisesIds!;
     print('exerciseIds >>>>> ${_userWorkoutsDateViewModel.exerciseId}');
-    _userWorkoutsDateViewModel.tmpExerciseId = resp.data!.exercisesIds!;
-    print('tmpExerciseId >>>>> ${_userWorkoutsDateViewModel.tmpExerciseId}');
+    // _userWorkoutsDateViewModel.tmpExerciseId = resp.data!.exercisesIds!;
+    // print('tmpExerciseId >>>>> ${_userWorkoutsDateViewModel.tmpExerciseId}');
 
     _userWorkoutsDateViewModel.supersetExerciseId =
         resp.data!.supersetExercisesIds!;

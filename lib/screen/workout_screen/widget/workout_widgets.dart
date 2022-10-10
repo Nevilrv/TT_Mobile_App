@@ -9,6 +9,8 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 
+import '../../../viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
+
 class WeightedCounterCard extends StatefulWidget {
   TextEditingController editingController;
   int counter;
@@ -184,13 +186,12 @@ class _WeightedCounterCardState extends State<WeightedCounterCard> {
 
 class NoWeightedCounterCard extends StatefulWidget {
   int counter;
-  String repsNo;
+  // String repsNo;
   int index;
-
   NoWeightedCounterCard({
     Key? key,
     required this.counter,
-    required this.repsNo,
+    // required this.repsNo,
     required this.index,
   }) : super(key: key);
 
@@ -203,7 +204,7 @@ class _NoWeightedCounterCardState extends State<NoWeightedCounterCard> {
       Get.put(UserWorkoutsDateViewModel());
   @override
   Widget build(BuildContext context) {
-    int repsCounter = int.parse(widget.repsNo.toString());
+    // int repsCounter = int.parse(widget.repsNo.toString());
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
@@ -220,13 +221,13 @@ class _NoWeightedCounterCardState extends State<NoWeightedCounterCard> {
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           InkWell(
             onTap: () {
-              setState(() {
-                if (widget.counter > 0) widget.counter--;
-                _userWorkoutsDateViewModel.repsList.removeAt(widget.index);
-                _userWorkoutsDateViewModel.repsList
-                    .insert(widget.index, widget.counter);
-                log('==================> ${_userWorkoutsDateViewModel.repsList}');
-              });
+              // widget.controller
+              //     .updateRepsList(index: widget.index, isPlus: false);
+              if (widget.counter > 0) widget.counter--;
+              _userWorkoutsDateViewModel.repsList.removeAt(widget.index);
+              _userWorkoutsDateViewModel.repsList
+                  .insert(widget.index, widget.counter);
+              log('==================> ${_userWorkoutsDateViewModel.repsList}');
             },
             child: Container(
               height: Get.height * .06,
@@ -255,14 +256,17 @@ class _NoWeightedCounterCardState extends State<NoWeightedCounterCard> {
           SizedBox(width: Get.width * .08),
           InkWell(
               onTap: () {
-                setState(() {
-                  // if (widget.counter < repsCounter)
-                  widget.counter++;
-                  _userWorkoutsDateViewModel.repsList.removeAt(widget.index);
-                  _userWorkoutsDateViewModel.repsList
-                      .insert(widget.index, widget.counter);
-                  log('==================> ${_userWorkoutsDateViewModel.repsList}');
-                });
+                // widget.controller
+                //     .updateRepsList(index: widget.index, isPlus: true);
+
+                // setState(() {
+                //   // if (widget.counter < repsCounter)
+                //   widget.counter++;
+                //   _userWorkoutsDateViewModel.repsList.removeAt(widget.index);
+                //   _userWorkoutsDateViewModel.repsList
+                //       .insert(widget.index, widget.counter);
+                //   log('==================> ${_userWorkoutsDateViewModel.repsList}');
+                // });
               },
               child: Container(
                 height: Get.height * .06,

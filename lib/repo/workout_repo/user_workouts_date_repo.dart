@@ -11,7 +11,7 @@ class UserWorkoutsDateRepo extends ApiRoutes {
     var response = await ApiService().getResponse(
         apiType: APIType.aGet,
         url: userWorkoutsDateUrl + userId! + "&date=" + date!);
-
+    print('response>>>>> $response');
     UserWorkoutsDateResponseModel userWorkoutsDateResponseModel =
         UserWorkoutsDateResponseModel.fromJson(response);
     return userWorkoutsDateResponseModel;

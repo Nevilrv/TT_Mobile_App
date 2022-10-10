@@ -24,8 +24,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: DeleteFile(),
-      home: SplashScreen(),
+      home: bottomSheet(),
+      // home: SplashScreen(),
 
       // home: YoutubePlayerDemoApp(),
     );

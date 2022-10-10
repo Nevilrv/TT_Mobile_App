@@ -777,8 +777,7 @@ class _DoneAMRAPScreenState extends State<DoneAMRAPScreen>
                       left: Get.height * .03,
                       right: Get.height * .03,
                       bottom: Get.height * .02),
-                  child: NoWeightedCounterCard(
-                      counter: 12, repsNo: "12", index: 2),
+                  child: NoWeightedCounterCard(counter: 12, index: 2),
                 ),
                 SizedBox(height: Get.height * .1),
                 Padding(
