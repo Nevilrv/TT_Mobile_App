@@ -9,7 +9,6 @@ import 'package:tcm/screen/splash_screen.dart';
 import 'delete_file.dart';
 
 void main() async {
-  ///ne
   await GetStorage.init();
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +23,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      home: bottomSheet(),
-      // home: SplashScreen(),
+      // home: bottomSheet(),
+      home: SplashScreen(),
 
       // home: YoutubePlayerDemoApp(),
     );

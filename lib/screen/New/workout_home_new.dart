@@ -8,8 +8,6 @@ import 'package:tcm/screen/New/new_no_weight_exercises_screen.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
-import 'package:tcm/screen/workout_screen/no_weight_exercise_screen.dart';
-import 'package:tcm/screen/workout_screen/share_progress_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
@@ -24,11 +22,17 @@ import '../../viewModel/conecction_check_viewModel.dart';
 class WorkoutHomeNew extends StatefulWidget {
   final String workoutId;
   final String exerciseId;
+  final List exercisesList;
+  final List withoutWarmUpExercisesList;
+  final List superSetList;
 
   WorkoutHomeNew({
     Key? key,
     required this.workoutId,
     required this.exerciseId,
+    required this.exercisesList,
+    required this.superSetList,
+    required this.withoutWarmUpExercisesList,
   }) : super(key: key);
 
   @override
@@ -45,14 +49,18 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
   WorkoutByIdViewModel _workoutByIdViewModel = Get.put(WorkoutByIdViewModel());
 
   VideoPlayerController? _videoPlayerController;
-  YoutubePlayerController? _youTubePlayerController;
+
   ChewieController? _chewieController;
 
   @override
   void initState() {
+    print('WIDGET EXERCISES LIST; ${widget.exercisesList}');
+    // print('initstare   >> ${_userWorkoutsDateViewModel.exercisesNewList}');
     _connectivityCheckViewModel.startMonitoring();
     super.initState();
-    apiCall();
+    Future.delayed(Duration.zero, () {
+      apiCall();
+    });
   }
 
   apiCall() async {
@@ -69,31 +77,33 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
     // id: "78");
   }
 
+  YoutubePlayerController? _youtubePlayerController;
   @override
   void dispose() {
     _videoPlayerController?.dispose();
     _chewieController?.dispose();
-    _youTubePlayerController?.dispose();
+    _youtubePlayerController!.dispose();
     super.dispose();
   }
 
-  Future initializePlayer(WorkoutByIdResponseModel workoutByIdData) async {
-    youtubeVideoID() {
-      String finalLink;
-      print('workoutVideo >>>> ${workoutByIdData.data![0].workoutVideo}');
-      String videoID = '${workoutByIdData.data![0].workoutVideo}';
-      List<String> splittedLink = videoID.split('v=');
-      List<String> longLink = splittedLink.last.split('&');
-      finalLink = longLink.first;
-      print('Link >>>>>  $finalLink');
-      return finalLink;
-    }
+  youtubeVideoID(WorkoutByIdResponseModel workoutByIdData) {
+    String finalLink;
+    print('workoutVideo >>>> ${workoutByIdData.data![0].workoutVideo}');
+    String videoID = '${workoutByIdData.data![0].workoutVideo}';
+    List<String> splittedLink = videoID.split('v=');
+    List<String> longLink = splittedLink.last.split('&');
+    finalLink = longLink.first;
+    print('Link >>>>>  $finalLink');
+    return finalLink;
+  }
 
+  Future initializePlayer(WorkoutByIdResponseModel workoutByIdData) async {
+    youtubeVideoID(workoutByIdData);
     // if ('${widget.data[0].workoutVideo}'.contains('www.youtube.com')) {
     if ('${workoutByIdData.data![0].workoutVideo}'
         .contains('www.youtube.com')) {
-      _youTubePlayerController = YoutubePlayerController(
-        initialVideoId: youtubeVideoID(),
+      _youtubePlayerController = YoutubePlayerController(
+        initialVideoId: youtubeVideoID(workoutByIdData),
         flags: YoutubePlayerFlags(
           autoPlay: true,
           mute: false,
@@ -152,7 +162,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                       print(
                           "exe date --------- ${exerciseByIdData.data![0].exerciseType}");
                       if (exerciseByIdData.data!.isNotEmpty) {
-                        String exerciseInstructions =
+                        /* String exerciseInstructions =
                             '${workoutByIdData.data![0].workoutDescription}';
                         List<String> splitHTMLInstruction =
                             exerciseInstructions.split('</li>');
@@ -175,30 +185,26 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                           print(
                               'finalHTMLInstruction >>>>>  ${finalHTMLInstruction}');
                           print('finalHTMLTips >>>>>  ${finalHTMLTips}');
-                        });
-                        return '${workoutByIdData.data![0].workoutVideo}'
-                                .contains('www.youtube.com')
-                            ? YoutubePlayerBuilder(
-                                player: YoutubePlayer(
-                                  controller: _youTubePlayerController!,
-                                  showVideoProgressIndicator: true,
-                                  bufferIndicator: CircularProgressIndicator(
-                                      color: ColorUtils.kTint),
-                                  controlsTimeOut: Duration(hours: 2),
-                                  aspectRatio: 16 / 9,
-                                  progressColors: ProgressBarColors(
-                                      handleColor: ColorUtils.kRed,
-                                      playedColor: ColorUtils.kRed,
-                                      backgroundColor: ColorUtils.kGray,
-                                      bufferedColor: ColorUtils.kLightGray),
-                                ),
-                                builder: (context, player) {
-                                  return WillPopScope(
-                                    onWillPop: () async {
-                                      Get.offAll(HomeScreen());
-                                      return true;
-                                    },
-                                    child: Scaffold(
+                        });*/
+                        try {
+                          return '${workoutByIdData.data![0].workoutVideo}'
+                                  .contains('www.youtube.com')
+                              ? YoutubePlayerBuilder(
+                                  player: YoutubePlayer(
+                                    controller: _youtubePlayerController!,
+                                    showVideoProgressIndicator: true,
+                                    bufferIndicator: CircularProgressIndicator(
+                                        color: ColorUtils.kTint),
+                                    controlsTimeOut: Duration(hours: 2),
+                                    aspectRatio: 16 / 9,
+                                    progressColors: ProgressBarColors(
+                                        handleColor: ColorUtils.kRed,
+                                        playedColor: ColorUtils.kRed,
+                                        backgroundColor: ColorUtils.kGray,
+                                        bufferedColor: ColorUtils.kLightGray),
+                                  ),
+                                  builder: (context, player) {
+                                    return Scaffold(
                                       backgroundColor: ColorUtils.kBlack,
                                       appBar: AppBar(
                                         elevation: 0,
@@ -243,7 +249,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                 ),
                                                 SizedBox(
                                                     height: Get.height * .02),
-                                                ListView.builder(
+                                                /* ListView.builder(
                                                     physics:
                                                         NeverScrollableScrollPhysics(),
                                                     shrinkWrap: true,
@@ -255,7 +261,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                         htmlToTextGrey(
                                                             data:
                                                                 finalHTMLInstruction[
-                                                                    index])),
+                                                                    index])),*/
                                                 SizedBox(
                                                     height: Get.height * .03),
                                                 !watchVideo
@@ -279,7 +285,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                         duration: Duration(
                                                             seconds: 2),
                                                         child: Center(
-                                                          child: _youTubePlayerController ==
+                                                          child: _youtubePlayerController ==
                                                                   null
                                                               ? CircularProgressIndicator(
                                                                   color:
@@ -510,49 +516,71 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                 // htmlToTextGrey(data: finalHTMLTips[1]),
                                                 SizedBox(
                                                     height: Get.height * .03),
-                                                _userWorkoutsDateViewModel
-                                                        .withWarmupExercisesList
+                                                widget.withoutWarmUpExercisesList
                                                         .isNotEmpty
                                                     ? commonNavigationButton(
                                                         name: "Begin Warm-Up",
                                                         onTap: () {
+                                                          try {
+                                                            _youtubePlayerController!
+                                                                .pause();
+                                                          } catch (e) {}
+                                                          setState(() {
+                                                            watchVideo = false;
+                                                          });
                                                           Get.to(
-                                                              () =>
-                                                                  NewNoWeightExercise(
-                                                                    superSetRound:
-                                                                        int.parse(
-                                                                            _userWorkoutsDateViewModel.superSetsRound),
-                                                                    exerciseList:
-                                                                        _userWorkoutsDateViewModel
-                                                                            .withWarmupExercisesList,
-                                                                    superSetList:
-                                                                        _userWorkoutsDateViewModel
-                                                                            .superSetList,
-                                                                  ),
+                                                              () => NewNoWeightExercise(
+                                                                  userProgramDatesId:
+                                                                      _userWorkoutsDateViewModel
+                                                                          .userProgramDatesId,
+                                                                  superSetRound: _userWorkoutsDateViewModel
+                                                                              .superSetsRound ==
+                                                                          ""
+                                                                      ? 1
+                                                                      : int.parse(
+                                                                          _userWorkoutsDateViewModel
+                                                                              .superSetsRound),
+                                                                  exerciseList:
+                                                                      widget
+                                                                          .exercisesList,
+                                                                  superSetList:
+                                                                      widget
+                                                                          .superSetList),
                                                               transition: Transition
                                                                   .rightToLeft);
                                                         })
                                                     : SizedBox(),
                                                 SizedBox(
                                                     height: Get.height * .03),
-                                                _userWorkoutsDateViewModel
-                                                        .withOutWarmupExercisesList
-                                                        .isNotEmpty
+                                                widget.exercisesList.isNotEmpty
                                                     ? commonNavigationButton(
                                                         name: "Start Workout",
                                                         onTap: () {
+                                                          try {
+                                                            _youtubePlayerController!
+                                                                .pause();
+                                                          } catch (e) {}
+                                                          setState(() {
+                                                            watchVideo = false;
+                                                          });
                                                           Get.to(
                                                               () => NewNoWeightExercise(
-                                                                  superSetRound:
-                                                                      int.parse(
+                                                                  userProgramDatesId:
+                                                                      _userWorkoutsDateViewModel
+                                                                          .userProgramDatesId,
+                                                                  superSetRound: _userWorkoutsDateViewModel
+                                                                              .superSetsRound ==
+                                                                          ""
+                                                                      ? 1
+                                                                      : int.parse(
                                                                           _userWorkoutsDateViewModel
                                                                               .superSetsRound),
                                                                   superSetList:
-                                                                      _userWorkoutsDateViewModel
+                                                                      widget
                                                                           .superSetList,
                                                                   exerciseList:
-                                                                      _userWorkoutsDateViewModel
-                                                                          .withOutWarmupExercisesList),
+                                                                      widget
+                                                                          .withoutWarmUpExercisesList),
                                                               transition: Transition
                                                                   .rightToLeft);
                                                         })
@@ -738,496 +766,551 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                               ]),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                })
-                            : WillPopScope(
-                                onWillPop: () async {
-                                  print('xyz');
-                                  Get.offAll(HomeScreen());
-                                  return true;
-                                },
-                                child: Scaffold(
-                                  backgroundColor: ColorUtils.kBlack,
-                                  appBar: AppBar(
-                                    elevation: 0,
-                                    leading: IconButton(
-                                        onPressed: () {
-                                          Get.offAll(HomeScreen());
-                                        },
-                                        icon: Icon(
-                                          Icons.arrow_back_ios_sharp,
-                                          color: ColorUtils.kTint,
-                                        )),
+                                    );
+                                  })
+                              : WillPopScope(
+                                  onWillPop: () async {
+                                    print('xyz');
+                                    Get.offAll(HomeScreen());
+                                    return true;
+                                  },
+                                  child: Scaffold(
                                     backgroundColor: ColorUtils.kBlack,
-                                    title: Text('Workout Overview',
-                                        style:
-                                            FontTextStyle.kWhite16BoldRoboto),
-                                    centerTitle: true,
-                                  ),
-                                  body: SingleChildScrollView(
-                                    physics: BouncingScrollPhysics(),
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.09,
-                                          vertical: Get.height * 0.02),
-                                      child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            Center(
-                                              child: Text(
-                                                '${workoutByIdData.data![0].workoutTitle}',
-                                                textAlign: TextAlign.center,
-                                                style: FontTextStyle
-                                                    .kWhite20BoldRoboto
-                                                    .copyWith(
-                                                        fontSize:
-                                                            Get.height * 0.022,
-                                                        fontWeight:
-                                                            FontWeight.bold),
+                                    appBar: AppBar(
+                                      elevation: 0,
+                                      leading: IconButton(
+                                          onPressed: () {
+                                            Get.offAll(HomeScreen());
+                                          },
+                                          icon: Icon(
+                                            Icons.arrow_back_ios_sharp,
+                                            color: ColorUtils.kTint,
+                                          )),
+                                      backgroundColor: ColorUtils.kBlack,
+                                      title: Text('Workout Overview',
+                                          style:
+                                              FontTextStyle.kWhite16BoldRoboto),
+                                      centerTitle: true,
+                                    ),
+                                    body: SingleChildScrollView(
+                                      physics: BouncingScrollPhysics(),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.width * 0.09,
+                                            vertical: Get.height * 0.02),
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Center(
+                                                child: Text(
+                                                  '${workoutByIdData.data![0].workoutTitle}',
+                                                  textAlign: TextAlign.center,
+                                                  style: FontTextStyle
+                                                      .kWhite20BoldRoboto
+                                                      .copyWith(
+                                                          fontSize: Get.height *
+                                                              0.022,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                ),
                                               ),
-                                            ),
-                                            SizedBox(height: Get.height * .02),
-                                            ListView.builder(
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                itemCount: finalHTMLInstruction
-                                                        .length -
-                                                    1,
-                                                itemBuilder: (_, index) =>
-                                                    htmlToTextGrey(
-                                                        data:
-                                                            finalHTMLInstruction[
-                                                                index])),
-                                            SizedBox(height: Get.height * .03),
-                                            !watchVideo
-                                                ? commonNavigationButtonWithIcon(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        watchVideo = true;
-                                                      });
-                                                    },
-                                                    name:
-                                                        'Watch Overview Video',
-                                                    iconImg: AppIcons.video,
-                                                    iconColor:
-                                                        ColorUtils.kBlack)
-                                                : SizedBox(),
-                                            watchVideo
-                                                ? AnimatedContainer(
-                                                    height: Get.height / 3.5,
-                                                    width: Get.width,
-                                                    duration:
-                                                        Duration(seconds: 2),
-                                                    child: Center(
-                                                        child: _chewieController !=
-                                                                    null &&
-                                                                _chewieController!
-                                                                    .videoPlayerController
-                                                                    .value
-                                                                    .isInitialized
-                                                            ? Chewie(
-                                                                controller:
-                                                                    _chewieController!,
-                                                              )
-                                                            : workoutByIdData
-                                                                        .data![
-                                                                            0]
-                                                                        .workoutImage ==
-                                                                    null
-                                                                ? noData()
-                                                                : Image.network(
-                                                                    workoutByIdData
-                                                                        .data![
-                                                                            0]
-                                                                        .workoutImage!,
-                                                                    errorBuilder:
-                                                                        (context,
-                                                                            error,
-                                                                            stackTrace) {
-                                                                      return noData();
-                                                                    },
-                                                                  )),
-                                                  )
-                                                : SizedBox(),
-
-                                            SizedBox(height: Get.height * .03),
-                                            Container(
-                                              // height: Get.height * .4,
-                                              width: Get.width * .9,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                  gradient: LinearGradient(
-                                                      colors: ColorUtilsGradient
-                                                          .kGrayGradient,
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter)),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                children: [
-                                                  SizedBox(
-                                                    // color: Colors.pink,
-                                                    width: Get.width * .525,
-                                                    child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceEvenly,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      .05),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 10,
-                                                                    right: 10),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                CircleAvatar(
-                                                                  radius:
-                                                                      Get.height *
-                                                                          .02,
-                                                                  backgroundColor:
-                                                                      ColorUtils
-                                                                          .kWhite,
-                                                                  child: Center(
-                                                                    child: Image
-                                                                        .asset(
-                                                                      AppIcons
-                                                                          .kettle_bell,
-                                                                      height: Get
-                                                                              .height *
-                                                                          0.025,
-                                                                      width: Get
-                                                                              .width *
-                                                                          0.1,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        Get.width *
-                                                                            .03),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                      'Equipment needed',
-                                                                      style: FontTextStyle
-                                                                          .kWhite20BoldRoboto),
+                                              SizedBox(
+                                                  height: Get.height * .02),
+                                              /*ListView.builder(
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  itemCount: finalHTMLInstruction
+                                                          .length -
+                                                      1,
+                                                  itemBuilder: (_, index) =>
+                                                      htmlToTextGrey(
+                                                          data:
+                                                              finalHTMLInstruction[
+                                                                  index])),*/
+                                              SizedBox(
+                                                  height: Get.height * .03),
+                                              !watchVideo
+                                                  ? commonNavigationButtonWithIcon(
+                                                      onTap: () {
+                                                        setState(() {
+                                                          watchVideo = true;
+                                                        });
+                                                      },
+                                                      name:
+                                                          'Watch Overview Video',
+                                                      iconImg: AppIcons.video,
+                                                      iconColor:
+                                                          ColorUtils.kBlack)
+                                                  : SizedBox(),
+                                              watchVideo
+                                                  ? AnimatedContainer(
+                                                      height: Get.height / 3.5,
+                                                      width: Get.width,
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                      child: Center(
+                                                          child: _chewieController !=
+                                                                      null &&
+                                                                  _chewieController!
+                                                                      .videoPlayerController
+                                                                      .value
+                                                                      .isInitialized
+                                                              ? Chewie(
+                                                                  controller:
+                                                                      _chewieController!,
                                                                 )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      .05),
-                                                          Container(
-                                                            // color: Colors.teal,
-                                                            width:
-                                                                Get.width * .4,
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            child: ListView
-                                                                .separated(
-                                                                    physics:
-                                                                        NeverScrollableScrollPhysics(),
-                                                                    shrinkWrap:
-                                                                        true,
-                                                                    itemCount: workoutByIdData
-                                                                        .data![
-                                                                            0]
-                                                                        .availableEquipments!
-                                                                        .length,
-                                                                    separatorBuilder: (_,
-                                                                        index) {
-                                                                      return SizedBox(
-                                                                          height:
-                                                                              Get.height * .008);
-                                                                    },
-                                                                    itemBuilder:
-                                                                        (_, index) {
-                                                                      if ('${workoutByIdData.data![0].availableEquipments![index]}' !=
-                                                                          "No Equipment") {
-                                                                        return Row(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            SizedBox(width: Get.width * .075),
-                                                                            Padding(
-                                                                              padding: EdgeInsets.only(top: 3),
-                                                                              child: Icon(
-                                                                                Icons.circle,
-                                                                                color: ColorUtils.kLightGray,
-                                                                                size: Get.height * 0.0135,
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(width: Get.width * .025),
-                                                                            Flexible(
-                                                                              child: Text(
-                                                                                '${workoutByIdData.data![0].availableEquipments![index]}',
-                                                                                style: FontTextStyle.kWhite17BoldRoboto,
-                                                                              ),
-                                                                            )
-                                                                            // RichText(
-                                                                            //     text: TextSpan(
-                                                                            //         text: '',
-                                                                            //         style: FontTextStyle
-                                                                            //             .kLightGray16W300Roboto,
-                                                                            //         children: [
-                                                                            //       TextSpan(
-                                                                            //           text:
-                                                                            //               ' ${widget.data[0].availableEquipments![index]}',
-                                                                            //           style: FontTextStyle
-                                                                            //               .kWhite17BoldRoboto)
-                                                                            //     ])),
-                                                                          ],
-                                                                        );
-                                                                      } else {
-                                                                        return SizedBox();
-                                                                      }
-                                                                    }),
-                                                          ),
-                                                          SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      .05),
-                                                          Padding(
-                                                            padding:
-                                                                EdgeInsets.only(
-                                                                    left: 10,
-                                                                    right: 10),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                              children: [
-                                                                CircleAvatar(
-                                                                  radius:
-                                                                      Get.height *
-                                                                          .02,
-                                                                  backgroundColor:
-                                                                      Colors
-                                                                          .transparent,
-                                                                  child:
-                                                                      ClipOval(
-                                                                    child: Image
-                                                                        .asset(
-                                                                      AppIcons
-                                                                          .clock,
-                                                                      color: ColorUtils
-                                                                          .kWhite,
-                                                                      fit: BoxFit
-                                                                          .fill,
-                                                                      height: Get
-                                                                          .height,
-                                                                      width: Get
-                                                                          .width,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                                SizedBox(
-                                                                    width:
-                                                                        Get.width *
-                                                                            .03),
-                                                                Expanded(
-                                                                  child: Text(
-                                                                    '${exerciseByIdData.data![0].exerciseRest} rest between sets',
-                                                                    style: FontTextStyle
-                                                                        .kWhite20BoldRoboto,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      .05),
-                                                        ]),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            SizedBox(height: Get.height * .03),
-                                            // ListView.builder(
-                                            //     physics: NeverScrollableScrollPhysics(),
-                                            //     shrinkWrap: true,
-                                            //     itemCount: finalHTMLTips.length - 1,
-                                            //     itemBuilder: (_, index) =>
-                                            //         ),
-                                            // htmlToTextGrey(data: finalHTMLTips[1]),
+                                                              : workoutByIdData
+                                                                          .data![
+                                                                              0]
+                                                                          .workoutImage ==
+                                                                      null
+                                                                  ? noData()
+                                                                  : Image
+                                                                      .network(
+                                                                      workoutByIdData
+                                                                          .data![
+                                                                              0]
+                                                                          .workoutImage!,
+                                                                      errorBuilder: (context,
+                                                                          error,
+                                                                          stackTrace) {
+                                                                        return noData();
+                                                                      },
+                                                                    )),
+                                                    )
+                                                  : SizedBox(),
 
-                                            SizedBox(height: Get.height * .03),
-                                            GetBuilder<
-                                                    UserWorkoutsDateViewModel>(
-                                                builder: (controller) {
-                                              // log("======================= ?>${controller.  warmUpId.isNotEmpty}");
-                                              return controller
-                                                      .userProgramDateID
-                                                      .isNotEmpty
-                                                  ? Column(
-                                                      children: [
-                                                        controller.warmUpId
-                                                                    .isNotEmpty &&
-                                                                controller
-                                                                        .warmUpId !=
-                                                                    []
-                                                            ? commonNavigationButton(
-                                                                name:
-                                                                    "Begin Warm-Up",
-                                                                onTap: () {
-                                                                  // log("hello warm up");
-                                                                  // log("hello warm up id ${controller.warmUpId}");
-                                                                  // log("hello exerciseId up Z${controller.exerciseId}");
-
-                                                                  if (controller
-                                                                      .warmUpId
-                                                                      .isNotEmpty) {
-                                                                    for (int i =
-                                                                            0;
-                                                                        i < controller.warmUpId.length;
-                                                                        i++) {
-                                                                      if (controller
-                                                                              .exerciseId
-                                                                              .contains(controller.warmUpId[i]) ==
-                                                                          false) {
-                                                                        controller
-                                                                            .exerciseId
-                                                                            .insert(i,
-                                                                                controller.warmUpId[i]);
-                                                                      }
-                                                                    }
-                                                                  }
-                                                                  // log("hello exerciseId up Z for loop ${controller.exerciseId}");
-
-                                                                  Get.to(
-                                                                      () =>
-                                                                          NoWeightExerciseScreen(
-                                                                            data:
-                                                                                workoutByIdData.data!,
-                                                                            workoutId:
-                                                                                workoutByIdData.data![0].workoutId,
-                                                                          ),
-                                                                      transition:
-                                                                          Transition
-                                                                              .rightToLeft);
-
-                                                                  if (controller
-                                                                          .exeIdCounter ==
-                                                                      controller
-                                                                          .exerciseId
-                                                                          .length) {
-                                                                    Get.to(
-                                                                        () =>
-                                                                            ShareProgressScreen(
-                                                                              exeData: exerciseByIdData.data!,
-                                                                              data: workoutByIdData.data!,
-                                                                              workoutId: workoutByIdData.data![0].workoutId,
-                                                                            ),
-                                                                        transition:
-                                                                            Transition.rightToLeft);
-                                                                  }
-
-                                                                  setState(() {
-                                                                    watchVideo =
-                                                                        false;
-                                                                  });
-                                                                  // log("warm up added ${controller.exerciseId}");
-                                                                })
-                                                            : SizedBox(),
-                                                        controller.warmUpId
-                                                                    .isNotEmpty &&
-                                                                controller
-                                                                        .warmUpId !=
-                                                                    []
-                                                            ? SizedBox(
+                                              SizedBox(
+                                                  height: Get.height * .03),
+                                              Container(
+                                                // height: Get.height * .4,
+                                                width: Get.width * .9,
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                    gradient: LinearGradient(
+                                                        colors:
+                                                            ColorUtilsGradient
+                                                                .kGrayGradient,
+                                                        begin:
+                                                            Alignment.topCenter,
+                                                        end: Alignment
+                                                            .bottomCenter)),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  children: [
+                                                    SizedBox(
+                                                      // color: Colors.pink,
+                                                      width: Get.width * .525,
+                                                      child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            SizedBox(
                                                                 height:
                                                                     Get.height *
-                                                                        .03)
-                                                            : SizedBox(),
-                                                        commonNavigationButton(
-                                                            name:
-                                                                'Start Workout',
-                                                            onTap: () {
-                                                              for (int i = 0;
-                                                                  i <
-                                                                      controller
-                                                                          .warmUpId
-                                                                          .length;
-                                                                  i++) {
-                                                                if (controller
-                                                                    .exerciseId
-                                                                    .contains(
-                                                                        controller
-                                                                            .warmUpId[i])) {
-                                                                  controller
-                                                                      .exerciseId
-                                                                      .removeAt(
-                                                                          0);
-                                                                }
-                                                              }
-
-                                                              // Get.to(SuperSetScreen());
-                                                              // controller
-                                                              //     .exerciseId
-                                                              //     .clear();
-                                                              //
-                                                              // controller
-                                                              //         .exerciseId =
-                                                              //     controller
-                                                              //         .tmpExerciseId;
-                                                              // log("warm up added ${controller.exerciseId}");
-
-                                                              Get.to(
-                                                                  () =>
-                                                                      NoWeightExerciseScreen(
-                                                                        data: workoutByIdData
-                                                                            .data!,
-                                                                        workoutId: workoutByIdData
-                                                                            .data![0]
-                                                                            .workoutId,
+                                                                        .05),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 10,
+                                                                      right:
+                                                                          10),
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  CircleAvatar(
+                                                                    radius:
+                                                                        Get.height *
+                                                                            .02,
+                                                                    backgroundColor:
+                                                                        ColorUtils
+                                                                            .kWhite,
+                                                                    child:
+                                                                        Center(
+                                                                      child: Image
+                                                                          .asset(
+                                                                        AppIcons
+                                                                            .kettle_bell,
+                                                                        height: Get.height *
+                                                                            0.025,
+                                                                        width: Get.width *
+                                                                            0.1,
                                                                       ),
-                                                                  transition:
-                                                                      Transition
-                                                                          .rightToLeft);
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: Get
+                                                                              .width *
+                                                                          .03),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                        'Equipment needed',
+                                                                        style: FontTextStyle
+                                                                            .kWhite20BoldRoboto),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                height:
+                                                                    Get.height *
+                                                                        .05),
+                                                            Container(
+                                                              // color: Colors.teal,
+                                                              width: Get.width *
+                                                                  .4,
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                              child: ListView
+                                                                  .separated(
+                                                                      physics:
+                                                                          NeverScrollableScrollPhysics(),
+                                                                      shrinkWrap:
+                                                                          true,
+                                                                      itemCount: workoutByIdData
+                                                                          .data![
+                                                                              0]
+                                                                          .availableEquipments!
+                                                                          .length,
+                                                                      separatorBuilder: (_,
+                                                                          index) {
+                                                                        return SizedBox(
+                                                                            height:
+                                                                                Get.height * .008);
+                                                                      },
+                                                                      itemBuilder:
+                                                                          (_, index) {
+                                                                        if ('${workoutByIdData.data![0].availableEquipments![index]}' !=
+                                                                            "No Equipment") {
+                                                                          return Row(
+                                                                            crossAxisAlignment:
+                                                                                CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              SizedBox(width: Get.width * .075),
+                                                                              Padding(
+                                                                                padding: EdgeInsets.only(top: 3),
+                                                                                child: Icon(
+                                                                                  Icons.circle,
+                                                                                  color: ColorUtils.kLightGray,
+                                                                                  size: Get.height * 0.0135,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(width: Get.width * .025),
+                                                                              Flexible(
+                                                                                child: Text(
+                                                                                  '${workoutByIdData.data![0].availableEquipments![index]}',
+                                                                                  style: FontTextStyle.kWhite17BoldRoboto,
+                                                                                ),
+                                                                              )
+                                                                              // RichText(
+                                                                              //     text: TextSpan(
+                                                                              //         text: '',
+                                                                              //         style: FontTextStyle
+                                                                              //             .kLightGray16W300Roboto,
+                                                                              //         children: [
+                                                                              //       TextSpan(
+                                                                              //           text:
+                                                                              //               ' ${widget.data[0].availableEquipments![index]}',
+                                                                              //           style: FontTextStyle
+                                                                              //               .kWhite17BoldRoboto)
+                                                                              //     ])),
+                                                                            ],
+                                                                          );
+                                                                        } else {
+                                                                          return SizedBox();
+                                                                        }
+                                                                      }),
+                                                            ),
+                                                            SizedBox(
+                                                                height:
+                                                                    Get.height *
+                                                                        .05),
+                                                            Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      left: 10,
+                                                                      right:
+                                                                          10),
+                                                              child: Row(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  CircleAvatar(
+                                                                    radius:
+                                                                        Get.height *
+                                                                            .02,
+                                                                    backgroundColor:
+                                                                        Colors
+                                                                            .transparent,
+                                                                    child:
+                                                                        ClipOval(
+                                                                      child: Image
+                                                                          .asset(
+                                                                        AppIcons
+                                                                            .clock,
+                                                                        color: ColorUtils
+                                                                            .kWhite,
+                                                                        fit: BoxFit
+                                                                            .fill,
+                                                                        height:
+                                                                            Get.height,
+                                                                        width: Get
+                                                                            .width,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  SizedBox(
+                                                                      width: Get
+                                                                              .width *
+                                                                          .03),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      '${exerciseByIdData.data![0].exerciseRest} rest between sets',
+                                                                      style: FontTextStyle
+                                                                          .kWhite20BoldRoboto,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                height:
+                                                                    Get.height *
+                                                                        .05),
+                                                          ]),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height: Get.height * .03),
+                                              // ListView.builder(
+                                              //     physics: NeverScrollableScrollPhysics(),
+                                              //     shrinkWrap: true,
+                                              //     itemCount: finalHTMLTips.length - 1,
+                                              //     itemBuilder: (_, index) =>
+                                              //         ),
+                                              // htmlToTextGrey(data: finalHTMLTips[1]),
 
-                                                              if (controller
-                                                                      .exeIdCounter ==
+                                              SizedBox(
+                                                  height: Get.height * .03),
+                                              widget.withoutWarmUpExercisesList
+                                                      .isNotEmpty
+                                                  ? commonNavigationButton(
+                                                      name: "Begin Warm-Up",
+                                                      onTap: () {
+                                                        try {
+                                                          _youtubePlayerController!
+                                                              .pause();
+                                                        } catch (e) {}
+                                                        setState(() {
+                                                          watchVideo = false;
+                                                        });
+                                                        Get.to(
+                                                            () => NewNoWeightExercise(
+                                                                userProgramDatesId:
+                                                                    _userWorkoutsDateViewModel
+                                                                        .userProgramDatesId,
+                                                                superSetRound: _userWorkoutsDateViewModel
+                                                                            .superSetsRound ==
+                                                                        ""
+                                                                    ? 1
+                                                                    : int.parse(
+                                                                        _userWorkoutsDateViewModel
+                                                                            .superSetsRound),
+                                                                exerciseList: widget
+                                                                    .exercisesList,
+                                                                superSetList: widget
+                                                                    .superSetList),
+                                                            transition: Transition
+                                                                .rightToLeft);
+                                                      })
+                                                  : SizedBox(),
+                                              SizedBox(
+                                                  height: Get.height * .03),
+                                              widget.exercisesList.isNotEmpty
+                                                  ? commonNavigationButton(
+                                                      name: "Start Workout",
+                                                      onTap: () {
+                                                        try {
+                                                          _youtubePlayerController!
+                                                              .pause();
+                                                        } catch (e) {}
+                                                        setState(() {
+                                                          watchVideo = false;
+                                                        });
+                                                        print(
+                                                            'ZHomew userProgramDatesId    ${_userWorkoutsDateViewModel.userProgramDatesId}');
+                                                        Get.to(
+                                                            () => NewNoWeightExercise(
+                                                                userProgramDatesId:
+                                                                    _userWorkoutsDateViewModel
+                                                                        .userProgramDatesId,
+                                                                superSetRound: _userWorkoutsDateViewModel
+                                                                            .superSetsRound ==
+                                                                        ""
+                                                                    ? 1
+                                                                    : int.parse(
+                                                                        _userWorkoutsDateViewModel
+                                                                            .superSetsRound),
+                                                                superSetList: widget
+                                                                    .superSetList,
+                                                                exerciseList: widget
+                                                                    .withoutWarmUpExercisesList),
+                                                            transition: Transition
+                                                                .rightToLeft);
+                                                      })
+                                                  : SizedBox()
+
+                                              /* GetBuilder<
+                                                      UserWorkoutsDateViewModel>(
+                                                  builder: (controller) {
+                                                // log("======================= ?>${controller.  warmUpId.isNotEmpty}");
+                                                return controller
+                                                        .userProgramDateID
+                                                        .isNotEmpty
+                                                    ? Column(
+                                                        children: [
+                                                          controller.warmUpId
+                                                                      .isNotEmpty &&
                                                                   controller
+                                                                          .warmUpId !=
+                                                                      []
+                                                              ? commonNavigationButton(
+                                                                  name:
+                                                                      "Begin Warm-Up",
+                                                                  onTap: () {
+                                                                    // log("hello warm up");
+                                                                    // log("hello warm up id ${controller.warmUpId}");
+                                                                    // log("hello exerciseId up Z${controller.exerciseId}");
+
+                                                                    if (controller
+                                                                        .warmUpId
+                                                                        .isNotEmpty) {
+                                                                      for (int i =
+                                                                              0;
+                                                                          i < controller.warmUpId.length;
+                                                                          i++) {
+                                                                        if (controller
+                                                                                .exerciseId
+                                                                                .contains(controller.warmUpId[i]) ==
+                                                                            false) {
+                                                                          controller
+                                                                              .exerciseId
+                                                                              .insert(i,
+                                                                                  controller.warmUpId[i]);
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                    // log("hello exerciseId up Z for loop ${controller.exerciseId}");
+
+                                                                    Get.to(
+                                                                        () =>
+                                                                            NoWeightExerciseScreen(
+                                                                              data:
+                                                                                  workoutByIdData.data!,
+                                                                              workoutId:
+                                                                                  workoutByIdData.data![0].workoutId,
+                                                                            ),
+                                                                        transition:
+                                                                            Transition
+                                                                                .rightToLeft);
+
+                                                                    if (controller
+                                                                            .exeIdCounter ==
+                                                                        controller
+                                                                            .exerciseId
+                                                                            .length) {
+                                                                      Get.to(
+                                                                          () =>
+                                                                              ShareProgressScreen(
+                                                                                exeData: exerciseByIdData.data!,
+                                                                                data: workoutByIdData.data!,
+                                                                                workoutId: workoutByIdData.data![0].workoutId,
+                                                                              ),
+                                                                          transition:
+                                                                              Transition.rightToLeft);
+                                                                    }
+
+                                                                    setState(() {
+                                                                      watchVideo =
+                                                                          false;
+                                                                    });
+                                                                    // log("warm up added ${controller.exerciseId}");
+                                                                  })
+                                                              : SizedBox(),
+                                                          controller.warmUpId
+                                                                      .isNotEmpty &&
+                                                                  controller
+                                                                          .warmUpId !=
+                                                                      []
+                                                              ? SizedBox(
+                                                                  height:
+                                                                      Get.height *
+                                                                          .03)
+                                                              : SizedBox(),
+                                                          commonNavigationButton(
+                                                              name:
+                                                                  'Start Workout',
+                                                              onTap: () {
+                                                                for (int i = 0;
+                                                                    i <
+                                                                        controller
+                                                                            .warmUpId
+                                                                            .length;
+                                                                    i++) {
+                                                                  if (controller
                                                                       .exerciseId
-                                                                      .length) {
+                                                                      .contains(
+                                                                          controller
+                                                                              .warmUpId[i])) {
+                                                                    controller
+                                                                        .exerciseId
+                                                                        .removeAt(
+                                                                            0);
+                                                                  }
+                                                                }
+
+                                                                // Get.to(SuperSetScreen());
+                                                                // controller
+                                                                //     .exerciseId
+                                                                //     .clear();
+                                                                //
+                                                                // controller
+                                                                //         .exerciseId =
+                                                                //     controller
+                                                                //         .tmpExerciseId;
+                                                                // log("warm up added ${controller.exerciseId}");
+
                                                                 Get.to(
                                                                     () =>
-                                                                        ShareProgressScreen(
-                                                                          exeData:
-                                                                              exerciseByIdData.data!,
-                                                                          data:
-                                                                              workoutByIdData.data!,
+                                                                        NoWeightExerciseScreen(
+                                                                          data: workoutByIdData
+                                                                              .data!,
                                                                           workoutId: workoutByIdData
                                                                               .data![0]
                                                                               .workoutId,
@@ -1235,30 +1318,56 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                                     transition:
                                                                         Transition
                                                                             .rightToLeft);
-                                                              }
-                                                              setState(() {
-                                                                watchVideo =
-                                                                    false;
-                                                              });
-                                                            }),
-                                                      ],
-                                                    )
-                                                  : SizedBox();
-                                            }),
-                                            SizedBox(height: Get.height * .03),
-                                            // commonNavigationButton(
-                                            //     name: 'Back to Home',
-                                            //     onTap: () {
-                                            //       Get.offAll(HomeScreen());
-                                            //       setState(() {
-                                            //         watchVideo = false;
-                                            //       });
-                                            //     })
-                                          ]),
+
+                                                                if (controller
+                                                                        .exeIdCounter ==
+                                                                    controller
+                                                                        .exerciseId
+                                                                        .length) {
+                                                                  Get.to(
+                                                                      () =>
+                                                                          ShareProgressScreen(
+                                                                            exeData:
+                                                                                exerciseByIdData.data!,
+                                                                            data:
+                                                                                workoutByIdData.data!,
+                                                                            workoutId: workoutByIdData
+                                                                                .data![0]
+                                                                                .workoutId,
+                                                                          ),
+                                                                      transition:
+                                                                          Transition
+                                                                              .rightToLeft);
+                                                                }
+                                                                setState(() {
+                                                                  watchVideo =
+                                                                      false;
+                                                                });
+                                                              }),
+                                                        ],
+                                                      )
+                                                    : SizedBox();
+                                              }),*/
+                                              // commonNavigationButton(
+                                              //     name: 'Back to Home',
+                                              //     onTap: () {
+                                              //       Get.offAll(HomeScreen());
+                                              //       setState(() {
+                                              //         watchVideo = false;
+                                              //       });
+                                              //     })
+                                            ]),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              );
+                                );
+                        } catch (e) {
+                          // TODO
+                          return Center(
+                              child: CircularProgressIndicator(
+                            color: ColorUtils.kTint,
+                          ));
+                        }
                       } else {
                         return Center(
                           child: CircularProgressIndicator(
@@ -1275,7 +1384,10 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                     }
                   });
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(
+                      child: CircularProgressIndicator(
+                    color: ColorUtils.kTint,
+                  ));
                 }
               },
             )

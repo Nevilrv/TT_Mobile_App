@@ -6,6 +6,7 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   List widgetOfIndex = [];
   List appBarTitle = [];
   List allIdList = [];
+  List exeNewList = [];
 
   updateAppBarTitle(String value) {
     appBarTitle.add(value);
@@ -23,6 +24,12 @@ class WorkoutBaseExerciseViewModel extends GetxController {
 
   set currentIndex(int value) {
     _currentIndex = value;
+    update();
+  }
+
+  bool isButtonShow = false;
+  setIsButtonShow({required bool isShow}) {
+    isButtonShow = isShow;
     update();
   }
 
@@ -46,6 +53,7 @@ class WorkoutBaseExerciseViewModel extends GetxController {
           showTimer = null;
           isClickForSuperSet = true;
           staticTimer = false;
+          timerStop = false;
           resTimer!.cancel();
           update();
         }
@@ -54,7 +62,20 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   }
 
   /// superset timer
+  bool superSetApiCall = true;
+  bool timerStop = false;
+  int roundCounter = 0;
+  int roundCount = 0;
   bool isClickForSuperSet = false;
+  List<Map<String, dynamic>> superCountList = [];
+  dataAdd({required int round, required String title, required int counter}) {
+    superCountList.add({
+      '$round': {title: counter}
+    });
+  }
+
+  List<Map<String, dynamic>> superSetDataCountList = [];
+
   setIsClickForSuperSet({required bool isValue}) {
     isClickForSuperSet = isValue;
   }
@@ -124,20 +145,23 @@ class WorkoutBaseExerciseViewModel extends GetxController {
     update();
   }
 
-  updateRepsSuperSetList({required int index, required bool isPlus}) {
-    if (isPlus) {
-      int mil = repsSuperSetList[index];
-      mil++;
-      repsSuperSetList.removeAt(index);
-      repsSuperSetList.insert(index, mil);
-    } else {
-      if (repsSuperSetList[index] != 0) {
-        int mil = repsSuperSetList[index];
-        mil--;
-        repsSuperSetList.removeAt(index);
-        repsSuperSetList.insert(index, mil);
-      }
-    }
-    update();
-  }
+  // int updateRepsSuperSetList({required int index, required bool isPlus}) {
+  //    print('repsSuperSetList ??  ${repsSuperSetList}');
+  //    if (isPlus) {
+  //      int mil = ;
+  //      mil++;
+  //
+  //      print('++ $mil');
+  //      return mil;
+  //    } else {
+  //      if (repsSuperSetList[index] != 0) {
+  //        int mil = ;
+  //        mil--;
+  //        print('--$mil');
+  //        return mil;
+  //
+  //      }
+  //    }
+  //    update();
+  //  }
 }

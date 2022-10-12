@@ -33,7 +33,9 @@ class UserWorkoutsDateViewModel extends GetxController {
 
   /// new list
   List withWarmupExercisesList = [];
-  List withOutWarmupExercisesList = [];
+  List allExercisesList = [];
+  List withOutWarmupAllExercisesList = [];
+  List warmUpList = [];
   List superSetList = [];
   String superSetsRound = "";
   String userProgramDatesId = "";
