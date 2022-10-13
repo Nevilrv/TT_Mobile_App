@@ -22,6 +22,7 @@ import '../../viewModel/conecction_check_viewModel.dart';
 class WorkoutHomeNew extends StatefulWidget {
   final String workoutId;
   final String exerciseId;
+  final List warmUpList;
   final List exercisesList;
   final List withoutWarmUpExercisesList;
   final List superSetList;
@@ -33,6 +34,7 @@ class WorkoutHomeNew extends StatefulWidget {
     required this.exercisesList,
     required this.superSetList,
     required this.withoutWarmUpExercisesList,
+    required this.warmUpList,
   }) : super(key: key);
 
   @override
@@ -145,6 +147,10 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'withoutWarmUpExercisesList********    ${widget.withoutWarmUpExercisesList}');
+    print('exercisesList********    ${widget.exercisesList}');
+    print('warmUpList********    ${widget.warmUpList}');
     print('build called');
     return GetBuilder<ConnectivityCheckViewModel>(
       builder: (control) => control.isOnline
@@ -516,8 +522,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                 // htmlToTextGrey(data: finalHTMLTips[1]),
                                                 SizedBox(
                                                     height: Get.height * .03),
-                                                widget.withoutWarmUpExercisesList
-                                                        .isNotEmpty
+                                                widget.warmUpList.isNotEmpty
                                                     ? commonNavigationButton(
                                                         name: "Begin Warm-Up",
                                                         onTap: () {
@@ -1118,8 +1123,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
 
                                               SizedBox(
                                                   height: Get.height * .03),
-                                              widget.withoutWarmUpExercisesList
-                                                      .isNotEmpty
+                                              widget.warmUpList.isNotEmpty
                                                   ? commonNavigationButton(
                                                       name: "Begin Warm-Up",
                                                       onTap: () {

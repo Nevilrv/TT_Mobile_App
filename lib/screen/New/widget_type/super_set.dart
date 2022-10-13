@@ -469,51 +469,51 @@ class _SuperSetTimerProgressBarState extends State<SuperSetTimerProgressBar> {
       builder: (controller) {
         return Padding(
           padding: EdgeInsets.all(8.0),
-          child: GestureDetector(
-            onTap: () {
-              if (controller.timerStop == false) {
-                controller.timerStop = true;
-                controller.currentValue = 0;
-                controller.setStaticTimer(staticTimerValue: false);
-                controller.setIsClickForSuperSet(isValue: true);
-                if (controller.isClickForSuperSet) {
-                  controller.setIsClickForSuperSet(isValue: false);
+          child: controller.showTimer == widget.index &&
+                  controller.superSetCurrentValue == widget.index &&
+                  controller.superSetCurrentValue != null
+              ? Container(
+                  height: widget.height,
+                  width: widget.width,
+                  // color: Colors.grey.shade50,
+                  decoration: BoxDecoration(
+                      // color: ColorUtils.kGray,
+                      border: Border.all(color: Colors.black, width: 1.5),
+                      gradient: LinearGradient(
+                          colors: ColorUtilsGradient.kGrayGradient,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: FAProgressBar(
+                    animatedDuration: Duration(seconds: 1),
+                    currentValue: controller.currentValue.toDouble(),
+                    backgroundColor: ColorUtils.kGray,
+                    progressColor: ColorUtils.kGreen,
+                    maxValue: double.parse("${widget.timerEndTime}"),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    if (controller.timerStop == false) {
+                      controller.timerStop = true;
+                      controller.currentValue = 0;
+                      controller.setStaticTimer(staticTimerValue: false);
+                      controller.setIsClickForSuperSet(isValue: true);
+                      if (controller.isClickForSuperSet) {
+                        controller.setIsClickForSuperSet(isValue: false);
 
-                  if (controller.showTimer == null) {
-                  } else {
-                    controller.resTimer!.cancel();
-                  }
-                  controller.setSuperSetCurrentValue(
-                      valueForSuperSet: widget.index);
-                  controller.showTimer = widget.index;
-                  controller.startRestTimer(endTime: widget.timerEndTime);
-                }
-              }
-            },
-            child: controller.showTimer == widget.index &&
-                    controller.superSetCurrentValue == widget.index &&
-                    controller.superSetCurrentValue != null
-                ? Container(
-                    height: widget.height,
-                    width: widget.width,
-                    // color: Colors.grey.shade50,
-                    decoration: BoxDecoration(
-                        // color: ColorUtils.kGray,
-                        border: Border.all(color: Colors.black, width: 1.5),
-                        gradient: LinearGradient(
-                            colors: ColorUtilsGradient.kGrayGradient,
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter),
-                        borderRadius: BorderRadius.circular(6)),
-                    child: FAProgressBar(
-                      animatedDuration: Duration(seconds: 1),
-                      currentValue: controller.currentValue.toDouble(),
-                      backgroundColor: ColorUtils.kGray,
-                      progressColor: ColorUtils.kGreen,
-                      maxValue: double.parse("${widget.timerEndTime}"),
-                    ),
-                  )
-                : Container(
+                        if (controller.showTimer == null) {
+                        } else {
+                          controller.resTimer!.cancel();
+                        }
+                        controller.setSuperSetCurrentValue(
+                            valueForSuperSet: widget.index);
+                        controller.showTimer = widget.index;
+                        controller.startRestTimer(endTime: widget.timerEndTime);
+                      }
+                    }
+                  },
+                  child: Container(
                     alignment: Alignment.center,
                     height: Get.height * .1,
                     width: Get.width,
@@ -540,7 +540,7 @@ class _SuperSetTimerProgressBarState extends State<SuperSetTimerProgressBar> {
                       ),
                     ),
                   ),
-          ),
+                ),
         );
       },
     );
@@ -678,53 +678,59 @@ class _SupersetStaticTimerState extends State<SupersetStaticTimer> {
       builder: (controller) {
         return Padding(
           padding: EdgeInsets.all(8.0),
-          child: GestureDetector(
-              onTap: () {
-                controller.setIsClickForSuperSet(isValue: true);
-                controller.setStaticTimer(staticTimerValue: true);
-                controller.setSuperSetCurrentValue(valueForSuperSet: null);
-                if (controller.isClickForSuperSet == true) {
-                  controller.setIsClickForSuperSet(isValue: false);
+          child: controller.staticTimer == true
+              ? Container(
+                  height: widget.height,
+                  width: widget.width,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: ColorUtilsGradient.kGrayGradient,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: FAProgressBar(
+                    animatedDuration: Duration(seconds: 1),
+                    currentValue: controller.currentValue.toDouble(),
+                    backgroundColor: ColorUtils.kGray,
+                    progressColor: ColorUtils.kGreen,
+                    maxValue: double.parse("${widget.timerEndTime}"),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    if (controller.timerStop == false) {
+                      controller.timerStop = true;
+                      controller.currentValue = 0;
+                      controller.setIsClickForSuperSet(isValue: true);
+                      controller.setStaticTimer(staticTimerValue: true);
+                      controller.setSuperSetCurrentValue(
+                          valueForSuperSet: null);
+                      if (controller.isClickForSuperSet == true) {
+                        controller.setIsClickForSuperSet(isValue: false);
 
-                  if (controller.showTimer == null) {
-                  } else {
-                    controller.resTimer!.cancel();
-                  }
-                  controller.showTimer = widget.index;
-                  controller.startRestTimer(endTime: widget.timerEndTime);
-                }
-              },
-              child: controller.staticTimer == true
-                  ? Container(
-                      height: widget.height,
-                      width: widget.width,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: ColorUtilsGradient.kGrayGradient,
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter),
-                          borderRadius: BorderRadius.circular(6)),
-                      child: FAProgressBar(
-                        animatedDuration: Duration(seconds: 1),
-                        currentValue: controller.currentValue.toDouble(),
-                        backgroundColor: ColorUtils.kGray,
-                        progressColor: ColorUtils.kGreen,
-                        maxValue: double.parse("${widget.timerEndTime}"),
-                      ),
-                    )
-                  : Container(
-                      alignment: Alignment.center,
-                      height: widget.height,
-                      width: widget.width,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: ColorUtilsGradient.kGrayGradient,
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter),
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Text("${widget.timerEndTime} Seconds Rest",
-                          style: FontTextStyle.kWhite17W400Roboto),
-                    )),
+                        if (controller.showTimer == null) {
+                        } else {
+                          controller.resTimer!.cancel();
+                        }
+                        controller.showTimer = widget.index;
+                        controller.startRestTimer(endTime: widget.timerEndTime);
+                      }
+                    }
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: widget.height,
+                    width: widget.width,
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: ColorUtilsGradient.kGrayGradient,
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        borderRadius: BorderRadius.circular(6)),
+                    child: Text("${widget.timerEndTime} Seconds Rest",
+                        style: FontTextStyle.kWhite17W400Roboto),
+                  ),
+                ),
         );
       },
     );

@@ -92,6 +92,36 @@ class WorkoutBaseExerciseViewModel extends GetxController {
     update();
   }
 
+/*
+  Timer? staticSuperSetTimer;
+  int staticCounterCurrentValue = 0;
+  void startStaticSuperSetTimer({required String endTime}) {
+    staticSuperSetTimer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        if (staticCounterCurrentValue >= 0 &&
+            staticCounterCurrentValue < int.parse(endTime)) {
+          staticCounterCurrentValue++;
+          print('count>>>>>$staticCounterCurrentValue');
+          update();
+        } else {
+          print('Timer Cancel');
+          */
+/*  staticCounterCurrentValue = 0;
+          showTimer = null;
+          isClickForSuperSet = true;
+          staticTimer = false;
+          timerStop = false;*/ /*
+
+          staticCounterCurrentValue = 0;
+          staticSuperSetTimer!.cancel();
+          update();
+        }
+      },
+    );
+  }
+*/
+
   /// for weighted screen
   List lbsList = [];
   List weightedRepsList = [];

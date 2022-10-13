@@ -573,6 +573,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           Get.to(WorkoutHomeNew(
                                                             withoutWarmUpExercisesList:
                                                                 withoutWarmupAllId,
+                                                            warmUpList: responseDate
+                                                                .data!
+                                                                .selectedWarmup!,
                                                             exercisesList:
                                                                 allId,
                                                             workoutId:

@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
@@ -16,6 +15,7 @@ import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/schedule_viewModel/schedule_by_date_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/remove_workout_program_viewModel.dart';
+import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 import '../../model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import '../../model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import '../../model/response_model/workout_response_model/user_workouts_date_response_model.dart';
