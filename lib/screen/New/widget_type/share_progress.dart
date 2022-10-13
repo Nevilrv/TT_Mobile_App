@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:tcm/api_services/api_response.dart';
-import 'package:tcm/model/request_model/update_status_user_program_request_model.dart';
-import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
-import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
-import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
-import 'package:tcm/screen/New/new_no_weight_exercises_screen.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
@@ -17,7 +11,6 @@ import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/update_status_user_program_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/share_viewModel.dart';
-import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 
 class NewShareProgressScreen extends StatefulWidget {
   final String? workoutId;

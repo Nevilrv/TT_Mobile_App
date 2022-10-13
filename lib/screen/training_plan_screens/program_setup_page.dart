@@ -14,7 +14,9 @@ import 'package:tcm/model/response_model/training_plans_response_model/remove_wo
 import 'package:tcm/model/response_model/training_plans_response_model/save_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_exercise_conflict_response_model.dart';
+import 'package:tcm/model/response_model/workout_response_model/user_workouts_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
+import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 import 'package:tcm/screen/New/workout_home_new.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
@@ -22,6 +24,7 @@ import 'package:tcm/screen/workout_screen/workout_home.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/utils/shimmer_loading.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/day_based_exercise_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
@@ -29,6 +32,7 @@ import 'package:tcm/viewModel/training_plan_viewModel/remove_workout_program_vie
 import 'package:tcm/viewModel/training_plan_viewModel/save_workout_program_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_exercise_conflict_viewModel.dart';
+import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 
 class ProgramSetupPage extends StatefulWidget {
   final String? exerciseId;
@@ -68,7 +72,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
 
   WorkoutExerciseConflictViewModel _workoutExerciseConflictViewModel =
       Get.put(WorkoutExerciseConflictViewModel());
-
+  UserWorkoutsDateViewModel _userWorkoutsDateViewModel =
+      Get.put(UserWorkoutsDateViewModel());
   RemoveWorkoutProgramViewModel _removeWorkoutProgramViewModel =
       Get.put(RemoveWorkoutProgramViewModel());
   ConnectivityCheckViewModel _connectivityCheckViewModel =
@@ -1091,13 +1096,63 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                                                   children: [
                                                                                     GestureDetector(
-                                                                                      onTap: () {
-                                                                                        Get.to(WorkoutHomeScreen(
+                                                                                      onTap: () async {
+                                                                                        UserWorkoutsDateResponseModel responseApi = await UserWorkoutsDateRepo().userWorkoutsDateRepo(date: DateTime.now().toString().split(' ').first, userId: PreferenceManager.getUId());
+                                                                                        try {
+                                                                                          _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+                                                                                          _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+                                                                                          _userWorkoutsDateViewModel.superSetList.clear();
+                                                                                          _userWorkoutsDateViewModel.warmUpList.clear();
+                                                                                          _userWorkoutsDateViewModel.superSetsRound = "";
+                                                                                          _userWorkoutsDateViewModel.userProgramDatesId = "";
+                                                                                          _userWorkoutsDateViewModel.restTime = "";
+                                                                                          responseApi.data!.selectedWarmup!.forEach((element) {
+                                                                                            _userWorkoutsDateViewModel.withWarmupExercisesList.add(element);
+                                                                                            _userWorkoutsDateViewModel.warmUpList.add(element);
+                                                                                          });
+
+                                                                                          responseApi.data!.supersetExercisesIds!.forEach((element) {
+                                                                                            _userWorkoutsDateViewModel.superSetList.add(element);
+                                                                                          });
+                                                                                          _userWorkoutsDateViewModel.allExercisesList.clear();
+                                                                                          _userWorkoutsDateViewModel.withOutWarmupAllExercisesList.clear();
+
+                                                                                          responseApi.data!.selectedWarmup!.forEach((element) {
+                                                                                            _userWorkoutsDateViewModel.allExercisesList.add(element);
+                                                                                          });
+                                                                                          print('allExercisesList warmup >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+                                                                                          responseApi.data!.exercisesIds!.forEach((element) {
+                                                                                            _userWorkoutsDateViewModel.allExercisesList.add(element);
+                                                                                            _userWorkoutsDateViewModel.withOutWarmupAllExercisesList.add(element);
+                                                                                          });
+                                                                                          print('allExercisesList >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+                                                                                          print('withOutWarmupAllExercisesList >>> ${_userWorkoutsDateViewModel.withOutWarmupAllExercisesList}');
+
+                                                                                          _userWorkoutsDateViewModel.superSetsRound = responseApi.data!.round;
+                                                                                          _userWorkoutsDateViewModel.userProgramDatesId = responseApi.data!.userProgramDatesId!;
+                                                                                          _userWorkoutsDateViewModel.restTime = responseApi.data!.restTime!;
+                                                                                        } catch (e) {}
+                                                                                        Navigator.push(
+                                                                                          context,
+                                                                                          MaterialPageRoute(
+                                                                                            builder: (context) => WorkoutHomeNew(
+                                                                                              warmUpList: responseApi.data!.selectedWarmup!,
+                                                                                              withoutWarmUpExercisesList: _userWorkoutsDateViewModel.withOutWarmupAllExercisesList,
+                                                                                              superSetList: responseApi.data!.supersetExercisesIds!,
+                                                                                              exercisesList: _userWorkoutsDateViewModel.allExercisesList,
+                                                                                              workoutId: responseApi.data!.workoutId.toString(),
+                                                                                              exerciseId: responseApi.data!.exercisesIds![0].toString(),
+                                                                                            ),
+                                                                                          ),
+                                                                                        );
+
+                                                                                        /* Get.to(WorkoutHomeScreen(
                                                                                           data: workResponse.data!,
                                                                                           exeData: response.data!,
                                                                                           workoutId: widget.workoutId,
                                                                                           date: DateTime.now().toString().split(' ').first,
-                                                                                        ));
+                                                                                        ));*/
+
                                                                                         Get.showSnackbar(GetSnackBar(
                                                                                           message: 'Your old workout ${workResponse.data![0].workoutTitle} is not removed from schedule',
                                                                                           duration: Duration(seconds: 2),
@@ -1326,17 +1381,83 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 message: '${saveWorkoutResponse.msg}',
                                                                                 duration: Duration(seconds: 2),
                                                                               ));
-                                                                              /* Get.to(WorkoutHomeNew(
-                                                                                exercisesList: [],
-                                                                                exerciseId: response.data![0].exerciseId![0],
-                                                                                workoutId: widget.workoutId.toString(),
-                                                                              ));*/
-                                                                              Get.to(WorkoutHomeScreen(
+                                                                              try {
+                                                                                print('tryyyyyyy');
+                                                                                UserWorkoutsDateResponseModel responseApi = await UserWorkoutsDateRepo().userWorkoutsDateRepo(date: DateTime.now().toString().split(' ').first, userId: PreferenceManager.getUId());
+                                                                                _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+                                                                                _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+                                                                                _userWorkoutsDateViewModel.superSetList.clear();
+                                                                                _userWorkoutsDateViewModel.warmUpList.clear();
+                                                                                _userWorkoutsDateViewModel.superSetsRound = "";
+                                                                                _userWorkoutsDateViewModel.userProgramDatesId = "";
+                                                                                _userWorkoutsDateViewModel.restTime = "";
+                                                                                responseApi.data!.selectedWarmup!.forEach((element) {
+                                                                                  _userWorkoutsDateViewModel.withWarmupExercisesList.add(element);
+                                                                                  _userWorkoutsDateViewModel.warmUpList.add(element);
+                                                                                });
+
+                                                                                responseApi.data!.supersetExercisesIds!.forEach((element) {
+                                                                                  _userWorkoutsDateViewModel.superSetList.add(element);
+                                                                                });
+                                                                                _userWorkoutsDateViewModel.allExercisesList.clear();
+                                                                                _userWorkoutsDateViewModel.withOutWarmupAllExercisesList.clear();
+
+                                                                                responseApi.data!.selectedWarmup!.forEach((element) {
+                                                                                  _userWorkoutsDateViewModel.allExercisesList.add(element);
+                                                                                });
+                                                                                print('allExercisesList warmup >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+                                                                                responseApi.data!.exercisesIds!.forEach((element) {
+                                                                                  _userWorkoutsDateViewModel.allExercisesList.add(element);
+                                                                                  _userWorkoutsDateViewModel.withOutWarmupAllExercisesList.add(element);
+                                                                                });
+                                                                                print('allExercisesList >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+                                                                                print('withOutWarmupAllExercisesList >>> ${_userWorkoutsDateViewModel.withOutWarmupAllExercisesList}');
+
+                                                                                _userWorkoutsDateViewModel.superSetsRound = responseApi.data!.round;
+                                                                                _userWorkoutsDateViewModel.userProgramDatesId = responseApi.data!.userProgramDatesId!;
+                                                                                _userWorkoutsDateViewModel.restTime = responseApi.data!.restTime!;
+                                                                                Get.back();
+
+                                                                                Navigator.push(
+                                                                                  context,
+                                                                                  MaterialPageRoute(
+                                                                                    builder: (context) => WorkoutHomeNew(
+                                                                                      warmUpList: responseApi.data!.selectedWarmup!,
+                                                                                      withoutWarmUpExercisesList: _userWorkoutsDateViewModel.withOutWarmupAllExercisesList,
+                                                                                      superSetList: responseApi.data!.supersetExercisesIds!,
+                                                                                      exercisesList: _userWorkoutsDateViewModel.allExercisesList,
+                                                                                      workoutId: responseApi.data!.workoutId.toString(),
+                                                                                      exerciseId: responseApi.data!.exercisesIds![0].toString(),
+                                                                                    ),
+                                                                                  ),
+                                                                                );
+                                                                              } catch (e) {
+                                                                                print('catchhhh');
+                                                                                // Get.back();
+                                                                                Navigator.pop(context);
+                                                                              }
+
+                                                                              /* Get.to(WorkoutHomeScreen(
+                                                                                          data: workResponse.data!,
+                                                                                          exeData: response.data!,
+                                                                                          workoutId: widget.workoutId,
+                                                                                          date: DateTime.now().toString().split(' ').first,
+                                                                                        ));*/
+
+                                                                              Get.showSnackbar(GetSnackBar(
+                                                                                message: 'Your old workout ${workResponse.data![0].workoutTitle} is not removed from schedule',
+                                                                                duration: Duration(seconds: 2),
+                                                                              ));
+                                                                              controllerWork.changeConflict(false);
+                                                                              print('Keep Pressed');
+                                                                              print('keep ${controllerWork.isConflict}');
+                                                                              /* Get.to(WorkoutHomeScreen(
                                                                                 data: workResponse.data!,
                                                                                 exeData: response.data!,
                                                                                 workoutId: widget.workoutId,
                                                                                 date: DateTime.now().toString().split(' ').first,
-                                                                              ));
+                                                                              ));*/
+                                                                              toWorkOutHome();
                                                                               widget.isEdit = false;
                                                                             }
                                                                             // else if (saveWorkoutResponse
@@ -1533,6 +1654,142 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
               : ConnectionCheckScreen();
         }),
       ),
+    );
+  }
+
+  toWorkOutHome() {
+    FutureBuilder(
+      future: UserWorkoutsDateRepo().userWorkoutsDateRepo(
+          userId: PreferenceManager.getUId(),
+          date: DateTime.now().toString().split(' ').first),
+      builder: (BuildContext context,
+          AsyncSnapshot<UserWorkoutsDateResponseModel> snapshot) {
+        if (snapshot.hasData) {
+          try {
+            _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+            _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+            _userWorkoutsDateViewModel.superSetList.clear();
+            _userWorkoutsDateViewModel.warmUpList.clear();
+            _userWorkoutsDateViewModel.superSetsRound = "";
+            _userWorkoutsDateViewModel.userProgramDatesId = "";
+            _userWorkoutsDateViewModel.restTime = "";
+            snapshot.data!.data!.selectedWarmup!.forEach((element) {
+              _userWorkoutsDateViewModel.withWarmupExercisesList.add(element);
+              _userWorkoutsDateViewModel.warmUpList.add(element);
+            });
+            // _userWorkoutsDateViewModel.exercisesNewList.clear();
+
+            // snapshot.data!.data!.exercisesIds!.forEach((element) {
+            //   _userWorkoutsDateViewModel.withWarmupExercisesList
+            //       .add(element);
+            //   _userWorkoutsDateViewModel.exercisesNewList.add(element);
+            // });
+            snapshot.data!.data!.supersetExercisesIds!.forEach((element) {
+              _userWorkoutsDateViewModel.superSetList.add(element);
+            });
+            _userWorkoutsDateViewModel.allExercisesList.clear();
+            _userWorkoutsDateViewModel.withOutWarmupAllExercisesList.clear();
+
+            snapshot.data!.data!.selectedWarmup!.forEach((element) {
+              _userWorkoutsDateViewModel.allExercisesList.add(element);
+            });
+            print(
+                'allExercisesList warmup >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+            snapshot.data!.data!.exercisesIds!.forEach((element) {
+              _userWorkoutsDateViewModel.allExercisesList.add(element);
+              _userWorkoutsDateViewModel.withOutWarmupAllExercisesList
+                  .add(element);
+            });
+            print(
+                'allExercisesList >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+            print(
+                'withOutWarmupAllExercisesList >>> ${_userWorkoutsDateViewModel.withOutWarmupAllExercisesList}');
+
+            _userWorkoutsDateViewModel.superSetsRound =
+                snapshot.data!.data!.round;
+            _userWorkoutsDateViewModel.userProgramDatesId =
+                snapshot.data!.data!.userProgramDatesId!;
+            _userWorkoutsDateViewModel.restTime =
+                snapshot.data!.data!.restTime!;
+          } catch (e) {}
+
+          print(
+              'withWarmupExercises >>> ${_userWorkoutsDateViewModel.withWarmupExercisesList}');
+          print('warmUpList >>> ${_userWorkoutsDateViewModel.warmUpList}');
+          // print(
+          //     'exercisesNewList >>> ${_userWorkoutsDateViewModel.exercisesNewList}');
+          print('superSetList >>> ${_userWorkoutsDateViewModel.superSetList}');
+          print(
+              'supersetRound >>> ${_userWorkoutsDateViewModel.superSetsRound}');
+          print(
+              'supersetRound >>> ${_userWorkoutsDateViewModel.userProgramDatesId}');
+
+          return /*scheduleByDateViewModel!.completeDate
+                        .contains(date.toString().split(' ').first)
+                    ? TextButton(
+                        onPressed: null,
+                        child: Text(
+                          "This workout is Completed",
+                          style: FontTextStyle.kTint24W400Roboto,
+                        ))
+                    :*/
+              snapshot.data!.data!.exercisesIds!.isEmpty ||
+                      snapshot.data!.data!.exercisesIds == []
+                  ? TextButton(
+                      onPressed: null,
+                      child: Text(
+                        "This workout is not Available",
+                        style: FontTextStyle.kTint24W400Roboto,
+                      ))
+                  : TextButton(
+                      onPressed: () {
+                        print('');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WorkoutHomeNew(
+                              warmUpList: snapshot.data!.data!.selectedWarmup!,
+                              withoutWarmUpExercisesList:
+                                  _userWorkoutsDateViewModel
+                                      .withOutWarmupAllExercisesList,
+                              superSetList:
+                                  snapshot.data!.data!.supersetExercisesIds!,
+                              exercisesList:
+                                  _userWorkoutsDateViewModel.allExercisesList,
+                              workoutId:
+                                  snapshot.data!.data!.workoutId.toString(),
+                              exerciseId: snapshot.data!.data!.exercisesIds![0]
+                                  .toString(),
+                              // exeData:
+                              //     snapshotExercise.data!.data!,
+                              // data: snapshotWorkOut.data!.data!,
+                              // date: dateNew.split(' ').first,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Start Workout',
+                        style: FontTextStyle.kTint24W400Roboto,
+                      ));
+        } else if (snapshot.hasError) {
+          print('HAS error');
+          // _userWorkoutsDateViewModel.withOutWarmupExercisesList.clear();
+          _userWorkoutsDateViewModel.withWarmupExercisesList.clear();
+          _userWorkoutsDateViewModel.superSetList.clear();
+          _userWorkoutsDateViewModel.superSetsRound = "";
+          _userWorkoutsDateViewModel.userProgramDatesId = "";
+          _userWorkoutsDateViewModel.restTime = "";
+          return TextButton(
+              onPressed: null,
+              child: Text(
+                "This workout is not Available",
+                style: FontTextStyle.kTint24W400Roboto,
+              ));
+        } else {
+          return shimmerLoading();
+        }
+      },
     );
   }
 
