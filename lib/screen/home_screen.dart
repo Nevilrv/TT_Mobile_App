@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +22,6 @@ import 'package:tcm/screen/schedule_screens/my_schedule_screen.dart';
 import 'package:tcm/screen/signIn_screens.dart';
 import 'package:tcm/screen/training_plan_screens/training_plan.dart';
 import 'package:tcm/screen/video_library/video_library_screen.dart';
-import 'package:tcm/screen/workout_screen/workout_home.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
@@ -571,6 +568,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                               .withWarmupExercisesList[0],
                                                     ));*/
                                                           Get.to(WorkoutHomeNew(
+                                                            userProgramDate:
+                                                                responseDate
+                                                                    .data!
+                                                                    .userProgramDatesId!,
+                                                            superSetRound:
+                                                                responseDate
+                                                                    .data!
+                                                                    .round!,
                                                             withoutWarmUpExercisesList:
                                                                 withoutWarmupAllId,
                                                             warmUpList: responseDate
@@ -1164,7 +1169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     image: AppIcons.profile_app_icon,
                     text: 'Profile',
                     onTap: () {
-                      Get.to(EditProfilePage(
+                      Get.off(EditProfilePage(
                         userDetails: response.data,
                       ));
                       setState(() {

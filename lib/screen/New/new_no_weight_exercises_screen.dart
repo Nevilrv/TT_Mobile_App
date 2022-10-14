@@ -42,11 +42,9 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
       Get.put(WorkoutBaseExerciseViewModel());
   UpdateStatusUserProgramViewModel _updateStatusUserProgramViewModel =
       Get.put(UpdateStatusUserProgramViewModel());
+  int lastBackIndex = 0;
+  bool isLastBackCheck = false;
   dataFetchById({required String id}) async {
-    // allIdList.addAll(widget.exerciseList);
-    // allIdList.add(widget.exerciseList);
-    // allIdList.add(widget.superSetList);
-
     if (_workoutBaseExerciseViewModel.currentIndex <
         widget.exerciseList.length) {
       _workoutBaseExerciseViewModel.setIsButtonShow(isShow: false);
@@ -106,8 +104,11 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
 
             print('Superset called');
             _workoutBaseExerciseViewModel.updateAppBarTitle("Super Set");
+            print('Round count  =====a ${widget.superSetRound}');
             _workoutBaseExerciseViewModel.setWidgetOfIndex(
                 value: SuperSetExercise(
+              superSetRound: widget.superSetRound,
+              superSetIdList: widget.superSetList,
               roundCount: _workoutBaseExerciseViewModel.roundCount,
               superSetExercisesList: _workoutBaseExerciseViewModel
                   .allIdList[_workoutBaseExerciseViewModel.currentIndex],
@@ -184,7 +185,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
     print('Enter in new no weight screen');
     return GetBuilder<WorkoutBaseExerciseViewModel>(
       builder: (controller) {
-        print('allid List tttt ${controller.allIdList}');
+        print('widgetOfIndex tttt ${controller.widgetOfIndex}');
 
         return Scaffold(
           backgroundColor: Colors.transparent,
@@ -199,110 +200,118 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                       child: SizedBox(
                           child: commonNavigationButton(
                               onTap: () async {
-                                if (_workoutBaseExerciseViewModel.currentIndex <
-                                    widget.exerciseList.length) {
-                                  print('print 1');
-                                  _workoutBaseExerciseViewModel.currentIndex++;
-                                } else {
-                                  if (widget.superSetList.length != 0) {
-                                    /*   _workoutBaseExerciseViewModel
-                                        .staticCounterCurrentValue = 0;
+                                if (lastBackIndex <
+                                        _workoutBaseExerciseViewModel
+                                            .currentIndex ||
+                                    isLastBackCheck == false) {
+                                  print('treeee');
+                                  isLastBackCheck = false;
+                                  if (_workoutBaseExerciseViewModel
+                                          .currentIndex <
+                                      widget.exerciseList.length) {
+                                    print('print 1');
                                     _workoutBaseExerciseViewModel
-                                        .staticSuperSetTimer!
-                                        .cancel();*/
+                                        .currentIndex++;
+                                  } else {
+                                    if (widget.superSetList.length != 0) {
+                                      print('print 2');
 
-                                    print('print 2');
-
-                                    if (_workoutBaseExerciseViewModel
-                                                .currentIndex -
-                                            widget.exerciseList.length !=
-                                        widget.superSetRound) {
-                                      print('print 3');
-                                      _workoutBaseExerciseViewModel
-                                          .currentIndex++;
-                                      try {
-                                        print(
-                                            'superSetDataCountList >>  ${_workoutBaseExerciseViewModel.superSetDataCountList}');
-                                        _workoutBaseExerciseViewModel
-                                            .superSetDataCountList
-                                            .clear();
-                                        _workoutBaseExerciseViewModel
-                                            .currentValue = 0;
-                                        _workoutBaseExerciseViewModel
-                                            .staticTimer = false;
-                                        _workoutBaseExerciseViewModel
-                                            .superSetCurrentValue = null;
-                                        _workoutBaseExerciseViewModel
-                                            .isClickForSuperSet = false;
-                                      } catch (e) {
+                                      if (_workoutBaseExerciseViewModel
+                                                  .currentIndex -
+                                              widget.exerciseList.length !=
+                                          widget.superSetRound) {
+                                        print('print 3');
                                         _workoutBaseExerciseViewModel
                                             .currentIndex++;
+                                        try {
+                                          print(
+                                              'superSetDataCountList >>  ${_workoutBaseExerciseViewModel.superSetDataCountList}');
+                                          _workoutBaseExerciseViewModel
+                                              .superSetDataCountList
+                                              .clear();
+                                          _workoutBaseExerciseViewModel
+                                              .currentValue = 0;
+                                          _workoutBaseExerciseViewModel
+                                              .staticTimer = false;
+                                          _workoutBaseExerciseViewModel
+                                              .superSetCurrentValue = null;
+                                          _workoutBaseExerciseViewModel
+                                              .isClickForSuperSet = false;
+                                        } catch (e) {
+                                          _workoutBaseExerciseViewModel
+                                              .currentIndex++;
+                                        }
+                                      } else {
+                                        _workoutBaseExerciseViewModel
+                                            .currentIndex++;
+
+                                        print('print 4');
                                       }
                                     } else {
                                       _workoutBaseExerciseViewModel
                                           .currentIndex++;
 
-                                      print('print 4');
+                                      print('print 5');
+
+                                      print('Over');
                                     }
-                                  } else {
-                                    _workoutBaseExerciseViewModel
-                                        .currentIndex++;
-
-                                    print('print 5');
-
-                                    print('Over');
                                   }
-                                }
 
-                                dataFetchById(
-                                    id: _workoutBaseExerciseViewModel
-                                                .currentIndex <
-                                            widget.exerciseList.length
-                                        ? widget.exerciseList[
-                                            _workoutBaseExerciseViewModel
-                                                .currentIndex]
-                                        : '');
-                                if (controller.allIdList.length ==
-                                    controller.currentIndex) {
-                                  print('Save    l.ll;l;');
-                                  UpdateStatusUserProgramRequestModel _request =
-                                      UpdateStatusUserProgramRequestModel();
+                                  dataFetchById(
+                                      id: _workoutBaseExerciseViewModel
+                                                  .currentIndex <
+                                              widget.exerciseList.length
+                                          ? widget.exerciseList[
+                                              _workoutBaseExerciseViewModel
+                                                  .currentIndex]
+                                          : '');
+                                  if (controller.allIdList.length ==
+                                      controller.currentIndex) {
+                                    print('Save    l.ll;l;');
+                                    UpdateStatusUserProgramRequestModel
+                                        _request =
+                                        UpdateStatusUserProgramRequestModel();
 
-                                  _request.userProgramDatesId =
-                                      widget.userProgramDatesId;
+                                    _request.userProgramDatesId =
+                                        widget.userProgramDatesId;
 
-                                  await _updateStatusUserProgramViewModel
-                                      .updateStatusUserProgramViewModel(
-                                          _request);
+                                    await _updateStatusUserProgramViewModel
+                                        .updateStatusUserProgramViewModel(
+                                            _request);
 
-                                  if (_updateStatusUserProgramViewModel
-                                          .apiResponse.status ==
-                                      Status.COMPLETE) {
-                                    UpdateStatusUserProgramResponseModel
-                                        response =
-                                        _updateStatusUserProgramViewModel
-                                            .apiResponse.data;
+                                    if (_updateStatusUserProgramViewModel
+                                            .apiResponse.status ==
+                                        Status.COMPLETE) {
+                                      UpdateStatusUserProgramResponseModel
+                                          response =
+                                          _updateStatusUserProgramViewModel
+                                              .apiResponse.data;
 
-                                    if (response.success == true) {
-                                      print('message === ${response.msg}');
+                                      if (response.success == true) {
+                                        print('message === ${response.msg}');
+                                        Get.showSnackbar(GetSnackBar(
+                                          message: '${response.msg}',
+                                          duration:
+                                              Duration(milliseconds: 1500),
+                                        ));
+                                      } else if (response.success == false) {
+                                        Get.showSnackbar(GetSnackBar(
+                                          message: '${response.msg}',
+                                          duration:
+                                              Duration(milliseconds: 1500),
+                                        ));
+                                      }
+                                    } else if (_updateStatusUserProgramViewModel
+                                            .apiResponse.status ==
+                                        Status.ERROR) {
                                       Get.showSnackbar(GetSnackBar(
-                                        message: '${response.msg}',
+                                        message: 'Something Went Wrong',
                                         duration: Duration(milliseconds: 1500),
                                       ));
-                                    } else if (response.success == false) {
-                                      Get.showSnackbar(GetSnackBar(
-                                        message: '${response.msg}',
-                                        duration: Duration(milliseconds: 1500),
-                                      ));
                                     }
-                                  } else if (_updateStatusUserProgramViewModel
-                                          .apiResponse.status ==
-                                      Status.ERROR) {
-                                    Get.showSnackbar(GetSnackBar(
-                                      message: 'Something Went Wrong',
-                                      duration: Duration(milliseconds: 1500),
-                                    ));
                                   }
+                                } else {
+                                  _workoutBaseExerciseViewModel.currentIndex++;
                                 }
                               },
                               name: controller.allIdList.length - 1 ==
@@ -325,11 +334,25 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
               title:
                   "${_workoutBaseExerciseViewModel.appBarTitle[_workoutBaseExerciseViewModel.currentIndex]}",
               backTap: () {
-                if (_workoutBaseExerciseViewModel.currentIndex != 0) {
-                  _workoutBaseExerciseViewModel.currentIndex--;
+                if (isLastBackCheck == false &&
+                    lastBackIndex <
+                        _workoutBaseExerciseViewModel.currentIndex) {
+                  isLastBackCheck = true;
+                  if (_workoutBaseExerciseViewModel.currentIndex != 0) {
+                    _workoutBaseExerciseViewModel.currentIndex--;
+                    lastBackIndex = _workoutBaseExerciseViewModel.currentIndex;
+                    print('lastBackIndex ˘>> $lastBackIndex');
+                  } else {
+                    Get.back();
+                    print('Back');
+                  }
                 } else {
-                  Get.back();
-                  print('Back');
+                  if (_workoutBaseExerciseViewModel.currentIndex != 0) {
+                    _workoutBaseExerciseViewModel.currentIndex--;
+                  } else {
+                    Get.back();
+                    print('Back else');
+                  }
                 }
               }),
           Expanded(

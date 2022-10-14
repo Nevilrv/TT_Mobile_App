@@ -17,6 +17,11 @@ Widget repsType({
   for (int i = 0; i < int.parse(sets); i++) {
     controller.repsList.add(int.parse(reps));
   }
+
+  controller.repsIndexList
+      .addAll({"${controller.currentIndex}": controller.repsList});
+  print('repsIndexList >>> ${controller.repsIndexList}');
+  // print('uyuyuy ${controller.repsIndexList["1"][0]}');
   return Scaffold(
     backgroundColor: ColorUtils.kBlack,
     body: SingleChildScrollView(
@@ -117,26 +122,59 @@ class _CounterCardState extends State<CounterCard> {
   Widget build(BuildContext context) {
     return GetBuilder<WorkoutBaseExerciseViewModel>(
       builder: (controller) {
-        try {
-          return Padding(
-            padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
-            child: Container(
-              height: Get.height * .1,
-              width: Get.width,
-              decoration: BoxDecoration(
-                  border: Border.all(color: ColorUtils.kBlack, width: 2),
-                  gradient: LinearGradient(
-                      colors: ColorUtilsGradient.kGrayGradient,
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter),
-                  borderRadius: BorderRadius.circular(6)),
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                InkWell(
+        return Padding(
+          padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
+          child: Container(
+            height: Get.height * .1,
+            width: Get.width,
+            decoration: BoxDecoration(
+                border: Border.all(color: ColorUtils.kBlack, width: 2),
+                gradient: LinearGradient(
+                    colors: ColorUtilsGradient.kGrayGradient,
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter),
+                borderRadius: BorderRadius.circular(6)),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              InkWell(
+                onTap: () {
+                  print('controller.repsList[index] ');
+                  controller.updateRepsList(
+                      index: widget.index,
+                      isPlus: false,
+                      key: "${controller.currentIndex}");
+                },
+                child: Container(
+                  height: Get.height * .06,
+                  width: Get.height * .06,
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                          colors: ColorUtilsGradient.kTintGradient,
+                          stops: [0.0, 1.0],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter)),
+                  child: Icon(Icons.remove, color: ColorUtils.kBlack),
+                ),
+              ),
+              SizedBox(width: Get.width * .08),
+              RichText(
+                  text: TextSpan(
+                      text:
+                          '${controller.repsIndexList["${controller.currentIndex}"][widget.index]} ',
+                      // text:
+                      //     '${controller.repsIndexList[controller.currentIndex][widget.index]} ',
+                      style: controller.repsIndexList["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
+                      children: [
+                    TextSpan(
+                        text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
+                  ])),
+              SizedBox(width: Get.width * .08),
+              InkWell(
                   onTap: () {
-                    print('controller.repsList[index] ');
                     controller.updateRepsList(
-                        index: widget.index, isPlus: false);
+                        index: widget.index,
+                        isPlus: true,
+                        key: "${controller.currentIndex}");
                   },
                   child: Container(
                     height: Get.height * .06,
@@ -148,46 +186,11 @@ class _CounterCardState extends State<CounterCard> {
                             stops: [0.0, 1.0],
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter)),
-                    child: Icon(Icons.remove, color: ColorUtils.kBlack),
-                  ),
-                ),
-                SizedBox(width: Get.width * .08),
-                RichText(
-                    text: TextSpan(
-                        text: '${controller.repsList[widget.index]} ',
-                        style: controller.repsList[widget.index] == 0
-                            ? FontTextStyle.kWhite24BoldRoboto
-                                .copyWith(color: ColorUtils.kGray)
-                            : FontTextStyle.kWhite24BoldRoboto,
-                        children: [
-                      TextSpan(
-                          text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
-                    ])),
-                SizedBox(width: Get.width * .08),
-                InkWell(
-                    onTap: () {
-                      controller.updateRepsList(
-                          index: widget.index, isPlus: true);
-                    },
-                    child: Container(
-                      height: Get.height * .06,
-                      width: Get.height * .06,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                              colors: ColorUtilsGradient.kTintGradient,
-                              stops: [0.0, 1.0],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter)),
-                      child: Icon(Icons.add, color: ColorUtils.kBlack),
-                    )),
-              ]),
-            ),
-          );
-        } catch (e) {
-          return SizedBox();
-          // TODO
-        }
+                    child: Icon(Icons.add, color: ColorUtils.kBlack),
+                  )),
+            ]),
+          ),
+        );
       },
     );
   }

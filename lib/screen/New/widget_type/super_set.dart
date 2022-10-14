@@ -15,9 +15,15 @@ import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.
 class SuperSetExercise extends StatefulWidget {
   final List superSetExercisesList;
   final int roundCount;
+  final List superSetIdList;
+  final int superSetRound;
 
   const SuperSetExercise(
-      {Key? key, required this.superSetExercisesList, required this.roundCount})
+      {Key? key,
+      required this.superSetExercisesList,
+      required this.roundCount,
+      required this.superSetRound,
+      required this.superSetIdList})
       : super(key: key);
 
   @override
@@ -33,6 +39,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
   TextEditingController? _weightTextEditingController;
   // UpdateStatusUserProgramViewModel _updateStatusUserProgramViewModel =
   //     Get.put(UpdateStatusUserProgramViewModel());
+  Map<String, dynamic> repsMap = {};
 
   formattedTime({required int timeInSecond}) {
     int sec = timeInSecond % 60;
@@ -173,29 +180,10 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           ExerciseByIdResponseModel response = snapshot.data!;
-          _workoutBaseExerciseViewModel.dataAdd(
-              round: widget.roundCount,
-              title: response.data![0].exerciseTitle.toString(),
-              counter: int.parse(response.data![0].exerciseReps.toString()));
-          // textEditingController = TextEditingController(
-          //     text: response.data![0].exerciseWeight ?? "30");
-          // _userWorkoutsDateViewModel.supersetWeight =
-          //     TextEditingController(text: response.data![0].exerciseWeight);
-          /// newww
-          // controllerWorkoutBaseExercise.superSetDataCountList.add({
-          //   "${response.data![0].exerciseTitle.toString()}":
-          //       response.data![0].exerciseReps,
-          //   "${response.data![0].exerciseTitle.toString()}lbs":
-          //       response.data![0].exerciseWeight,
-          // });
-          // controllerWorkoutBaseExercise.superSetDataCountList.add({
-          //   "${response.data![0].exerciseTitle.toString()}":
-          //   response.data![0].exerciseReps == "0"
-          //       ? "0"
-          //       : response.data![0].exerciseReps,
-          //   "${response.data![0].exerciseTitle.toString()}lbs":
-          //   response.data![0].exerciseWeight ?? "0",
-          // });
+          repsMap.addAll({
+            "${snapshot.data!.data![0].exerciseTitle}":
+                snapshot.data!.data![0].exerciseReps
+          });
           if (response.data![0].exerciseType == "REPS") {
             if (_workoutBaseExerciseViewModel.superSetApiCall == true) {
               _workoutBaseExerciseViewModel.superSetApiCall = false;

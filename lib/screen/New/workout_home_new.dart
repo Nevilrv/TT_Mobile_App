@@ -23,6 +23,8 @@ class WorkoutHomeNew extends StatefulWidget {
   final String workoutId;
   final String exerciseId;
   final List warmUpList;
+  final String userProgramDate;
+  final String superSetRound;
   final List exercisesList;
   final List withoutWarmUpExercisesList;
   final List superSetList;
@@ -35,6 +37,8 @@ class WorkoutHomeNew extends StatefulWidget {
     required this.superSetList,
     required this.withoutWarmUpExercisesList,
     required this.warmUpList,
+    required this.userProgramDate,
+    required this.superSetRound,
   }) : super(key: key);
 
   @override
@@ -536,15 +540,15 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                           Get.to(
                                                               () => NewNoWeightExercise(
                                                                   userProgramDatesId:
-                                                                      _userWorkoutsDateViewModel
-                                                                          .userProgramDatesId,
-                                                                  superSetRound: _userWorkoutsDateViewModel
-                                                                              .superSetsRound ==
+                                                                      widget
+                                                                          .userProgramDate,
+                                                                  superSetRound: widget
+                                                                              .superSetRound ==
                                                                           ""
                                                                       ? 1
                                                                       : int.parse(
-                                                                          _userWorkoutsDateViewModel
-                                                                              .superSetsRound),
+                                                                          widget
+                                                                              .superSetRound),
                                                                   exerciseList:
                                                                       widget
                                                                           .exercisesList,
@@ -571,15 +575,15 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                           Get.to(
                                                               () => NewNoWeightExercise(
                                                                   userProgramDatesId:
-                                                                      _userWorkoutsDateViewModel
-                                                                          .userProgramDatesId,
-                                                                  superSetRound: _userWorkoutsDateViewModel
-                                                                              .superSetsRound ==
+                                                                      widget
+                                                                          .userProgramDate,
+                                                                  superSetRound: widget
+                                                                              .superSetRound ==
                                                                           ""
                                                                       ? 1
                                                                       : int.parse(
-                                                                          _userWorkoutsDateViewModel
-                                                                              .superSetsRound),
+                                                                          widget
+                                                                              .superSetRound),
                                                                   superSetList:
                                                                       widget
                                                                           .superSetList,
@@ -1137,15 +1141,15 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                         Get.to(
                                                             () => NewNoWeightExercise(
                                                                 userProgramDatesId:
-                                                                    _userWorkoutsDateViewModel
-                                                                        .userProgramDatesId,
-                                                                superSetRound: _userWorkoutsDateViewModel
-                                                                            .superSetsRound ==
+                                                                    widget
+                                                                        .userProgramDate,
+                                                                superSetRound: widget
+                                                                            .superSetRound ==
                                                                         ""
                                                                     ? 1
                                                                     : int.parse(
-                                                                        _userWorkoutsDateViewModel
-                                                                            .superSetsRound),
+                                                                        widget
+                                                                            .superSetRound),
                                                                 exerciseList: widget
                                                                     .exercisesList,
                                                                 superSetList: widget
@@ -1172,15 +1176,15 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                         Get.to(
                                                             () => NewNoWeightExercise(
                                                                 userProgramDatesId:
-                                                                    _userWorkoutsDateViewModel
-                                                                        .userProgramDatesId,
-                                                                superSetRound: _userWorkoutsDateViewModel
-                                                                            .superSetsRound ==
+                                                                    widget
+                                                                        .userProgramDate,
+                                                                superSetRound: widget
+                                                                            .superSetRound ==
                                                                         ""
                                                                     ? 1
                                                                     : int.parse(
-                                                                        _userWorkoutsDateViewModel
-                                                                            .superSetsRound),
+                                                                        widget
+                                                                            .superSetRound),
                                                                 superSetList: widget
                                                                     .superSetList,
                                                                 exerciseList: widget

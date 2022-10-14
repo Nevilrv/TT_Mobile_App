@@ -277,9 +277,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                             controller: controller
                                                 .dateRangePickerController,
                                             initialDisplayDate:
-                                                controller.dayList.isNotEmpty
+                                                /* controller.dayList.isNotEmpty
                                                     ? controller.dayList.first
-                                                    : DateTime.now(),
+                                                    :*/
+                                                DateTime.now(),
                                             todayHighlightColor:
                                                 ColorUtils.kTint,
                                             selectionColor: Colors.transparent,
