@@ -1,5 +1,6 @@
 import 'dart:developer' as d;
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 import 'package:social_share/social_share.dart';
 import 'package:tcm/model/request_model/forum_request_model/dislike_forum_request_model.dart';
@@ -404,13 +406,23 @@ class _ForumScreenState extends State<ForumScreen> {
                                   video: response.data![index].postImage![0]),
                             ),
                           )
-                        : Center(
-                            child: Container(
-                              width: Get.width,
-                              height: Get.height * 0.23,
-                              child: Image.network(
-                                response.data![index].postImage![0],
-                                fit: BoxFit.cover,
+                        : Container(
+                            width: Get.width,
+                            height: Get.height * 0.23,
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  '${response.data![index].postImage![0]}',
+                              fit: BoxFit.fill,
+                              errorWidget: (context, url, error) => SizedBox(),
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                      Shimmer.fromColors(
+                                baseColor: Colors.white.withOpacity(0.4),
+                                highlightColor: Colors.white.withOpacity(0.2),
+                                enabled: true,
+                                child: Container(
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           )

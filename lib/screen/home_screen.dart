@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,7 +22,6 @@ import 'package:tcm/screen/schedule_screens/my_schedule_screen.dart';
 import 'package:tcm/screen/signIn_screens.dart';
 import 'package:tcm/screen/training_plan_screens/training_plan.dart';
 import 'package:tcm/screen/video_library/video_library_screen.dart';
-import 'package:tcm/screen/workout_screen/workout_home.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
@@ -549,27 +546,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ),
                                                       GestureDetector(
                                                         onTap: () {
-                                                          // Navigator.push(
-                                                          //   context,
-                                                          //   CustomMaterialPageRoute(
-                                                          //     builder: (context) =>
-                                                          //         WorkoutHomeScreen(
-                                                          //       exeData:
-                                                          //           exerciseResponse!
-                                                          //               .data!,
-                                                          //       data: workoutResponse!
-                                                          //           .data!,
-                                                          //     ),
-                                                          //   ),
-                                                          // );
-                                                          /*Get.to(WorkoutHomeNew(
-                                                      workoutId:
-                                                          _userWorkoutsDateViewModel
-                                                              .userProgramDatesId,
-                                                      exerciseId:
-                                                          _userWorkoutsDateViewModel
-                                                              .withWarmupExercisesList[0],
-                                                    ));*/
                                                           Get.to(WorkoutHomeNew(
                                                             withoutWarmUpExercisesList:
                                                                 withoutWarmupAllId,
@@ -589,22 +565,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                                     .data!
                                                                     .selectedWarmup!,
                                                           ));
-                                                          /* Get.to(
-                                                              WorkoutHomeScreen(
-                                                            exeData:
-                                                                exerciseResponse!
-                                                                    .data!,
-                                                            data:
-                                                                workoutResponse!
-                                                                    .data!,
-                                                            date: today
-                                                                .toString()
-                                                                .split(' ')
-                                                                .first,
-                                                          ));*/
-                                                          setState(() {
-                                                            oneTime = false;
-                                                          });
+
+                                                          oneTime = false;
                                                         },
                                                         child: Container(
                                                           height: Get.height *
@@ -703,9 +665,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   onTap: () {
                                                     Get.to(
                                                         TrainingPlanScreen());
-                                                    setState(() {
-                                                      oneTime = false;
-                                                    });
+
+                                                    oneTime = false;
                                                   },
                                                   child: Container(
                                                     height: Get.height * .05,
@@ -784,9 +745,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                             child: GestureDetector(
                                               onTap: () {
                                                 Get.to(TrainingPlanScreen());
-                                                setState(() {
-                                                  oneTime = false;
-                                                });
+
+                                                oneTime = false;
                                               },
                                               child: Container(
                                                 height: Get.height * .05,
@@ -833,18 +793,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         category(
                             onTap: () {
                               Get.to(TrainingPlanScreen());
-                              setState(() {
-                                oneTime = false;
-                              });
+
+                              oneTime = false;
                             },
                             image: 'asset/images/training.png',
-                            text: 'Training Plans'),
+                            text: 'Trainin Plans'),
                         category(
                             onTap: () {
                               Get.to(VideoLibraryScreen());
-                              setState(() {
-                                oneTime = false;
-                              });
+
+                              oneTime = false;
                             },
                             image: 'asset/images/videos.png',
                             text: 'Video Library'),
@@ -853,9 +811,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             text: 'The Forums',
                             onTap: () {
                               Get.to(ForumScreen());
-                              setState(() {
-                                oneTime = false;
-                              });
+
+                              oneTime = false;
                             }),
                         category(
                             image: 'asset/images/habit.png',
@@ -872,9 +829,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               } else {
                                 Get.to(UpdateProgressScreen());
                               }
-                              setState(() {
-                                oneTime = false;
-                              });
+
+                              oneTime = false;
                             })
                       ]),
                     ),
@@ -970,115 +926,73 @@ class _HomeScreenState extends State<HomeScreen> {
                   )),
             ],
           ),
-
           SizedBox(
             height: Get.height * .02,
           ),
-          GetBuilder<UserDetailViewModel>(
-            builder: (controller) {
-              if (controller.apiResponse.status == Status.LOADING) {
-                return Center(
-                  child: CircularProgressIndicator(color: ColorUtils.kTint),
-                );
-              }
-              if (controller.apiResponse.status == Status.ERROR) {
-                return Center(
-                  child: Text('Data Not Found!',
-                      style: FontTextStyle.kTine16W400Roboto),
-                );
-              }
-              UserdetailResponseModel response = controller.apiResponse.data;
-
-              if (response.data != null ||
-                  response.data != '' ||
-                  response.success == true) {
-                return Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        Get.to(ProfileViewScreen(
-                          userDetails: response.data,
-                        ));
-                      },
-                      child: CircleAvatar(
-                        radius: 80,
-                        backgroundColor: Color(0xff363636),
-                        child: ClipRRect(
-                          child: Container(
-                            height: 160,
-                            width: 160,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(120),
-                              border: Border.all(color: Colors.white, width: 4),
-                              color: Color(0xff363636),
-                            ),
-                            child: PreferenceManager.getProfilePic() == ''
-                                ? ClipRRect(
+          Column(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                  _connectivityCheckViewModel.userData.addAll({
+                    'firstName': PreferenceManager.getFirstName() ?? '',
+                    'lastName': PreferenceManager.getLastName() ?? '',
+                    'email': PreferenceManager.getEmail() ?? '',
+                    'dob': PreferenceManager.getDOB() ?? '',
+                    'userName': PreferenceManager.getUserName() ?? '',
+                    'weight': PreferenceManager.getWeight() ?? '',
+                    'image': PreferenceManager.getProfilePic() ?? '',
+                  });
+                  Get.to(ProfileViewScreen());
+                },
+                child: CircleAvatar(
+                  radius: 80,
+                  backgroundColor: Color(0xff363636),
+                  child: ClipRRect(
+                    child: Container(
+                      height: 160,
+                      width: 160,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(120),
+                        border: Border.all(color: Colors.white, width: 4),
+                        color: Color(0xff363636),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(120),
+                        child: CachedNetworkImage(
+                            imageUrl: '${PreferenceManager.getProfilePic()}',
+                            fit: BoxFit.fill,
+                            errorWidget: (context, url, error) => ClipRRect(
+                                  borderRadius: BorderRadius.circular(120),
+                                  child: Image.asset(
+                                    AppImages.logo,
+                                    scale: 2,
+                                  ),
+                                ),
+                            progressIndicatorBuilder: (context, url,
+                                    downloadProgress) =>
+                                Shimmer.fromColors(
+                                  baseColor: Colors.white.withOpacity(0.4),
+                                  highlightColor: Colors.white.withOpacity(0.2),
+                                  enabled: true,
+                                  child: ClipRRect(
                                     borderRadius: BorderRadius.circular(120),
-                                    child: Image.asset(
-                                      AppImages.logo,
-                                      scale: 2,
-                                    ),
-                                  )
-                                : PreferenceManager.getProfilePic() == null
-                                    ? Center(
-                                        child: CircularProgressIndicator(
-                                            color: ColorUtils.kTint),
-                                      )
-                                    : ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(120),
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              PreferenceManager.getProfilePic(),
-
-                                          fit: BoxFit.fill,
-
-                                          progressIndicatorBuilder: (context,
-                                                  url, downloadProgress) =>
-                                              CircularProgressIndicator(
-                                                  value:
-                                                      downloadProgress.progress,
-                                                  color: ColorUtils.kTint),
-                                          // loadingBuilder: (BuildContext context,
-                                          //     Widget child,
-                                          //     ImageChunkEvent?
-                                          //         loadingProgress) {
-                                          //   if (loadingProgress == null) {
-                                          //     return child;
-                                          //   }
-                                          //   return Center(
-                                          //     child: CircularProgressIndicator(
-                                          //         color: ColorUtils.kTint,
-                                          //         value: loadingProgress
-                                          //                     .expectedTotalBytes !=
-                                          //                 null
-                                          //             ? loadingProgress
-                                          //                     .cumulativeBytesLoaded /
-                                          //                 loadingProgress
-                                          //                     .expectedTotalBytes!
-                                          //             : null),
-                                          //   );
-                                          // },
-                                        ),
-                                      ),
-                          ),
-                        ),
+                                    child: Container(color: Colors.white),
+                                  ),
+                                )),
                       ),
                     ),
-                    SizedBox(
-                      height: Get.height * .01,
-                    ),
-                    Text(
-                      '${PreferenceManager.getUserName() == null || PreferenceManager.getUserName() == '' ? '' : PreferenceManager.getUserName() ?? response.data!.name}',
-                      style: FontTextStyle.kWhite16BoldRoboto,
-                    ),
-                  ],
-                );
-              } else {
-                return SizedBox();
-              }
-            },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: Get.height * .01,
+              ),
+              Text(
+                '${PreferenceManager.getUserName() == null || PreferenceManager.getUserName() == '' ? '' : PreferenceManager.getUserName() ?? ''}',
+                style: FontTextStyle.kWhite16BoldRoboto,
+              ),
+            ],
           ),
           SizedBox(
             height: Get.height * .05,
@@ -1087,10 +1001,11 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.dumbell,
               text: 'Training Plans',
               onTap: () {
+                Navigator.pop(context);
+
                 Get.to(TrainingPlanScreen());
-                setState(() {
-                  oneTime = false;
-                });
+
+                oneTime = false;
               }),
           SizedBox(
             height: Get.height * .03,
@@ -1099,10 +1014,11 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.video,
               text: 'Video Library',
               onTap: () {
+                Navigator.pop(context);
+
                 Get.to(VideoLibraryScreen());
-                setState(() {
-                  oneTime = false;
-                });
+
+                oneTime = false;
               }),
           SizedBox(
             height: Get.height * .03,
@@ -1111,10 +1027,11 @@ class _HomeScreenState extends State<HomeScreen> {
             image: AppIcons.forum,
             text: 'The Forums',
             onTap: () {
+              Navigator.pop(context);
+
               Get.to(ForumScreen());
-              setState(() {
-                oneTime = false;
-              });
+
+              oneTime = false;
             },
           ),
           SizedBox(
@@ -1124,6 +1041,8 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.journal,
               text: 'Habit Tracker',
               onTap: () {
+                Navigator.pop(context);
+
                 // Get.to(HabitTrackerHomeScreen());
                 if (response!.data![0].habitId == "" ||
                     response!.data![0].habitId!.isEmpty &&
@@ -1136,46 +1055,30 @@ class _HomeScreenState extends State<HomeScreen> {
                 } else {
                   Get.to(UpdateProgressScreen());
                 }
-                setState(() {
-                  oneTime = false;
-                });
+
+                oneTime = false;
               }),
           SizedBox(
             height: Get.height * .03,
           ),
-          GetBuilder<UserDetailViewModel>(
-            builder: (controller) {
-              if (controller.apiResponse.status == Status.LOADING) {
-                return Center(
-                  child: CircularProgressIndicator(color: ColorUtils.kTint),
-                );
-              }
-              if (controller.apiResponse.status == Status.ERROR) {
-                return Center(
-                  child: Text('Data Not Found!',
-                      style: FontTextStyle.kTine16W400Roboto),
-                );
-              }
-              UserdetailResponseModel response = controller.apiResponse.data;
-              if (response.data != null ||
-                  response.data != '' ||
-                  response.success == true) {
-                return bild(
-                    image: AppIcons.profile_app_icon,
-                    text: 'Profile',
-                    onTap: () {
-                      Get.to(EditProfilePage(
-                        userDetails: response.data,
-                      ));
-                      setState(() {
-                        oneTime = false;
-                      });
-                    });
-              } else {
-                return SizedBox();
-              }
-            },
-          ),
+          bild(
+              image: AppIcons.profile_app_icon,
+              text: 'Profile',
+              onTap: () {
+                Navigator.pop(context);
+                _connectivityCheckViewModel.userData.addAll({
+                  'firstName': PreferenceManager.getFirstName() ?? '',
+                  'lastName': PreferenceManager.getLastName() ?? '',
+                  'email': PreferenceManager.getEmail() ?? '',
+                  'dob': PreferenceManager.getDOB() ?? '',
+                  'userName': PreferenceManager.getUserName() ?? '',
+                  'weight': PreferenceManager.getWeight() ?? '',
+                  'image': PreferenceManager.getProfilePic() ?? '',
+                });
+                Get.to(EditProfilePage());
+
+                oneTime = false;
+              }),
           SizedBox(
             height: Get.height * .03,
           ),
@@ -1183,10 +1086,11 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.calendar,
               text: 'Schedule',
               onTap: () {
+                Navigator.pop(context);
+
                 Get.to(MyScheduleScreen());
-                setState(() {
-                  oneTime = false;
-                });
+
+                oneTime = false;
               }),
           SizedBox(
             height: Get.height * .03,
@@ -1195,6 +1099,8 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.logout,
               text: 'Sign Out',
               onTap: () {
+                Navigator.pop(context);
+
                 _logOutAlertDialog(onTapCancel: () {
                   Get.back();
                 }, onTapLogOut: () {
@@ -1208,28 +1114,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 });
               }),
           SizedBox(height: Get.height * .08),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          //   children: [
-          //     GestureDetector(
-          //       onTap: () {
-          //         _homeViewModel.launchInsta();
-          //       },
-          //       child: Image.asset(AppIcons.instagram),
-          //     ),
-          //     GestureDetector(
-          //         onTap: () {
-          //           _homeViewModel.launchYoutube();
-          //         },
-          //         child: Image.asset(AppIcons.youtube)),
-          //     GestureDetector(
-          //         onTap: () {
-          //           _homeViewModel.launchTwitter();
-          //         },
-          //         child: Image.asset(AppIcons.twitter))
-          //   ],
-          // ),
-          // SizedBox(height: Get.height * .04)
         ]),
       ),
     );

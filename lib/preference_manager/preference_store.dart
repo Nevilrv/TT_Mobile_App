@@ -7,7 +7,7 @@ class PreferenceManager {
     await getStorage.write('email', value);
   }
 
-  static String getEmail() {
+  static getEmail() {
     return getStorage.read('email');
   }
 
@@ -15,7 +15,7 @@ class PreferenceManager {
     await getStorage.write('image', value);
   }
 
-  static String getImage() {
+  static getImage() {
     return getStorage.read('image');
   }
 

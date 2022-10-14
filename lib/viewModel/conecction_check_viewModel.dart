@@ -58,4 +58,26 @@ class ConnectivityCheckViewModel extends GetxController {
     }
     return isConnected;
   }
+
+  Map<String, dynamic> userData = {};
+  setUserData({
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String dob,
+    required String userName,
+    required String weight,
+    required String image,
+  }) {
+    userData.addAll({
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'dob': dob,
+      'userName': userName,
+      'weight': weight,
+      'image': image,
+    });
+    update();
+  }
 }

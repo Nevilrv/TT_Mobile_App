@@ -9,8 +9,6 @@ import 'package:tcm/repo/edit_profile_repo.dart';
 class EditProfileViewModel extends GetxController {
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
-  File? image;
-
   ApiResponse get apiResponse => _apiResponse;
   late EditProfileResponseModel response;
   Future<void> editProfileViewModel(EditProfileRequestModel model) async {
@@ -27,6 +25,18 @@ class EditProfileViewModel extends GetxController {
       _apiResponse = ApiResponse.error(message: e.toString());
       print(".........   $e");
     }
+    update();
+  }
+
+  File? image;
+  setImage(imageValue) {
+    image = imageValue;
+    update();
+  }
+
+  bool isUpload = false;
+  setIsUpload({required bool isLoading}) {
+    isUpload = isLoading;
     update();
   }
 }

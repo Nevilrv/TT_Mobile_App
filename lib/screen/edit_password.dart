@@ -519,9 +519,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                               duration: Duration(seconds: 2),
                                             ));
 
-                                            Get.off(ProfileViewScreen(
-                                              userDetails: null,
-                                            ));
+                                            Get.off(ProfileViewScreen());
                                           }
                                         } else if (response.msg == null ||
                                             response.msg == "") {

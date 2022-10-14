@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -13,25 +12,19 @@ import 'package:tcm/model/response_model/edit_profile_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/edit_password.dart';
-import 'package:tcm/screen/profile_view_screen.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/edit_profile_viewModel.dart';
 import 'package:dio/dio.dart' as dio;
-
-import '../model/response_model/user_detail_response_model.dart';
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
 
 // ignore: must_be_immutable
 class EditProfilePage extends StatefulWidget {
-  Data? userDetails;
-  final File? image;
+  // Data? userDetails;
 
   EditProfilePage({
     Key? key,
-    required this.userDetails,
-    this.image,
   }) : super(key: key);
 
   @override
@@ -44,7 +37,6 @@ const String INIT_DATETIME = '2019-05-16 09:00:58';
 const String DATE_FORMAT = 'yyyy-MM-dd,H时:m分';
 
 class _EditProfilePageState extends State<EditProfilePage> {
-  File? _image;
   ImagePicker? picker = ImagePicker();
 
   final _formKeyEditProfile = GlobalKey<FormState>();
@@ -78,13 +70,18 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Future pickImage() async {
     final pickedFile = await picker!.getImage(source: ImageSource.gallery);
 
-    setState(() {
-      _image = File(pickedFile!.path);
-      if (_image != null) {}
-    });
+    _editProfileViewModel.image = File(pickedFile!.path);
+    if (_editProfileViewModel.image != null) {
+      _editProfileViewModel.setImage(_editProfileViewModel.image);
+      Get.to(ProfileSizer(
+        image: _editProfileViewModel.image,
+        id: PreferenceManager.getUId(),
+      ));
+    }
   }
 
   initState() {
+    _editProfileViewModel.isUpload = false;
     _connectivityCheckViewModel.startMonitoring();
     super.initState();
     email = TextEditingController(text: PreferenceManager.getEmail());
@@ -96,730 +93,829 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<EditProfileViewModel>(builder: (controller) {
-      if (controller.apiResponse.status == Status.LOADING) {
-        return Center(
-          child: CircularProgressIndicator(color: ColorUtils.kTint),
-        );
-      }
-      prefDOB = DateTime.parse(PreferenceManager.getDOB());
-      return GetBuilder<ConnectivityCheckViewModel>(
-        builder: (control) => control.isOnline
-            ? Scaffold(
-                backgroundColor: ColorUtils.kBlack,
-                appBar: AppBar(
-                  elevation: 0,
-                  leading: IconButton(
-                      onPressed: () {
-                        Get.back();
-                      },
-                      icon: Icon(
-                        Icons.arrow_back_ios_sharp,
-                        color: ColorUtils.kTint,
-                      )),
-                  backgroundColor: ColorUtils.kBlack,
-                  title: Text('My Profile',
-                      style: FontTextStyle.kWhite16BoldRoboto),
-                  centerTitle: true,
-                ),
-                body: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
-                  child: Column(children: [
-                    SizedBox(
-                      height: Get.height * .02,
-                    ),
-                    Center(
-                      child: Stack(
-                        children: [
-                          widget.image == null
-                              ? CircleAvatar(
-                                  radius: 80,
-                                  backgroundColor: Color(0xff363636),
-                                  child: ClipRRect(
-                                    child: Container(
-                                      height: 160,
-                                      width: 160,
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(120),
-                                        border: Border.all(
-                                            color: Colors.white, width: 4),
-                                        color: Color(0xff363636),
-                                      ),
-                                      child: PreferenceManager
-                                                  .getProfilePic() ==
-                                              ''
-                                          ? ClipRRect(
+    try {
+      return GetBuilder<EditProfileViewModel>(builder: (controller) {
+        prefDOB = DateTime.parse(PreferenceManager.getDOB());
+        return GetBuilder<ConnectivityCheckViewModel>(
+          builder: (control) => control.isOnline
+              ? controller.isUpload
+                  ? Center(
+                      child: CircularProgressIndicator(color: ColorUtils.kTint),
+                    )
+                  : Scaffold(
+                      backgroundColor: ColorUtils.kBlack,
+                      appBar: AppBar(
+                        elevation: 0,
+                        leading: IconButton(
+                            onPressed: () {
+                              Get.back();
+                            },
+                            icon: Icon(
+                              Icons.arrow_back_ios_sharp,
+                              color: ColorUtils.kTint,
+                            )),
+                        backgroundColor: ColorUtils.kBlack,
+                        title: Text('FMy Profile',
+                            style: FontTextStyle.kWhite16BoldRoboto),
+                        centerTitle: true,
+                      ),
+                      body: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(children: [
+                          SizedBox(
+                            height: Get.height * .02,
+                          ),
+                          Center(
+                            child: Stack(
+                              children: [
+                                controller.image == null
+                                    ? CircleAvatar(
+                                        radius: 80,
+                                        backgroundColor: Color(0xff363636),
+                                        child: ClipRRect(
+                                          child: Container(
+                                            height: 160,
+                                            width: 160,
+                                            decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(120),
-                                              child: Image.asset(
-                                                AppImages.logo,
-                                                scale: 2,
-                                              ),
-                                            )
-                                          : PreferenceManager.getProfilePic() ==
-                                                  null
-                                              ? Center(
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                          color:
-                                                              ColorUtils.kTint),
-                                                )
-                                              : ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          120),
-                                                  child: CachedNetworkImage(
-                                                    imageUrl: PreferenceManager
-                                                        .getProfilePic(),
+                                              border: Border.all(
+                                                  color: Colors.white,
+                                                  width: 4),
+                                              color: Color(0xff363636),
+                                            ),
+                                            child: PreferenceManager
+                                                        .getProfilePic() ==
+                                                    ''
+                                                ? ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            120),
+                                                    child: Image.asset(
+                                                      AppImages.logo,
+                                                      scale: 2,
+                                                    ),
+                                                  )
+                                                : PreferenceManager
+                                                            .getProfilePic() ==
+                                                        null
+                                                    ? Center(
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                                color:
+                                                                    ColorUtils
+                                                                        .kTint),
+                                                      )
+                                                    : ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(120),
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          imageUrl:
+                                                              PreferenceManager
+                                                                  .getProfilePic(),
 
-                                                    fit: BoxFit.fill,
+                                                          fit: BoxFit.fill,
 
-                                                    progressIndicatorBuilder: (context,
-                                                            url,
-                                                            downloadProgress) =>
-                                                        CircularProgressIndicator(
-                                                            value:
-                                                                downloadProgress
-                                                                    .progress,
-                                                            color: ColorUtils
-                                                                .kTint),
-                                                    // loadingBuilder: (BuildContext context,
-                                                    //     Widget child,
-                                                    //     ImageChunkEvent?
-                                                    //         loadingProgress) {
-                                                    //   if (loadingProgress == null) {
-                                                    //     return child;
-                                                    //   }
-                                                    //   return Center(
-                                                    //     child: CircularProgressIndicator(
-                                                    //         color: ColorUtils.kTint,
-                                                    //         value: loadingProgress
-                                                    //                     .expectedTotalBytes !=
-                                                    //                 null
-                                                    //             ? loadingProgress
-                                                    //                     .cumulativeBytesLoaded /
-                                                    //                 loadingProgress
-                                                    //                     .expectedTotalBytes!
-                                                    //             : null),
-                                                    //   );
-                                                    // },
-                                                  ),
-                                                ),
-                                    ),
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  radius: 80,
-                                  backgroundColor: Color(0xff363636),
-                                  child: ClipRRect(
+                                                          progressIndicatorBuilder: (context,
+                                                                  url,
+                                                                  downloadProgress) =>
+                                                              CircularProgressIndicator(
+                                                                  value: downloadProgress
+                                                                      .progress,
+                                                                  color:
+                                                                      ColorUtils
+                                                                          .kTint),
+                                                          // loadingBuilder: (BuildContext context,
+                                                          //     Widget child,
+                                                          //     ImageChunkEvent?
+                                                          //         loadingProgress) {
+                                                          //   if (loadingProgress == null) {
+                                                          //     return child;
+                                                          //   }
+                                                          //   return Center(
+                                                          //     child: CircularProgressIndicator(
+                                                          //         color: ColorUtils.kTint,
+                                                          //         value: loadingProgress
+                                                          //                     .expectedTotalBytes !=
+                                                          //                 null
+                                                          //             ? loadingProgress
+                                                          //                     .cumulativeBytesLoaded /
+                                                          //                 loadingProgress
+                                                          //                     .expectedTotalBytes!
+                                                          //             : null),
+                                                          //   );
+                                                          // },
+                                                        ),
+                                                      ),
+                                          ),
+                                        ),
+                                      )
+                                    : CircleAvatar(
+                                        radius: 80,
+                                        backgroundColor: Color(0xff363636),
+                                        child: ClipRRect(
+                                          child: Container(
+                                            height: 160,
+                                            width: 160,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(120),
+                                                border: Border.all(
+                                                    color: Colors.white,
+                                                    width: 4),
+                                                color: Color(0xff363636),
+                                                image: DecorationImage(
+                                                  image: FileImage(
+                                                      controller.image!),
+                                                  fit: BoxFit.cover,
+                                                )),
+                                          ),
+                                        ),
+                                      ),
+                                Positioned(
+                                  top: 110,
+                                  left: 90,
+                                  child: FlatButton(
+                                    onPressed: () async {
+                                      pickImage();
+                                    },
                                     child: Container(
-                                      height: 160,
-                                      width: 160,
-                                      decoration: BoxDecoration(
+                                        alignment: Alignment.center,
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          color: ColorUtils.kTint,
                                           borderRadius:
-                                              BorderRadius.circular(120),
-                                          border: Border.all(
-                                              color: Colors.white, width: 4),
-                                          color: Color(0xff363636),
-                                          image: DecorationImage(
-                                            image: FileImage(widget.image!),
-                                            fit: BoxFit.cover,
-                                          )),
-                                    ),
+                                              BorderRadius.circular(50),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: ColorUtils.kBlack,
+                                          size: Get.height * .045,
+                                        )),
                                   ),
                                 ),
-                          Positioned(
-                            top: 110,
-                            left: 90,
-                            child: FlatButton(
-                              onPressed: () async {
-                                pickImage().then((value) => Get.to(ProfileSizer(
-                                      image: _image,
-                                      id: PreferenceManager.getUId(),
-                                    )));
-                              },
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    color: ColorUtils.kTint,
-                                    borderRadius: BorderRadius.circular(50),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: ColorUtils.kBlack,
-                                    size: Get.height * .045,
-                                  )),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: Get.height * .01,
-                    ),
-                    Text(
-                      '${PreferenceManager.getUserName() ?? widget.userDetails!.name}',
-                      style: FontTextStyle.kWhite24BoldRoboto,
-                    ),
-                    Form(
-                      key: _formKeyEditProfile,
-                      child: Column(children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: Get.height * 0.03,
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      'First name',
-                                      style: FontTextStyle.kGreyBoldRoboto,
+                          SizedBox(
+                            height: Get.height * .01,
+                          ),
+                          Text(
+                            '${PreferenceManager.getUserName() ?? ''}',
+                            style: FontTextStyle.kWhite24BoldRoboto,
+                          ),
+                          Form(
+                            key: _formKeyEditProfile,
+                            child: Column(children: [
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: Get.height * 0.03,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: Get.width * 0.05,
-                                  ),
-                                  Expanded(
-                                      child: Text('Last name',
-                                          style:
-                                              FontTextStyle.kGreyBoldRoboto)),
-                                ],
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                      child: textField(
-                                    readOnly: false,
-                                    text: 'First Name',
-                                    controller: fName,
-                                  )),
-                                  SizedBox(
-                                    width: Get.width * 0.05,
-                                  ),
-                                  Expanded(
-                                      child: textField(
-                                    readOnly: false,
-                                    text: 'Last Name',
-                                    controller: lName,
-                                  )),
-                                ],
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Email address',
-                                    style: FontTextStyle.kGreyBoldRoboto,
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * 0.01,
-                                  ),
-                                  TextFormField(
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: Get.height * 0.018),
-                                    // validator: (email) {
-                                    //   if (isEmailValid(email!)) {
-                                    //     return '';
-                                    //   }
-                                    // },
-                                    // onTap: () {
-                                    //   setState(() {
-                                    //     isNotValidEmail = false;
-                                    //   });
-                                    // },
-                                    keyboardType: TextInputType.emailAddress,
-                                    // initialValue: PreferenceManager.getEmail(),
-
-                                    controller: email,
-                                    decoration: InputDecoration(
-                                      hintText: 'user@user.com',
-                                      hintStyle: TextStyle(
-                                          color: ColorUtils.kHintTextGray,
-                                          fontSize: Get.height * 0.02,
-                                          fontWeight: FontWeight.w500),
-                                      filled: true,
-                                      errorStyle: TextStyle(fontSize: 0),
-                                      contentPadding: EdgeInsets.all(10),
-                                      fillColor: Color(0xff363636),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        // borderSide: BorderSide.none
-                                        borderSide:
-                                            !isEmailEmpty && !isNotValidEmail
-                                                ? BorderSide.none
-                                                : BorderSide(
-                                                    color: Colors.red,
-                                                    width: 2),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          // borderSide: BorderSide.none
-                                          borderSide:
-                                              !isEmailEmpty && !isNotValidEmail
-                                                  ? BorderSide.none
-                                                  : BorderSide(
-                                                      color: Colors.red,
-                                                      width: 2)),
-                                      errorBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          // borderSide: BorderSide.none
-                                          borderSide:
-                                              !isEmailEmpty && !isNotValidEmail
-                                                  ? BorderSide.none
-                                                  : BorderSide(
-                                                      color: Colors.red,
-                                                      width: 2)),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none),
-                                    ),
-                                  ),
-                                  isNotValidEmail
-                                      ? Text('   Please enter valid Email',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: ColorUtils.kRed))
-                                      : SizedBox(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              Text(
-                                'Date of Birth',
-                                style: FontTextStyle.kGreyBoldRoboto,
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              GestureDetector(
-                                  onTap: () {
-                                    DatePicker.showDatePicker(
-                                      context,
-                                      theme: DatePickerTheme(
-                                          backgroundColor: ColorUtils.kBlack,
-                                          cancelStyle:
-                                              FontTextStyle.kTine16W400Roboto,
-                                          doneStyle:
-                                              FontTextStyle.kTine16W400Roboto,
-                                          itemStyle:
-                                              FontTextStyle.kWhite16W300Roboto),
-                                      showTitleActions: true,
-                                      minTime: DateTime(1980, 1, 1),
-                                      maxTime: DateTime(2025, 12, 30),
-                                      onConfirm: (date) {
-                                        setState(() {
-                                          pickedDate = date;
-                                        });
-                                      },
-                                      currentTime: prefDOB,
-                                    );
-                                  },
-                                  child: Container(
-                                      alignment: Alignment.centerLeft,
-                                      height: 48,
-                                      width: Get.width,
-                                      decoration: BoxDecoration(
-                                          color: Color(0xff363636),
-                                          borderRadius:
-                                              BorderRadius.circular(8)),
-                                      child: Padding(
-                                        padding: EdgeInsets.only(left: 10),
-                                        child: Text(
-                                          pickedDate == null
-                                              ? '${DateFormat.yMMMMd().format(prefDOB!)}'
-                                              : '${DateFormat.yMMMMd().format(pickedDate!)}',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                              fontSize: Get.height * 0.018),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'First name',
+                                            style:
+                                                FontTextStyle.kGreyBoldRoboto,
+                                          ),
                                         ),
-                                      ))),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Username',
-                                    style: FontTextStyle.kGreyBoldRoboto,
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * 0.01,
-                                  ),
-                                  TextFormField(
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                        fontSize: Get.height * .018),
-                                    // validator: (value) {
-                                    //   if (!RegExp('[a-zA-Z]').hasMatch(value!)) {
-                                    //     setState(() {
-                                    //       isNotValidUserName = true;
-                                    //     });
-                                    //     return '';
-                                    //   }
-                                    // },
-                                    onTap: () {
-                                      setState(() {
-                                        isNotValidUserName = false;
-                                      });
-                                    },
-                                    // initialValue: PreferenceManager.getUserName(),
-                                    keyboardType: TextInputType.text,
-                                    controller: userName,
-                                    decoration: InputDecoration(
-                                      hintText: 'Edit your Username',
-                                      hintStyle: TextStyle(
-                                          color: ColorUtils.kHintTextGray,
-                                          fontSize: Get.height * 0.02,
-                                          fontWeight: FontWeight.w500),
-                                      filled: true,
-                                      errorStyle: TextStyle(fontSize: 0),
-                                      contentPadding: EdgeInsets.all(10),
-                                      fillColor: Color(0xff363636),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(8),
-                                        // borderSide: BorderSide.none
-                                        borderSide: !isNotValidUserName
-                                            ? BorderSide.none
-                                            : BorderSide(
-                                                color: Colors.red, width: 2),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          // borderSide: BorderSide.none
-                                          borderSide: !isNotValidUserName
-                                              ? BorderSide.none
-                                              : BorderSide(
-                                                  color: Colors.red, width: 2)),
-                                      errorBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          // borderSide: BorderSide.none
-                                          borderSide: !isNotValidUserName
-                                              ? BorderSide.none
-                                              : BorderSide(
-                                                  color: Colors.red, width: 2)),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          borderSide: BorderSide.none),
+                                        SizedBox(
+                                          width: Get.width * 0.05,
+                                        ),
+                                        Expanded(
+                                            child: Text('Last name',
+                                                style: FontTextStyle
+                                                    .kGreyBoldRoboto)),
+                                      ],
                                     ),
-                                  ),
-                                  isNotValidUserName
-                                      ? Text('   Please enter valid Username',
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: ColorUtils.kRed))
-                                      : SizedBox(),
-                                ],
-                              ),
-                              SizedBox(
-                                height: Get.height * 0.01,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Weight',
-                                    style: FontTextStyle.kGreyBoldRoboto,
-                                  ),
-                                  SizedBox(
-                                    height: Get.height * .01,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        height: 40,
-                                        width: Get.height * .18,
-                                        child: TextFormField(
-                                          onTap: () {},
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Expanded(
+                                            child: textField(
+                                          readOnly: false,
+                                          text: 'First Name',
+                                          controller: fName,
+                                        )),
+                                        SizedBox(
+                                          width: Get.width * 0.05,
+                                        ),
+                                        Expanded(
+                                            child: textField(
+                                          readOnly: false,
+                                          text: 'Last Name',
+                                          controller: lName,
+                                        )),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Email address',
+                                          style: FontTextStyle.kGreyBoldRoboto,
+                                        ),
+                                        SizedBox(
+                                          height: Get.height * 0.01,
+                                        ),
+                                        TextFormField(
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
                                               fontSize: Get.height * 0.018),
-                                          controller: weight,
-                                          // initialValue: PreferenceManager.getWeight(),
-                                          keyboardType: TextInputType.number,
+                                          // validator: (email) {
+                                          //   if (isEmailValid(email!)) {
+                                          //     return '';
+                                          //   }
+                                          // },
+                                          // onTap: () {
+                                          //   setState(() {
+                                          //     isNotValidEmail = false;
+                                          //   });
+                                          // },
+                                          keyboardType:
+                                              TextInputType.emailAddress,
+
+                                          controller: email,
                                           decoration: InputDecoration(
-                                            alignLabelWithHint: true,
+                                            hintText: 'user@user.com',
                                             hintStyle: TextStyle(
                                                 color: ColorUtils.kHintTextGray,
                                                 fontSize: Get.height * 0.02,
                                                 fontWeight: FontWeight.w500),
-                                            hintText: 'Weight',
                                             filled: true,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical: Get.height * .01,
-                                                    horizontal:
-                                                        Get.height * .011),
+                                            errorStyle: TextStyle(fontSize: 0),
+                                            contentPadding: EdgeInsets.all(10),
                                             fillColor: Color(0xff363636),
-                                            suffixIcon: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text('lbs',
-                                                    textAlign: TextAlign.center,
-                                                    style: FontTextStyle
-                                                        .kGreyBoldRoboto),
-                                              ],
-                                            ),
                                             focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                borderSide: BorderSide.none),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              // borderSide: BorderSide.none
+                                              borderSide: !isEmailEmpty &&
+                                                      !isNotValidEmail
+                                                  ? BorderSide.none
+                                                  : BorderSide(
+                                                      color: Colors.red,
+                                                      width: 2),
+                                            ),
                                             enabledBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(8),
-                                                borderSide: BorderSide.none),
+                                                // borderSide: BorderSide.none
+                                                borderSide: !isEmailEmpty &&
+                                                        !isNotValidEmail
+                                                    ? BorderSide.none
+                                                    : BorderSide(
+                                                        color: Colors.red,
+                                                        width: 2)),
+                                            errorBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                // borderSide: BorderSide.none
+                                                borderSide: !isEmailEmpty &&
+                                                        !isNotValidEmail
+                                                    ? BorderSide.none
+                                                    : BorderSide(
+                                                        color: Colors.red,
+                                                        width: 2)),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    borderSide:
+                                                        BorderSide.none),
                                           ),
                                         ),
-                                      )
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: Get.height * .03,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: Get.width * 0.05),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Get.to(EditPasswordPage());
-
-                                    // if (_formKeyEditProfile.currentState!.validate()) {
-                                    //   Get.to(SetProfilePage(
-                                    //     fname: fName.text,
-                                    //     lname: lName.text,
-                                    //     email: email.text.trim(),
-                                    //     pass: pass.text.trim(),
-                                    //     userName: userName.text,
-                                    //     gender: isRadioButton == 1 ? 'Male' : 'Female',
-                                    //     phone: '9638527410',
-                                    //     weight: weight.text,
-                                    //     dob: pickedDate.toString(),
-                                    //   ));
-                                    // } else {
-                                    //   Get.showSnackbar(GetSnackBar(
-                                    //     message: 'Please check your credentials',
-                                    //     duration: Duration(seconds: 1),
-                                    //   ));
-                                    // }
-                                  },
-                                  child: Container(
-                                    height: Get.height * 0.06,
-                                    width: Get.width * 0.9,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          stops: [0.0, 1.0],
-                                          colors:
-                                              ColorUtilsGradient.kTintGradient,
+                                        isNotValidEmail
+                                            ? Text(
+                                                '   Please enter valid Email',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: ColorUtils.kRed))
+                                            : SizedBox(),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Text(
+                                      'Date of Birth',
+                                      style: FontTextStyle.kGreyBoldRoboto,
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    GestureDetector(
+                                        onTap: () {
+                                          DatePicker.showDatePicker(
+                                            context,
+                                            theme: DatePickerTheme(
+                                                backgroundColor:
+                                                    ColorUtils.kBlack,
+                                                cancelStyle: FontTextStyle
+                                                    .kTine16W400Roboto,
+                                                doneStyle: FontTextStyle
+                                                    .kTine16W400Roboto,
+                                                itemStyle: FontTextStyle
+                                                    .kWhite16W300Roboto),
+                                            showTitleActions: true,
+                                            minTime: DateTime(1980, 1, 1),
+                                            maxTime: DateTime(2025, 12, 30),
+                                            onConfirm: (date) {
+                                              setState(() {
+                                                pickedDate = date;
+                                              });
+                                            },
+                                            currentTime: prefDOB,
+                                          );
+                                        },
+                                        child: Container(
+                                            alignment: Alignment.centerLeft,
+                                            height: 48,
+                                            width: Get.width,
+                                            decoration: BoxDecoration(
+                                                color: Color(0xff363636),
+                                                borderRadius:
+                                                    BorderRadius.circular(8)),
+                                            child: Padding(
+                                              padding:
+                                                  EdgeInsets.only(left: 10),
+                                              child: Text(
+                                                pickedDate == null
+                                                    ? '${DateFormat.yMMMMd().format(prefDOB!)}'
+                                                    : '${DateFormat.yMMMMd().format(pickedDate!)}',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        Get.height * 0.018),
+                                              ),
+                                            ))),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Username',
+                                          style: FontTextStyle.kGreyBoldRoboto,
                                         ),
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: ColorUtils.kTint),
-                                    child: Center(
-                                        child: Text(
-                                      'Reset Password',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: Get.height * 0.02),
-                                    )),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: Get.height * .03,
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: Get.width * 0.05),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    if (_formKeyEditProfile.currentState!
-                                        .validate()) {
-                                      EditProfileRequestModel _request =
-                                          EditProfileRequestModel();
+                                        SizedBox(
+                                          height: Get.height * 0.01,
+                                        ),
+                                        TextFormField(
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: Get.height * .018),
+                                          // validator: (value) {
+                                          //   if (!RegExp('[a-zA-Z]').hasMatch(value!)) {
+                                          //     setState(() {
+                                          //       isNotValidUserName = true;
+                                          //     });
+                                          //     return '';
+                                          //   }
+                                          // },
+                                          onTap: () {
+                                            setState(() {
+                                              isNotValidUserName = false;
+                                            });
+                                          },
+                                          keyboardType: TextInputType.text,
+                                          controller: userName,
+                                          decoration: InputDecoration(
+                                            hintText: 'Edit your Username',
+                                            hintStyle: TextStyle(
+                                                color: ColorUtils.kHintTextGray,
+                                                fontSize: Get.height * 0.02,
+                                                fontWeight: FontWeight.w500),
+                                            filled: true,
+                                            errorStyle: TextStyle(fontSize: 0),
+                                            contentPadding: EdgeInsets.all(10),
+                                            fillColor: Color(0xff363636),
+                                            focusedBorder: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              // borderSide: BorderSide.none
+                                              borderSide: !isNotValidUserName
+                                                  ? BorderSide.none
+                                                  : BorderSide(
+                                                      color: Colors.red,
+                                                      width: 2),
+                                            ),
+                                            enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                // borderSide: BorderSide.none
+                                                borderSide: !isNotValidUserName
+                                                    ? BorderSide.none
+                                                    : BorderSide(
+                                                        color: Colors.red,
+                                                        width: 2)),
+                                            errorBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                                // borderSide: BorderSide.none
+                                                borderSide: !isNotValidUserName
+                                                    ? BorderSide.none
+                                                    : BorderSide(
+                                                        color: Colors.red,
+                                                        width: 2)),
+                                            focusedErrorBorder:
+                                                OutlineInputBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    borderSide:
+                                                        BorderSide.none),
+                                          ),
+                                        ),
+                                        isNotValidUserName
+                                            ? Text(
+                                                '   Please enter valid Username',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: ColorUtils.kRed))
+                                            : SizedBox(),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * 0.01,
+                                    ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Weight',
+                                          style: FontTextStyle.kGreyBoldRoboto,
+                                        ),
+                                        SizedBox(
+                                          height: Get.height * .01,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              height: 40,
+                                              width: Get.height * .18,
+                                              child: TextFormField(
+                                                onTap: () {},
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
+                                                    fontSize:
+                                                        Get.height * 0.018),
+                                                controller: weight,
+                                                keyboardType:
+                                                    TextInputType.number,
+                                                decoration: InputDecoration(
+                                                  alignLabelWithHint: true,
+                                                  hintStyle: TextStyle(
+                                                      color: ColorUtils
+                                                          .kHintTextGray,
+                                                      fontSize:
+                                                          Get.height * 0.02,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                  hintText: 'Weight',
+                                                  filled: true,
+                                                  contentPadding:
+                                                      EdgeInsets.symmetric(
+                                                          vertical:
+                                                              Get.height * .01,
+                                                          horizontal:
+                                                              Get.height *
+                                                                  .011),
+                                                  fillColor: Color(0xff363636),
+                                                  suffixIcon: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text('lbs',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: FontTextStyle
+                                                              .kGreyBoldRoboto),
+                                                    ],
+                                                  ),
+                                                  focusedBorder:
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              BorderSide.none),
+                                                  enabledBorder:
+                                                      OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          borderSide:
+                                                              BorderSide.none),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * .03,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.width * 0.05),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Get.to(EditPasswordPage());
 
-                                      _request.userId =
-                                          PreferenceManager.getUId();
-                                      _request.fname = fName!.text.isEmpty
-                                          ? PreferenceManager.getFirstName()
-                                          : fName!.text;
-                                      _request.lname = lName!.text.isEmpty
-                                          ? PreferenceManager.getLastName()
-                                          : lName!.text;
-                                      _request.email = email!.text.isEmpty
-                                          ? PreferenceManager.getEmail()
-                                          : email!.text;
-                                      _request.username = userName!.text.isEmpty
-                                          ? PreferenceManager.getUserName()
-                                          : userName!.text;
-                                      _request.birthday = pickedDate == null
-                                          ? PreferenceManager.getDOB()
-                                          : pickedDate.toString();
-                                      _request.weight = weight!.text.isEmpty
-                                          ? PreferenceManager.getWeight()
-                                          : weight!.text;
+                                          // if (_formKeyEditProfile.currentState!.validate()) {
+                                          //   Get.to(SetProfilePage(
+                                          //     fname: fName.text,
+                                          //     lname: lName.text,
+                                          //     email: email.text.trim(),
+                                          //     pass: pass.text.trim(),
+                                          //     userName: userName.text,
+                                          //     gender: isRadioButton == 1 ? 'Male' : 'Female',
+                                          //     phone: '9638527410',
+                                          //     weight: weight.text,
+                                          //     dob: pickedDate.toString(),
+                                          //   ));
+                                          // } else {
+                                          //   Get.showSnackbar(GetSnackBar(
+                                          //     message: 'Please check your credentials',
+                                          //     duration: Duration(seconds: 1),
+                                          //   ));
+                                          // }
+                                        },
+                                        child: Container(
+                                          height: Get.height * 0.06,
+                                          width: Get.width * 0.9,
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                stops: [0.0, 1.0],
+                                                colors: ColorUtilsGradient
+                                                    .kTintGradient,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: ColorUtils.kTint),
+                                          child: Center(
+                                              child: Text(
+                                            'Reset Password',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: Get.height * 0.02),
+                                          )),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: Get.height * .03,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.width * 0.05),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          if (_formKeyEditProfile.currentState!
+                                              .validate()) {
+                                            controller.setIsUpload(
+                                                isLoading: true);
+                                            EditProfileRequestModel _request =
+                                                EditProfileRequestModel();
 
-                                      await controller
-                                          .editProfileViewModel(_request);
+                                            _request.userId =
+                                                PreferenceManager.getUId();
+                                            _request.fname = fName!.text.isEmpty
+                                                ? PreferenceManager
+                                                    .getFirstName()
+                                                : fName!.text;
+                                            _request.lname = lName!.text.isEmpty
+                                                ? PreferenceManager
+                                                    .getLastName()
+                                                : lName!.text;
+                                            _request.email = email!.text.isEmpty
+                                                ? PreferenceManager.getEmail()
+                                                : email!.text;
+                                            _request.username =
+                                                userName!.text.isEmpty
+                                                    ? PreferenceManager
+                                                        .getUserName()
+                                                    : userName!.text;
+                                            _request.birthday =
+                                                pickedDate == null
+                                                    ? PreferenceManager.getDOB()
+                                                    : pickedDate.toString();
+                                            _request.weight = weight!
+                                                    .text.isEmpty
+                                                ? PreferenceManager.getWeight()
+                                                : weight!.text;
 
-                                      if (controller.apiResponse.status ==
-                                          Status.COMPLETE) {
-                                        EditProfileResponseModel response =
-                                            controller.apiResponse.data;
+                                            await controller
+                                                .editProfileViewModel(_request);
 
-                                        if (response.data != null ||
-                                            response.data != []) {
-                                          if (response.success == true &&
-                                              response.data != null) {
-                                            Get.showSnackbar(GetSnackBar(
-                                              message: '${response.msg}',
-                                              duration: Duration(seconds: 1),
-                                            ));
+                                            if (controller.apiResponse.status ==
+                                                Status.COMPLETE) {
+                                              EditProfileResponseModel
+                                                  response =
+                                                  controller.apiResponse.data;
 
-                                            PreferenceManager.setEmail(
-                                                response.data![0].email!);
-                                            PreferenceManager.setFirstName(
-                                                response.data![0].fname!);
-                                            PreferenceManager.setLastName(
-                                                response.data![0].lname!);
-                                            PreferenceManager.setPassword(
-                                                response.data![0].password!);
-                                            PreferenceManager.setUserName(
-                                                response.data![0].username!);
-                                            PreferenceManager.setUId(
-                                                response.data![0].id!);
-                                            PreferenceManager.setWeight(
-                                                response.data![0].weight!);
-                                            PreferenceManager.setDOB(response
-                                                .data![0].birthday!
-                                                .toString());
+                                              if (response.data != null ||
+                                                  response.data != []) {
+                                                if (response.success == true &&
+                                                    response.data != null) {
+                                                  PreferenceManager.setEmail(
+                                                      response.data![0].email!);
+                                                  PreferenceManager
+                                                      .setFirstName(response
+                                                          .data![0].fname!);
+                                                  PreferenceManager.setLastName(
+                                                      response.data![0].lname!);
+                                                  PreferenceManager.setPassword(
+                                                      response
+                                                          .data![0].password!);
+                                                  PreferenceManager.setUserName(
+                                                      response
+                                                          .data![0].username!);
+                                                  PreferenceManager.setUId(
+                                                      response.data![0].id!);
+                                                  PreferenceManager.setWeight(
+                                                      response
+                                                          .data![0].weight!);
+                                                  PreferenceManager.setDOB(
+                                                      response
+                                                          .data![0].birthday!
+                                                          .toString());
 
-                                            PreferenceManager.isSetLogin(true);
+                                                  PreferenceManager.isSetLogin(
+                                                      true);
 
-                                            if (widget.image != null) {
-                                              Map<String, dynamic> data = {
-                                                'user_id':
-                                                    PreferenceManager.getUId(),
-                                                'profile_pic':
-                                                    await dio.MultipartFile
-                                                        .fromFile(
-                                                            widget.image!.path),
-                                              };
+                                                  if (controller.image !=
+                                                      null) {
+                                                    Map<String, dynamic> data =
+                                                        {
+                                                      'user_id':
+                                                          PreferenceManager
+                                                              .getUId(),
+                                                      'profile_pic': await dio
+                                                              .MultipartFile
+                                                          .fromFile(controller
+                                                              .image!.path),
+                                                    };
 
-                                              Map<String, String> header = {
-                                                'content-type':
-                                                    'application/json'
-                                              };
+                                                    Map<String, String> header =
+                                                        {
+                                                      'content-type':
+                                                          'application/json'
+                                                    };
 
-                                              dio.FormData formData =
-                                                  dio.FormData.fromMap(data);
+                                                    dio.FormData formData =
+                                                        dio.FormData.fromMap(
+                                                            data);
 
-                                              dio.Response result =
-                                                  await dio.Dio().post(
-                                                      'https://tcm.sataware.dev//json/data_user_profile.php',
-                                                      data: formData,
-                                                      options: dio.Options(
-                                                          headers: header));
-                                              Map<String, dynamic> dataa =
-                                                  result.data;
+                                                    dio.Response result =
+                                                        await dio.Dio().post(
+                                                            'https://tcm.sataware.dev//json/data_user_profile.php',
+                                                            data: formData,
+                                                            options: dio.Options(
+                                                                headers:
+                                                                    header));
+                                                    Map<String, dynamic> dataa =
+                                                        result.data;
+                                                    print(
+                                                        'proooo      ${dataa['data'][0]['profile_pic']}');
+                                                    PreferenceManager
+                                                        .setProfilePic(dataa[
+                                                                'data'][0]
+                                                            ['profile_pic']);
+                                                  }
+                                                  _connectivityCheckViewModel
+                                                      .setUserData(
+                                                    userName: PreferenceManager
+                                                            .getUserName() ??
+                                                        '',
+                                                    image: PreferenceManager
+                                                            .getProfilePic() ??
+                                                        '',
+                                                    weight: PreferenceManager
+                                                            .getWeight() ??
+                                                        '',
+                                                    dob: PreferenceManager
+                                                            .getDOB() ??
+                                                        '',
+                                                    email: PreferenceManager
+                                                            .getEmail() ??
+                                                        '',
+                                                    firstName: PreferenceManager
+                                                            .getFirstName() ??
+                                                        '',
+                                                    lastName: PreferenceManager
+                                                            .getLastName() ??
+                                                        '',
+                                                  );
+                                                  print(
+                                                      'proooo 1     ${PreferenceManager.getProfilePic()}');
 
-                                              PreferenceManager.setProfilePic(
-                                                  dataa['data'][0]
-                                                      ['profile_pic']);
+                                                  Navigator.pop(context);
+                                                  Get.showSnackbar(GetSnackBar(
+                                                    message: '${response.msg}',
+                                                    duration:
+                                                        Duration(seconds: 1),
+                                                  ));
+                                                  controller.setIsUpload(
+                                                      isLoading: true);
+
+                                                  // Get.off(ProfileViewScreen());
+                                                } else {
+                                                  Get.showSnackbar(GetSnackBar(
+                                                    message: response.msg,
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  ));
+                                                }
+                                              }
+                                            } else {
+                                              CircularProgressIndicator(
+                                                color: ColorUtils.kTint,
+                                              );
                                             }
-                                            Get.off(ProfileViewScreen(
-                                              userDetails: null,
-                                            ));
                                           } else {
-                                            Get.showSnackbar(GetSnackBar(
-                                              message: response.msg,
-                                              duration: Duration(seconds: 2),
-                                            ));
+                                            CircularProgressIndicator(
+                                              color: ColorUtils.kTint,
+                                            );
                                           }
-                                        }
-                                      } else {
-                                        CircularProgressIndicator(
-                                          color: ColorUtils.kTint,
-                                        );
-                                      }
-                                    } else {
-                                      CircularProgressIndicator(
-                                        color: ColorUtils.kTint,
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    height: Get.height * 0.06,
-                                    width: Get.width * 0.9,
-                                    decoration: BoxDecoration(
-                                        gradient: LinearGradient(
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                          stops: [0.0, 1.0],
-                                          colors:
-                                              ColorUtilsGradient.kTintGradient,
+                                        },
+                                        child: Container(
+                                          height: Get.height * 0.06,
+                                          width: Get.width * 0.9,
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                stops: [0.0, 1.0],
+                                                colors: ColorUtilsGradient
+                                                    .kTintGradient,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: ColorUtils.kTint),
+                                          child: Center(
+                                              child: Text(
+                                            'Update Profile',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: Get.height * 0.02),
+                                          )),
                                         ),
-                                        borderRadius: BorderRadius.circular(6),
-                                        color: ColorUtils.kTint),
-                                    child: Center(
-                                        child: Text(
-                                      'Update Profile',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: Get.height * 0.02),
-                                    )),
-                                  ),
+                                      ),
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
+                              ),
+                              SizedBox(
+                                height: Get.height * 0.03,
+                              ),
+                            ]),
                           ),
-                        ),
-                        SizedBox(
-                          height: Get.height * 0.03,
-                        ),
-                      ]),
-                    ),
-                  ]),
-                ),
-              )
-            : ConnectionCheckScreen(),
-      );
-    });
+                        ]),
+                      ),
+                    )
+              : ConnectionCheckScreen(),
+        );
+      });
+    } catch (e) {
+      return SizedBox();
+    }
   }
 
   Widget textField(
@@ -883,8 +979,6 @@ class ProfileSizer extends StatefulWidget {
 }
 
 class _ProfileSizerState extends State<ProfileSizer> {
-  EditProfileViewModel _editProfileViewModel = Get.put(EditProfileViewModel());
-
   final cropKey = GlobalKey<CropState>();
   File? image;
   @override
@@ -932,11 +1026,12 @@ class _ProfileSizerState extends State<ProfileSizer> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Get.width * .05),
             child: GestureDetector(
-              onTap: () {
-                _cropImage().then((value) => Get.off(EditProfilePage(
-                      userDetails: null,
-                      image: image,
-                    )));
+              onTap: () async {
+                await _cropImage();
+                Navigator.pop(context);
+                // Get.off(EditProfilePage(
+                //   image: image,
+                // ));
               },
               child: Container(
                 height: Get.height * 0.06,
