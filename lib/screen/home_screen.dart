@@ -547,6 +547,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       GestureDetector(
                                                         onTap: () {
                                                           Get.to(WorkoutHomeNew(
+                                                            userProgramDate:
+                                                                responseDate
+                                                                    .data!
+                                                                    .userProgramDatesId!,
+                                                            superSetRound:
+                                                                responseDate
+                                                                    .data!
+                                                                    .round!,
                                                             withoutWarmUpExercisesList:
                                                                 withoutWarmupAllId,
                                                             warmUpList: responseDate

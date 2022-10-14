@@ -7,6 +7,7 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   List appBarTitle = [];
   List allIdList = [];
   List exeNewList = [];
+  bool showReps = false;
 
   updateAppBarTitle(String value) {
     appBarTitle.add(value);
@@ -66,13 +67,8 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   bool timerStop = false;
   int roundCounter = 0;
   int roundCount = 0;
+
   bool isClickForSuperSet = false;
-  List<Map<String, dynamic>> superCountList = [];
-  dataAdd({required int round, required String title, required int counter}) {
-    superCountList.add({
-      '$round': {title: counter}
-    });
-  }
 
   List<Map<String, dynamic>> superSetDataCountList = [];
 
@@ -157,22 +153,31 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   /// for reps screen
 
   List repsList = [];
+  Map<String, dynamic> repsIndexList = {};
   List repsSuperSetList = [];
-  updateRepsList({required int index, required bool isPlus}) {
+  updateRepsList(
+      {required int index, required bool isPlus, required String key}) {
     if (isPlus) {
-      int mil = repsList[index];
+      // int mil = repsList[index];
+      int mil = repsIndexList[key][index];
       mil++;
-      repsList.removeAt(index);
-      repsList.insert(index, mil);
+      // repsList.removeAt(index);
+      // repsList.insert(index, mil);
+      repsIndexList[key].removeAt(index);
+      repsIndexList[key].insert(index, mil);
     } else {
-      if (repsList[index] != 0) {
-        int mil = repsList[index];
+      if (repsIndexList[key][index] != 0) {
+        // int mil = repsList[index];
+        int mil = repsIndexList[key][index];
         mil--;
-        repsList.removeAt(index);
-        repsList.insert(index, mil);
+        // repsList.removeAt(index);
+        // repsList.insert(index, mil);
+        repsIndexList[key].removeAt(index);
+        repsIndexList[key].insert(index, mil);
       }
     }
     update();
+    print('List ertrt ==== ${repsIndexList}');
   }
 
   // int updateRepsSuperSetList({required int index, required bool isPlus}) {

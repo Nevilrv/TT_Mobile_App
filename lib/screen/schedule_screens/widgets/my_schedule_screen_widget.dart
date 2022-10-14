@@ -292,6 +292,9 @@ void openBottomSheet(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => WorkoutHomeNew(
+                                    superSetRound: snapshot.data!.data!.round!,
+                                    userProgramDate: snapshot
+                                        .data!.data!.userProgramDatesId!,
                                     warmUpList:
                                         snapshot.data!.data!.selectedWarmup!,
                                     withoutWarmUpExercisesList:
