@@ -268,7 +268,7 @@ void openBottomSheet(
                 print(
                     'supersetRound >>> ${_userWorkoutsDateViewModel.userProgramDatesId}');
 
-                return /*scheduleByDateViewModel!.completeDate
+                return /* scheduleByDateViewModel!.completeDate
                         .contains(date.toString().split(' ').first)
                     ? TextButton(
                         onPressed: null,

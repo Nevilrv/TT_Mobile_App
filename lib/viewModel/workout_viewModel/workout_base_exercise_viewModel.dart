@@ -8,6 +8,7 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   List allIdList = [];
   List exeNewList = [];
   bool showReps = false;
+  Map<String, dynamic> superSetRepsSaveMap = {};
 
   updateAppBarTitle(String value) {
     appBarTitle.add(value);
