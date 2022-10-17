@@ -412,7 +412,7 @@ class _ForumScreenState extends State<ForumScreen> {
                             child: CachedNetworkImage(
                               imageUrl:
                                   '${response.data![index].postImage![0]}',
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                               errorWidget: (context, url, error) => SizedBox(),
                               progressIndicatorBuilder:
                                   (context, url, downloadProgress) =>

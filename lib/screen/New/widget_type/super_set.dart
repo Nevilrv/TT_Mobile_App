@@ -406,15 +406,17 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                   alignment: Alignment.topRight,
                   children: [
                     WeightedCard(
-                        editingController: textEditingController!,
-                        weight:
-                            '${snapshot.data!.data![0].exerciseWeight ?? "30"}',
-                        counter: int.parse(
-                            '${snapshot.data!.data![0].exerciseReps}'
-                                .split("-")
-                                .first),
-                        index: 0,
-                        controller: controllerWorkoutBaseExercise),
+                      weight: "0",
+                      editingController: textEditingController!,
+                      // weight:
+                      //     '${snapshot.data!.data![0].exerciseWeight ?? "30"}',
+                      counter: int.parse(
+                          '${snapshot.data!.data![0].exerciseReps}'
+                              .split("-")
+                              .first),
+                      index: 0,
+                      // controller: controllerWorkoutBaseExercise
+                    ),
                     Positioned(
                       top: Get.height * .01,
                       child: Container(
@@ -867,7 +869,7 @@ class _SuperSetWeightedCardState extends State<SuperSetWeightedCard> {
               InkWell(
                 onTap: () {
                   controller.updateWeightRepsList(
-                      index: widget.index, isPlus: false);
+                      keys: "", index: widget.index, isPlus: false);
                 },
                 child: Container(
                   height: Get.height * .06,
@@ -900,7 +902,7 @@ class _SuperSetWeightedCardState extends State<SuperSetWeightedCard> {
                   print('Index >>> ${widget.index}');
                   print('${widget.index.runtimeType}');
                   controller.updateWeightRepsList(
-                      index: widget.index, isPlus: true);
+                      keys: "", index: widget.index, isPlus: true);
                 },
                 child: Container(
                   height: Get.height * .06,
@@ -946,11 +948,12 @@ class _SuperSetWeightedCardState extends State<SuperSetWeightedCard> {
                           onChanged: (value) {
                             if (value.isNotEmpty) {
                               controller.updateLbsList(
+                                  keys: "",
                                   index: widget.index,
                                   value: widget.editingController!.text);
                             } else {
                               controller.updateLbsList(
-                                  index: widget.index, value: "0");
+                                  keys: "", index: widget.index, value: "0");
                             }
                           },
                           decoration: InputDecoration(

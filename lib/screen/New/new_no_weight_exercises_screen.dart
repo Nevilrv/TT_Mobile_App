@@ -163,6 +163,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
     print('InItState call');
     print('>>>> InItState call exerciseList   ${widget.exerciseList}');
     _workoutBaseExerciseViewModel.isButtonShow = false;
+    _workoutBaseExerciseViewModel.weightedEnter = false;
+
     _workoutBaseExerciseViewModel.allIdList.clear();
     print('superSetegswdegstList >>> ${widget.superSetList}');
     widget.exerciseList.forEach((element) {

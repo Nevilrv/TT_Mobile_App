@@ -43,41 +43,72 @@ class _WeightedTypeState extends State<WeightedType> {
   @override
   void initState() {
     super.initState();
+    print('123123123');
     weight = "${widget.exerciseWeight}";
+
     weightedLoop();
   }
 
   weightedLoop() {
-    _workoutBaseExerciseViewModel.weightedRepsList.clear();
-    _workoutBaseExerciseViewModel.lbsList.clear();
-    try {
-      for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
-        _workoutBaseExerciseViewModel.weightedRepsList
-            .add(int.parse("${widget.exerciseReps}"));
-        if (widget.exerciseWeight == "" && widget.exerciseWeight.isEmpty) {
-          _workoutBaseExerciseViewModel.lbsList.add("0");
-        } else {
-          _workoutBaseExerciseViewModel.lbsList.add("${widget.exerciseWeight}");
-        }
-      }
-    } catch (e) {
-      for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
-        _workoutBaseExerciseViewModel.weightedRepsList.add(2);
-        _workoutBaseExerciseViewModel.lbsList.add("12");
-      }
-      // _workoutBaseExerciseViewModel.weightedRepsList = [2, 2, 2];
-      // _workoutBaseExerciseViewModel.lbsList = ["12", "12", "12"];
-    }
-  }
+    if (_workoutBaseExerciseViewModel.weightedEnter == false) {
+      _workoutBaseExerciseViewModel.weightedEnter = true;
 
-  @override
-  void dispose() {
-    super.dispose();
+      print('enter in weighted loop');
+      _workoutBaseExerciseViewModel.weightedRepsList.clear();
+      _workoutBaseExerciseViewModel.lbsList.clear();
+      try {
+        for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
+          _workoutBaseExerciseViewModel.weightedRepsList
+              .add(int.parse("${widget.exerciseReps}"));
+          if (widget.exerciseWeight == "" && widget.exerciseWeight.isEmpty) {
+            _workoutBaseExerciseViewModel.lbsList.add("0");
+          } else {
+            _workoutBaseExerciseViewModel.lbsList
+                .add("${widget.exerciseWeight}");
+          }
+        }
+        print(
+            '˘>>>>> reps List >>> ${_workoutBaseExerciseViewModel.weightedRepsList}');
+        print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
+
+        _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
+          "${_workoutBaseExerciseViewModel.currentIndex}":
+              _workoutBaseExerciseViewModel.weightedRepsList
+        });
+        _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
+          "${_workoutBaseExerciseViewModel.currentIndex}":
+              _workoutBaseExerciseViewModel.lbsList
+        });
+        print(
+            'weightedIndexRepsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexRepsMap}');
+        print(
+            'weightedIndexLbsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexLbsMap}');
+      } catch (e) {
+        for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
+          _workoutBaseExerciseViewModel.weightedRepsList.add(2);
+          _workoutBaseExerciseViewModel.lbsList.add("12");
+        }
+
+        _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
+          "${_workoutBaseExerciseViewModel.currentIndex}":
+              _workoutBaseExerciseViewModel.weightedRepsList
+        });
+        _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
+          "${_workoutBaseExerciseViewModel.currentIndex}":
+              _workoutBaseExerciseViewModel.lbsList
+        });
+      }
+    }
   }
 
   List<TextEditingController> _controller = [];
   List? restTimer;
   int currentValue = 0;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -135,63 +166,81 @@ class _WeightedTypeState extends State<WeightedType> {
           SizedBox(
             height: Get.height * 0.05,
           ),
-          SizedBox(
-            child: ListView.separated(
-                physics: NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: int.parse(widget.exerciseSets.toString()),
-                padding: EdgeInsets.only(
-                    top: 0, right: Get.width * .06, left: Get.width * .06),
-                separatorBuilder: (_, index) {
-                  print('exerciseRest >> ${widget.exerciseRest}');
-                  return TimerProgressBar(
-                    // superSetScreen: false,
-                    height: Get.height * .03,
-                    width: Get.width,
-                    timerEndTime: widget.exerciseRest.split(" ").first,
-                    index: index,
-                  );
-                },
-                itemBuilder: (_, index) {
-                  for (int i = 0;
-                      i < int.parse(widget.exerciseSets.toString());
-                      i++) _controller.add(TextEditingController());
-                  return Stack(
-                    alignment: Alignment.topRight,
-                    children: [
-                      WeightedCard(
-                          counter: int.parse(widget.exerciseReps),
-                          index: index,
-                          editingController: _controller[index],
-                          controller: _workoutBaseExerciseViewModel,
-                          weight: "$weight"),
-                      Positioned(
-                        top: Get.height * .01,
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: Get.height * .027,
-                          width: Get.height * .09,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  colors: widget.exerciseColor == "green"
-                                      ? ColorUtilsGradient.kGreenGradient
-                                      : widget.exerciseColor == "yellow"
-                                          ? ColorUtilsGradient.kOrangeGradient
-                                          : ColorUtilsGradient.kRedGradient,
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter),
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(6),
-                                  bottomLeft: Radius.circular(6))),
-                          child: Text('RIR 0-1',
-                              style: FontTextStyle.kWhite12BoldRoboto
-                                  .copyWith(fontWeight: FontWeight.w500)),
-                        ),
-                      )
-                    ],
-                  );
-                }),
-          ),
+          GetBuilder<WorkoutBaseExerciseViewModel>(
+            builder: (controller) {
+              /*   print('sdfsfdsf ${controller.currentIndex}');
+              print(
+                  'asdfghjkl ${controller.weightedIndexLbsMap["${controller.currentIndex}"].length}');*/
+              // print('${controller.weightedIndexLbsMap}');
+              return SizedBox(
+                child: ListView.separated(
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    // itemCount: int.parse(widget.exerciseSets.toString()),
+                    itemCount: controller
+                        .weightedIndexLbsMap["${controller.currentIndex}"]
+                        .length,
+                    padding: EdgeInsets.only(
+                        top: 0, right: Get.width * .06, left: Get.width * .06),
+                    separatorBuilder: (_, index) {
+                      print('exerciseRest >> ${widget.exerciseRest}');
+                      return TimerProgressBar(
+                        // superSetScreen: false,
+                        height: Get.height * .03,
+                        width: Get.width,
+                        timerEndTime: widget.exerciseRest.split(" ").first,
+                        index: index,
+                      );
+                    },
+                    itemBuilder: (_, index) {
+                      for (int i = 0;
+                          i <
+                              controller
+                                  .weightedIndexLbsMap[
+                                      "${controller.currentIndex}"]
+                                  .length;
+                          i++) _controller.add(TextEditingController());
+                      return Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          WeightedCard(
+                            weight: "$weight",
+                            counter: int.parse(widget.exerciseReps),
+                            index: index,
+                            editingController: _controller[index],
+                            // controller: _workoutBaseExerciseViewModel,
+                            // weight: "$weight"
+                          ),
+                          Positioned(
+                            top: Get.height * .01,
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: Get.height * .027,
+                              width: Get.height * .09,
+                              decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: widget.exerciseColor == "green"
+                                          ? ColorUtilsGradient.kGreenGradient
+                                          : widget.exerciseColor == "yellow"
+                                              ? ColorUtilsGradient
+                                                  .kOrangeGradient
+                                              : ColorUtilsGradient.kRedGradient,
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(6),
+                                      bottomLeft: Radius.circular(6))),
+                              child: Text('RIR 0-1',
+                                  style: FontTextStyle.kWhite12BoldRoboto
+                                      .copyWith(fontWeight: FontWeight.w500)),
+                            ),
+                          )
+                        ],
+                      );
+                    }),
+              );
+            },
+          )
           // isShow == false
           //     ? SizedBox(height: Get.height * .25)
           //     : SizedBox(height: Get.height * .025),
@@ -203,27 +252,30 @@ class _WeightedTypeState extends State<WeightedType> {
 
 class WeightedCard extends StatefulWidget {
   TextEditingController editingController;
-  WorkoutBaseExerciseViewModel controller;
+  int index;
   String weight;
   int counter;
-  int index;
 
-  WeightedCard(
-      {Key? key,
-      required this.editingController,
-      required this.weight,
-      required this.counter,
-      required this.index,
-      required this.controller})
-      : super(key: key);
+  WeightedCard({
+    Key? key,
+    required this.editingController,
+    required this.weight,
+    required this.counter,
+    required this.index,
+  }) : super(key: key);
 
   @override
   _WeightedCardState createState() => _WeightedCardState();
 }
 
 class _WeightedCardState extends State<WeightedCard> {
+  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
+      Get.put(WorkoutBaseExerciseViewModel());
   void initState() {
     super.initState();
+/*    widget.editingController = TextEditingController(
+        text: _workoutBaseExerciseViewModel.weightedIndexLbsMap[
+            '${_workoutBaseExerciseViewModel.currentIndex}'][widget.index]);*/
     widget.editingController = TextEditingController(text: widget.weight);
   }
 
@@ -247,7 +299,9 @@ class _WeightedCardState extends State<WeightedCard> {
               InkWell(
                 onTap: () {
                   controller.updateWeightRepsList(
-                      index: widget.index, isPlus: false);
+                      keys: "${controller.currentIndex}",
+                      index: widget.index,
+                      isPlus: false);
                 },
                 child: Container(
                   height: Get.height * .06,
@@ -265,11 +319,9 @@ class _WeightedCardState extends State<WeightedCard> {
               SizedBox(width: Get.width * .08),
               RichText(
                   text: TextSpan(
-                      text: '${controller.weightedRepsList[widget.index]} ',
-                      style: widget.counter == 0
-                          ? FontTextStyle.kWhite24BoldRoboto
-                              .copyWith(color: ColorUtils.kGray)
-                          : FontTextStyle.kWhite24BoldRoboto,
+                      text:
+                          '${controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index]} ',
+                      style: controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
                       children: [
                     TextSpan(
                         text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
@@ -280,7 +332,9 @@ class _WeightedCardState extends State<WeightedCard> {
                   print('Index >>> ${widget.index}');
                   print('${widget.index.runtimeType}');
                   controller.updateWeightRepsList(
-                      index: widget.index, isPlus: true);
+                      keys: "${controller.currentIndex}",
+                      index: widget.index,
+                      isPlus: true);
                 },
                 child: Container(
                   height: Get.height * .06,
@@ -326,11 +380,14 @@ class _WeightedCardState extends State<WeightedCard> {
                           onChanged: (value) {
                             if (value.isNotEmpty) {
                               controller.updateLbsList(
+                                  keys: "${controller.currentIndex}",
                                   index: widget.index,
                                   value: widget.editingController.text);
                             } else {
                               controller.updateLbsList(
-                                  index: widget.index, value: "0");
+                                  keys: "${controller.currentIndex}",
+                                  index: widget.index,
+                                  value: "0");
                             }
                             // if (value.isEmpty) value = "0";
                             // controller.weightList.removeAt(widget.index);

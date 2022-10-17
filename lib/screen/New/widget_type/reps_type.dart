@@ -18,9 +18,9 @@ Widget repsType({
     controller.repsList.add(int.parse(reps));
   }
 
-  controller.repsIndexList
+  controller.repsIndexMap
       .addAll({"${controller.currentIndex}": controller.repsList});
-  print('repsIndexList >>> ${controller.repsIndexList}');
+  print('repsIndexList >>> ${controller.repsIndexMap}');
   // print('uyuyuy ${controller.repsIndexList["1"][0]}');
   return Scaffold(
     backgroundColor: ColorUtils.kBlack,
@@ -160,10 +160,10 @@ class _CounterCardState extends State<CounterCard> {
               RichText(
                   text: TextSpan(
                       text:
-                          '${controller.repsIndexList["${controller.currentIndex}"][widget.index]} ',
+                          '${controller.repsIndexMap["${controller.currentIndex}"][widget.index]} ',
                       // text:
                       //     '${controller.repsIndexList[controller.currentIndex][widget.index]} ',
-                      style: controller.repsIndexList["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
+                      style: controller.repsIndexMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
                       children: [
                     TextSpan(
                         text: 'reps', style: FontTextStyle.kWhite17W400Roboto)

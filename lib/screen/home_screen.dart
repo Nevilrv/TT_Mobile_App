@@ -791,7 +791,76 @@ class _HomeScreenState extends State<HomeScreen> {
                                 });
                               });
                             } else {
-                              return SizedBox();
+                              return Container(
+                                height: Get.height * 0.22,
+                                width: Get.width * 0.99,
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    color: Color(0xff363636)),
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 20,
+                                            bottom: 10,
+                                            top: 20,
+                                            right: 20),
+                                        child: Text(
+                                          'No Workouts Scheduled',
+                                          style:
+                                              FontTextStyle.kWhite20BoldRoboto,
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20),
+                                        child: Text(
+                                          'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                          style:
+                                              FontTextStyle.kWhite16W300Roboto,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: Get.height * .03,
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: Get.width * 0.05),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Get.to(TrainingPlanScreen());
+
+                                            oneTime = false;
+                                          },
+                                          child: Container(
+                                            height: Get.height * .05,
+                                            width: Get.width * .9,
+                                            decoration: BoxDecoration(
+                                                gradient: LinearGradient(
+                                                  begin: Alignment.topCenter,
+                                                  end: Alignment.bottomCenter,
+                                                  stops: [0.0, 1.0],
+                                                  colors: ColorUtilsGradient
+                                                      .kTintGradient,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                color: ColorUtils.kTint),
+                                            child: Center(
+                                                child: Text(
+                                              'Choose a Workout Plan',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black,
+                                                  fontSize: Get.height * 0.02),
+                                            )),
+                                          ),
+                                        ),
+                                      ),
+                                    ]),
+                              );
                             }
                           },
                         ),

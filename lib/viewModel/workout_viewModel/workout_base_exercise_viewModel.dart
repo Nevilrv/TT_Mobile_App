@@ -122,63 +122,66 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   /// for weighted screen
   List lbsList = [];
   List weightedRepsList = [];
-  updateWeightRepsList({required int index, required bool isPlus}) {
-    print('List   >>> ${weightedRepsList[index]}');
-    print('List   >>> ${weightedRepsList[index].runtimeType}');
+  Map<String, dynamic> weightedIndexRepsMap = {};
+  Map<String, dynamic> weightedIndexLbsMap = {};
+  bool weightedEnter = false;
+  updateWeightRepsList(
+      {required int index, required bool isPlus, required String keys}) {
     if (isPlus) {
-      int mil = int.parse("${weightedRepsList[index]}");
+      int mil = int.parse("${weightedIndexRepsMap[keys][index]}");
       mil++;
       print('milll $mil');
-      weightedRepsList.removeAt(index);
-      weightedRepsList.insert(index, mil);
+      weightedIndexRepsMap[keys].removeAt(index);
+      weightedIndexRepsMap[keys].insert(index, mil);
     } else {
-      if (weightedRepsList[index] != 0) {
-        int mil = int.parse("${weightedRepsList[index]}");
+      if (weightedIndexRepsMap[keys][index] != 0) {
+        int mil = int.parse("${weightedIndexRepsMap[keys][index]}");
         mil--;
         print('milll $mil');
-        weightedRepsList.removeAt(index);
-        weightedRepsList.insert(index, mil);
+        weightedIndexRepsMap[keys].removeAt(index);
+        weightedIndexRepsMap[keys].insert(index, mil);
       }
     }
-    print('weightedRepsList >>  ${weightedRepsList}');
+    print('weightedIndexRepsList >>  ${weightedIndexRepsMap}');
     update();
   }
 
-  updateLbsList({required int index, required String value}) {
-    lbsList.removeAt(index);
-    lbsList.insert(index, value);
+  updateLbsList(
+      {required int index, required String value, required String keys}) {
+    weightedIndexLbsMap[keys].removeAt(index);
+    weightedIndexLbsMap[keys].insert(index, value);
     update();
-    print('lbsList >>> ${lbsList}');
+    print('weightedIndexLbsMap >>> ${weightedIndexLbsMap}');
   }
 
   /// for reps screen
 
   List repsList = [];
-  Map<String, dynamic> repsIndexList = {};
+  Map<String, dynamic> repsIndexMap = {};
   List repsSuperSetList = [];
   updateRepsList(
       {required int index, required bool isPlus, required String key}) {
     if (isPlus) {
       // int mil = repsList[index];
-      int mil = repsIndexList[key][index];
+      int mil = repsIndexMap[key][index];
       mil++;
       // repsList.removeAt(index);
       // repsList.insert(index, mil);
-      repsIndexList[key].removeAt(index);
-      repsIndexList[key].insert(index, mil);
+      repsIndexMap[key].removeAt(index);
+      repsIndexMap[key].insert(index, mil);
     } else {
-      if (repsIndexList[key][index] != 0) {
+      if (repsIndexMap[key][index] != 0) {
         // int mil = repsList[index];
-        int mil = repsIndexList[key][index];
+        int mil = repsIndexMap[key][index];
         mil--;
         // repsList.removeAt(index);
         // repsList.insert(index, mil);
-        repsIndexList[key].removeAt(index);
-        repsIndexList[key].insert(index, mil);
+        repsIndexMap[key].removeAt(index);
+        repsIndexMap[key].insert(index, mil);
       }
     }
     update();
-    print('List ertrt ==== ${repsIndexList}');
+    print('List ertrt ==== ${repsIndexMap}');
   }
 
   // int updateRepsSuperSetList({required int index, required bool isPlus}) {
