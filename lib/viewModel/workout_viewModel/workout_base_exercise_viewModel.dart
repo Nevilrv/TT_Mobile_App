@@ -9,6 +9,17 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   List exeNewList = [];
   bool showReps = false;
   Map<String, dynamic> superSetRepsSaveMap = {};
+  bool isOneTimeApiCall = true;
+  updateSuperSetRepsSaveMap(
+      {required String keyMain,
+      required String subKey,
+      required String value}) {
+    print('before app  ${superSetRepsSaveMap['$keyMain']["$subKey"]}');
+    superSetRepsSaveMap[keyMain][subKey] = value;
+    print('after app  ${superSetRepsSaveMap['$keyMain']["$subKey"]}');
+
+    update();
+  }
 
   updateAppBarTitle(String value) {
     appBarTitle.add(value);
