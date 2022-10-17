@@ -1031,7 +1031,9 @@ class _SuperSetWeightedCardState extends State<SuperSetWeightedCard> {
               InkWell(
                 onTap: () {
                   controller.updateWeightRepsList(
-                      keys: "", index: widget.index, isPlus: false);
+                      // keys: "",
+                      index: widget.index,
+                      isPlus: false);
                 },
                 child: Container(
                   height: Get.height * .06,
@@ -1064,7 +1066,9 @@ class _SuperSetWeightedCardState extends State<SuperSetWeightedCard> {
                   print('Index >>> ${widget.index}');
                   print('${widget.index.runtimeType}');
                   controller.updateWeightRepsList(
-                      keys: "", index: widget.index, isPlus: true);
+                      // keys: "",
+                      index: widget.index,
+                      isPlus: true);
                 },
                 child: Container(
                   height: Get.height * .06,

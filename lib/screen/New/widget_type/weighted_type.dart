@@ -299,7 +299,7 @@ class _WeightedCardState extends State<WeightedCard> {
               InkWell(
                 onTap: () {
                   controller.updateWeightRepsList(
-                      keys: "${controller.currentIndex}",
+                      // keys: "${controller.currentIndex}",
                       index: widget.index,
                       isPlus: false);
                 },
@@ -319,9 +319,14 @@ class _WeightedCardState extends State<WeightedCard> {
               SizedBox(width: Get.width * .08),
               RichText(
                   text: TextSpan(
-                      text:
-                          '${controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index]} ',
-                      style: controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
+                      text: "${controller.weightedRepsList[widget.index]} ",
+                      style: widget.counter == 0
+                          ? FontTextStyle.kWhite24BoldRoboto
+                              .copyWith(color: ColorUtils.kGray)
+                          : FontTextStyle.kWhite24BoldRoboto,
+                      // text:
+                      //     '${controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index]} ',
+                      // style: controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
                       children: [
                     TextSpan(
                         text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
@@ -332,7 +337,7 @@ class _WeightedCardState extends State<WeightedCard> {
                   print('Index >>> ${widget.index}');
                   print('${widget.index.runtimeType}');
                   controller.updateWeightRepsList(
-                      keys: "${controller.currentIndex}",
+                      // keys: "${controller.currentIndex}",
                       index: widget.index,
                       isPlus: true);
                 },
