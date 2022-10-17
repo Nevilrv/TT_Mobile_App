@@ -15,7 +15,9 @@ class WorkoutBaseExerciseViewModel extends GetxController {
       required String subKey,
       required String value}) {
     print('before app  ${superSetRepsSaveMap['$keyMain']["$subKey"]}');
+
     superSetRepsSaveMap[keyMain][subKey] = value;
+
     print('after app  ${superSetRepsSaveMap['$keyMain']["$subKey"]}');
 
     update();
