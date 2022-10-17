@@ -6,13 +6,13 @@ import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 
-Widget repsType({
-  required String title,
-  required String exercisesId,
-  required String sets,
-  required String reps,
-  required WorkoutBaseExerciseViewModel controller,
-}) {
+Widget repsType(
+    {required String title,
+    required String exercisesId,
+    required String sets,
+    required String reps,
+    required WorkoutBaseExerciseViewModel controller,
+    required exerciseColor}) {
   controller.repsList = [];
   for (int i = 0; i < int.parse(sets); i++) {
     controller.repsList.add(int.parse(reps));
@@ -85,9 +85,46 @@ Widget repsType({
                   top: 0, right: Get.width * .06, left: Get.width * .06),
               itemCount: int.parse(sets),
               itemBuilder: (_, index) {
-                return CounterCard(
-                  index: index,
-                  counter: int.parse(reps),
+                return Stack(
+                  alignment: Alignment.topRight,
+                  children: [
+                    Container(
+                      height: Get.height * .12,
+                      width: Get.width,
+                      decoration: BoxDecoration(
+                          border:
+                              Border.all(color: ColorUtils.kBlack, width: 2),
+                          gradient: LinearGradient(
+                              colors: ColorUtilsGradient.kGrayGradient,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.circular(6)),
+                    ),
+                    CounterCard(
+                      index: index,
+                      counter: int.parse(reps),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      height: Get.height * .027,
+                      width: Get.height * .09,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: exerciseColor == "green"
+                                  ? ColorUtilsGradient.kGreenGradient
+                                  : exerciseColor == "yellow"
+                                      ? ColorUtilsGradient.kOrangeGradient
+                                      : ColorUtilsGradient.kRedGradient,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(6),
+                              bottomLeft: Radius.circular(6))),
+                      child: Text('RIR 0-1',
+                          style: FontTextStyle.kWhite12BoldRoboto
+                              .copyWith(fontWeight: FontWeight.w500)),
+                    )
+                  ],
                 );
               }),
         ),
@@ -125,15 +162,9 @@ class _CounterCardState extends State<CounterCard> {
         return Padding(
           padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
           child: Container(
-            height: Get.height * .1,
+            height: Get.height * .11,
             width: Get.width,
-            decoration: BoxDecoration(
-                border: Border.all(color: ColorUtils.kBlack, width: 2),
-                gradient: LinearGradient(
-                    colors: ColorUtilsGradient.kGrayGradient,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.circular(6)),
+            color: Colors.transparent,
             child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               InkWell(
                 onTap: () {

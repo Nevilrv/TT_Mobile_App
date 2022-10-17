@@ -64,7 +64,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   title: exerciseByIdResponse.data![0].exerciseTitle!,
                   sets: exerciseByIdResponse.data![0].exerciseSets!,
                   exercisesId: exerciseByIdResponse.data![0].exerciseId!,
-                  reps: exerciseByIdResponse.data![0].exerciseReps!));
+                  reps: exerciseByIdResponse.data![0].exerciseReps!,
+                  exerciseColor: exerciseByIdResponse.data![0].exerciseColor!));
         } else if (exerciseByIdResponse.data![0].exerciseType == "TIME") {
           _workoutBaseExerciseViewModel
               .updateAppBarTitle(exerciseByIdResponse.data![0].exerciseTitle!);
