@@ -641,7 +641,12 @@ superSetCounterCardWidget(
                 controller.updateSuperSetRepsSaveMap(
                     keyMain: '$round', subKey: keys, value: '$t');
               }
-
+              print(
+                  'jhyrtjyrtyrtyrtjhyrt n 1 ${controller.listOfSetRepesSave[0][keys]}');
+              print(
+                  'jhyrtjyrtyrtyrtjhyrt n2  ${controller.listOfSetRepesSave[1][keys]}');
+              print(
+                  'jhyrtjyrtyrtyrtjhyrt n 3 ${controller.listOfSetRepesSave[2][keys]}');
               print('>>>>>> -    $t');
 
               // var index = widget.round;
@@ -680,13 +685,13 @@ superSetCounterCardWidget(
               // controller.updateRepsSuperSetList(
               //         index: , isPlus: true);
               print('=====1-2-3-4  ${controller.superSetRepsSaveMap}');
+
               int t =
                   int.parse(controller.superSetRepsSaveMap['$round']["$keys"]);
 
               t++;
               controller.updateSuperSetRepsSaveMap(
                   keyMain: "$round", subKey: "$keys", value: '$t');
-              print('++++ /// $t');
 
               /*var index = widget.round;
                 print('index /// $index');
@@ -734,7 +739,7 @@ RichText showTextWidget(WorkoutBaseExerciseViewModel controller, int round,
   } catch (e) {
     return RichText(
         text: TextSpan(
-            text: '${showText} ',
+            text: '$showText ',
             style: FontTextStyle.kWhite24BoldRoboto,
             children: [
           TextSpan(text: 'reps', style: FontTextStyle.kWhite17W400Roboto)

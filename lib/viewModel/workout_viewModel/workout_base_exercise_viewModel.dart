@@ -10,15 +10,12 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   bool showReps = false;
   Map<String, dynamic> superSetRepsSaveMap = {};
   bool isOneTimeApiCall = true;
+  List<Map<String, dynamic>> listOfSetRepesSave = [];
   updateSuperSetRepsSaveMap(
       {required String keyMain,
       required String subKey,
       required String value}) {
-    print('before app  ${superSetRepsSaveMap['$keyMain']["$subKey"]}');
-
     superSetRepsSaveMap[keyMain][subKey] = value;
-
-    print('after app  ${superSetRepsSaveMap['$keyMain']["$subKey"]}');
 
     update();
   }
