@@ -61,7 +61,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
     print('initstate');
     _workoutBaseExerciseViewModel.staticTimer = false;
     _workoutBaseExerciseViewModel.showReps = false;
-
+    _workoutBaseExerciseViewModel.isOneTimeApiCall = true;
     super.initState();
   }
 
@@ -184,13 +184,16 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
         if (snapshot.hasData) {
           print('API CALLING');
           ExerciseByIdResponseModel response = snapshot.data!;
-          repsMap.addAll({
-            "${snapshot.data!.data![0].exerciseTitle}":
-                snapshot.data!.data![0].exerciseReps!.isEmpty ||
-                        snapshot.data!.data![0].exerciseReps == ""
-                    ? "12"
-                    : snapshot.data!.data![0].exerciseReps
-          });
+          if (controllerWorkoutBaseExercise.isOneTimeApiCall) {
+            repsMap.addAll({
+              "${snapshot.data!.data![0].exerciseTitle}":
+                  snapshot.data!.data![0].exerciseReps!.isEmpty ||
+                          snapshot.data!.data![0].exerciseReps == ""
+                      ? "12"
+                      : snapshot.data!.data![0].exerciseReps
+            });
+            print('superSetsuperSetsuperSetsuperSet');
+          }
 
           print('length of key ??? ${repsMap.keys}');
           print('length of superSetId ??? ${widget.superSetIdList.length}');
@@ -205,9 +208,13 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
               _workoutBaseExerciseViewModel.showReps = true;
               print(
                   'value of ShowReps after  ${_workoutBaseExerciseViewModel.showReps}');
-              for (var i = 1; i <= widget.superSetRound; i++) {
-                _workoutBaseExerciseViewModel.superSetRepsSaveMap
-                    .addAll({'$i': repsMap});
+              if (controllerWorkoutBaseExercise.isOneTimeApiCall) {
+                for (var i = 1; i <= widget.superSetRound; i++) {
+                  _workoutBaseExerciseViewModel.superSetRepsSaveMap
+                      .addAll({'$i': repsMap});
+                }
+                controllerWorkoutBaseExercise.isOneTimeApiCall = false;
+                print('superSetsuperSetsuperSetsuperSet1');
               }
 
               print(
@@ -275,8 +282,9 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                   style: FontTextStyle.kLightGray18W300Roboto,
                 ),
                 SizedBox(height: Get.height * .0075),
-                SuperSetCounterCard(
-                  workoutBaseExerciseViewModel: _workoutBaseExerciseViewModel,
+                superSetCounterCardWidget(
+                  showText: '${response.data![0].exerciseReps}',
+                  controller: _workoutBaseExerciseViewModel,
                   superSetRound: int.parse("${widget.superSetRound}"),
                   round: widget.roundCount,
                   keys: "${response.data![0].exerciseTitle}",
@@ -583,124 +591,107 @@ class _SuperSetTimerProgressBarState extends State<SuperSetTimerProgressBar> {
 }
 
 /// super set card
-class SuperSetCounterCard extends StatefulWidget {
-  final int counter;
-  final int round;
-  final int superSetRound;
-  final WorkoutBaseExerciseViewModel workoutBaseExerciseViewModel;
-  final String keys;
-  final List<Map<String, dynamic>> newList;
-  const SuperSetCounterCard(
-      {Key? key,
-      required this.counter,
-      required this.round,
-      required this.superSetRound,
-      required this.keys,
-      required this.newList,
-      required this.workoutBaseExerciseViewModel})
-      : super(key: key);
+superSetCounterCardWidget(
+    {required int counter,
+    required String showText,
+    required int round,
+    required int superSetRound,
+    required WorkoutBaseExerciseViewModel controller,
+    required String keys,
+    required List<Map<String, dynamic>> newList}) {
+  print('round >>> ${round}');
+  print('keys >>> ${keys}');
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
+    child: Container(
+      height: Get.height * .1,
+      width: Get.width,
+      decoration: BoxDecoration(
+          border: Border.all(color: ColorUtils.kBlack, width: 2),
+          gradient: LinearGradient(
+              colors: ColorUtilsGradient.kGrayGradient,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter),
+          borderRadius: BorderRadius.circular(6)),
+      child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        InkWell(
+          onTap: () {
+            // controller.repsSuperSetList[0]++;
+            // print('controller.repsList[index] ');
+            //  controller.updateRepsSuperSetList(
+            //         index: widget.index, isPlus: false);
 
-  @override
-  _SuperSetCounterCardState createState() => _SuperSetCounterCardState();
-}
+            if (controller.superSetRepsSaveMap['$round'][keys] != 0) {
+              int t = int.parse(controller.superSetRepsSaveMap['$round'][keys]);
 
-class _SuperSetCounterCardState extends State<SuperSetCounterCard> {
-  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
-      Get.put(WorkoutBaseExerciseViewModel());
-  // int counters = 0;
+              t--;
+              controller.updateSuperSetRepsSaveMap(
+                  keyMain: '$round', subKey: keys, value: '$t');
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+              print('>>>>>> -    $t');
 
-  @override
-  Widget build(BuildContext context) {
-    print('round >>> ${widget.round}');
-    print('keys >>> ${widget.keys}');
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
-      child: Container(
-        height: Get.height * .1,
-        width: Get.width,
-        decoration: BoxDecoration(
-            border: Border.all(color: ColorUtils.kBlack, width: 2),
-            gradient: LinearGradient(
-                colors: ColorUtilsGradient.kGrayGradient,
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter),
-            borderRadius: BorderRadius.circular(6)),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          InkWell(
-            onTap: () {
-              // controller.repsSuperSetList[0]++;
-              // print('controller.repsList[index] ');
-              //  controller.updateRepsSuperSetList(
-              //         index: widget.index, isPlus: false);
-              if (_workoutBaseExerciseViewModel.superSetRepsSaveMap["1"]
-                      ["Renegade Row"] !=
-                  0) {
-                var t = int.parse(_workoutBaseExerciseViewModel
-                    .superSetRepsSaveMap["1"]["Renegade Row"]);
-
-                setState(() {
-                  t--;
-                });
-                print('>>>>>> -    $t');
-
-                // var index = widget.round;
-                // print('index /// $index');
-                // var x = widget.newList[index];
-                //
-                // print('cxcxcxcxc $x');
-                // print('${widget.keys}');
-                //
-                // x[widget.keys] = t;
-                // print('yyyy $x');
-                // widget.newList.removeAt(index);
-                // widget.newList.insert(index, x);
-                // print('1221212 >>> ${widget.newList}');
-              }
-            },
-            child: Container(
-              height: Get.height * .06,
-              width: Get.height * .06,
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                      colors: ColorUtilsGradient.kTintGradient,
-                      stops: [0.0, 1.0],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter)),
-              child: Icon(Icons.remove, color: ColorUtils.kBlack),
-            ),
+              // var index = widget.round;
+              // print('index /// $index');
+              // var x = widget.newList[index];
+              //
+              // print('cxcxcxcxc $x');
+              // print('${widget.keys}');
+              //
+              // x[widget.keys] = t;
+              // print('yyyy $x');
+              // widget.newList.removeAt(index);
+              // widget.newList.insert(index, x);
+              // print('1221212 >>> ${widget.newList}');
+            }
+            Future.delayed(Duration(milliseconds: 100));
+          },
+          child: Container(
+            height: Get.height * .06,
+            width: Get.height * .06,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                    colors: ColorUtilsGradient.kTintGradient,
+                    stops: [0.0, 1.0],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter)),
+            child: Icon(Icons.remove, color: ColorUtils.kBlack),
           ),
-          SizedBox(width: Get.width * .08),
-          RichText(
-              text: TextSpan(
-                  // text:  '${controller.repsSuperSetList[widget.index]} ',
-                  // text: '$counters ',
-                  /* text: '${widget.newList[widget.round]['${widget.keys}']} ',
-                  style: widget.newList[widget.round]['${widget.keys}'] == 0
-                      ? FontTextStyle.kWhite24BoldRoboto
-                          .copyWith(color: ColorUtils.kGray)
-                      : FontTextStyle.kWhite24BoldRoboto,*/
-                  children: [
-                TextSpan(text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
-              ])),
-          SizedBox(width: Get.width * .08),
-          InkWell(
-              onTap: () {
-                // controller.updateRepsSuperSetList(
-                //         index: , isPlus: true);
-                var t = int.parse(_workoutBaseExerciseViewModel
-                    .superSetRepsSaveMap["1"]["Renegade Row"]);
+        ),
+        SizedBox(width: Get.width * .08),
+        showCountText(
+          subKey: keys,
+          key: '$round',
+          controller: controller,
+          showText: '${showText}',
+        ),
+        // RichText(
+        //     text: TextSpan(
+        //         text:
+        //             '${_workoutBaseExerciseViewModel.superSetRepsSaveMap["1"]["Renegade Row"]} ',
+        //         // style: widget.newList[widget.round]['${widget.keys}'] == 0
+        //         //     ? FontTextStyle.kWhite24BoldRoboto
+        //         //         .copyWith(color: ColorUtils.kGray)
+        //         //     : FontTextStyle.kWhite24BoldRoboto,
+        //         children: [
+        //       TextSpan(
+        //           text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
+        //     ])),
+        SizedBox(width: Get.width * .08),
+        InkWell(
+            onTap: () {
+              // controller.updateRepsSuperSetList(
+              //         index: , isPlus: true);
+              print('=====1-2-3-4  ${controller.superSetRepsSaveMap}');
+              int t =
+                  int.parse(controller.superSetRepsSaveMap['$round']["$keys"]);
 
-                t++;
-                print('++++ /// $t');
+              t++;
+              controller.updateSuperSetRepsSaveMap(
+                  keyMain: "$round", subKey: "$keys", value: '$t');
+              print('++++ /// $t');
 
-                /*var index = widget.round;
+              /*var index = widget.round;
                 print('index /// $index');
                 var x = widget.newList[index];
 
@@ -712,24 +703,195 @@ class _SuperSetCounterCardState extends State<SuperSetCounterCard> {
                 widget.newList.removeAt(index);
                 widget.newList.insert(index, x);
                 print('1221212 >>> ${widget.newList}');*/
-              },
-              child: Container(
-                height: Get.height * .06,
-                width: Get.height * .06,
-                decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                        colors: ColorUtilsGradient.kTintGradient,
-                        stops: [0.0, 1.0],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter)),
-                child: Icon(Icons.add, color: ColorUtils.kBlack),
-              )),
-        ]),
-      ),
+            },
+            child: Container(
+              height: Get.height * .06,
+              width: Get.height * .06,
+              decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                      colors: ColorUtilsGradient.kTintGradient,
+                      stops: [0.0, 1.0],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter)),
+              child: Icon(Icons.add, color: ColorUtils.kBlack),
+            )),
+      ]),
+    ),
+  );
+}
+
+Text showCountText(
+    {required WorkoutBaseExerciseViewModel controller,
+    required String showText,
+    required String subKey,
+    required String key}) {
+  try {
+    return Text(
+      '${controller.superSetRepsSaveMap[key][subKey] ?? ""}',
+      style: TextStyle(color: Colors.white),
+    );
+  } catch (e) {
+    return Text(
+      '$showText',
+      style: TextStyle(color: Colors.white),
     );
   }
 }
+// class SuperSetCounterCard extends StatefulWidget {
+//   final int counter;
+//   final int round;
+//   final int superSetRound;
+//   final WorkoutBaseExerciseViewModel controller;
+//   final String keys;
+//   final List<Map<String, dynamic>> newList;
+//   const SuperSetCounterCard(
+//       {Key? key,
+//       required this.counter,
+//       required this.round,
+//       required this.superSetRound,
+//       required this.keys,
+//       required this.newList,
+//       required this.controller})
+//       : super(key: key);
+//
+//   @override
+//   _SuperSetCounterCardState createState() => _SuperSetCounterCardState();
+// }
+
+// class _SuperSetCounterCardState extends State<SuperSetCounterCard> {
+//   // int counters = 0;
+//
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     print('round >>> ${widget.round}');
+//     print('keys >>> ${widget.keys}');
+//     return Padding(
+//       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
+//       child: Container(
+//         height: Get.height * .1,
+//         width: Get.width,
+//         decoration: BoxDecoration(
+//             border: Border.all(color: ColorUtils.kBlack, width: 2),
+//             gradient: LinearGradient(
+//                 colors: ColorUtilsGradient.kGrayGradient,
+//                 begin: Alignment.topCenter,
+//                 end: Alignment.bottomCenter),
+//             borderRadius: BorderRadius.circular(6)),
+//         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+//           InkWell(
+//             onTap: () {
+//
+//               // controller.repsSuperSetList[0]++;
+//               // print('controller.repsList[index] ');
+//               //  controller.updateRepsSuperSetList(
+//               //         index: widget.index, isPlus: false);
+//
+//               if (widget.controller.superSetRepsSaveMap["1"]["Renegade Row"] !=
+//                   0) {
+//                 int t = int.parse(
+//                     widget.controller.superSetRepsSaveMap["1"]["Renegade Row"]);
+//
+//                 t--;
+//                 widget.controller.updateSuperSetRepsSaveMap(
+//                     keyMain: "1", subKey: "Renegade Row", value: '$t');
+//
+//                 print('>>>>>> -    $t');
+//
+//                 // var index = widget.round;
+//                 // print('index /// $index');
+//                 // var x = widget.newList[index];
+//                 //
+//                 // print('cxcxcxcxc $x');
+//                 // print('${widget.keys}');
+//                 //
+//                 // x[widget.keys] = t;
+//                 // print('yyyy $x');
+//                 // widget.newList.removeAt(index);
+//                 // widget.newList.insert(index, x);
+//                 // print('1221212 >>> ${widget.newList}');
+//               }
+//             },
+//             child: Container(
+//               height: Get.height * .06,
+//               width: Get.height * .06,
+//               decoration: BoxDecoration(
+//                   shape: BoxShape.circle,
+//                   gradient: LinearGradient(
+//                       colors: ColorUtilsGradient.kTintGradient,
+//                       stops: [0.0, 1.0],
+//                       begin: Alignment.topCenter,
+//                       end: Alignment.bottomCenter)),
+//               child: Icon(Icons.remove, color: ColorUtils.kBlack),
+//             ),
+//           ),
+//           SizedBox(width: Get.width * .08),
+//           Text(
+//             '${widget.controller.superSetRepsSaveMap["1"]["Renegade Row"]}',
+//             style: TextStyle(color: Colors.white),
+//           ),
+//           // RichText(
+//           //     text: TextSpan(
+//           //         text:
+//           //             '${_workoutBaseExerciseViewModel.superSetRepsSaveMap["1"]["Renegade Row"]} ',
+//           //         // style: widget.newList[widget.round]['${widget.keys}'] == 0
+//           //         //     ? FontTextStyle.kWhite24BoldRoboto
+//           //         //         .copyWith(color: ColorUtils.kGray)
+//           //         //     : FontTextStyle.kWhite24BoldRoboto,
+//           //         children: [
+//           //       TextSpan(
+//           //           text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
+//           //     ])),
+//           SizedBox(width: Get.width * .08),
+//           InkWell(
+//               onTap: () {
+//                 // controller.updateRepsSuperSetList(
+//                 //         index: , isPlus: true);
+//                 print('=====1-2-3-4  ${widget.controller.superSetRepsSaveMap}');
+//                 int t = int.parse(
+//                     widget.controller.superSetRepsSaveMap["1"]["Renegade Row"]);
+//
+//                 t++;
+//                 widget.controller.updateSuperSetRepsSaveMap(
+//                     keyMain: "1", subKey: "Renegade Row", value: '$t');
+//                 print('++++ /// $t');
+//
+//                 /*var index = widget.round;
+//                 print('index /// $index');
+//                 var x = widget.newList[index];
+//
+//                 print('cxcxcxcxc $x');
+//                 print('${widget.keys}');
+//
+//                 x[widget.keys] = t;
+//                 print('yyyy $x');
+//                 widget.newList.removeAt(index);
+//                 widget.newList.insert(index, x);
+//                 print('1221212 >>> ${widget.newList}');*/
+//               },
+//               child: Container(
+//                 height: Get.height * .06,
+//                 width: Get.height * .06,
+//                 decoration: BoxDecoration(
+//                     shape: BoxShape.circle,
+//                     gradient: LinearGradient(
+//                         colors: ColorUtilsGradient.kTintGradient,
+//                         stops: [0.0, 1.0],
+//                         begin: Alignment.topCenter,
+//                         end: Alignment.bottomCenter)),
+//                 child: Icon(Icons.add, color: ColorUtils.kBlack),
+//               )),
+//         ]),
+//       ),
+//     );
+//   }
+// }
 
 /// super set static timer(30 sec)
 class SupersetStaticTimer extends StatefulWidget {
@@ -751,8 +913,8 @@ class SupersetStaticTimer extends StatefulWidget {
 }
 
 class _SupersetStaticTimerState extends State<SupersetStaticTimer> {
-  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
-      Get.put(WorkoutBaseExerciseViewModel());
+  // WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
+  //     Get.put(WorkoutBaseExerciseViewModel());
 
   @override
   Widget build(BuildContext context) {
