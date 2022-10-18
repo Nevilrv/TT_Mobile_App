@@ -204,8 +204,8 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                                                       : NetworkImage('${response.data![0].exercises![index].exerciseImage}'),
                                                                   fit: BoxFit.fill))),
                                                       SizedBox(
-                                                        width: 15,
-                                                      ),
+                                                          width:
+                                                              Get.width * .03),
                                                       Expanded(
                                                         child: Column(
                                                           crossAxisAlignment:
@@ -233,7 +233,7 @@ class _WorkoutOverviewPageState extends State<WorkoutOverviewPage> {
                                                                         Get.width *
                                                                             0.3,
                                                                     child: ListView.separated(
-                                                                        itemCount: int.parse('${response.data![0].exercises![index].exerciseSets!}') >= 7 ? 7 : int.parse('${response.data![0].exercises![index].exerciseSets!}'),
+                                                                        itemCount: int.parse('${response.data![0].exercises![index].exerciseSets!}') >= 6 ? 6 : int.parse('${response.data![0].exercises![index].exerciseSets!}'),
                                                                         scrollDirection: Axis.horizontal,
                                                                         physics: NeverScrollableScrollPhysics(),
                                                                         shrinkWrap: true,
