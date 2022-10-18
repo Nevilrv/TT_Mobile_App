@@ -98,7 +98,9 @@ Padding listViewTab(
                                     date: getEventForDay[index].date,
                                     onPressedView: () {
                                       Get.to(() => PlanOverviewScreen(
-                                          id: "${getEventForDay[index].programData![0].workoutId}"));
+                                            id: "${getEventForDay[index].programData![0].workoutId}",
+                                            isDoStart: false,
+                                          ));
                                     },
                                     // onPressedStart: () {
                                     //   print(

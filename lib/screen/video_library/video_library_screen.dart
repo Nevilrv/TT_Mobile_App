@@ -7,6 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/all_categories_response_model.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
+import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/screen/video_library/video_single_cat_screen.dart';
@@ -217,6 +218,11 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                             ? 10
                                                             : videoResponse
                                                                 .data!.length,
+                                                        // separatorBuilder:
+                                                        //     (_, index1) {
+                                                        //   return SizedBox(
+                                                        //       width: 50);
+                                                        // },
                                                         itemBuilder:
                                                             (_, index1) {
                                                           log('videoResponse.data!.length  ${videoResponse.data![index1].videoUrl}');
@@ -243,48 +249,52 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                                     print(
                                                                         "button pressed ");
                                                                   },
-                                                                  child:
-                                                                      Container(
-                                                                    margin: EdgeInsets.only(
-                                                                        top: Get.height *
-                                                                            .01,
-                                                                        right: Get.height *
-                                                                            .02),
-                                                                    height: Get
-                                                                            .height *
-                                                                        0.175,
-                                                                    width: Get
-                                                                            .height *
-                                                                        0.125,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      border: Border.all(
-                                                                          color: ColorUtils
-                                                                              .kTint,
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Column(
+                                                                        children: [
+                                                                          Expanded(
+                                                                            flex:
+                                                                                3,
+                                                                            child:
+                                                                                Container(
+                                                                              margin: EdgeInsets.only(top: Get.height * .02),
+                                                                              height: Get.height * 0.075,
+                                                                              width: Get.height * 0.2,
+                                                                              decoration: BoxDecoration(
+                                                                                border: Border.all(color: ColorUtils.kTint, width: 1),
+                                                                                borderRadius: BorderRadius.circular(15),
+                                                                              ),
+                                                                              child: ClipRRect(
+                                                                                borderRadius: BorderRadius.circular(15),
+                                                                                child: Center(
+                                                                                    child: videoResponse.data![index].videoThumbnail == null || videoResponse.data![index].videoThumbnail == ''
+                                                                                        ? Padding(
+                                                                                            padding: EdgeInsets.all(15.0),
+                                                                                            child: Image.asset(AppImages.logo),
+                                                                                          )
+                                                                                        : Image.network(videoResponse.data![index].videoThumbnail!, fit: BoxFit.cover, height: Get.height, width: Get.width)),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              height: Get.height * .015),
+                                                                          Padding(
+                                                                            padding:
+                                                                                EdgeInsets.only(left: Get.height * .013),
+                                                                            child:
+                                                                                Text(
+                                                                              '${videoResponse.data![index].videoTitle}'.length <= 20 ? '${videoResponse.data![index].videoTitle}' : '${videoResponse.data![index].videoTitle!.substring(0, 20)} ..',
+                                                                              // '${videoResponse.data![index1].videoTitle}',
+                                                                              style: FontTextStyle.kWhite17BoldRoboto,
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                      SizedBox(
                                                                           width:
-                                                                              1),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              15),
-                                                                    ),
-                                                                    child:
-                                                                        ClipRRect(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              15),
-                                                                      child: Center(
-                                                                          child: videoResponse.data![index1].videoThumbnail == null || videoResponse.data![index1].videoThumbnail == ''
-                                                                              ? Padding(
-                                                                                  padding: EdgeInsets.all(15.0),
-                                                                                  child: Image.asset(AppImages.logo),
-                                                                                )
-                                                                              : Image.network(
-                                                                                  videoResponse.data![index1].videoThumbnail!,
-                                                                                  height: Get.height * 0.175,
-                                                                                  width: Get.height * 0.125,
-                                                                                  fit: BoxFit.cover,
-                                                                                )),
-                                                                    ),
+                                                                              Get.height * .03),
+                                                                    ],
                                                                   ),
                                                                 )
                                                               : SizedBox();

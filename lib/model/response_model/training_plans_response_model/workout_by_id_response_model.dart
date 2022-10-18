@@ -1,788 +1,3 @@
-// // To parse this JSON data, do
-// //
-// //     final workoutByIdResponseModel = workoutByIdResponseModelFromJson(jsonString);
-// //
-// // import 'dart:convert';
-// //
-// // WorkoutByIdResponseModel workoutByIdResponseModelFromJson(String str) =>
-// //     WorkoutByIdResponseModel.fromJson(json.decode(str));
-// //
-// // String workoutByIdResponseModelToJson(WorkoutByIdResponseModel data) =>
-// //     json.encode(data.toJson());
-// //
-// // class WorkoutByIdResponseModel {
-// //   WorkoutByIdResponseModel({
-// //     this.success,
-// //     this.msg,
-// //     this.data,
-// //   });
-// //
-// //   bool? success;
-// //   String? msg;
-// //   List<WorkoutById>? data;
-// //
-// //   factory WorkoutByIdResponseModel.fromJson(Map<String, dynamic> json) =>
-// //       WorkoutByIdResponseModel(
-// //         success: json["success"],
-// //         msg: json["msg"],
-// //         data: List<WorkoutById>.from(
-// //             json["data"].map((x) => WorkoutById.fromJson(x))),
-// //       );
-// //
-// //   Map<String, dynamic> toJson() => {
-// //         "success": success,
-// //         "msg": msg,
-// //         "data": List<dynamic>.from(data!.map((x) => x.toJson())),
-// //       };
-// // }
-// //
-// // class WorkoutById {
-// //   WorkoutById({
-// //     this.workoutId,
-// //     this.workoutTitle,
-// //     this.workoutDescription,
-// //     this.workoutGoal,
-// //     this.workoutLevel,
-// //     this.workoutDuration,
-// //     this.workoutImage,
-// //     this.workoutVideo,
-// //     this.goalTitle,
-// //     this.levelTitle,
-// //     this.dayNames,
-// //     this.daysAllData,
-// //   });
-// //
-// //   String? workoutId;
-// //   String? workoutTitle;
-// //   String? workoutDescription;
-// //   String? workoutGoal;
-// //   String? workoutLevel;
-// //   int? workoutDuration;
-// //   String? workoutImage;
-// //   dynamic workoutVideo;
-// //   String? goalTitle;
-// //   String? levelTitle;
-// //   List<dynamic>? dayNames;
-// //   List<dynamic>? daysAllData;
-// //
-// //   factory WorkoutById.fromJson(Map<String, dynamic> json) => WorkoutById(
-// //         workoutId: json["workout_id"],
-// //         workoutTitle: json["workout_title"],
-// //         workoutDescription: json["workout_description"],
-// //         workoutGoal: json["workout_goal"],
-// //         workoutLevel: json["workout_level"],
-// //         workoutDuration: json["workout_duration"],
-// //         workoutImage: json["workout_image"],
-// //         workoutVideo: json["workout_video"],
-// //         goalTitle: json["goal_title"],
-// //         levelTitle: json["level_title"],
-// //         dayNames: List<dynamic>.from(json["day_names"].map((x) => x)),
-// //         daysAllData: json["days_all_data"] == null
-// //             ? []
-// //             : List<DaysAllWorkoutById>.from(json["days_all_data"]
-// //                 .map((x) => DaysAllWorkoutById.fromJson(x))),
-// //       );
-// //
-// //   Map<String, dynamic> toJson() => {
-// //         "workout_id": workoutId,
-// //         "workout_title": workoutTitle,
-// //         "workout_description": workoutDescription,
-// //         "workout_goal": workoutGoal,
-// //         "workout_level": workoutLevel,
-// //         "workout_duration": workoutDuration,
-// //         "workout_image": workoutImage,
-// //         "workout_video": workoutVideo,
-// //         "goal_title": goalTitle,
-// //         "level_title": levelTitle,
-// //         "day_names": List<dynamic>.from(dayNames!.map((x) => x)),
-// //         "days_all_data":
-// //             List<dynamic>.from(daysAllData!.map((x) => x.toJson())),
-// //       };
-// // }
-// //
-// // class DaysAllWorkoutById {
-// //   DaysAllWorkoutById({
-// //     this.days,
-// //   });
-// //
-// //   List<Day>? days;
-// //
-// //   factory DaysAllWorkoutById.fromJson(Map<String, dynamic> json) =>
-// //       DaysAllWorkoutById(
-// //         days: List<Day>.from(json["days"].map((x) => Day.fromJson(x))),
-// //       );
-// //
-// //   Map<String, dynamic> toJson() => {
-// //         "days": List<dynamic>.from(days!.map((x) => x.toJson())),
-// //       };
-// // }
-// //
-// // class Day {
-// //   Day({
-// //     this.selectedExercises,
-// //     this.favorite,
-// //     this.day,
-// //     this.dayName,
-// //   });
-// //
-// //   List<String>? selectedExercises;
-// //   List<dynamic>? favorite;
-// //   String? day;
-// //   String? dayName;
-// //
-// //   factory Day.fromJson(Map<String, dynamic> json) => Day(
-// //         selectedExercises:
-// //             List<String>.from(json["selected_exercises"].map((x) => x)),
-// //         favorite: List<dynamic>.from(json["favorite"].map((x) => x)),
-// //         day: json["day"],
-// //         dayName: json["day_name"],
-// //       );
-// //
-// //   Map<String, dynamic> toJson() => {
-// //         "selected_exercises":
-// //             List<dynamic>.from(selectedExercises!.map((x) => x)),
-// //         "favorite": List<dynamic>.from(favorite!.map((x) => x)),
-// //         "day": day,
-// //         "day_name": dayName,
-// //       };
-// // }
-//
-// /// 2
-//
-// // To parse this JSON data, do
-// //
-// //     final workoutByIdResponseModel = workoutByIdResponseModelFromJson(jsonString);
-//
-// import 'dart:convert';
-//
-// WorkoutByIdResponseModel workoutByIdResponseModelFromJson(String str) =>
-//     WorkoutByIdResponseModel.fromJson(json.decode(str));
-//
-// String workoutByIdResponseModelToJson(WorkoutByIdResponseModel data) =>
-//     json.encode(data.toJson());
-//
-// class WorkoutByIdResponseModel {
-//   WorkoutByIdResponseModel({
-//     this.success,
-//     this.msg,
-//     this.data,
-//   });
-//
-//   bool? success;
-//   String? msg;
-//   List<WorkoutById>? data;
-//
-//   factory WorkoutByIdResponseModel.fromJson(Map<String, dynamic> json) =>
-//       WorkoutByIdResponseModel(
-//         success: json["success"],
-//         msg: json["msg"],
-//         data: List<WorkoutById>.from(
-//             json["data"].map((x) => WorkoutById.fromJson(x))),
-//       );
-//
-//   Map<String, dynamic> toJson() => {
-//         "success": success,
-//         "msg": msg,
-//         "data": List<dynamic>.from(data!.map((x) => x.toJson())),
-//       };
-// }
-//
-// class WorkoutById {
-//   WorkoutById({
-//     this.workoutId,
-//     this.workoutTitle,
-//     this.workoutDescription,
-//     this.workoutGoal,
-//     this.workoutLevel,
-//     this.workoutDuration,
-//     this.workoutImage,
-//     this.workoutVideo,
-//     this.goalTitle,
-//     this.levelTitle,
-//     this.selectedDays,
-//     this.dayNames,
-//     this.daysAllData,
-//     this.availableEquipments,
-//   });
-//
-//   String? workoutId;
-//   String? workoutTitle;
-//   String? workoutDescription;
-//   String? workoutGoal;
-//   String? workoutLevel;
-//   int? workoutDuration;
-//   String? workoutImage;
-//   dynamic workoutVideo;
-//   String? goalTitle;
-//   String? levelTitle;
-//   String? selectedDays;
-//   List<dynamic>? dayNames;
-//   List<dynamic>? daysAllData;
-//   List<String>? availableEquipments;
-//
-//   factory WorkoutById.fromJson(Map<String, dynamic> json) => WorkoutById(
-//         workoutId: json["workout_id"],
-//         workoutTitle: json["workout_title"],
-//         workoutDescription: json["workout_description"],
-//         workoutGoal: json["workout_goal"],
-//         workoutLevel: json["workout_level"],
-//         workoutDuration: json["workout_duration"],
-//         workoutImage: json["workout_image"],
-//         workoutVideo: json["workout_video"],
-//         goalTitle: json["goal_title"],
-//         levelTitle: json["level_title"],
-//         selectedDays: json["selected_days"],
-//         dayNames: json["days_all_data"] == []
-//             ? []
-//             : List<dynamic>.from(json["day_names"].map((x) => x)),
-//         daysAllData: json["days_all_data"] == null
-//             ? []
-//             : List<DaysAllWorkoutById>.from(json["days_all_data"]
-//                 .map((x) => DaysAllWorkoutById.fromJson(x))),
-//         availableEquipments: json["available_equipments"] == null
-//             ? []
-//             : List<String>.from(json["available_equipments"].map((x) => x)),
-//       );
-//
-//   Map<String, dynamic> toJson() => {
-//         "workout_id": workoutId,
-//         "workout_title": workoutTitle,
-//         "workout_description": workoutDescription,
-//         "workout_goal": workoutGoal,
-//         "workout_level": workoutLevel,
-//         "workout_duration": workoutDuration,
-//         "workout_image": workoutImage,
-//         "workout_video": workoutVideo,
-//         "goal_title": goalTitle,
-//         "level_title": levelTitle,
-//         "selected_days": selectedDays,
-//         "day_names": List<dynamic>.from(dayNames!.map((x) => x)),
-//         "days_all_data":
-//             List<dynamic>.from(daysAllData!.map((x) => x.toJson())),
-//         "available_equipments":
-//             List<String>.from(availableEquipments!.map((x) => x)),
-//       };
-// }
-//
-// class DaysAllWorkoutById {
-//   DaysAllWorkoutById({
-//     this.days,
-//   });
-//
-//   List<Day>? days;
-//
-//   factory DaysAllWorkoutById.fromJson(Map<String, dynamic> json) =>
-//       DaysAllWorkoutById(
-//         days: List<Day>.from(json["days"].map((x) => Day.fromJson(x))),
-//       );
-//
-//   Map<String, dynamic> toJson() => {
-//         "days": List<dynamic>.from(days!.map((x) => x.toJson())),
-//       };
-// }
-//
-// class Day {
-//   Day({
-//     this.selectedExercises,
-//     this.favorite,
-//     this.day,
-//     this.dayName,
-//     this.dayIndex,
-//     this.groups,
-//   });
-//
-//   List<String>? selectedExercises;
-//   List<dynamic>? favorite;
-//   String? day;
-//   String? dayName;
-//   String? dayIndex;
-//   Map<String, Group>? groups;
-//
-//   factory Day.fromJson(Map<String, dynamic> json) => Day(
-//         selectedExercises:
-//             List<String>.from(json["selected_exercises"].map((x) => x)),
-//         favorite: json["favorite"] == null
-//             ? null
-//             : List<dynamic>.from(json["favorite"].map((x) => x)),
-//         day: json["day"],
-//         dayName: json["day_name"],
-//         dayIndex: json["day_index"],
-//         groups: json["groups"] == null
-//             ? null
-//             : Map.from(json["groups"])
-//                 .map((k, v) => MapEntry<String, Group>(k, Group.fromJson(v))),
-//       );
-//
-//   Map<String, dynamic> toJson() => {
-//         "selected_exercises":
-//             List<dynamic>.from(selectedExercises!.map((x) => x)),
-//         "favorite": favorite == null
-//             ? null
-//             : List<dynamic>.from(favorite!.map((x) => x)),
-//         "day": day,
-//         "day_name": dayName,
-//         "day_index": dayIndex,
-//         "groups": groups == null
-//             ? null
-//             : Map.from(groups!)
-//                 .map((k, v) => MapEntry<String, dynamic>(k, v.toJson())),
-//       };
-// }
-//
-// class Group {
-//   Group({
-//     this.parentId,
-//     this.groupId,
-//   });
-//
-//   String? parentId;
-//   String? groupId;
-//
-//   factory Group.fromJson(Map<String, dynamic> json) => Group(
-//         parentId: json["parent_id"],
-//         groupId: json["group_id"],
-//       );
-//
-//   Map<String, dynamic> toJson() => {
-//         "parent_id": parentId,
-//         "group_id": groupId,
-//       };
-// }
-
-// import 'dart:developer';
-//
-// import 'package:flutter/cupertino.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
-//
-// class YoutubePlayerDemoApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Youtube Player Flutter',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//         appBarTheme: const AppBarTheme(
-//           color: Colors.blueAccent,
-//           titleTextStyle: TextStyle(
-//             color: Colors.white,
-//             fontWeight: FontWeight.w300,
-//             fontSize: 20,
-//           ),
-//         ),
-//         iconTheme: const IconThemeData(
-//           color: Colors.blueAccent,
-//         ),
-//       ),
-//       home: MyHomePage(),
-//     );
-//   }
-// }
-//
-// /// Homepage
-// class MyHomePage extends StatefulWidget {
-//   @override
-//   _MyHomePageState createState() => _MyHomePageState();
-// }
-//
-// class _MyHomePageState extends State<MyHomePage> {
-//   late YoutubePlayerController _controller;
-//   late TextEditingController _idController;
-//   late TextEditingController _seekToController;
-//
-//   late PlayerState _playerState;
-//   late YoutubeMetaData _videoMetaData;
-//   double _volume = 100;
-//   bool _muted = false;
-//   bool _isPlayerReady = false;
-//
-//   final List<String> _ids = [
-//     'nPt8bK2gbaU',
-//     'gQDByCdjUXw',
-//     'iLnmTe5Q2Qw',
-//     '_WoCV4c6XOE',
-//     'KmzdUe0RSJo',
-//     '6jZDSSZZxjQ',
-//     'p2lYr3vM_1w',
-//     '7QUtEmBT_-w',
-//     '34_PXCzGw1M',
-//   ];
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _controller = YoutubePlayerController(
-//       initialVideoId: _ids.first,
-//       flags: const YoutubePlayerFlags(
-//         mute: false,
-//         autoPlay: true,
-//         disableDragSeek: false,
-//         loop: false,
-//         isLive: false,
-//         forceHD: false,
-//         enableCaption: true,
-//       ),
-//     )..addListener(listener);
-//     _idController = TextEditingController();
-//     _seekToController = TextEditingController();
-//     _videoMetaData = const YoutubeMetaData();
-//     _playerState = PlayerState.unknown;
-//   }
-//
-//   void listener() {
-//     if (_isPlayerReady && mounted && !_controller.value.isFullScreen) {
-//       setState(() {
-//         _playerState = _controller.value.playerState;
-//         _videoMetaData = _controller.metadata;
-//       });
-//     }
-//   }
-//
-//   @override
-//   void deactivate() {
-//     // Pauses video while navigating to next page.
-//     _controller.pause();
-//     super.deactivate();
-//   }
-//
-//   @override
-//   void dispose() {
-//     _controller.dispose();
-//     _idController.dispose();
-//     _seekToController.dispose();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return YoutubePlayerBuilder(
-//       onExitFullScreen: () {
-//         // The player forces portraitUp after exiting fullscreen. This overrides the behaviour.
-//         SystemChrome.setPreferredOrientations(DeviceOrientation.values);
-//       },
-//       player: YoutubePlayer(
-//         controller: _controller,
-//         showVideoProgressIndicator: true,
-//         progressIndicatorColor: Colors.blueAccent,
-//         topActions: <Widget>[
-//           const SizedBox(width: 8.0),
-//           Expanded(
-//             child: Text(
-//               _controller.metadata.title,
-//               style: const TextStyle(
-//                 color: Colors.white,
-//                 fontSize: 18.0,
-//               ),
-//               overflow: TextOverflow.ellipsis,
-//               maxLines: 1,
-//             ),
-//           ),
-//           IconButton(
-//             icon: const Icon(
-//               Icons.settings,
-//               color: Colors.white,
-//               size: 25.0,
-//             ),
-//             onPressed: () {
-//               log('Settings Tapped!');
-//             },
-//           ),
-//         ],
-//         onReady: () {
-//           _isPlayerReady = true;
-//         },
-//         onEnded: (data) {
-//           _controller
-//               .load(_ids[(_ids.indexOf(data.videoId) + 1) % _ids.length]);
-//           _showSnackBar('Next Video Started!');
-//         },
-//       ),
-//       builder: (context, player) => Scaffold(
-//         appBar: AppBar(
-//           leading: Padding(
-//             padding: const EdgeInsets.only(left: 12.0),
-//             child: Image.asset(
-//               'assets/ypf.png',
-//               fit: BoxFit.fitWidth,
-//             ),
-//           ),
-//           title: const Text(
-//             'Youtube Player Flutter',
-//             style: TextStyle(color: Colors.white),
-//           ),
-//           actions: [
-//             IconButton(icon: const Icon(Icons.video_library), onPressed: () {}),
-//           ],
-//         ),
-//         body: ListView(
-//           children: [
-//             player,
-//             Padding(
-//               padding: const EdgeInsets.all(8.0),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.stretch,
-//                 children: [
-//                   _space,
-//                   _text('Title', _videoMetaData.title),
-//                   _space,
-//                   _text('Channel', _videoMetaData.author),
-//                   _space,
-//                   _text('Video Id', _videoMetaData.videoId),
-//                   _space,
-//                   Row(
-//                     children: [
-//                       _text(
-//                         'Playback Quality',
-//                         _controller.value.playbackQuality ?? '',
-//                       ),
-//                       const Spacer(),
-//                       _text(
-//                         'Playback Rate',
-//                         '${_controller.value.playbackRate}x  ',
-//                       ),
-//                     ],
-//                   ),
-//                   _space,
-//                   TextField(
-//                     enabled: _isPlayerReady,
-//                     controller: _idController,
-//                     decoration: InputDecoration(
-//                       border: InputBorder.none,
-//                       hintText: 'Enter youtube \<video id\> or \<link\>',
-//                       fillColor: Colors.blueAccent.withAlpha(20),
-//                       filled: true,
-//                       hintStyle: const TextStyle(
-//                         fontWeight: FontWeight.w300,
-//                         color: Colors.blueAccent,
-//                       ),
-//                       suffixIcon: IconButton(
-//                         icon: const Icon(Icons.clear),
-//                         onPressed: () => _idController.clear(),
-//                       ),
-//                     ),
-//                   ),
-//                   _space,
-//                   Row(
-//                     children: [
-//                       _loadCueButton('LOAD'),
-//                       const SizedBox(width: 10.0),
-//                       _loadCueButton('CUE'),
-//                     ],
-//                   ),
-//                   _space,
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                     children: [
-//                       IconButton(
-//                         icon: const Icon(Icons.skip_previous),
-//                         onPressed: _isPlayerReady
-//                             ? () => _controller.load(_ids[
-//                                 (_ids.indexOf(_controller.metadata.videoId) -
-//                                         1) %
-//                                     _ids.length])
-//                             : null,
-//                       ),
-//                       IconButton(
-//                         icon: Icon(
-//                           _controller.value.isPlaying
-//                               ? Icons.pause
-//                               : Icons.play_arrow,
-//                         ),
-//                         onPressed: _isPlayerReady
-//                             ? () {
-//                                 _controller.value.isPlaying
-//                                     ? _controller.pause()
-//                                     : _controller.play();
-//                                 setState(() {});
-//                               }
-//                             : null,
-//                       ),
-//                       IconButton(
-//                         icon: Icon(_muted ? Icons.volume_off : Icons.volume_up),
-//                         onPressed: _isPlayerReady
-//                             ? () {
-//                                 _muted
-//                                     ? _controller.unMute()
-//                                     : _controller.mute();
-//                                 setState(() {
-//                                   _muted = !_muted;
-//                                 });
-//                               }
-//                             : null,
-//                       ),
-//                       FullScreenButton(
-//                         controller: _controller,
-//                         color: Colors.blueAccent,
-//                       ),
-//                       IconButton(
-//                         icon: const Icon(Icons.skip_next),
-//                         onPressed: _isPlayerReady
-//                             ? () => _controller.load(_ids[
-//                                 (_ids.indexOf(_controller.metadata.videoId) +
-//                                         1) %
-//                                     _ids.length])
-//                             : null,
-//                       ),
-//                     ],
-//                   ),
-//                   _space,
-//                   Row(
-//                     children: <Widget>[
-//                       const Text(
-//                         "Volume",
-//                         style: TextStyle(fontWeight: FontWeight.w300),
-//                       ),
-//                       Expanded(
-//                         child: Slider(
-//                           inactiveColor: Colors.transparent,
-//                           value: _volume,
-//                           min: 0.0,
-//                           max: 100.0,
-//                           divisions: 10,
-//                           label: '${(_volume).round()}',
-//                           onChanged: _isPlayerReady
-//                               ? (value) {
-//                                   setState(() {
-//                                     _volume = value;
-//                                   });
-//                                   _controller.setVolume(_volume.round());
-//                                 }
-//                               : null,
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                   _space,
-//                   AnimatedContainer(
-//                     duration: const Duration(milliseconds: 800),
-//                     decoration: BoxDecoration(
-//                       borderRadius: BorderRadius.circular(20.0),
-//                       color: _getStateColor(_playerState),
-//                     ),
-//                     padding: const EdgeInsets.all(8.0),
-//                     child: Text(
-//                       _playerState.toString(),
-//                       style: const TextStyle(
-//                         fontWeight: FontWeight.w300,
-//                         color: Colors.white,
-//                       ),
-//                       textAlign: TextAlign.center,
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-//   Widget _text(String title, String value) {
-//     return RichText(
-//       text: TextSpan(
-//         text: '$title : ',
-//         style: const TextStyle(
-//           color: Colors.blueAccent,
-//           fontWeight: FontWeight.bold,
-//         ),
-//         children: [
-//           TextSpan(
-//             text: value,
-//             style: const TextStyle(
-//               color: Colors.blueAccent,
-//               fontWeight: FontWeight.w300,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   Color _getStateColor(PlayerState state) {
-//     switch (state) {
-//       case PlayerState.unknown:
-//         return Colors.grey[700]!;
-//       case PlayerState.unStarted:
-//         return Colors.pink;
-//       case PlayerState.ended:
-//         return Colors.red;
-//       case PlayerState.playing:
-//         return Colors.blueAccent;
-//       case PlayerState.paused:
-//         return Colors.orange;
-//       case PlayerState.buffering:
-//         return Colors.yellow;
-//       case PlayerState.cued:
-//         return Colors.blue[900]!;
-//       default:
-//         return Colors.blue;
-//     }
-//   }
-//
-//   Widget get _space => const SizedBox(height: 10);
-//
-//   Widget _loadCueButton(String action) {
-//     return Expanded(
-//       child: MaterialButton(
-//         color: Colors.blueAccent,
-//         onPressed: _isPlayerReady
-//             ? () {
-//                 if (_idController.text.isNotEmpty) {
-//                   var id = YoutubePlayer.convertUrlToId(
-//                         _idController.text,
-//                       ) ??
-//                       '';
-//                   if (action == 'LOAD') _controller.load(id);
-//                   if (action == 'CUE') _controller.cue(id);
-//                   FocusScope.of(context).requestFocus(FocusNode());
-//                 } else {
-//                   _showSnackBar('Source can\'t be empty!');
-//                 }
-//               }
-//             : null,
-//         disabledColor: Colors.grey,
-//         disabledTextColor: Colors.black,
-//         child: Padding(
-//           padding: const EdgeInsets.symmetric(vertical: 14.0),
-//           child: Text(
-//             action,
-//             style: const TextStyle(
-//               fontSize: 18.0,
-//               color: Colors.white,
-//               fontWeight: FontWeight.w300,
-//             ),
-//             textAlign: TextAlign.center,
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-//
-//   void _showSnackBar(String message) {
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(
-//         content: Text(
-//           message,
-//           textAlign: TextAlign.center,
-//           style: const TextStyle(
-//             fontWeight: FontWeight.w300,
-//             fontSize: 16.0,
-//           ),
-//         ),
-//         backgroundColor: Colors.blueAccent,
-//         behavior: SnackBarBehavior.floating,
-//         elevation: 1.0,
-//         shape: RoundedRectangleBorder(
-//           borderRadius: BorderRadius.circular(50.0),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 // To parse this JSON data, do
 //
 //     final workoutByIdResponseModel = workoutByIdResponseModelFromJson(jsonString);
@@ -808,16 +23,20 @@ class WorkoutByIdResponseModel {
 
   factory WorkoutByIdResponseModel.fromJson(Map<String, dynamic> json) =>
       WorkoutByIdResponseModel(
-        success: json["success"],
-        msg: json["msg"],
-        data: List<WorkoutById>.from(
-            json["data"].map((x) => WorkoutById.fromJson(x))),
+        success: json["success"] == null ? null : json["success"],
+        msg: json["msg"] == null ? null : json["msg"],
+        data: json["data"] == null
+            ? null
+            : List<WorkoutById>.from(
+                json["data"].map((x) => WorkoutById.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "success": success,
-        "msg": msg,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+        "success": success == null ? null : success,
+        "msg": msg == null ? null : msg,
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
@@ -850,105 +69,172 @@ class WorkoutById {
   String? goalTitle;
   String? levelTitle;
   String? selectedDays;
-  List<dynamic>? dayNames;
-  List<dynamic>? daysAllData;
+  List<String>? dayNames;
+  List<DaysAllDatum>? daysAllData;
   List<String>? availableEquipments;
 
   factory WorkoutById.fromJson(Map<String, dynamic> json) => WorkoutById(
-        workoutId: json["workout_id"],
-        workoutTitle: json["workout_title"],
-        workoutDescription: json["workout_description"],
-        workoutGoal: json["workout_goal"],
-        workoutLevel: json["workout_level"],
-        workoutDuration: json["workout_duration"],
-        workoutImage: json["workout_image"],
-        workoutVideo: json["workout_video"],
-        goalTitle: json["goal_title"],
-        levelTitle: json["level_title"],
-        selectedDays: json["selected_days"],
-        dayNames: json["day_names"] == []
-            ? []
+        workoutId: json["workout_id"] == null ? null : json["workout_id"],
+        workoutTitle:
+            json["workout_title"] == null ? null : json["workout_title"],
+        workoutDescription: json["workout_description"] == null
+            ? null
+            : json["workout_description"],
+        workoutGoal: json["workout_goal"] == null ? null : json["workout_goal"],
+        workoutLevel:
+            json["workout_level"] == null ? null : json["workout_level"],
+        workoutDuration:
+            json["workout_duration"] == null ? null : json["workout_duration"],
+        workoutImage:
+            json["workout_image"] == null ? null : json["workout_image"],
+        workoutVideo:
+            json["workout_video"] == null ? null : json["workout_video"],
+        goalTitle: json["goal_title"] == null ? null : json["goal_title"],
+        levelTitle: json["level_title"] == null ? null : json["level_title"],
+        selectedDays:
+            json["selected_days"] == null ? null : json["selected_days"],
+        dayNames: json["day_names"] == null
+            ? null
             : List<String>.from(json["day_names"].map((x) => x)),
         daysAllData: json["days_all_data"] == null
-            ? []
-            : List<DaysAllWorkoutById>.from(json["days_all_data"]
-                .map((x) => DaysAllWorkoutById.fromJson(x))),
+            ? null
+            : List<DaysAllDatum>.from(
+                json["days_all_data"].map((x) => DaysAllDatum.fromJson(x))),
         availableEquipments: json["available_equipments"] == null
-            ? []
+            ? null
             : List<String>.from(json["available_equipments"].map((x) => x)),
       );
 
   Map<String, dynamic> toJson() => {
-        "workout_id": workoutId,
-        "workout_title": workoutTitle,
-        "workout_description": workoutDescription,
-        "workout_goal": workoutGoal,
-        "workout_level": workoutLevel,
-        "workout_duration": workoutDuration,
-        "workout_image": workoutImage,
-        "workout_video": workoutVideo,
-        "goal_title": goalTitle,
-        "level_title": levelTitle,
-        "selected_days": selectedDays,
-        "day_names": List<dynamic>.from(dayNames!.map((x) => x)),
-        "days_all_data":
-            List<dynamic>.from(daysAllData!.map((x) => x.toJson())),
-        "available_equipments":
-            List<String>.from(availableEquipments!.map((x) => x)),
+        "workout_id": workoutId == null ? null : workoutId,
+        "workout_title": workoutTitle == null ? null : workoutTitle,
+        "workout_description":
+            workoutDescription == null ? null : workoutDescription,
+        "workout_goal": workoutGoal == null ? null : workoutGoal,
+        "workout_level": workoutLevel == null ? null : workoutLevel,
+        "workout_duration": workoutDuration == null ? null : workoutDuration,
+        "workout_image": workoutImage == null ? null : workoutImage,
+        "workout_video": workoutVideo == null ? null : workoutVideo,
+        "goal_title": goalTitle == null ? null : goalTitle,
+        "level_title": levelTitle == null ? null : levelTitle,
+        "selected_days": selectedDays == null ? null : selectedDays,
+        "day_names": dayNames == null
+            ? null
+            : List<dynamic>.from(dayNames!.map((x) => x)),
+        "days_all_data": daysAllData == null
+            ? null
+            : List<dynamic>.from(daysAllData!.map((x) => x.toJson())),
+        "available_equipments": availableEquipments == null
+            ? null
+            : List<dynamic>.from(availableEquipments!.map((x) => x)),
       };
 }
 
-class DaysAllWorkoutById {
-  DaysAllWorkoutById({
+class DaysAllDatum {
+  DaysAllDatum({
     this.days,
   });
 
   List<Day>? days;
 
-  factory DaysAllWorkoutById.fromJson(Map<String, dynamic> json) =>
-      DaysAllWorkoutById(
-        days: List<Day>.from(json["days"].map((x) => Day.fromJson(x))),
+  factory DaysAllDatum.fromJson(Map<String, dynamic> json) => DaysAllDatum(
+        days: json["days"] == null
+            ? null
+            : List<Day>.from(json["days"].map((x) => Day.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "days": List<dynamic>.from(days!.map((x) => x.toJson())),
+        "days": days == null
+            ? null
+            : List<dynamic>.from(days!.map((x) => x.toJson())),
       };
 }
 
 class Day {
   Day({
     this.selectedExercises,
+    this.selectedWarmup,
+    this.categoryType,
     this.favorite,
     this.day,
     this.dayName,
     this.dayIndex,
+    this.groups,
   });
 
   List<String>? selectedExercises;
-  List<dynamic>? favorite;
+  List<dynamic>? selectedWarmup;
+  String? categoryType;
+  dynamic favorite;
   String? day;
   String? dayName;
   String? dayIndex;
+  dynamic groups;
 
   factory Day.fromJson(Map<String, dynamic> json) => Day(
-        selectedExercises:
-            List<String>.from(json["selected_exercises"].map((x) => x)),
-        favorite: json["favorite"] == null
+        selectedExercises: json["selected_exercises"] == null
             ? null
-            : List<dynamic>.from(json["favorite"].map((x) => x)),
-        day: json["day"],
-        dayName: json["day_name"],
-        dayIndex: json["day_index"],
+            : List<String>.from(json["selected_exercises"].map((x) => x)),
+        selectedWarmup: json["selected_warmup"] == null
+            ? null
+            : List<dynamic>.from(json["selected_warmup"].map((x) => x)),
+        categoryType:
+            json["category_type"] == null ? null : json["category_type"],
+        favorite: json["favorite"],
+        day: json["day"] == null ? null : json["day"],
+        dayName: json["day_name"] == null ? null : json["day_name"],
+        dayIndex: json["day_index"] == null ? null : json["day_index"],
+        groups: json["groups"],
       );
 
   Map<String, dynamic> toJson() => {
-        "selected_exercises":
-            List<dynamic>.from(selectedExercises!.map((x) => x)),
-        "favorite": favorite == null
+        "selected_exercises": selectedExercises == null
             ? null
-            : List<dynamic>.from(favorite!.map((x) => x)),
-        "day": day,
-        "day_name": dayName,
-        "day_index": dayIndex,
+            : List<dynamic>.from(selectedExercises!.map((x) => x)),
+        "selected_warmup": selectedWarmup == null
+            ? null
+            : List<dynamic>.from(selectedWarmup!.map((x) => x)),
+        "category_type": categoryType == null ? null : categoryType,
+        "favorite": favorite,
+        "day": day == null ? null : day,
+        "day_name": dayName == null ? null : dayName,
+        "day_index": dayIndex == null ? null : dayIndex,
+        "groups": groups,
+      };
+}
+
+class GroupsClass {
+  GroupsClass({
+    this.the7,
+  });
+
+  The7? the7;
+
+  factory GroupsClass.fromJson(Map<String, dynamic> json) => GroupsClass(
+        the7: json["7"] == null ? null : The7.fromJson(json["7"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "7": the7 == null ? null : the7!.toJson(),
+      };
+}
+
+class The7 {
+  The7({
+    this.parentId,
+    this.groupId,
+  });
+
+  String? parentId;
+  String? groupId;
+
+  factory The7.fromJson(Map<String, dynamic> json) => The7(
+        parentId: json["parent_id"] == null ? null : json["parent_id"],
+        groupId: json["group_id"] == null ? null : json["group_id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "parent_id": parentId == null ? null : parentId,
+        "group_id": groupId == null ? null : groupId,
       };
 }

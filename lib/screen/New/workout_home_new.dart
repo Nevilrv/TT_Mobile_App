@@ -8,6 +8,7 @@ import 'package:tcm/screen/New/new_no_weight_exercises_screen.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/home_screen.dart';
+import 'package:tcm/screen/training_plan_screens/plan_overview.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
@@ -890,6 +891,17 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                                     )),
                                                     )
                                                   : SizedBox(),
+                                              SizedBox(
+                                                  height: Get.height * .02),
+
+                                              commonNavigationButton(
+                                                  onTap: () {
+                                                    Get.to(PlanOverviewScreen(
+                                                      id: widget.workoutId,
+                                                      isDoStart: false,
+                                                    ));
+                                                  },
+                                                  name: 'Workout Overview'),
 
                                               SizedBox(
                                                   height: Get.height * .03),

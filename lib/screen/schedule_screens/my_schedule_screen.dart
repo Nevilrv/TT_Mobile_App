@@ -553,7 +553,10 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                                         () {
                                                                       Get.to(() =>
                                                                           PlanOverviewScreen(
-                                                                              id: "${scheduleResponse.data![index].programData![0].workoutId}"));
+                                                                            id: "${scheduleResponse.data![index].programData![0].workoutId}",
+                                                                            isDoStart:
+                                                                                false,
+                                                                          ));
                                                                     },
                                                                     onPressedEdit:
                                                                         () {

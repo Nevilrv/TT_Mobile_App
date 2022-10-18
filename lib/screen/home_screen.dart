@@ -870,11 +870,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         category(
                             onTap: () {
                               Get.to(TrainingPlanScreen());
-
                               oneTime = false;
                             },
                             image: 'asset/images/training.png',
-                            text: 'Trainin Plans'),
+                            text: 'Training Plans'),
                         category(
                             onTap: () {
                               Get.to(VideoLibraryScreen());
@@ -888,7 +887,6 @@ class _HomeScreenState extends State<HomeScreen> {
                             text: 'The Forums',
                             onTap: () {
                               Get.to(ForumScreen());
-
                               oneTime = false;
                             }),
                         category(

@@ -25,7 +25,9 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class PlanOverviewScreen extends StatefulWidget {
   final String id;
-  const PlanOverviewScreen({Key? key, required this.id}) : super(key: key);
+  bool isDoStart = true;
+  PlanOverviewScreen({Key? key, required this.id, required this.isDoStart})
+      : super(key: key);
 
   @override
   _PlanOverviewScreenState createState() => _PlanOverviewScreenState();
@@ -145,8 +147,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                       controller.apiResponse.data;
                   data.clear();
 
-                  response.data![0].daysAllData!.forEach((element) {
-                    element.days.forEach((v) {
+                  response.data![0].daysAllData?.forEach((element) {
+                    element.days?.forEach((v) {
                       data.add(v);
                     });
                   });
@@ -200,98 +202,105 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                 .kWhite16BoldRoboto),
                                         centerTitle: true,
                                         actions: [
-                                          data.isNotEmpty || data.length != 0
-                                              ? Center(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            right: 18),
-                                                    child: InkWell(
-                                                      onTap: () async {
-                                                        if (controller
-                                                                .apiResponse
-                                                                .status ==
-                                                            Status.COMPLETE) {
-                                                          CheckWorkoutProgramRequestModel
-                                                              _request =
-                                                              CheckWorkoutProgramRequestModel();
-                                                          _request.workoutId =
-                                                              response.data![0]
-                                                                  .workoutId;
-                                                          _request.userId =
-                                                              PreferenceManager
-                                                                  .getUId();
-
-                                                          await _checkWorkoutProgramViewModel
-                                                              .checkWorkoutProgramViewModel(
-                                                                  _request);
-
-                                                          if (_checkWorkoutProgramViewModel
-                                                                  .apiResponse
-                                                                  .status ==
-                                                              Status.COMPLETE) {
-                                                            CheckWorkoutProgramResponseModel
-                                                                checkResponse =
-                                                                _checkWorkoutProgramViewModel
+                                          widget.isDoStart
+                                              ? data.isNotEmpty ||
+                                                      data.length != 0
+                                                  ? Center(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                right: 18),
+                                                        child: InkWell(
+                                                          onTap: () async {
+                                                            if (controller
                                                                     .apiResponse
-                                                                    .data;
+                                                                    .status ==
+                                                                Status
+                                                                    .COMPLETE) {
+                                                              CheckWorkoutProgramRequestModel
+                                                                  _request =
+                                                                  CheckWorkoutProgramRequestModel();
+                                                              _request.workoutId =
+                                                                  response
+                                                                      .data![0]
+                                                                      .workoutId;
+                                                              _request.userId =
+                                                                  PreferenceManager
+                                                                      .getUId();
 
-                                                            if (checkResponse
-                                                                    .success ==
-                                                                true) {
-                                                              if ('${response.data![0].workoutVideo}'
-                                                                  .contains(
-                                                                      'www.youtube.com')) {
-                                                                _youTubePlayerController
-                                                                    ?.pause();
-                                                              } else {
-                                                                _videoPlayerController
-                                                                    ?.pause();
-                                                                _chewieController
-                                                                    ?.pause();
-                                                              }
-                                                              Get.to(
-                                                                  ProgramSetupPage(
-                                                                workoutId:
-                                                                    '${response.data![0].workoutId}',
-                                                                day: '1',
-                                                                workoutName:
-                                                                    '${response.data![0].workoutTitle}',
-                                                              ));
-                                                            } else if (checkResponse
-                                                                    .success ==
-                                                                false) {
-                                                              Get.showSnackbar(
-                                                                  GetSnackBar(
-                                                                message:
-                                                                    '${checkResponse.msg}',
-                                                                duration:
-                                                                    Duration(
+                                                              await _checkWorkoutProgramViewModel
+                                                                  .checkWorkoutProgramViewModel(
+                                                                      _request);
+
+                                                              if (_checkWorkoutProgramViewModel
+                                                                      .apiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .COMPLETE) {
+                                                                CheckWorkoutProgramResponseModel
+                                                                    checkResponse =
+                                                                    _checkWorkoutProgramViewModel
+                                                                        .apiResponse
+                                                                        .data;
+
+                                                                if (checkResponse
+                                                                        .success ==
+                                                                    true) {
+                                                                  if ('${response.data![0].workoutVideo}'
+                                                                      .contains(
+                                                                          'www.youtube.com')) {
+                                                                    _youTubePlayerController
+                                                                        ?.pause();
+                                                                  } else {
+                                                                    _videoPlayerController
+                                                                        ?.pause();
+                                                                    _chewieController
+                                                                        ?.pause();
+                                                                  }
+                                                                  Get.to(
+                                                                      ProgramSetupPage(
+                                                                    workoutId:
+                                                                        '${response.data![0].workoutId}',
+                                                                    day: '1',
+                                                                    workoutName:
+                                                                        '${response.data![0].workoutTitle}',
+                                                                  ));
+                                                                } else if (checkResponse
+                                                                        .success ==
+                                                                    false) {
+                                                                  Get.showSnackbar(
+                                                                      GetSnackBar(
+                                                                    message:
+                                                                        '${checkResponse.msg}',
+                                                                    duration: Duration(
                                                                         seconds:
                                                                             2),
-                                                                backgroundColor:
-                                                                    ColorUtils
-                                                                        .kRed,
-                                                              ));
+                                                                    backgroundColor:
+                                                                        ColorUtils
+                                                                            .kRed,
+                                                                  ));
+                                                                }
+                                                              } else if (_checkWorkoutProgramViewModel
+                                                                      .apiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .ERROR) {
+                                                                Text(
+                                                                  'Something went wrong',
+                                                                  style: FontTextStyle
+                                                                      .kWhite16W300Roboto,
+                                                                );
+                                                              }
                                                             }
-                                                          } else if (_checkWorkoutProgramViewModel
-                                                                  .apiResponse
-                                                                  .status ==
-                                                              Status.ERROR) {
-                                                            Text(
-                                                              'Something went wrong',
+                                                          },
+                                                          child: Text('Start',
                                                               style: FontTextStyle
-                                                                  .kWhite16W300Roboto,
-                                                            );
-                                                          }
-                                                        }
-                                                      },
-                                                      child: Text('Start',
-                                                          style: FontTextStyle
-                                                              .kTine16W400Roboto),
-                                                    ),
-                                                  ),
-                                                )
+                                                                  .kTine16W400Roboto),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  : SizedBox()
                                               : SizedBox(),
                                         ],
                                       ),
@@ -499,127 +508,134 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                   SizedBox(
                                                       height:
                                                           Get.height * .025),
-                                                  data.isNotEmpty ||
-                                                          data.length != 0
-                                                      ? InkWell(
-                                                          onTap: () async {
-                                                            if (controller
-                                                                    .apiResponse
-                                                                    .status ==
-                                                                Status
-                                                                    .COMPLETE) {
-                                                              CheckWorkoutProgramRequestModel
-                                                                  _request =
-                                                                  CheckWorkoutProgramRequestModel();
-                                                              _request.workoutId =
-                                                                  response
-                                                                      .data![0]
-                                                                      .workoutId;
-                                                              _request.userId =
-                                                                  PreferenceManager
-                                                                      .getUId();
-
-                                                              await _checkWorkoutProgramViewModel
-                                                                  .checkWorkoutProgramViewModel(
-                                                                      _request);
-
-                                                              if (_checkWorkoutProgramViewModel
-                                                                      .apiResponse
-                                                                      .status ==
-                                                                  Status
-                                                                      .COMPLETE) {
-                                                                CheckWorkoutProgramResponseModel
-                                                                    checkResponse =
-                                                                    _checkWorkoutProgramViewModel
+                                                  widget.isDoStart
+                                                      ? data.isNotEmpty ||
+                                                              data.length != 0
+                                                          ? InkWell(
+                                                              onTap: () async {
+                                                                if (controller
                                                                         .apiResponse
-                                                                        .data;
+                                                                        .status ==
+                                                                    Status
+                                                                        .COMPLETE) {
+                                                                  CheckWorkoutProgramRequestModel
+                                                                      _request =
+                                                                      CheckWorkoutProgramRequestModel();
+                                                                  _request.workoutId =
+                                                                      response
+                                                                          .data![
+                                                                              0]
+                                                                          .workoutId;
+                                                                  _request.userId =
+                                                                      PreferenceManager
+                                                                          .getUId();
 
-                                                                if (checkResponse
-                                                                        .success ==
-                                                                    true) {
-                                                                  if ('${response.data![0].workoutVideo}'
-                                                                      .contains(
-                                                                          'www.youtube.com')) {
-                                                                    _youTubePlayerController
-                                                                        ?.pause();
-                                                                  } else {
-                                                                    _videoPlayerController
-                                                                        ?.pause();
-                                                                    _chewieController
-                                                                        ?.pause();
+                                                                  await _checkWorkoutProgramViewModel
+                                                                      .checkWorkoutProgramViewModel(
+                                                                          _request);
+
+                                                                  if (_checkWorkoutProgramViewModel
+                                                                          .apiResponse
+                                                                          .status ==
+                                                                      Status
+                                                                          .COMPLETE) {
+                                                                    CheckWorkoutProgramResponseModel
+                                                                        checkResponse =
+                                                                        _checkWorkoutProgramViewModel
+                                                                            .apiResponse
+                                                                            .data;
+
+                                                                    if (checkResponse
+                                                                            .success ==
+                                                                        true) {
+                                                                      if ('${response.data![0].workoutVideo}'
+                                                                          .contains(
+                                                                              'www.youtube.com')) {
+                                                                        _youTubePlayerController
+                                                                            ?.pause();
+                                                                      } else {
+                                                                        _videoPlayerController
+                                                                            ?.pause();
+                                                                        _chewieController
+                                                                            ?.pause();
+                                                                      }
+                                                                      Get.to(
+                                                                          ProgramSetupPage(
+                                                                        workoutId:
+                                                                            '${response.data![0].workoutId}',
+                                                                        day:
+                                                                            '1',
+                                                                        workoutName:
+                                                                            '${response.data![0].workoutTitle}',
+                                                                      ));
+                                                                    } else if (checkResponse
+                                                                            .success ==
+                                                                        false) {
+                                                                      Get.showSnackbar(
+                                                                          GetSnackBar(
+                                                                        message:
+                                                                            '${checkResponse.msg}',
+                                                                        duration:
+                                                                            Duration(seconds: 2),
+                                                                        backgroundColor:
+                                                                            ColorUtils.kRed,
+                                                                      ));
+                                                                    }
+                                                                  } else if (_checkWorkoutProgramViewModel
+                                                                          .apiResponse
+                                                                          .status ==
+                                                                      Status
+                                                                          .ERROR) {
+                                                                    Text(
+                                                                      'Something went wrong',
+                                                                      style: FontTextStyle
+                                                                          .kWhite16W300Roboto,
+                                                                    );
                                                                   }
-                                                                  Get.to(
-                                                                      ProgramSetupPage(
-                                                                    workoutId:
-                                                                        '${response.data![0].workoutId}',
-                                                                    day: '1',
-                                                                    workoutName:
-                                                                        '${response.data![0].workoutTitle}',
-                                                                  ));
-                                                                } else if (checkResponse
-                                                                        .success ==
-                                                                    false) {
-                                                                  Get.showSnackbar(
-                                                                      GetSnackBar(
-                                                                    message:
-                                                                        '${checkResponse.msg}',
-                                                                    duration: Duration(
-                                                                        seconds:
-                                                                            2),
-                                                                    backgroundColor:
-                                                                        ColorUtils
-                                                                            .kRed,
-                                                                  ));
                                                                 }
-                                                              } else if (_checkWorkoutProgramViewModel
-                                                                      .apiResponse
-                                                                      .status ==
-                                                                  Status
-                                                                      .ERROR) {
-                                                                Text(
-                                                                  'Something went wrong',
-                                                                  style: FontTextStyle
-                                                                      .kWhite16W300Roboto,
-                                                                );
-                                                              }
-                                                            }
-                                                          },
-                                                          child: Container(
-                                                            margin:
-                                                                EdgeInsets.only(
-                                                                    bottom: 15,
-                                                                    top: 5,
-                                                                    right: 12,
-                                                                    left: 12),
-                                                            alignment: Alignment
-                                                                .center,
-                                                            height: Get.height *
-                                                                .06,
-                                                            width: Get.width,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    gradient:
-                                                                        LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topCenter,
-                                                                      end: Alignment
-                                                                          .bottomCenter,
-                                                                      stops: [
-                                                                        0.0,
-                                                                        1.0
-                                                                      ],
-                                                                      colors: ColorUtilsGradient
-                                                                          .kTintGradient,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            6)),
-                                                            child: Text(
-                                                                'Start Program',
-                                                                style: FontTextStyle
-                                                                    .kBlack20BoldRoboto),
-                                                          ),
-                                                        )
+                                                              },
+                                                              child: Container(
+                                                                margin: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            15,
+                                                                        top: 5,
+                                                                        right:
+                                                                            12,
+                                                                        left:
+                                                                            12),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                height:
+                                                                    Get.height *
+                                                                        .06,
+                                                                width:
+                                                                    Get.width,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                        gradient:
+                                                                            LinearGradient(
+                                                                          begin:
+                                                                              Alignment.topCenter,
+                                                                          end: Alignment
+                                                                              .bottomCenter,
+                                                                          stops: [
+                                                                            0.0,
+                                                                            1.0
+                                                                          ],
+                                                                          colors:
+                                                                              ColorUtilsGradient.kTintGradient,
+                                                                        ),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(6)),
+                                                                child: Text(
+                                                                    'Start Program',
+                                                                    style: FontTextStyle
+                                                                        .kBlack20BoldRoboto),
+                                                              ),
+                                                            )
+                                                          : SizedBox()
                                                       : SizedBox(),
                                                   SizedBox(
                                                       height: Get.height * .03),
@@ -653,92 +669,99 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                             FontTextStyle.kWhite16BoldRoboto),
                                     centerTitle: true,
                                     actions: [
-                                      data.isNotEmpty || data.length != 0
-                                          ? Center(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 18),
-                                                child: InkWell(
-                                                  onTap: () async {
-                                                    if (controller.apiResponse
-                                                            .status ==
-                                                        Status.COMPLETE) {
-                                                      CheckWorkoutProgramRequestModel
-                                                          _request =
-                                                          CheckWorkoutProgramRequestModel();
-                                                      _request.workoutId =
-                                                          response.data![0]
-                                                              .workoutId;
-                                                      _request.userId =
-                                                          PreferenceManager
-                                                              .getUId();
-
-                                                      await _checkWorkoutProgramViewModel
-                                                          .checkWorkoutProgramViewModel(
-                                                              _request);
-
-                                                      if (_checkWorkoutProgramViewModel
-                                                              .apiResponse
-                                                              .status ==
-                                                          Status.COMPLETE) {
-                                                        CheckWorkoutProgramResponseModel
-                                                            checkResponse =
-                                                            _checkWorkoutProgramViewModel
+                                      widget.isDoStart
+                                          ? data.isNotEmpty || data.length != 0
+                                              ? Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 18),
+                                                    child: InkWell(
+                                                      onTap: () async {
+                                                        if (controller
                                                                 .apiResponse
-                                                                .data;
+                                                                .status ==
+                                                            Status.COMPLETE) {
+                                                          CheckWorkoutProgramRequestModel
+                                                              _request =
+                                                              CheckWorkoutProgramRequestModel();
+                                                          _request.workoutId =
+                                                              response.data![0]
+                                                                  .workoutId;
+                                                          _request.userId =
+                                                              PreferenceManager
+                                                                  .getUId();
 
-                                                        if (checkResponse
-                                                                .success ==
-                                                            true) {
-                                                          // if ('${response.data![0].workoutVideo}'
-                                                          //     .contains(
-                                                          //         'www.youtube.com')) {
-                                                          //   _youTubePlayerController
-                                                          //       ?.pause();
-                                                          // } else {
-                                                          //   _videoPlayerController
-                                                          //       ?.pause();
-                                                          //   _chewieController?.pause();
-                                                          // }
-                                                          Get.to(
-                                                              ProgramSetupPage(
-                                                            workoutId:
-                                                                '${response.data![0].workoutId}',
-                                                            day: '1',
-                                                            workoutName:
-                                                                '${response.data![0].workoutTitle}',
-                                                          ));
-                                                        } else if (checkResponse
-                                                                .success ==
-                                                            false) {
-                                                          Get.showSnackbar(
-                                                              GetSnackBar(
-                                                            message:
-                                                                '${checkResponse.msg}',
-                                                            duration: Duration(
-                                                                seconds: 2),
-                                                            backgroundColor:
-                                                                ColorUtils.kRed,
-                                                          ));
+                                                          await _checkWorkoutProgramViewModel
+                                                              .checkWorkoutProgramViewModel(
+                                                                  _request);
+
+                                                          if (_checkWorkoutProgramViewModel
+                                                                  .apiResponse
+                                                                  .status ==
+                                                              Status.COMPLETE) {
+                                                            CheckWorkoutProgramResponseModel
+                                                                checkResponse =
+                                                                _checkWorkoutProgramViewModel
+                                                                    .apiResponse
+                                                                    .data;
+
+                                                            if (checkResponse
+                                                                    .success ==
+                                                                true) {
+                                                              // if ('${response.data![0].workoutVideo}'
+                                                              //     .contains(
+                                                              //         'www.youtube.com')) {
+                                                              //   _youTubePlayerController
+                                                              //       ?.pause();
+                                                              // } else {
+                                                              //   _videoPlayerController
+                                                              //       ?.pause();
+                                                              //   _chewieController?.pause();
+                                                              // }
+                                                              Get.to(
+                                                                  ProgramSetupPage(
+                                                                workoutId:
+                                                                    '${response.data![0].workoutId}',
+                                                                day: '1',
+                                                                workoutName:
+                                                                    '${response.data![0].workoutTitle}',
+                                                              ));
+                                                            } else if (checkResponse
+                                                                    .success ==
+                                                                false) {
+                                                              Get.showSnackbar(
+                                                                  GetSnackBar(
+                                                                message:
+                                                                    '${checkResponse.msg}',
+                                                                duration:
+                                                                    Duration(
+                                                                        seconds:
+                                                                            2),
+                                                                backgroundColor:
+                                                                    ColorUtils
+                                                                        .kRed,
+                                                              ));
+                                                            }
+                                                          } else if (_checkWorkoutProgramViewModel
+                                                                  .apiResponse
+                                                                  .status ==
+                                                              Status.ERROR) {
+                                                            Text(
+                                                              'Something went wrong',
+                                                              style: FontTextStyle
+                                                                  .kWhite16W300Roboto,
+                                                            );
+                                                          }
                                                         }
-                                                      } else if (_checkWorkoutProgramViewModel
-                                                              .apiResponse
-                                                              .status ==
-                                                          Status.ERROR) {
-                                                        Text(
-                                                          'Something went wrong',
+                                                      },
+                                                      child: Text('Start',
                                                           style: FontTextStyle
-                                                              .kWhite16W300Roboto,
-                                                        );
-                                                      }
-                                                    }
-                                                  },
-                                                  child: Text('Start',
-                                                      style: FontTextStyle
-                                                          .kTine16W400Roboto),
-                                                ),
-                                              ),
-                                            )
+                                                              .kTine16W400Roboto),
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox()
                                           : SizedBox(),
                                     ],
                                   ),
@@ -922,9 +945,166 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
 
                                               SizedBox(
                                                   height: Get.height * .025),
-                                              data.isNotEmpty ||
-                                                      data.length != 0
-                                                  ? InkWell(
+                                              widget.isDoStart
+                                                  ? data.isNotEmpty ||
+                                                          data.length != 0
+                                                      ? InkWell(
+                                                          onTap: () async {
+                                                            if (controller
+                                                                    .apiResponse
+                                                                    .status ==
+                                                                Status
+                                                                    .COMPLETE) {
+                                                              CheckWorkoutProgramRequestModel
+                                                                  _request =
+                                                                  CheckWorkoutProgramRequestModel();
+                                                              _request.workoutId =
+                                                                  response
+                                                                      .data![0]
+                                                                      .workoutId;
+                                                              _request.userId =
+                                                                  PreferenceManager
+                                                                      .getUId();
+
+                                                              await _checkWorkoutProgramViewModel
+                                                                  .checkWorkoutProgramViewModel(
+                                                                      _request);
+
+                                                              if (_checkWorkoutProgramViewModel
+                                                                      .apiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .COMPLETE) {
+                                                                CheckWorkoutProgramResponseModel
+                                                                    checkResponse =
+                                                                    _checkWorkoutProgramViewModel
+                                                                        .apiResponse
+                                                                        .data;
+
+                                                                if (checkResponse
+                                                                        .success ==
+                                                                    true) {
+                                                                  if ('${response.data![0].workoutVideo}'
+                                                                      .contains(
+                                                                          'www.youtube.com')) {
+                                                                    _youTubePlayerController
+                                                                        ?.pause();
+                                                                  } else {
+                                                                    _videoPlayerController
+                                                                        ?.pause();
+                                                                    _chewieController
+                                                                        ?.pause();
+                                                                  }
+                                                                  Get.to(
+                                                                      ProgramSetupPage(
+                                                                    workoutId:
+                                                                        '${response.data![0].workoutId}',
+                                                                    day: '1',
+                                                                    workoutName:
+                                                                        '${response.data![0].workoutTitle}',
+                                                                  ));
+                                                                } else if (checkResponse
+                                                                        .success ==
+                                                                    false) {
+                                                                  Get.showSnackbar(
+                                                                      GetSnackBar(
+                                                                    message:
+                                                                        '${checkResponse.msg}',
+                                                                    duration: Duration(
+                                                                        seconds:
+                                                                            2),
+                                                                    backgroundColor:
+                                                                        ColorUtils
+                                                                            .kRed,
+                                                                  ));
+                                                                }
+                                                              } else if (_checkWorkoutProgramViewModel
+                                                                      .apiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .ERROR) {
+                                                                Text(
+                                                                  'Something went wrong',
+                                                                  style: FontTextStyle
+                                                                      .kWhite16W300Roboto,
+                                                                );
+                                                              }
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    bottom: 15,
+                                                                    top: 5,
+                                                                    right: 12,
+                                                                    left: 12),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: Get.height *
+                                                                .06,
+                                                            width: Get.width,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                      stops: [
+                                                                        0.0,
+                                                                        1.0
+                                                                      ],
+                                                                      colors: ColorUtilsGradient
+                                                                          .kTintGradient,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            6)),
+                                                            child: Text(
+                                                                'Start Program',
+                                                                style: FontTextStyle
+                                                                    .kBlack20BoldRoboto),
+                                                          ),
+                                                        )
+                                                      : SizedBox()
+                                                  : SizedBox(),
+                                              SizedBox(
+                                                  height: Get.height * .03),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              : Scaffold(
+                                  backgroundColor: ColorUtils.kBlack,
+                                  appBar: AppBar(
+                                    elevation: 0,
+                                    leading: IconButton(
+                                        onPressed: () {
+                                          Get.back();
+                                        },
+                                        icon: Icon(
+                                          Icons.arrow_back_ios_sharp,
+                                          color: ColorUtils.kTint,
+                                        )),
+                                    backgroundColor: ColorUtils.kBlack,
+                                    title: Text(
+                                        '${response.data![0].workoutTitle}',
+                                        style:
+                                            FontTextStyle.kWhite16BoldRoboto),
+                                    centerTitle: true,
+                                    actions: [
+                                      widget.isDoStart
+                                          ? data.isNotEmpty || data.length != 0
+                                              ? Center(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 18),
+                                                    child: InkWell(
                                                       onTap: () async {
                                                         if (controller
                                                                 .apiResponse
@@ -1004,158 +1184,13 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                           }
                                                         }
                                                       },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 15,
-                                                            top: 5,
-                                                            right: 12,
-                                                            left: 12),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        height:
-                                                            Get.height * .06,
-                                                        width: Get.width,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                gradient:
-                                                                    LinearGradient(
-                                                                  begin: Alignment
-                                                                      .topCenter,
-                                                                  end: Alignment
-                                                                      .bottomCenter,
-                                                                  stops: [
-                                                                    0.0,
-                                                                    1.0
-                                                                  ],
-                                                                  colors: ColorUtilsGradient
-                                                                      .kTintGradient,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            6)),
-                                                        child: Text(
-                                                            'Start Program',
-                                                            style: FontTextStyle
-                                                                .kBlack20BoldRoboto),
-                                                      ),
-                                                    )
-                                                  : SizedBox(),
-                                              SizedBox(
-                                                  height: Get.height * .03),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              : Scaffold(
-                                  backgroundColor: ColorUtils.kBlack,
-                                  appBar: AppBar(
-                                    elevation: 0,
-                                    leading: IconButton(
-                                        onPressed: () {
-                                          Get.back();
-                                        },
-                                        icon: Icon(
-                                          Icons.arrow_back_ios_sharp,
-                                          color: ColorUtils.kTint,
-                                        )),
-                                    backgroundColor: ColorUtils.kBlack,
-                                    title: Text(
-                                        '${response.data![0].workoutTitle}',
-                                        style:
-                                            FontTextStyle.kWhite16BoldRoboto),
-                                    centerTitle: true,
-                                    actions: [
-                                      data.isNotEmpty || data.length != 0
-                                          ? Center(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 18),
-                                                child: InkWell(
-                                                  onTap: () async {
-                                                    if (controller.apiResponse
-                                                            .status ==
-                                                        Status.COMPLETE) {
-                                                      CheckWorkoutProgramRequestModel
-                                                          _request =
-                                                          CheckWorkoutProgramRequestModel();
-                                                      _request.workoutId =
-                                                          response.data![0]
-                                                              .workoutId;
-                                                      _request.userId =
-                                                          PreferenceManager
-                                                              .getUId();
-
-                                                      await _checkWorkoutProgramViewModel
-                                                          .checkWorkoutProgramViewModel(
-                                                              _request);
-
-                                                      if (_checkWorkoutProgramViewModel
-                                                              .apiResponse
-                                                              .status ==
-                                                          Status.COMPLETE) {
-                                                        CheckWorkoutProgramResponseModel
-                                                            checkResponse =
-                                                            _checkWorkoutProgramViewModel
-                                                                .apiResponse
-                                                                .data;
-
-                                                        if (checkResponse
-                                                                .success ==
-                                                            true) {
-                                                          if ('${response.data![0].workoutVideo}'
-                                                              .contains(
-                                                                  'www.youtube.com')) {
-                                                            _youTubePlayerController
-                                                                ?.pause();
-                                                          } else {
-                                                            _videoPlayerController
-                                                                ?.pause();
-                                                            _chewieController
-                                                                ?.pause();
-                                                          }
-                                                          Get.to(
-                                                              ProgramSetupPage(
-                                                            workoutId:
-                                                                '${response.data![0].workoutId}',
-                                                            day: '1',
-                                                            workoutName:
-                                                                '${response.data![0].workoutTitle}',
-                                                          ));
-                                                        } else if (checkResponse
-                                                                .success ==
-                                                            false) {
-                                                          Get.showSnackbar(
-                                                              GetSnackBar(
-                                                            message:
-                                                                '${checkResponse.msg}',
-                                                            duration: Duration(
-                                                                seconds: 2),
-                                                            backgroundColor:
-                                                                ColorUtils.kRed,
-                                                          ));
-                                                        }
-                                                      } else if (_checkWorkoutProgramViewModel
-                                                              .apiResponse
-                                                              .status ==
-                                                          Status.ERROR) {
-                                                        Text(
-                                                          'Something went wrong',
+                                                      child: Text('Start',
                                                           style: FontTextStyle
-                                                              .kWhite16W300Roboto,
-                                                        );
-                                                      }
-                                                    }
-                                                  },
-                                                  child: Text('Start',
-                                                      style: FontTextStyle
-                                                          .kTine16W400Roboto),
-                                                ),
-                                              ),
-                                            )
+                                                              .kTine16W400Roboto),
+                                                    ),
+                                                  ),
+                                                )
+                                              : SizedBox()
                                           : SizedBox(),
                                     ],
                                   ),
@@ -1350,124 +1385,129 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
 
                                               SizedBox(
                                                   height: Get.height * .025),
-                                              data.isNotEmpty ||
-                                                      data.length != 0
-                                                  ? InkWell(
-                                                      onTap: () async {
-                                                        if (controller
-                                                                .apiResponse
-                                                                .status ==
-                                                            Status.COMPLETE) {
-                                                          CheckWorkoutProgramRequestModel
-                                                              _request =
-                                                              CheckWorkoutProgramRequestModel();
-                                                          _request.workoutId =
-                                                              response.data![0]
-                                                                  .workoutId;
-                                                          _request.userId =
-                                                              PreferenceManager
-                                                                  .getUId();
-
-                                                          await _checkWorkoutProgramViewModel
-                                                              .checkWorkoutProgramViewModel(
-                                                                  _request);
-
-                                                          if (_checkWorkoutProgramViewModel
-                                                                  .apiResponse
-                                                                  .status ==
-                                                              Status.COMPLETE) {
-                                                            CheckWorkoutProgramResponseModel
-                                                                checkResponse =
-                                                                _checkWorkoutProgramViewModel
+                                              widget.isDoStart
+                                                  ? data.isNotEmpty ||
+                                                          data.length != 0
+                                                      ? InkWell(
+                                                          onTap: () async {
+                                                            if (controller
                                                                     .apiResponse
-                                                                    .data;
+                                                                    .status ==
+                                                                Status
+                                                                    .COMPLETE) {
+                                                              CheckWorkoutProgramRequestModel
+                                                                  _request =
+                                                                  CheckWorkoutProgramRequestModel();
+                                                              _request.workoutId =
+                                                                  response
+                                                                      .data![0]
+                                                                      .workoutId;
+                                                              _request.userId =
+                                                                  PreferenceManager
+                                                                      .getUId();
 
-                                                            if (checkResponse
-                                                                    .success ==
-                                                                true) {
-                                                              if ('${response.data![0].workoutVideo}'
-                                                                  .contains(
-                                                                      'www.youtube.com')) {
-                                                                _youTubePlayerController
-                                                                    ?.pause();
-                                                              } else {
-                                                                _videoPlayerController
-                                                                    ?.pause();
-                                                                _chewieController
-                                                                    ?.pause();
-                                                              }
-                                                              Get.to(
-                                                                  ProgramSetupPage(
-                                                                workoutId:
-                                                                    '${response.data![0].workoutId}',
-                                                                day: '1',
-                                                                workoutName:
-                                                                    '${response.data![0].workoutTitle}',
-                                                              ));
-                                                            } else if (checkResponse
-                                                                    .success ==
-                                                                false) {
-                                                              Get.showSnackbar(
-                                                                  GetSnackBar(
-                                                                message:
-                                                                    '${checkResponse.msg}',
-                                                                duration:
-                                                                    Duration(
+                                                              await _checkWorkoutProgramViewModel
+                                                                  .checkWorkoutProgramViewModel(
+                                                                      _request);
+
+                                                              if (_checkWorkoutProgramViewModel
+                                                                      .apiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .COMPLETE) {
+                                                                CheckWorkoutProgramResponseModel
+                                                                    checkResponse =
+                                                                    _checkWorkoutProgramViewModel
+                                                                        .apiResponse
+                                                                        .data;
+
+                                                                if (checkResponse
+                                                                        .success ==
+                                                                    true) {
+                                                                  if ('${response.data![0].workoutVideo}'
+                                                                      .contains(
+                                                                          'www.youtube.com')) {
+                                                                    _youTubePlayerController
+                                                                        ?.pause();
+                                                                  } else {
+                                                                    _videoPlayerController
+                                                                        ?.pause();
+                                                                    _chewieController
+                                                                        ?.pause();
+                                                                  }
+                                                                  Get.to(
+                                                                      ProgramSetupPage(
+                                                                    workoutId:
+                                                                        '${response.data![0].workoutId}',
+                                                                    day: '1',
+                                                                    workoutName:
+                                                                        '${response.data![0].workoutTitle}',
+                                                                  ));
+                                                                } else if (checkResponse
+                                                                        .success ==
+                                                                    false) {
+                                                                  Get.showSnackbar(
+                                                                      GetSnackBar(
+                                                                    message:
+                                                                        '${checkResponse.msg}',
+                                                                    duration: Duration(
                                                                         seconds:
                                                                             2),
-                                                                backgroundColor:
-                                                                    ColorUtils
-                                                                        .kRed,
-                                                              ));
+                                                                    backgroundColor:
+                                                                        ColorUtils
+                                                                            .kRed,
+                                                                  ));
+                                                                }
+                                                              } else if (_checkWorkoutProgramViewModel
+                                                                      .apiResponse
+                                                                      .status ==
+                                                                  Status
+                                                                      .ERROR) {
+                                                                Text(
+                                                                  'Something went wrong',
+                                                                  style: FontTextStyle
+                                                                      .kWhite16W300Roboto,
+                                                                );
+                                                              }
                                                             }
-                                                          } else if (_checkWorkoutProgramViewModel
-                                                                  .apiResponse
-                                                                  .status ==
-                                                              Status.ERROR) {
-                                                            Text(
-                                                              'Something went wrong',
-                                                              style: FontTextStyle
-                                                                  .kWhite16W300Roboto,
-                                                            );
-                                                          }
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        margin: EdgeInsets.only(
-                                                            bottom: 15,
-                                                            top: 5,
-                                                            right: 12,
-                                                            left: 12),
-                                                        alignment:
-                                                            Alignment.center,
-                                                        height:
-                                                            Get.height * .06,
-                                                        width: Get.width,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                gradient:
-                                                                    LinearGradient(
-                                                                  begin: Alignment
-                                                                      .topCenter,
-                                                                  end: Alignment
-                                                                      .bottomCenter,
-                                                                  stops: [
-                                                                    0.0,
-                                                                    1.0
-                                                                  ],
-                                                                  colors: ColorUtilsGradient
-                                                                      .kTintGradient,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
+                                                          },
+                                                          child: Container(
+                                                            margin:
+                                                                EdgeInsets.only(
+                                                                    bottom: 15,
+                                                                    top: 5,
+                                                                    right: 12,
+                                                                    left: 12),
+                                                            alignment: Alignment
+                                                                .center,
+                                                            height: Get.height *
+                                                                .06,
+                                                            width: Get.width,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                      stops: [
+                                                                        0.0,
+                                                                        1.0
+                                                                      ],
+                                                                      colors: ColorUtilsGradient
+                                                                          .kTintGradient,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
                                                                             6)),
-                                                        child: Text(
-                                                            'Start Program',
-                                                            style: FontTextStyle
-                                                                .kBlack20BoldRoboto),
-                                                      ),
-                                                    )
+                                                            child: Text(
+                                                                'Start Program',
+                                                                style: FontTextStyle
+                                                                    .kBlack20BoldRoboto),
+                                                          ),
+                                                        )
+                                                      : SizedBox()
                                                   : SizedBox(),
                                               SizedBox(
                                                   height: Get.height * .03),
@@ -1510,59 +1550,68 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
             style: FontTextStyle.kWhite16BoldRoboto),
         centerTitle: true,
         actions: [
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.only(right: 18),
-              child: InkWell(
-                onTap: () async {
-                  if (controller.apiResponse.status == Status.COMPLETE) {
-                    CheckWorkoutProgramRequestModel _request =
-                        CheckWorkoutProgramRequestModel();
-                    _request.workoutId = response.data![0].workoutId;
-                    _request.userId = PreferenceManager.getUId();
+          widget.isDoStart
+              ? data.isNotEmpty || data.length != 0
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 18),
+                        child: InkWell(
+                          onTap: () async {
+                            if (controller.apiResponse.status ==
+                                Status.COMPLETE) {
+                              CheckWorkoutProgramRequestModel _request =
+                                  CheckWorkoutProgramRequestModel();
+                              _request.workoutId = response.data![0].workoutId;
+                              _request.userId = PreferenceManager.getUId();
 
-                    await _checkWorkoutProgramViewModel
-                        .checkWorkoutProgramViewModel(_request);
+                              await _checkWorkoutProgramViewModel
+                                  .checkWorkoutProgramViewModel(_request);
 
-                    if (_checkWorkoutProgramViewModel.apiResponse.status ==
-                        Status.COMPLETE) {
-                      CheckWorkoutProgramResponseModel checkResponse =
-                          _checkWorkoutProgramViewModel.apiResponse.data;
+                              if (_checkWorkoutProgramViewModel
+                                      .apiResponse.status ==
+                                  Status.COMPLETE) {
+                                CheckWorkoutProgramResponseModel checkResponse =
+                                    _checkWorkoutProgramViewModel
+                                        .apiResponse.data;
 
-                      if (checkResponse.success == true) {
-                        if ('${response.data![0].workoutVideo}'
-                            .contains('www.youtube.com')) {
-                          _youTubePlayerController?.pause();
-                        } else {
-                          _videoPlayerController?.pause();
-                          _chewieController?.pause();
-                        }
-                        Get.to(ProgramSetupPage(
-                          workoutId: '${response.data![0].workoutId}',
-                          day: '1',
-                          workoutName: '${response.data![0].workoutTitle}',
-                        ));
-                      } else if (checkResponse.success == false) {
-                        Get.showSnackbar(GetSnackBar(
-                          message: '${checkResponse.msg}',
-                          duration: Duration(seconds: 2),
-                          backgroundColor: ColorUtils.kRed,
-                        ));
-                      }
-                    } else if (_checkWorkoutProgramViewModel
-                            .apiResponse.status ==
-                        Status.ERROR) {
-                      Text(
-                        'Something went wrong',
-                        style: FontTextStyle.kWhite16W300Roboto,
-                      );
-                    }
-                  }
-                },
-                child: Text('Start', style: FontTextStyle.kTine16W400Roboto),
-              ),
-            ),
-          ),
+                                if (checkResponse.success == true) {
+                                  if ('${response.data![0].workoutVideo}'
+                                      .contains('www.youtube.com')) {
+                                    _youTubePlayerController?.pause();
+                                  } else {
+                                    _videoPlayerController?.pause();
+                                    _chewieController?.pause();
+                                  }
+                                  Get.to(ProgramSetupPage(
+                                    workoutId: '${response.data![0].workoutId}',
+                                    day: '1',
+                                    workoutName:
+                                        '${response.data![0].workoutTitle}',
+                                  ));
+                                } else if (checkResponse.success == false) {
+                                  Get.showSnackbar(GetSnackBar(
+                                    message: '${checkResponse.msg}',
+                                    duration: Duration(seconds: 2),
+                                    backgroundColor: ColorUtils.kRed,
+                                  ));
+                                }
+                              } else if (_checkWorkoutProgramViewModel
+                                      .apiResponse.status ==
+                                  Status.ERROR) {
+                                Text(
+                                  'Something went wrong',
+                                  style: FontTextStyle.kWhite16W300Roboto,
+                                );
+                              }
+                            }
+                          },
+                          child: Text('Start',
+                              style: FontTextStyle.kTine16W400Roboto),
+                        ),
+                      ),
+                    )
+                  : SizedBox()
+              : SizedBox(),
         ],
       ),
       body: SingleChildScrollView(
@@ -1712,75 +1761,80 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                         ),
 
                   SizedBox(height: Get.height * .025),
-                  data.isNotEmpty || data.length != 0
-                      ? InkWell(
-                          onTap: () async {
-                            if (controller.apiResponse.status ==
-                                Status.COMPLETE) {
-                              CheckWorkoutProgramRequestModel _request =
-                                  CheckWorkoutProgramRequestModel();
-                              _request.workoutId = response.data![0].workoutId;
-                              _request.userId = PreferenceManager.getUId();
+                  widget.isDoStart
+                      ? data.isNotEmpty || data.length != 0
+                          ? InkWell(
+                              onTap: () async {
+                                if (controller.apiResponse.status ==
+                                    Status.COMPLETE) {
+                                  CheckWorkoutProgramRequestModel _request =
+                                      CheckWorkoutProgramRequestModel();
+                                  _request.workoutId =
+                                      response.data![0].workoutId;
+                                  _request.userId = PreferenceManager.getUId();
 
-                              await _checkWorkoutProgramViewModel
-                                  .checkWorkoutProgramViewModel(_request);
+                                  await _checkWorkoutProgramViewModel
+                                      .checkWorkoutProgramViewModel(_request);
 
-                              if (_checkWorkoutProgramViewModel
-                                      .apiResponse.status ==
-                                  Status.COMPLETE) {
-                                CheckWorkoutProgramResponseModel checkResponse =
-                                    _checkWorkoutProgramViewModel
-                                        .apiResponse.data;
+                                  if (_checkWorkoutProgramViewModel
+                                          .apiResponse.status ==
+                                      Status.COMPLETE) {
+                                    CheckWorkoutProgramResponseModel
+                                        checkResponse =
+                                        _checkWorkoutProgramViewModel
+                                            .apiResponse.data;
 
-                                if (checkResponse.success == true) {
-                                  if ('${response.data![0].workoutVideo}'
-                                      .contains('www.youtube.com')) {
-                                    _youTubePlayerController?.pause();
-                                  } else {
-                                    _videoPlayerController?.pause();
-                                    _chewieController?.pause();
+                                    if (checkResponse.success == true) {
+                                      if ('${response.data![0].workoutVideo}'
+                                          .contains('www.youtube.com')) {
+                                        _youTubePlayerController?.pause();
+                                      } else {
+                                        _videoPlayerController?.pause();
+                                        _chewieController?.pause();
+                                      }
+                                      Get.to(ProgramSetupPage(
+                                        workoutId:
+                                            '${response.data![0].workoutId}',
+                                        day: '1',
+                                        workoutName:
+                                            '${response.data![0].workoutTitle}',
+                                      ));
+                                    } else if (checkResponse.success == false) {
+                                      Get.showSnackbar(GetSnackBar(
+                                        message: '${checkResponse.msg}',
+                                        duration: Duration(seconds: 2),
+                                        backgroundColor: ColorUtils.kRed,
+                                      ));
+                                    }
+                                  } else if (_checkWorkoutProgramViewModel
+                                          .apiResponse.status ==
+                                      Status.ERROR) {
+                                    Text(
+                                      'Something went wrong',
+                                      style: FontTextStyle.kWhite16W300Roboto,
+                                    );
                                   }
-                                  Get.to(ProgramSetupPage(
-                                    workoutId: '${response.data![0].workoutId}',
-                                    day: '1',
-                                    workoutName:
-                                        '${response.data![0].workoutTitle}',
-                                  ));
-                                } else if (checkResponse.success == false) {
-                                  Get.showSnackbar(GetSnackBar(
-                                    message: '${checkResponse.msg}',
-                                    duration: Duration(seconds: 2),
-                                    backgroundColor: ColorUtils.kRed,
-                                  ));
                                 }
-                              } else if (_checkWorkoutProgramViewModel
-                                      .apiResponse.status ==
-                                  Status.ERROR) {
-                                Text(
-                                  'Something went wrong',
-                                  style: FontTextStyle.kWhite16W300Roboto,
-                                );
-                              }
-                            }
-                          },
-                          child: Container(
-                            margin: EdgeInsets.only(
-                                bottom: 15, top: 5, right: 12, left: 12),
-                            alignment: Alignment.center,
-                            height: Get.height * .06,
-                            width: Get.width,
-                            decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  stops: [0.0, 1.0],
-                                  colors: ColorUtilsGradient.kTintGradient,
-                                ),
-                                borderRadius: BorderRadius.circular(6)),
-                            child: Text('Start Program',
-                                style: FontTextStyle.kBlack20BoldRoboto),
-                          ),
-                        )
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                    bottom: 15, top: 5, right: 12, left: 12),
+                                alignment: Alignment.center,
+                                height: Get.height * .06,
+                                width: Get.width,
+                                decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      stops: [0.0, 1.0],
+                                      colors: ColorUtilsGradient.kTintGradient,
+                                    ),
+                                    borderRadius: BorderRadius.circular(6)),
+                                child: Text('Start Program',
+                                    style: FontTextStyle.kBlack20BoldRoboto),
+                              ),
+                            )
+                          : SizedBox()
                       : SizedBox(),
                   SizedBox(height: Get.height * .03),
                 ],

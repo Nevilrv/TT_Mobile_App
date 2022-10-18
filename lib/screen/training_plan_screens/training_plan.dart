@@ -223,6 +223,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                   onTap: () {
                     Get.to(PlanOverviewScreen(
                       id: '${workoutResponse.data![index].workoutId}',
+                      isDoStart: true,
                     ));
                   });
             } else {
