@@ -57,6 +57,8 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
     }
   }
 
+  List<TextEditingController> _controller = [];
+
   @override
   void initState() {
     print('initstate');
@@ -139,13 +141,15 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                         // itemCount: exeName.length,
                         physics: NeverScrollableScrollPhysics(),
                         itemBuilder: (context, index) {
+                          for (int i = 0;
+                              i < widget.superSetExercisesList.length;
+                              i++) _controller.add(TextEditingController());
                           return superSet(
                               index: index,
                               id: widget.superSetExercisesList[index],
                               controllerWorkoutBaseExercise:
                                   _workoutBaseExerciseViewModel,
-                              textEditingController:
-                                  TextEditingController(text: ''));
+                              textEditingController: _controller[index]);
                         }),
                   ),
                 ),
@@ -284,6 +288,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                 ),
                 SizedBox(height: Get.height * .0075),
                 superSetCounterCardWidget(
+                  controllerText: textEditingController,
                   showText: '${response.data![0].exerciseReps}',
                   controller: _workoutBaseExerciseViewModel,
                   superSetRound: int.parse("${widget.superSetRound}"),
@@ -607,6 +612,7 @@ superSetCounterCardWidget(
     {required int counter,
     required String showText,
     required int round,
+    required TextEditingController? controllerText,
     required int superSetRound,
     required WorkoutBaseExerciseViewModel controller,
     required String keys,

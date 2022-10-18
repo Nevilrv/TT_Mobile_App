@@ -136,24 +136,19 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   Map<String, dynamic> weightedIndexLbsMap = {};
   bool weightedEnter = false;
   updateWeightRepsList({required int index, required bool isPlus}) {
-    print('List   >>> ${weightedRepsList[index]}');
-    print('List   >>> ${weightedRepsList[index].runtimeType}');
     if (isPlus) {
       int mil = int.parse("${weightedRepsList[index]}");
       mil++;
-      print('milll $mil');
       weightedRepsList.removeAt(index);
       weightedRepsList.insert(index, mil);
     } else {
       if (weightedRepsList[index] != 0) {
         int mil = int.parse("${weightedRepsList[index]}");
         mil--;
-        print('milll $mil');
         weightedRepsList.removeAt(index);
         weightedRepsList.insert(index, mil);
       }
     }
-    print('weightedRepsList >>  ${weightedRepsList}');
     update();
   }
 
