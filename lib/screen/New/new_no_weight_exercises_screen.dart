@@ -129,7 +129,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
         }
       } else {
         _workoutBaseExerciseViewModel.updateAppBarTitle("TRAINING SESSION");
-
         _workoutBaseExerciseViewModel.setWidgetOfIndex(
             value: NewShareProgressScreen(
           workoutId: widget.userProgramDatesId,
