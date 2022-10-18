@@ -587,7 +587,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                                   Get.height * .025),
                                       itemBuilder: (_, index) {
                                         return GestureDetector(
-                                          onTap: () {
+                                          onTap: () async {
                                             controller.updateSelectedHabits(
                                                 id: '${recordResponse!.data![index].habitId}');
                                             controller.progressCounter(
@@ -609,6 +609,51 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
 
                                             print(
                                                 "condition check ${controller.tmpHabitUpdatesList.contains('${recordResponse!.data![index].habitId}')}");
+
+                                            if (_habitViewModel
+                                                .habitIdString!.isNotEmpty) {
+                                              HabitRecordAddUpdateRequestModel
+                                                  _request =
+                                                  HabitRecordAddUpdateRequestModel();
+                                              _request.userId =
+                                                  PreferenceManager.getUId();
+                                              _request.habitIds =
+                                                  _habitViewModel.habitIdString;
+                                              _request.date = finalDate!;
+
+                                              await _habitRecordAddUpdateViewModel
+                                                  .habitRecordAddUpdateViewModel(
+                                                      _request);
+
+                                              if (_habitRecordAddUpdateViewModel
+                                                      .apiResponse.status ==
+                                                  Status.COMPLETE) {
+                                                HabitRecordAddUpdateResponseModel
+                                                    res =
+                                                    _habitRecordAddUpdateViewModel
+                                                        .apiResponse.data;
+
+                                                // Get.showSnackbar(GetSnackBar(
+                                                //   message: '${res.msg}',
+                                                //   duration:
+                                                //       Duration(seconds: 2),
+                                                // ));
+                                                print(
+                                                    "------------------- $_habitRecordAddUpdateViewModel");
+                                                print(
+                                                    "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
+                                                // Get.to(PerfectDayScreen());
+                                              } else if (_habitRecordAddUpdateViewModel
+                                                      .apiResponse.status ==
+                                                  Status.ERROR) {
+                                                Get.showSnackbar(GetSnackBar(
+                                                  message:
+                                                      'Something went wrong!!! \nPlease try again',
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ));
+                                              }
+                                            }
                                           },
                                           child: Container(
                                             padding: EdgeInsets.symmetric(
