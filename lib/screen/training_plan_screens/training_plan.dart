@@ -17,6 +17,7 @@ import 'package:tcm/viewModel/goal_view_model.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_filter_viewModel.dart';
 
 import '../../utils/images.dart';
+import '../../viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 
 class TrainingPlanScreen extends StatefulWidget {
   const TrainingPlanScreen({Key? key}) : super(key: key);
@@ -31,7 +32,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
       Get.put(WorkoutByFilterViewModel());
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
-
+  WorkoutByIdViewModel _workoutByIdViewModel = Get.put(WorkoutByIdViewModel());
   String? goal = '1';
   String? duration = '3';
   String? gender = 'male';
@@ -221,6 +222,7 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
                   image: '${workoutResponse.data![index].workoutImage}',
                   scheduled: workoutResponse.data![index].scheduled,
                   onTap: () {
+                    _workoutByIdViewModel.apiResponse.status = Status.LOADING;
                     Get.to(PlanOverviewScreen(
                       id: '${workoutResponse.data![index].workoutId}',
                       isDoStart: true,

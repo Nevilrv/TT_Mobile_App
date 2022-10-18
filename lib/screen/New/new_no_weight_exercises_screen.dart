@@ -48,7 +48,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
     if (_workoutBaseExerciseViewModel.currentIndex <
         widget.exerciseList.length) {
       _workoutBaseExerciseViewModel.setIsButtonShow(isShow: false);
-      print('if');
       await _exerciseByIdViewModel.getExerciseByIdDetails(id: id);
       if (_exerciseByIdViewModel.apiResponse.status == Status.COMPLETE) {
         ExerciseByIdResponseModel exerciseByIdResponse =
@@ -91,19 +90,13 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
         }
       }
     } else {
-      print('else');
       if (widget.superSetList.length != 0) {
-        print(' sout 1');
         _workoutBaseExerciseViewModel.roundCount++;
         if (_workoutBaseExerciseViewModel.allIdList.length >
             _workoutBaseExerciseViewModel.currentIndex) {
-          print('sout 2');
           if (_workoutBaseExerciseViewModel.currentIndex -
                   widget.exerciseList.length !=
               widget.superSetRound) {
-            print('sout 3');
-
-            print('Superset called');
             _workoutBaseExerciseViewModel.updateAppBarTitle("Super Set");
             print('Round count  =====a ${widget.superSetRound}');
             _workoutBaseExerciseViewModel.setWidgetOfIndex(
@@ -115,7 +108,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   .allIdList[_workoutBaseExerciseViewModel.currentIndex],
             ));
           } else {
-            print(' sout 4');
             _workoutBaseExerciseViewModel.updateAppBarTitle("TRAINING SESSION");
             _workoutBaseExerciseViewModel.setWidgetOfIndex(
                 value: NewShareProgressScreen(
@@ -123,7 +115,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
             ));
           }
         } else {
-          print('sout 5${widget.userProgramDatesId}');
           _workoutBaseExerciseViewModel.updateAppBarTitle("TRAINING SESSION");
 
           _workoutBaseExerciseViewModel.setWidgetOfIndex(
@@ -137,7 +128,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
           print('${_workoutBaseExerciseViewModel.currentIndex}');
         }
       } else {
-        print('sout 6');
         _workoutBaseExerciseViewModel.updateAppBarTitle("TRAINING SESSION");
 
         _workoutBaseExerciseViewModel.setWidgetOfIndex(
@@ -161,7 +151,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
     print('supersetttt ${widget.superSetList}');
     print('supersetttt round    ${widget.superSetRound}');
 
-    print('InItState call');
     print('>>>> InItState call exerciseList   ${widget.exerciseList}');
     _workoutBaseExerciseViewModel.isButtonShow = false;
     _workoutBaseExerciseViewModel.weightedEnter = false;
@@ -185,11 +174,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
 
   @override
   Widget build(BuildContext context) {
-    print('Enter in new no weight screen');
     return GetBuilder<WorkoutBaseExerciseViewModel>(
       builder: (controller) {
-        print('widgetOfIndex tttt ${controller.widgetOfIndex}');
-
         return Scaffold(
           backgroundColor: Colors.transparent,
           bottomNavigationBar: controller.isButtonShow
@@ -207,28 +193,21 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                         _workoutBaseExerciseViewModel
                                             .currentIndex ||
                                     isLastBackCheck == false) {
-                                  print('treeee');
                                   isLastBackCheck = false;
                                   if (_workoutBaseExerciseViewModel
                                           .currentIndex <
                                       widget.exerciseList.length) {
-                                    print('print 1');
                                     _workoutBaseExerciseViewModel
                                         .currentIndex++;
                                   } else {
                                     if (widget.superSetList.length != 0) {
-                                      print('print 2');
-
                                       if (_workoutBaseExerciseViewModel
                                                   .currentIndex -
                                               widget.exerciseList.length !=
                                           widget.superSetRound) {
-                                        print('print 3');
                                         _workoutBaseExerciseViewModel
                                             .currentIndex++;
                                         try {
-                                          print(
-                                              'superSetDataCountList >>  ${_workoutBaseExerciseViewModel.superSetDataCountList}');
                                           _workoutBaseExerciseViewModel
                                               .superSetDataCountList
                                               .clear();
@@ -247,16 +226,10 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                       } else {
                                         _workoutBaseExerciseViewModel
                                             .currentIndex++;
-
-                                        print('print 4');
                                       }
                                     } else {
                                       _workoutBaseExerciseViewModel
                                           .currentIndex++;
-
-                                      print('print 5');
-
-                                      print('Over');
                                     }
                                   }
 
@@ -270,7 +243,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                           : '');
                                   if (controller.allIdList.length ==
                                       controller.currentIndex) {
-                                    print('Save    l.ll;l;');
                                     UpdateStatusUserProgramRequestModel
                                         _request =
                                         UpdateStatusUserProgramRequestModel();
@@ -344,17 +316,14 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   if (_workoutBaseExerciseViewModel.currentIndex != 0) {
                     _workoutBaseExerciseViewModel.currentIndex--;
                     lastBackIndex = _workoutBaseExerciseViewModel.currentIndex;
-                    print('lastBackIndex ˘>> $lastBackIndex');
                   } else {
                     Get.back();
-                    print('Back');
                   }
                 } else {
                   if (_workoutBaseExerciseViewModel.currentIndex != 0) {
                     _workoutBaseExerciseViewModel.currentIndex--;
                   } else {
                     Get.back();
-                    print('Back else');
                   }
                 }
               }),
