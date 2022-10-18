@@ -131,10 +131,11 @@ class WorkoutBaseExerciseViewModel extends GetxController {
 
   /// for weighted screen
   List lbsList = [];
-  List weightedRepsList = [];
   Map<String, dynamic> weightedIndexRepsMap = {};
   Map<String, dynamic> weightedIndexLbsMap = {};
   bool weightedEnter = false;
+  List weightedRepsList = [];
+
   updateWeightRepsList({required int index, required bool isPlus}) {
     if (isPlus) {
       int mil = int.parse("${weightedRepsList[index]}");

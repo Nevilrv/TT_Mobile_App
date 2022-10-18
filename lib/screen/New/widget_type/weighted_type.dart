@@ -60,6 +60,8 @@ class _WeightedTypeState extends State<WeightedType> {
         for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
           _workoutBaseExerciseViewModel.weightedRepsList
               .add(int.parse("${widget.exerciseReps}"));
+          // _workoutBaseExerciseViewModel.weightedLBSList
+          //     .add(int.parse("${widget}"));
           if (widget.exerciseWeight == "" && widget.exerciseWeight.isEmpty) {
             _workoutBaseExerciseViewModel.lbsList.add("0");
           } else {
@@ -67,9 +69,8 @@ class _WeightedTypeState extends State<WeightedType> {
                 .add("${widget.exerciseWeight}");
           }
         }
-        print(
-            '˘>>>>> reps List >>> ${_workoutBaseExerciseViewModel.weightedRepsList}');
         print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
+        print('>>>>> lbs List >>>  ${weight}  ${weight.runtimeType}');
 
         _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
           "${_workoutBaseExerciseViewModel.currentIndex}":
@@ -281,6 +282,8 @@ class _WeightedCardState extends State<WeightedCard> {
 
   @override
   Widget build(BuildContext context) {
+    print('call build');
+    print('widget.weight${widget.weight}');
     return Padding(
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: GetBuilder<WorkoutBaseExerciseViewModel>(
@@ -370,11 +373,12 @@ class _WeightedCardState extends State<WeightedCard> {
                       SizedBox(
                         width: 40,
                         child: TextField(
-                          controller: widget.editingController,
-                          style: widget.counter == 0
-                              ? FontTextStyle.kWhite24BoldRoboto
-                                  .copyWith(color: ColorUtils.kGray)
-                              : FontTextStyle.kWhite24BoldRoboto,
+                          //  controller: widget.editingController,
+                          style:
+                              int.parse(controller.lbsList[widget.index]) == 0
+                                  ? FontTextStyle.kWhite24BoldRoboto
+                                      .copyWith(color: ColorUtils.kGray)
+                                  : FontTextStyle.kWhite24BoldRoboto,
                           keyboardType: TextInputType.numberWithOptions(
                               decimal: true, signed: true),
                           inputFormatters: [
@@ -387,12 +391,12 @@ class _WeightedCardState extends State<WeightedCard> {
                               controller.updateLbsList(
                                   keys: "${controller.currentIndex}",
                                   index: widget.index,
-                                  value: widget.editingController.text);
+                                  value: value);
                             } else {
                               controller.updateLbsList(
                                   keys: "${controller.currentIndex}",
                                   index: widget.index,
-                                  value: "0");
+                                  value: " 0");
                             }
                             // if (value.isEmpty) value = "0";
                             // controller.weightList.removeAt(widget.index);
@@ -400,12 +404,17 @@ class _WeightedCardState extends State<WeightedCard> {
                             //     .insert(widget.index, value);
                             // log("===============> ${controller.weightList}");
                           },
+                          //,sc
                           decoration: InputDecoration(
-                              hintText: '0',
+                              hintText: '${controller.lbsList[widget.index]}',
                               counterText: '',
                               semanticCounterText: '',
-                              hintStyle: FontTextStyle.kWhite24BoldRoboto
-                                  .copyWith(color: ColorUtils.kGray),
+                              hintStyle:
+                                  int.parse(controller.lbsList[widget.index]) ==
+                                          0
+                                      ? FontTextStyle.kWhite24BoldRoboto
+                                          .copyWith(color: ColorUtils.kGray)
+                                      : FontTextStyle.kWhite24BoldRoboto,
                               enabledBorder: UnderlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Colors.transparent)),
