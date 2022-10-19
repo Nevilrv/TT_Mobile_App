@@ -70,12 +70,18 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
           print(
               'exerciseByIdResponse.data![0].userExercise!.id ============> ${"${exerciseByIdResponse.data![0].userExercise!.id!}"}');
         } catch (e) {
-          print('eeeeee $e');
+          _workoutBaseExerciseViewModel.userSaveExeId = "";
         }
 
         if (exerciseByIdResponse.data![0].exerciseType == "REPS") {
           _workoutBaseExerciseViewModel
               .updateAppBarTitle(exerciseByIdResponse.data![0].exerciseTitle!);
+          String? repsById;
+          try {
+            repsById = exerciseByIdResponse.data![0].userExercise!.repsData;
+          } catch (e) {
+            repsById = '';
+          }
           _workoutBaseExerciseViewModel.setWidgetOfIndex(
               value: repsType(
                   controller: _workoutBaseExerciseViewModel,
@@ -83,6 +89,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   sets: exerciseByIdResponse.data![0].exerciseSets!,
                   exercisesId: exerciseByIdResponse.data![0].exerciseId!,
                   reps: exerciseByIdResponse.data![0].exerciseReps!,
+                  repsData: repsById,
                   exerciseColor: exerciseByIdResponse.data![0].exerciseColor!));
         } else if (exerciseByIdResponse.data![0].exerciseType == "TIME") {
           _workoutBaseExerciseViewModel
@@ -97,12 +104,24 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
           _workoutBaseExerciseViewModel
               .updateAppBarTitle(exerciseByIdResponse.data![0].exerciseTitle!);
 
+          String? repsById;
+          String? weightById;
+          try {
+            repsById = exerciseByIdResponse.data![0].userExercise!.repsData;
+            weightById = exerciseByIdResponse.data![0].userExercise!.weightData;
+          } catch (e) {
+            repsById = '';
+            weightById = '';
+          }
+
           _workoutBaseExerciseViewModel.setWidgetOfIndex(
               value: WeightedType(
                   exerciseSets: exerciseByIdResponse.data![0].exerciseSets!,
                   exerciseId: exerciseByIdResponse.data![0].exerciseId!,
                   exerciseTitle: exerciseByIdResponse.data![0].exerciseTitle!,
                   exerciseReps: exerciseByIdResponse.data![0].exerciseReps!,
+                  repsData: repsById,
+                  weightData: weightById,
                   exerciseRest: exerciseByIdResponse.data![0].exerciseRest!,
                   exerciseWeight: exerciseByIdResponse.data![0].exerciseWeight!,
                   exerciseColor: exerciseByIdResponse.data![0].exerciseColor!));
@@ -218,8 +237,10 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                         "WEIGHTED") {
                                   SaveUserCustomizedExerciseRequestModel _req =
                                       SaveUserCustomizedExerciseRequestModel();
+
                                   _req.id = _workoutBaseExerciseViewModel
-                                          .userSaveExeId!.isEmpty
+                                              .userSaveExeId ==
+                                          ""
                                       ? ""
                                       : _workoutBaseExerciseViewModel
                                           .userSaveExeId;

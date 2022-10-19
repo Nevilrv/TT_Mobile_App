@@ -11,11 +11,27 @@ Widget repsType(
     required String exercisesId,
     required String sets,
     required String reps,
+    String? repsData,
     required WorkoutBaseExerciseViewModel controller,
     required exerciseColor}) {
   controller.repsList = [];
-  for (int i = 0; i < int.parse(sets); i++) {
-    controller.repsList.add(int.parse(reps));
+
+  try {
+    List tmpRepsDataList = repsData!
+        .replaceAll("[", "")
+        .replaceAll("]", "")
+        .removeAllWhitespace
+        .split(",");
+
+    print('repsData ========== > ${tmpRepsDataList}');
+
+    for (int i = 0; i < tmpRepsDataList.length; i++) {
+      controller.repsList.add(int.parse(tmpRepsDataList[i]));
+    }
+  } catch (e) {
+    for (int i = 0; i < int.parse(sets); i++) {
+      controller.repsList.add(int.parse(reps));
+    }
   }
 
   controller.repsIndexMap

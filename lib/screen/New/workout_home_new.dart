@@ -305,6 +305,17 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                               : player,
                                                         ))
                                                     : SizedBox(),
+                                                SizedBox(
+                                                    height: Get.height * .02),
+
+                                                commonNavigationButton(
+                                                    onTap: () {
+                                                      Get.to(PlanOverviewScreen(
+                                                        id: widget.workoutId,
+                                                        isDoStart: false,
+                                                      ));
+                                                    },
+                                                    name: 'Workout Overview'),
 
                                                 SizedBox(
                                                     height: Get.height * .03),
