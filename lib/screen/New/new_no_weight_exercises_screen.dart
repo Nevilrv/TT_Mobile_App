@@ -286,10 +286,10 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                     print(
                                         "weightData ============= > ${resp.data![0].weightData}");
                                     print(
-                                        "exerciseId ============= > ${resp.data![0].exerciseId}");
+                                        "exerciseId ============= > ${resp.data![0].exerciseId}");`
                                     print(
                                         "exerciseType ============= > ${resp.data![0].exerciseType}");
-                                  }
+                                  }`
                                 }
 
                                 if (lastBackIndex <
