@@ -268,12 +268,12 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                                               child: ClipRRect(
                                                                                 borderRadius: BorderRadius.circular(15),
                                                                                 child: Center(
-                                                                                    child: videoResponse.data![index].videoThumbnail == null || videoResponse.data![index].videoThumbnail == ''
+                                                                                    child: videoResponse.data![index1].videoThumbnail == null || videoResponse.data![index1].videoThumbnail == ''
                                                                                         ? Padding(
                                                                                             padding: EdgeInsets.all(15.0),
                                                                                             child: Image.asset(AppImages.logo),
                                                                                           )
-                                                                                        : Image.network(videoResponse.data![index].videoThumbnail!, fit: BoxFit.cover, height: Get.height, width: Get.width)),
+                                                                                        : Image.network(videoResponse.data![index1].videoThumbnail!, fit: BoxFit.cover, height: Get.height, width: Get.width)),
                                                                               ),
                                                                             ),
                                                                           ),
@@ -284,7 +284,7 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                                                 EdgeInsets.only(left: Get.height * .013),
                                                                             child:
                                                                                 Text(
-                                                                              '${videoResponse.data![index].videoTitle}'.length <= 20 ? '${videoResponse.data![index].videoTitle}' : '${videoResponse.data![index].videoTitle!.substring(0, 20)} ..',
+                                                                              '${videoResponse.data![index1].videoTitle}'.length <= 20 ? '${videoResponse.data![index1].videoTitle}' : '${videoResponse.data![index1].videoTitle!.substring(0, 20)} ..',
                                                                               // '${videoResponse.data![index1].videoTitle}',
                                                                               style: FontTextStyle.kWhite17BoldRoboto,
                                                                             ),

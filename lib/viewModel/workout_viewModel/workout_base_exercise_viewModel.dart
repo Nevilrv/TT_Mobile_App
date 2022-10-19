@@ -8,6 +8,15 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   List allIdList = [];
   List exeNewList = [];
   bool showReps = false;
+  String _exerciseType = "";
+  String? userSaveExeId;
+
+  String get exerciseType => _exerciseType;
+
+  set exerciseType(String value) {
+    _exerciseType = value;
+  }
+
   Map<String, dynamic> superSetRepsSaveMap = {};
   bool isOneTimeApiCall = true;
   List<Map<String, dynamic>> listOfSetRepesSave = [];
