@@ -16,6 +16,8 @@ class WeightedType extends StatefulWidget {
   final String exerciseRest;
   final String exerciseWeight;
   final String exerciseColor;
+  final String? repsData;
+  final String? weightData;
 
   const WeightedType(
       {Key? key,
@@ -24,6 +26,8 @@ class WeightedType extends StatefulWidget {
       required this.exerciseTitle,
       required this.exerciseReps,
       required this.exerciseRest,
+      this.repsData,
+      this.weightData,
       required this.exerciseWeight,
       required this.exerciseColor})
       : super(key: key);
@@ -56,16 +60,30 @@ class _WeightedTypeState extends State<WeightedType> {
       _workoutBaseExerciseViewModel.weightedRepsList.clear();
       _workoutBaseExerciseViewModel.lbsList.clear();
       try {
-        for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
+        List tmpRepsDataList = widget.repsData!
+            .replaceAll("[", "")
+            .replaceAll("]", "")
+            .removeAllWhitespace
+            .split(",");
+        List tmpWeightDataList = widget.weightData!
+            .replaceAll("[", "")
+            .replaceAll("]", "")
+            .removeAllWhitespace
+            .split(",");
+
+        print("tmpRepsDataListtmpRepsDataList ========== > ${tmpRepsDataList}");
+        print(
+            "tmpWeightDataListtmpWeightDataList =========== > ${tmpWeightDataList}");
+
+        for (int i = 0; i < tmpRepsDataList.length; i++) {
           _workoutBaseExerciseViewModel.weightedRepsList
-              .add(int.parse("${widget.exerciseReps}"));
+              .add(int.parse(tmpRepsDataList[i]));
           // _workoutBaseExerciseViewModel.weightedLBSList
           //     .add(int.parse("${widget}"));
           if (widget.exerciseWeight == "" && widget.exerciseWeight.isEmpty) {
             _workoutBaseExerciseViewModel.lbsList.add("0");
           } else {
-            _workoutBaseExerciseViewModel.lbsList
-                .add("${widget.exerciseWeight}");
+            _workoutBaseExerciseViewModel.lbsList.add(tmpWeightDataList[i]);
           }
         }
         print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
