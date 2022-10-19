@@ -115,7 +115,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                               color: ColorUtils.kTint,
                             )),
                         backgroundColor: ColorUtils.kBlack,
-                        title: Text('FMy Profile',
+                        title: Text('My Profile',
                             style: FontTextStyle.kWhite16BoldRoboto),
                         centerTitle: true,
                       ),
@@ -781,6 +781,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
                                                   if (controller.image !=
                                                       null) {
+                                                    print(
+                                                        'is not call for image ');
                                                     Map<String, dynamic> data =
                                                         {
                                                       'user_id':

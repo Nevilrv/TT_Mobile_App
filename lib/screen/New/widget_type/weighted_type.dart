@@ -43,7 +43,6 @@ class _WeightedTypeState extends State<WeightedType> {
   @override
   void initState() {
     super.initState();
-    print('123123123');
     weight = "${widget.exerciseWeight}";
 
     weightedLoop();
