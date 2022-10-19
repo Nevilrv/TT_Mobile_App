@@ -21,56 +21,65 @@ class SaveUserCustomizedExerciseResponseModel {
 
   bool? success;
   String? msg;
-  List<customExe>? data;
+  List<CustomData>? data;
 
   factory SaveUserCustomizedExerciseResponseModel.fromJson(
           Map<String, dynamic> json) =>
       SaveUserCustomizedExerciseResponseModel(
-        success: json["success"],
-        msg: json["msg"],
-        data: List<customExe>.from(
-            json["data"].map((x) => customExe.fromJson(x))),
+        success: json["success"] == null ? null : json["success"],
+        msg: json["msg"] == null ? null : json["msg"],
+        data: json["data"] == null
+            ? null
+            : List<CustomData>.from(
+                json["data"].map((x) => CustomData.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
-        "success": success,
-        "msg": msg,
-        "data": List<dynamic>.from(data!.map((x) => x.toJson())),
+        "success": success == null ? null : success,
+        "msg": msg == null ? null : msg,
+        "data": data == null
+            ? null
+            : List<dynamic>.from(data!.map((x) => x.toJson())),
       };
 }
 
-class customExe {
-  customExe({
+class CustomData {
+  CustomData({
     this.id,
     this.userId,
     this.exerciseId,
-    this.reps,
+    this.exerciseType,
+    this.repsData,
+    this.weightData,
     this.createdAt,
-    this.isCompleted,
   });
 
   String? id;
   String? userId;
   String? exerciseId;
-  String? reps;
+  String? exerciseType;
+  String? repsData;
+  String? weightData;
   String? createdAt;
-  String? isCompleted;
 
-  factory customExe.fromJson(Map<String, dynamic> json) => customExe(
-        id: json["id"],
-        userId: json["user_id"],
-        exerciseId: json["exercise_id"],
-        reps: json["reps"],
-        createdAt: json["created_at"],
-        isCompleted: json["is_completed"],
+  factory CustomData.fromJson(Map<String, dynamic> json) => CustomData(
+        id: json["id"] == null ? null : json["id"],
+        userId: json["user_id"] == null ? null : json["user_id"],
+        exerciseId: json["exercise_id"] == null ? null : json["exercise_id"],
+        exerciseType:
+            json["exercise_type"] == null ? null : json["exercise_type"],
+        repsData: json["reps_data"] == null ? null : json["reps_data"],
+        weightData: json["weight_data"] == null ? null : json["weight_data"],
+        createdAt: json["created_at"] == null ? null : json["created_at"],
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
-        "user_id": userId,
-        "exercise_id": exerciseId,
-        "reps": reps,
-        "created_at": createdAt,
-        "is_completed": isCompleted,
+        "id": id == null ? null : id,
+        "user_id": userId == null ? null : userId,
+        "exercise_id": exerciseId == null ? null : exerciseId,
+        "exercise_type": exerciseType == null ? null : exerciseType,
+        "reps_data": repsData == null ? null : repsData,
+        "weight_data": weightData == null ? null : weightData,
+        "created_at": createdAt == null ? null : createdAt,
       };
 }

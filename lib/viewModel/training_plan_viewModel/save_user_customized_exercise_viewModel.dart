@@ -6,17 +6,17 @@ import 'package:tcm/model/response_model/training_plans_response_model/save_user
 import 'package:tcm/repo/training_plan_repo/save_user_customized_exercise_repo.dart';
 
 class SaveUserCustomizedExerciseViewModel extends GetxController {
-  int counterReps = 0;
-
-  counterPlus({int? totCount}) {
-    if (counterReps < totCount!) counterReps++;
-    update();
-  }
-
-  counterMinus() {
-    if (counterReps > 0) counterReps--;
-    update();
-  }
+  // int counterReps = 0;
+  //
+  // counterPlus({int? totCount}) {
+  //   if (counterReps < totCount!) counterReps++;
+  //   update();
+  // }
+  //
+  // counterMinus() {
+  //   if (counterReps > 0) counterReps--;
+  //   update();
+  // }
 
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 

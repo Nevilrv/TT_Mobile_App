@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/request_model/training_plan_request_model/save_user_customized_exercise_request_model.dart';
 import 'package:tcm/model/request_model/update_status_user_program_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
+import 'package:tcm/model/response_model/training_plans_response_model/save_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
+import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/New/widget_type/reps_type.dart';
 import 'package:tcm/screen/New/widget_type/super_set.dart';
 import 'package:tcm/screen/New/widget_type/time_type.dart';
@@ -13,6 +17,7 @@ import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
+import 'package:tcm/viewModel/training_plan_viewModel/save_user_customized_exercise_viewModel.dart';
 import 'package:tcm/viewModel/update_status_user_program_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 
@@ -42,8 +47,11 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
       Get.put(WorkoutBaseExerciseViewModel());
   UpdateStatusUserProgramViewModel _updateStatusUserProgramViewModel =
       Get.put(UpdateStatusUserProgramViewModel());
+  SaveUserCustomizedExerciseViewModel _saveUserCustomizedExerciseViewModel =
+      Get.put(SaveUserCustomizedExerciseViewModel());
   int lastBackIndex = 0;
   bool isLastBackCheck = false;
+
   dataFetchById({required String id}) async {
     if (_workoutBaseExerciseViewModel.currentIndex <
         widget.exerciseList.length) {
@@ -53,6 +61,17 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
         ExerciseByIdResponseModel exerciseByIdResponse =
             _exerciseByIdViewModel.apiResponse.data;
         _workoutBaseExerciseViewModel.setIsButtonShow(isShow: true);
+        _workoutBaseExerciseViewModel.exerciseType =
+            "${exerciseByIdResponse.data![0].exerciseType}";
+
+        try {
+          _workoutBaseExerciseViewModel.userSaveExeId =
+              "${exerciseByIdResponse.data![0].userExercise!.id}";
+          print(
+              'exerciseByIdResponse.data![0].userExercise!.id ============> ${"${exerciseByIdResponse.data![0].userExercise!.id!}"}');
+        } catch (e) {
+          print('eeeeee $e');
+        }
 
         if (exerciseByIdResponse.data![0].exerciseType == "REPS") {
           _workoutBaseExerciseViewModel
@@ -188,6 +207,70 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                       child: SizedBox(
                           child: commonNavigationButton(
                               onTap: () async {
+                                print(
+                                    'repsListrepsListrepsList ===========  > ${_workoutBaseExerciseViewModel.exerciseType == "WEIGHTED" ? _workoutBaseExerciseViewModel.weightedRepsList : _workoutBaseExerciseViewModel.repsList}');
+
+                                if (_workoutBaseExerciseViewModel
+                                            .exerciseType ==
+                                        "REPS" ||
+                                    _workoutBaseExerciseViewModel
+                                            .exerciseType ==
+                                        "WEIGHTED") {
+                                  SaveUserCustomizedExerciseRequestModel _req =
+                                      SaveUserCustomizedExerciseRequestModel();
+                                  _req.id = _workoutBaseExerciseViewModel
+                                          .userSaveExeId!.isEmpty
+                                      ? ""
+                                      : _workoutBaseExerciseViewModel
+                                          .userSaveExeId;
+
+                                  _req.exerciseId = widget.exerciseList[
+                                      _workoutBaseExerciseViewModel
+                                          .currentIndex];
+                                  _req.userId = PreferenceManager.getUId();
+                                  _req.exerciseType =
+                                      _workoutBaseExerciseViewModel
+                                                  .exerciseType ==
+                                              "WEIGHTED"
+                                          ? "weight"
+                                          : "reps";
+                                  _req.repsData = _workoutBaseExerciseViewModel
+                                              .exerciseType ==
+                                          "WEIGHTED"
+                                      ? "${_workoutBaseExerciseViewModel.weightedRepsList}"
+                                      : "${_workoutBaseExerciseViewModel.repsList}";
+
+                                  _req.weightData =
+                                      _workoutBaseExerciseViewModel
+                                                  .exerciseType ==
+                                              "WEIGHTED"
+                                          ? "${controller.lbsList}"
+                                          : "";
+
+                                  _saveUserCustomizedExerciseViewModel
+                                      .saveUserCustomizedExerciseViewModel(
+                                          _req);
+
+                                  if (_saveUserCustomizedExerciseViewModel
+                                          .apiResponse.status ==
+                                      Status.COMPLETE) {
+                                    SaveUserCustomizedExerciseResponseModel
+                                        resp =
+                                        SaveUserCustomizedExerciseResponseModel();
+
+                                    print(
+                                        "userId ============= > ${resp.data![0].userId}");
+                                    print(
+                                        "repsData ============= > ${resp.data![0].repsData}");
+                                    print(
+                                        "weightData ============= > ${resp.data![0].weightData}");
+                                    print(
+                                        "exerciseId ============= > ${resp.data![0].exerciseId}");
+                                    print(
+                                        "exerciseType ============= > ${resp.data![0].exerciseType}");
+                                  }
+                                }
+
                                 if (lastBackIndex <
                                         _workoutBaseExerciseViewModel
                                             .currentIndex ||
