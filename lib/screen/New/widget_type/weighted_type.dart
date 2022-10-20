@@ -87,7 +87,7 @@ class _WeightedTypeState extends State<WeightedType> {
           }
         }
         print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
-        print('>>>>> lbs List >>>  ${weight}  ${weight.runtimeType}');
+        print('>>>>> lbs List >>>  $weight}  ${weight.runtimeType}');
 
         _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
           "${_workoutBaseExerciseViewModel.currentIndex}":
