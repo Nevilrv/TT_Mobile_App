@@ -235,7 +235,6 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
               //   "Barbell Hang Pull": 5
               // });
               // print('updated NewList >>>> $newList');
-
             }
           }
 
@@ -244,8 +243,14 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
             if (_workoutBaseExerciseViewModel.superSetApiCall == true) {
               _workoutBaseExerciseViewModel.superSetApiCall = false;
               controllerWorkoutBaseExercise.repsSuperSetList = [];
-              controllerWorkoutBaseExercise.repsSuperSetList
-                  .add(int.parse("${response.data![0].exerciseReps}"));
+              controllerWorkoutBaseExercise.repsSuperSetList.add(int.tryParse(
+                          "${response.data![0].exerciseReps}"
+                              .split("-")
+                              .first) !=
+                      null
+                  ? int.parse(
+                      "${response.data![0].exerciseReps}".split("-").first)
+                  : 10);
             }
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,

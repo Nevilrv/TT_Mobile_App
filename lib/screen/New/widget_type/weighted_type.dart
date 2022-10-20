@@ -305,6 +305,8 @@ class _WeightedCardState extends State<WeightedCard> {
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: GetBuilder<WorkoutBaseExerciseViewModel>(
         builder: (controller) {
+          print('hello =========== > ${controller.lbsList[widget.index]}');
+
           return Container(
             height: Get.height * .1,
             width: Get.width,
