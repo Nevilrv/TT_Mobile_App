@@ -183,6 +183,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
       required int index,
       required WorkoutBaseExerciseViewModel controllerWorkoutBaseExercise,
       required TextEditingController? textEditingController}) {
+    print('${id}');
     return FutureBuilder<ExerciseByIdResponseModel>(
       future: ExerciseByIdRepo().exerciseByIdRepo(id: id),
       builder: (context, snapshot) {

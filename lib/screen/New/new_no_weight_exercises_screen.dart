@@ -5,7 +5,6 @@ import 'package:tcm/model/request_model/training_plan_request_model/save_user_cu
 import 'package:tcm/model/request_model/update_status_user_program_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
-import 'package:tcm/model/response_model/training_plans_response_model/save_workout_program_response_model.dart';
 import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/New/widget_type/reps_type.dart';

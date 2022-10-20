@@ -21,8 +21,8 @@ class ExerciseByIdViewModel extends GetxController {
     // _apiResponse = ApiResponse.loading(message: 'Loading');
 
     try {
-      ExerciseByIdResponseModel response = await ExerciseByIdRepo()
-          .exerciseByIdRepo(id: id, userId: PreferenceManager.getUId());
+      ExerciseByIdResponseModel response =
+          await ExerciseByIdRepo().exerciseByIdRepo(id: id);
       print('AllWorkOutResponseModel=>${response}');
       _apiResponse = ApiResponse.complete(response);
     } catch (e) {
