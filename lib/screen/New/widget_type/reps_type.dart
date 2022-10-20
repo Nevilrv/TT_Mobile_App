@@ -118,7 +118,9 @@ Widget repsType(
                     ),
                     CounterCard(
                       index: index,
-                      counter: int.parse(reps),
+                      counter: int.tryParse(reps.split("-").first) != null
+                          ? int.parse(reps.split("-").first)
+                          : 10,
                     ),
                     Container(
                       alignment: Alignment.center,

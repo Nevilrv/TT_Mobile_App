@@ -87,7 +87,7 @@ class _WeightedTypeState extends State<WeightedType> {
           }
         }
         print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
-        print('>>>>> lbs List >>>  ${weight}  ${weight.runtimeType}');
+        print('>>>>> lbs List >>>  $weight}  ${weight.runtimeType}');
 
         _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
           "${_workoutBaseExerciseViewModel.currentIndex}":
@@ -305,6 +305,8 @@ class _WeightedCardState extends State<WeightedCard> {
       padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
       child: GetBuilder<WorkoutBaseExerciseViewModel>(
         builder: (controller) {
+          print('hello =========== > ${controller.lbsList[widget.index]}');
+
           return Container(
             height: Get.height * .1,
             width: Get.width,

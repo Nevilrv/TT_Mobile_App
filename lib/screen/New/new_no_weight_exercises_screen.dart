@@ -134,6 +134,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
           if (_workoutBaseExerciseViewModel.currentIndex -
                   widget.exerciseList.length !=
               widget.superSetRound) {
+            _workoutBaseExerciseViewModel.exerciseType = "Super Set";
             _workoutBaseExerciseViewModel.updateAppBarTitle("Super Set");
             print('Round count  =====a ${widget.superSetRound}');
             _workoutBaseExerciseViewModel.setWidgetOfIndex(
