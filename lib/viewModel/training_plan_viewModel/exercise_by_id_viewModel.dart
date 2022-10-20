@@ -23,7 +23,7 @@ class ExerciseByIdViewModel extends GetxController {
     try {
       ExerciseByIdResponseModel response =
           await ExerciseByIdRepo().exerciseByIdRepo(id: id);
-      print('AllWorkOutResponseModel=>${response}');
+      print('AllWorkOutResponseModel=>$response');
       _apiResponse = ApiResponse.complete(response);
     } catch (e) {
       print(".........>$e");
