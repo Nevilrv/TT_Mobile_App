@@ -221,7 +221,6 @@ void openBottomSheet(
                     _userWorkoutsDateViewModel.warmUpList.add(element);
                   });
                   // _userWorkoutsDateViewModel.exercisesNewList.clear();
-
                   // snapshot.data!.data!.exercisesIds!.forEach((element) {
                   //   _userWorkoutsDateViewModel.withWarmupExercisesList
                   //       .add(element);
@@ -405,7 +404,8 @@ void openBottomSheet(
           Divider(
             color: ColorUtils.kTint,
           ),
-          */ /*FutureBuilder(
+          */
+  /*FutureBuilder(
             future: UserWorkoutsDateRepo().userWorkoutsDateRepo(
                 userId: PreferenceManager.getUId(),
                 date: date!.split(" ").first),
@@ -500,7 +500,8 @@ void openBottomSheet(
                 return shimmerLoading();
               }
             },
-          ),*/ /*
+          ),*/
+  /*
           FutureBuilder(
             future: UserWorkoutsDateRepo().userWorkoutsDateRepo(
                 userId: PreferenceManager.getUId(),

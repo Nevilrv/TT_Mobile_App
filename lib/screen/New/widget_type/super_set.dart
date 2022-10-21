@@ -266,18 +266,45 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                   style: FontTextStyle.kLightGray18W300Roboto,
                 ),
                 SizedBox(height: Get.height * .0075),
-                superSetCounterCardWidget(
-                  controllerText: textEditingController,
-                  showText: '${response.data![0].exerciseReps}',
-                  controller: _workoutBaseExerciseViewModel,
-                  superSetRound: int.parse("${widget.superSetRound}"),
-                  round: widget.roundCount,
-                  keys: "${response.data![0].exerciseTitle}",
-                  // counter: int.parse(
-                  //     "${response.data![0].exerciseReps}".split("-").first),
-                  counter: 2,
-                  newList: [],
-                ),
+                Stack(alignment: Alignment.topRight, children: [
+                  superSetCounterCardWidget(
+                    controllerText: textEditingController,
+                    showText: '${response.data![0].exerciseReps}',
+                    controller: _workoutBaseExerciseViewModel,
+                    superSetRound: int.parse("${widget.superSetRound}"),
+                    round: widget.roundCount,
+                    keys: "${response.data![0].exerciseTitle}",
+                    // counter: int.parse(
+                    //     "${response.data![0].exerciseReps}".split("-").first),
+                    counter: 2,
+                    newList: [],
+                  ),
+                  Positioned(
+                    top: Get.height * .01,
+                    child: Container(
+                      alignment: Alignment.center,
+                      height: Get.height * .027,
+                      width: Get.height * .09,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: snapshot.data!.data![0].exerciseColor ==
+                                      "green"
+                                  ? ColorUtilsGradient.kGreenGradient
+                                  : snapshot.data!.data![0].exerciseColor ==
+                                          "yellow"
+                                      ? ColorUtilsGradient.kOrangeGradient
+                                      : ColorUtilsGradient.kRedGradient,
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(6),
+                              bottomLeft: Radius.circular(6))),
+                      child: Text('RIR ${response.data![0].exerciseReps}',
+                          style: FontTextStyle.kWhite12BoldRoboto
+                              .copyWith(fontWeight: FontWeight.w500)),
+                    ),
+                  )
+                ]),
                 Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
               ],
             );
@@ -425,7 +452,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                             borderRadius: BorderRadius.only(
                                 topRight: Radius.circular(6),
                                 bottomLeft: Radius.circular(6))),
-                        child: Text('RIR 0-1',
+                        child: Text('RIR ${response.data![0].exerciseReps}',
                             style: FontTextStyle.kWhite12BoldRoboto
                                 .copyWith(fontWeight: FontWeight.w500)),
                       ),
@@ -596,7 +623,7 @@ superSetCounterCardWidget(
   return Padding(
     padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
     child: Container(
-      height: Get.height * .1,
+      height: Get.height * .12,
       width: Get.width,
       decoration: BoxDecoration(
           border: Border.all(color: ColorUtils.kBlack, width: 2),

@@ -138,7 +138,7 @@ Widget repsType(
                           borderRadius: BorderRadius.only(
                               topRight: Radius.circular(6),
                               bottomLeft: Radius.circular(6))),
-                      child: Text('RIR 0-1',
+                      child: Text('RIR $reps',
                           style: FontTextStyle.kWhite12BoldRoboto
                               .copyWith(fontWeight: FontWeight.w500)),
                     )

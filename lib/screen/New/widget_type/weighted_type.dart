@@ -251,7 +251,7 @@ class _WeightedTypeState extends State<WeightedType> {
                                   borderRadius: BorderRadius.only(
                                       topRight: Radius.circular(6),
                                       bottomLeft: Radius.circular(6))),
-                              child: Text('RIR 0-1',
+                              child: Text('RIR ${widget.exerciseReps}',
                                   style: FontTextStyle.kWhite12BoldRoboto
                                       .copyWith(fontWeight: FontWeight.w500)),
                             ),
@@ -346,19 +346,20 @@ class _WeightedCardState extends State<WeightedCard> {
               ),
               SizedBox(width: Get.width * .08),
               RichText(
-                  text: TextSpan(
-                      text: "${controller.weightedRepsList[widget.index]} ",
-                      style: widget.counter == 0
-                          ? FontTextStyle.kWhite24BoldRoboto
-                              .copyWith(color: ColorUtils.kGray)
-                          : FontTextStyle.kWhite24BoldRoboto,
-                      // text:
-                      //     '${controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index]} ',
-                      // style: controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
-                      children: [
-                    TextSpan(
-                        text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
-                  ])),
+                text: TextSpan(
+                    text: "${controller.weightedRepsList[widget.index]} ",
+                    style: widget.counter == 0
+                        ? FontTextStyle.kWhite24BoldRoboto
+                            .copyWith(color: ColorUtils.kGray)
+                        : FontTextStyle.kWhite24BoldRoboto,
+                    // text:
+                    //     '${controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index]} ',
+                    // style: controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
+                    children: [
+                      TextSpan(
+                          text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
+                    ]),
+              ),
               SizedBox(width: Get.width * .08),
               InkWell(
                 onTap: () {
