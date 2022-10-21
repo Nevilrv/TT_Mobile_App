@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -549,6 +551,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                           setState(() {
                                                             watchVideo = false;
                                                           });
+                                                          log('superset list ================ ${widget.superSetList}');
                                                           Get.to(
                                                               () => NewNoWeightExercise(
                                                                   userProgramDatesId:
@@ -584,6 +587,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                           setState(() {
                                                             watchVideo = false;
                                                           });
+                                                          log('superset list ================ ${widget.superSetList}');
                                                           Get.to(
                                                               () => NewNoWeightExercise(
                                                                   userProgramDatesId:
@@ -1154,6 +1158,7 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                   ? commonNavigationButton(
                                                       name: "Begin Warm-Up",
                                                       onTap: () {
+                                                        log('superset list ================ ${widget.superSetList}');
                                                         try {
                                                           _youtubePlayerController!
                                                               .pause();
@@ -1187,6 +1192,8 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                                   ? commonNavigationButton(
                                                       name: "Start Workout",
                                                       onTap: () {
+                                                        log('superset list ================ ${widget.superSetList}');
+
                                                         try {
                                                           _youtubePlayerController!
                                                               .pause();

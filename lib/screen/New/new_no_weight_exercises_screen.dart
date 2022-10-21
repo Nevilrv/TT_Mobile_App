@@ -52,6 +52,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
   bool isLastBackCheck = false;
 
   dataFetchById({required String id}) async {
+    print('id idiiiidididi $id');
     if (_workoutBaseExerciseViewModel.currentIndex <
         widget.exerciseList.length) {
       _workoutBaseExerciseViewModel.setIsButtonShow(isShow: false);
@@ -178,6 +179,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
   getSuperSetList() {
     try {
       for (int i = 0; i < widget.superSetRound; i++) {
+        print(
+            'widget.superSetRound =================== > ${widget.superSetList}');
         _workoutBaseExerciseViewModel.allIdList.add(widget.superSetList);
       }
     } catch (e) {}
@@ -226,9 +229,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                       child: SizedBox(
                           child: commonNavigationButton(
                               onTap: () async {
-                                print(
-                                    'repsListrepsListrepsList ===========  > ${_workoutBaseExerciseViewModel.exerciseType == "WEIGHTED" ? _workoutBaseExerciseViewModel.weightedRepsList : _workoutBaseExerciseViewModel.repsList}');
-
                                 if (_workoutBaseExerciseViewModel
                                             .exerciseType ==
                                         "REPS" ||
@@ -278,17 +278,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                     SaveUserCustomizedExerciseResponseModel
                                         resp =
                                         SaveUserCustomizedExerciseResponseModel();
-
-                                    print(
-                                        "userId ============= > ${resp.data![0].userId}");
-                                    print(
-                                        "repsData ============= > ${resp.data![0].repsData}");
-                                    print(
-                                        "weightData ============= > ${resp.data![0].weightData}");
-                                    print(
-                                        "exerciseId ============= > ${resp.data![0].exerciseId}");
-                                    print(
-                                        "exerciseType ============= > ${resp.data![0].exerciseType}");
                                   }
                                 }
 

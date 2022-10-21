@@ -519,8 +519,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                             trailing: InkWell(
                                                               onTap: () {
                                                                 print(
-                                                                    'HELLOOOOOO');
-                                                                print(
                                                                     'date>>>>><<<<< ${scheduleResponse.data![index].date}');
 
                                                                 openBottomSheet(
@@ -652,21 +650,12 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
   }
 
   getExercisesId(String time) async {
-    // print("called 123");
-    // print('hello........................3');
-    // print('$time........................time');
-    // print('$time........................date');
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(), date: time);
 
     if (_userWorkoutsDateViewModel.apiResponse.status == Status.COMPLETE) {
-      // print("complete api call");
       UserWorkoutsDateResponseModel resp =
           _userWorkoutsDateViewModel.apiResponse.data;
-
-      // print("--------------- dates ${resp.msg}");
-      //
-      // print("success ------------- true");
 
       if (resp.success == true) {
         _userWorkoutsDateViewModel.supersetExerciseId.clear();
@@ -690,13 +679,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
         } else {
           _userWorkoutsDateViewModel.supersetExerciseId = [];
         }
-
-        // print(
-        //     'NEXT supersetExerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.supersetExerciseId}');
-        // print(
-        //     'NEXT exerciseId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.exerciseId}');
-        // print(
-        //     'NEXT userProgramDatesId >>>>>>>>>>>>>> ${_userWorkoutsDateViewModel.userProgramDateID}');
 
         await _exerciseByIdViewModel.getExerciseByIdDetails(
             id: _userWorkoutsDateViewModel

@@ -571,7 +571,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                             superSetList:
                                                                 responseDate
                                                                     .data!
-                                                                    .selectedWarmup!,
+                                                                    .supersetExercisesIds!,
                                                           ));
 
                                                           oneTime = false;

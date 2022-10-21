@@ -61,7 +61,6 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
 
   @override
   void initState() {
-    print('initstate');
     _workoutBaseExerciseViewModel.staticTimer = false;
     _workoutBaseExerciseViewModel.showReps = false;
     _workoutBaseExerciseViewModel.isOneTimeApiCall = true;
@@ -183,13 +182,10 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
       required int index,
       required WorkoutBaseExerciseViewModel controllerWorkoutBaseExercise,
       required TextEditingController? textEditingController}) {
-    print('$id');
-    print('call this page again');
     return FutureBuilder<ExerciseByIdResponseModel>(
       future: ExerciseByIdRepo().exerciseByIdRepo(id: id),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          print('API CALLING');
           ExerciseByIdResponseModel response = snapshot.data!;
           if (controllerWorkoutBaseExercise.isOneTimeApiCall) {
             repsMap.addAll({
@@ -199,46 +195,22 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                       ? "12"
                       : snapshot.data!.data![0].exerciseReps
             });
-            print('superSetsuperSetsuperSetsuperSet');
           }
 
-          print('length of key ??? ${repsMap.keys}');
-          print('length of superSetId ??? ${widget.superSetIdList.length}');
-          print(
-              'value of ShowReps Before  ${_workoutBaseExerciseViewModel.showReps}');
-
           if (repsMap.keys.length == widget.superSetIdList.length) {
-            print('Enter in if');
-            print(
-                'value of ShowReps Before  ${_workoutBaseExerciseViewModel.showReps}');
             if (_workoutBaseExerciseViewModel.showReps == false) {
               _workoutBaseExerciseViewModel.showReps = true;
-              print(
-                  'value of ShowReps after  ${_workoutBaseExerciseViewModel.showReps}');
+
               if (controllerWorkoutBaseExercise.isOneTimeApiCall) {
                 for (var i = 1; i <= widget.superSetRound; i++) {
                   _workoutBaseExerciseViewModel.superSetRepsSaveMap
                       .addAll({'$i': repsMap});
                 }
                 controllerWorkoutBaseExercise.isOneTimeApiCall = false;
-                print('superSetsuperSetsuperSetsuperSet1');
               }
-
-              print(
-                  'NewList >>>> ${_workoutBaseExerciseViewModel.superSetRepsSaveMap}');
-              print(
-                  'length >>> ${_workoutBaseExerciseViewModel.superSetRepsSaveMap.length}');
-              // newList.insert(0, {
-              // newList.insert(0, {
-              //   "Renegade Row": 45,
-              //   "Elbow Plank Pike Jacks": 10,
-              //   "Barbell Hang Pull": 5
-              // });
-              // print('updated NewList >>>> $newList');
             }
           }
 
-          print('Round Count >>??? ${widget.roundCount}');
           if (response.data![0].exerciseType == "REPS") {
             if (_workoutBaseExerciseViewModel.superSetApiCall == true) {
               _workoutBaseExerciseViewModel.superSetApiCall = false;
@@ -306,11 +278,6 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                   counter: 2,
                   newList: [],
                 ),
-                // CounterCard(
-                //     superSetScreen: true,
-                //     index: 0,
-                //     counter: int.parse(
-                //         "${response.data![0].exerciseReps}".split("-").first)),
                 Divider(height: Get.height * .06, color: ColorUtils.kLightGray)
               ],
             );
@@ -647,33 +614,16 @@ superSetCounterCardWidget(
             //         index: widget.index, isPlus: false);
 
             if (controller.superSetRepsSaveMap['$round'][keys] != 0) {
-              int t = int.parse(controller.superSetRepsSaveMap['$round'][keys]);
+              int t = int.parse(controller.superSetRepsSaveMap['$round'][keys]
+                  .toString()
+                  .split('-')
+                  .first);
 
               t--;
               if (t >= 0) {
                 controller.updateSuperSetRepsSaveMap(
                     keyMain: '$round', subKey: keys, value: '$t');
               }
-              print(
-                  'jhyrtjyrtyrtyrtjhyrt n 1 ${controller.listOfSetRepesSave[0][keys]}');
-              print(
-                  'jhyrtjyrtyrtyrtjhyrt n2  ${controller.listOfSetRepesSave[1][keys]}');
-              print(
-                  'jhyrtjyrtyrtyrtjhyrt n 3 ${controller.listOfSetRepesSave[2][keys]}');
-              print('>>>>>> -    $t');
-
-              // var index = widget.round;
-              // print('index /// $index');
-              // var x = widget.newList[index];
-              //
-              // print('cxcxcxcxc $x');
-              // print('${widget.keys}');
-              //
-              // x[widget.keys] = t;
-              // print('yyyy $x');
-              // widget.newList.removeAt(index);
-              // widget.newList.insert(index, x);
-              // print('1221212 >>> ${widget.newList}');
             }
             Future.delayed(Duration(milliseconds: 100));
           },
@@ -699,8 +649,11 @@ superSetCounterCardWidget(
               //         index: , isPlus: true);
               print('=====1-2-3-4  ${controller.superSetRepsSaveMap}');
 
-              int t =
-                  int.parse(controller.superSetRepsSaveMap['$round']["$keys"]);
+              int t = int.parse(controller.superSetRepsSaveMap['$round']
+                      ["$keys"]
+                  .toString()
+                  .split('-')
+                  .first);
 
               t++;
               controller.updateSuperSetRepsSaveMap(
@@ -741,18 +694,16 @@ RichText showTextWidget(WorkoutBaseExerciseViewModel controller, int round,
   try {
     return RichText(
         text: TextSpan(
-            text: '${controller.superSetRepsSaveMap['$round'][keys]} ',
-            style: controller.superSetRepsSaveMap['$round'][keys] == '0'
-                ? FontTextStyle.kWhite24BoldRoboto
-                    .copyWith(color: ColorUtils.kGray)
-                : FontTextStyle.kWhite24BoldRoboto,
+            text:
+                '${controller.superSetRepsSaveMap['$round'][keys].toString().split('-').first} ',
+            style: controller.superSetRepsSaveMap['$round'][keys] == '0' ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
             children: [
           TextSpan(text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
         ]));
   } catch (e) {
     return RichText(
         text: TextSpan(
-            text: '$showText ',
+            text: '${showText.toString().split('-').first} ',
             style: FontTextStyle.kWhite24BoldRoboto,
             children: [
           TextSpan(text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
@@ -845,172 +796,6 @@ class _SupersetStaticTimerState extends State<SupersetStaticTimer> {
                 ),
         );
       },
-    );
-  }
-}
-
-/// super set weighted card
-class SuperSetWeightedCard extends StatefulWidget {
-  TextEditingController? editingController;
-  final WorkoutBaseExerciseViewModel controller;
-  final String weight;
-  final int counter;
-  final int index;
-
-  SuperSetWeightedCard(
-      {Key? key,
-      this.editingController,
-      required this.controller,
-      required this.weight,
-      required this.counter,
-      required this.index})
-      : super(key: key);
-
-  @override
-  _SuperSetWeightedCardState createState() => _SuperSetWeightedCardState();
-}
-
-class _SuperSetWeightedCardState extends State<SuperSetWeightedCard> {
-  void initState() {
-    super.initState();
-    widget.editingController = TextEditingController(text: widget.weight);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
-      child: GetBuilder<WorkoutBaseExerciseViewModel>(
-        builder: (controller) {
-          return Container(
-            height: Get.height * .1,
-            width: Get.width,
-            decoration: BoxDecoration(
-                border: Border.all(color: ColorUtils.kBlack, width: 2),
-                gradient: LinearGradient(
-                    colors: ColorUtilsGradient.kGrayGradient,
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter),
-                borderRadius: BorderRadius.circular(6)),
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              InkWell(
-                onTap: () {
-                  controller.updateWeightRepsList(
-                      // keys: "",
-                      index: widget.index,
-                      isPlus: false);
-                },
-                child: Container(
-                  height: Get.height * .06,
-                  width: Get.height * .06,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                          colors: ColorUtilsGradient.kTintGradient,
-                          stops: [0.0, 1.0],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)),
-                  child: Icon(Icons.remove, color: ColorUtils.kBlack),
-                ),
-              ),
-              SizedBox(width: Get.width * .08),
-              RichText(
-                  text: TextSpan(
-                      text: '${controller.weightedRepsList[widget.index]} ',
-                      style: widget.counter == 0
-                          ? FontTextStyle.kWhite24BoldRoboto
-                              .copyWith(color: ColorUtils.kGray)
-                          : FontTextStyle.kWhite24BoldRoboto,
-                      children: [
-                    TextSpan(
-                        text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
-                  ])),
-              SizedBox(width: Get.width * .08),
-              InkWell(
-                onTap: () {
-                  print('Index >>> ${widget.index}');
-                  print('${widget.index.runtimeType}');
-                  controller.updateWeightRepsList(
-                      // keys: "",
-                      index: widget.index,
-                      isPlus: true);
-                },
-                child: Container(
-                  height: Get.height * .06,
-                  width: Get.height * .06,
-                  decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: LinearGradient(
-                          colors: ColorUtilsGradient.kTintGradient,
-                          stops: [0.0, 1.0],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter)),
-                  child: Icon(Icons.add, color: ColorUtils.kBlack),
-                ),
-              ),
-              VerticalDivider(
-                width: Get.width * .08,
-                thickness: 1.25,
-                color: ColorUtils.kBlack,
-                indent: Get.height * .015,
-                endIndent: Get.height * .015,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 10),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: 40,
-                        child: TextField(
-                          controller: widget.editingController,
-                          style: widget.counter == 0
-                              ? FontTextStyle.kWhite24BoldRoboto
-                                  .copyWith(color: ColorUtils.kGray)
-                              : FontTextStyle.kWhite24BoldRoboto,
-                          keyboardType: TextInputType.numberWithOptions(
-                              decimal: true, signed: true),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
-                          maxLength: 3,
-                          cursorColor: ColorUtils.kTint,
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              controller.updateLbsList(
-                                  keys: "",
-                                  index: widget.index,
-                                  value: widget.editingController!.text);
-                            } else {
-                              controller.updateLbsList(
-                                  keys: "", index: widget.index, value: "0");
-                            }
-                          },
-                          decoration: InputDecoration(
-                              hintText: '0',
-                              counterText: '',
-                              semanticCounterText: '',
-                              hintStyle: FontTextStyle.kWhite24BoldRoboto
-                                  .copyWith(color: ColorUtils.kGray),
-                              enabledBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.transparent)),
-                              focusedBorder: UnderlineInputBorder(
-                                  borderSide:
-                                      BorderSide(color: Colors.transparent))),
-                        ),
-                      ),
-                      Text('lbs', style: FontTextStyle.kWhite17W400Roboto),
-                    ],
-                  ),
-                  SizedBox(),
-                ],
-              ),
-            ]),
-          );
-        },
-      ),
     );
   }
 }

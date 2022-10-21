@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:simple_timer/simple_timer.dart';
 import 'package:tcm/screen/training_plan_screens/exercise_detail_page.dart';
@@ -57,7 +59,7 @@ class _TimeTypeState extends State<TimeType>
     String time =
         '${_exerciseByIdViewModel.responseExe!.data![0].exerciseTime}';
     List<String> splittedTime = time.split(' ');
-    // log('------------- ${splittedTime.first}');
+    log('------------- ${splittedTime.first}');
     int? timer;
     if (splittedTime.first.length == 1) {
       timer = int.parse(splittedTime.first) * 60;

@@ -30,7 +30,7 @@ Widget repsType(
     }
   } catch (e) {
     for (int i = 0; i < int.parse(sets); i++) {
-      controller.repsList.add(int.parse(reps));
+      controller.repsList.add(int.parse(reps.split("-").first));
     }
   }
 

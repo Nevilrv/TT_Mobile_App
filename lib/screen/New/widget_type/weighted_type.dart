@@ -56,7 +56,7 @@ class _WeightedTypeState extends State<WeightedType> {
     if (_workoutBaseExerciseViewModel.weightedEnter == false) {
       _workoutBaseExerciseViewModel.weightedEnter = true;
 
-      print('enter in weighted loop');
+      print('enter in weighted loop ${widget.exerciseId}');
       _workoutBaseExerciseViewModel.weightedRepsList.clear();
       _workoutBaseExerciseViewModel.lbsList.clear();
       try {
@@ -80,14 +80,16 @@ class _WeightedTypeState extends State<WeightedType> {
               .add(int.parse(tmpRepsDataList[i]));
           // _workoutBaseExerciseViewModel.weightedLBSList
           //     .add(int.parse("${widget}"));
-          if (widget.exerciseWeight == "" && widget.exerciseWeight.isEmpty) {
+          if (widget.exerciseWeight == "" &&
+              widget.exerciseWeight.isEmpty &&
+              widget.weightData == "" &&
+              widget.weightData!.isEmpty) {
             _workoutBaseExerciseViewModel.lbsList.add("0");
           } else {
             _workoutBaseExerciseViewModel.lbsList.add(tmpWeightDataList[i]);
           }
         }
         print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
-        print('>>>>> lbs List >>>  $weight}  ${weight.runtimeType}');
 
         _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
           "${_workoutBaseExerciseViewModel.currentIndex}":
@@ -131,7 +133,6 @@ class _WeightedTypeState extends State<WeightedType> {
   @override
   Widget build(BuildContext context) {
     weightedLoop();
-
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
       resizeToAvoidBottomInset: false,
@@ -186,18 +187,19 @@ class _WeightedTypeState extends State<WeightedType> {
           ),
           GetBuilder<WorkoutBaseExerciseViewModel>(
             builder: (controller) {
-              /*   print('sdfsfdsf ${controller.currentIndex}');
-              print(
-                  'asdfghjkl ${controller.weightedIndexLbsMap["${controller.currentIndex}"].length}');*/
-              // print('${controller.weightedIndexLbsMap}');
+              // try {
               return SizedBox(
                 child: ListView.separated(
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     // itemCount: int.parse(widget.exerciseSets.toString()),
-                    itemCount: controller
-                        .weightedIndexLbsMap["${controller.currentIndex}"]
-                        .length,
+                    itemCount: controller.weightedIndexLbsMap[
+                                "${controller.currentIndex}"] ==
+                            null
+                        ? 0
+                        : controller
+                            .weightedIndexLbsMap["${controller.currentIndex}"]
+                            .length,
                     padding: EdgeInsets.only(
                         top: 0, right: Get.width * .06, left: Get.width * .06),
                     separatorBuilder: (_, index) {
@@ -223,7 +225,8 @@ class _WeightedTypeState extends State<WeightedType> {
                         children: [
                           WeightedCard(
                             weight: "$weight",
-                            counter: int.parse(widget.exerciseReps),
+                            counter:
+                                int.parse(widget.exerciseReps.split("-").first),
                             index: index,
                             editingController: _controller[index],
                             // controller: _workoutBaseExerciseViewModel,
@@ -257,6 +260,9 @@ class _WeightedTypeState extends State<WeightedType> {
                       );
                     }),
               );
+              // } catch (e) {
+              //   return SizedBox();
+              // }
             },
           )
           // isShow == false

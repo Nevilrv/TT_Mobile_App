@@ -270,7 +270,7 @@ void openBottomSheet(
                 print(
                     'supersetRound >>> ${_userWorkoutsDateViewModel.userProgramDatesId}');
 
-                return /* scheduleByDateViewModel!.completeDate
+                return /*scheduleByDateViewModel!.completeDate
                         .contains(date.toString().split(' ').first)
                     ? TextButton(
                         onPressed: null,
@@ -278,7 +278,7 @@ void openBottomSheet(
                           "This workout is Completed",
                           style: FontTextStyle.kTint24W400Roboto,
                         ))
-                    :*/
+                    : */
                     snapshot.data!.data!.exercisesIds!.isEmpty ||
                             snapshot.data!.data!.exercisesIds == []
                         ? TextButton(
@@ -351,9 +351,7 @@ void openBottomSheet(
                 'View Workout',
                 style: FontTextStyle.kTint24W400Roboto,
               )),
-          Divider(
-            color: ColorUtils.kTint,
-          ),
+          Divider(color: ColorUtils.kTint),
           TextButton(
               onPressed: onPressedEdit,
               child: Text(
