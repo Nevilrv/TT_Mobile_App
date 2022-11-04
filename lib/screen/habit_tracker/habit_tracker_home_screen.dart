@@ -33,7 +33,6 @@ class _HabitTrackerHomeScreenState extends State<HabitTrackerHomeScreen> {
   initState() {
     super.initState();
     _connectivityCheckViewModel.startMonitoring();
-
     dateApiCall();
   }
 
@@ -49,40 +48,40 @@ class _HabitTrackerHomeScreenState extends State<HabitTrackerHomeScreen> {
         isLoading: true, model: _request);
     GetHabitRecordDateResponseModel resp =
         _getHabitRecordDateViewModel.apiResponse.data;
-
     response = resp;
   }
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
-      return control.isOnline
-          ? Scaffold(
-              backgroundColor: ColorUtils.kBlack,
-              appBar: AppBar(
-                elevation: 0,
-                leading: IconButton(
-                    onPressed: () {
-                      Get.back();
-                    },
-                    icon: Icon(
-                      Icons.arrow_back_ios_sharp,
-                      color: ColorUtils.kTint,
-                    )),
+    return GetBuilder<ConnectivityCheckViewModel>(
+      builder: (control) {
+        return control.isOnline
+            ? Scaffold(
                 backgroundColor: ColorUtils.kBlack,
-                title: Text('Habit Tracking',
-                    style: FontTextStyle.kWhite16BoldRoboto),
-                centerTitle: true,
-              ),
-              body: Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: Get.width * .06, vertical: Get.height * .025),
-                child: Column(
-                  children: [
-                    Container(
-                      height: Get.height * .7,
-                      width: Get.width,
-                      child: Column(
+                appBar: AppBar(
+                  elevation: 0,
+                  leading: IconButton(
+                      onPressed: () {
+                        Get.back();
+                      },
+                      icon: Icon(
+                        Icons.arrow_back_ios_sharp,
+                        color: ColorUtils.kTint,
+                      )),
+                  backgroundColor: ColorUtils.kBlack,
+                  title: Text('Habit Tracking',
+                      style: FontTextStyle.kWhite16BoldRoboto),
+                  centerTitle: true,
+                ),
+                body: Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: Get.width * .06, vertical: Get.height * .025),
+                  child: Column(
+                    children: [
+                      Container(
+                        height: Get.height * .7,
+                        width: Get.width,
+                        child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
@@ -100,35 +99,41 @@ class _HabitTrackerHomeScreenState extends State<HabitTrackerHomeScreen> {
                             RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
-                                  text: AppText.habitTrackerHome1,
-                                  style:
-                                      FontTextStyle.kWhite16W300Roboto.copyWith(
-                                    fontSize: Get.height * 0.02,
-                                  ),
-                                  children: [
-                                    TextSpan(
-                                        text: ' Habit\nTracker! ',
-                                        style:
-                                            FontTextStyle.kWhite16BoldRoboto),
-                                    TextSpan(
-                                        text: AppText.habitTrackerHome2,
-                                        style: FontTextStyle.kWhite16W300Roboto
-                                            .copyWith(
-                                                fontSize: Get.height * .02))
-                                  ]),
+                                text: AppText.habitTrackerHome1,
+                                style:
+                                    FontTextStyle.kWhite16W300Roboto.copyWith(
+                                  fontSize: Get.height * 0.02,
+                                ),
+                                children: [
+                                  TextSpan(
+                                      text: ' Habit\nTracker! ',
+                                      style: FontTextStyle.kWhite16BoldRoboto),
+                                  TextSpan(
+                                    text: AppText.habitTrackerHome2,
+                                    style: FontTextStyle.kWhite16W300Roboto
+                                        .copyWith(
+                                      fontSize: Get.height * .02,
+                                    ),
+                                  )
+                                ],
+                              ),
                             )
-                          ]),
-                    ),
-                    commonNavigationButton(
-                        onTap: () {
-                          Get.to(HabitSelectionScreen());
-                        },
-                        name: 'Get Started!')
-                  ],
+                          ],
+                        ),
+                      ),
+                      commonNavigationButton(
+                          onTap: () {
+                            Get.to(
+                              HabitSelectionScreen(),
+                            );
+                          },
+                          name: 'Get Started!')
+                    ],
+                  ),
                 ),
-              ),
-            )
-          : ConnectionCheckScreen();
-    });
+              )
+            : ConnectionCheckScreen();
+      },
+    );
   }
 }

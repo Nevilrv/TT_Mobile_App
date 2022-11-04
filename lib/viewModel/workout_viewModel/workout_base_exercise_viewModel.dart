@@ -127,7 +127,9 @@ class WorkoutBaseExerciseViewModel extends GetxController {
           showTimer = null;
           isClickForSuperSet = true;
           staticTimer = false;
-          timerStop = false;*/ /*
+          timerStop = false;*/
+
+  /*
 
           staticCounterCurrentValue = 0;
           staticSuperSetTimer!.cancel();

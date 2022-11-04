@@ -287,18 +287,22 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CircleAvatar(
-                                    radius: 10,
-                                    backgroundColor: Colors.black,
-                                    child: Icon(
-                                      Icons.add,
-                                      size: 12.5,
-                                      color: ColorUtils.kTint,
-                                    )),
+                                  radius: 10,
+                                  backgroundColor: Colors.black,
+                                  child: Icon(
+                                    Icons.add,
+                                    size: 12.5,
+                                    color: ColorUtils.kTint,
+                                  ),
+                                ),
                                 SizedBox(width: Get.width * .025),
-                                Text('Add Custom Habit',
-                                    style: FontTextStyle.kBlack22BoldRoboto
-                                        .copyWith(
-                                            fontSize: Get.height * 0.022)),
+                                Text(
+                                  'Add Custom Habit',
+                                  style:
+                                      FontTextStyle.kBlack22BoldRoboto.copyWith(
+                                    fontSize: Get.height * 0.022,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -306,50 +310,56 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                       ),
                       SizedBox(height: Get.height * .08),
                       commonNavigationButton(
-                          onTap: () async {
-                            if (idList!.isNotEmpty) {
-                              AddUserHabitIdRequestModel _request =
-                                  AddUserHabitIdRequestModel();
+                        onTap: () async {
+                          if (idList!.isNotEmpty) {
+                            AddUserHabitIdRequestModel _request =
+                                AddUserHabitIdRequestModel();
 
-                              _request.userId = PreferenceManager.getUId();
-                              _request.habitIds = idList;
+                            _request.userId = PreferenceManager.getUId();
+                            _request.habitIds = idList;
 
-                              await _addUserHabitIdViewModel
-                                  .addUserHabitIdViewModel(_request);
+                            await _addUserHabitIdViewModel
+                                .addUserHabitIdViewModel(_request);
 
-                              if (_addUserHabitIdViewModel.apiResponse.status ==
-                                  Status.COMPLETE) {
-                                AddUserHabitIdResponseModel res =
-                                    _addUserHabitIdViewModel.apiResponse.data;
+                            if (_addUserHabitIdViewModel.apiResponse.status ==
+                                Status.COMPLETE) {
+                              AddUserHabitIdResponseModel res =
+                                  _addUserHabitIdViewModel.apiResponse.data;
 
-                                Get.showSnackbar(GetSnackBar(
+                              Get.showSnackbar(
+                                GetSnackBar(
                                   message: '${res.msg}',
                                   duration: Duration(seconds: 2),
-                                ));
-                                // print("------------------- ${listOfHabitId()}");
-                                print(
-                                    "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
-                                HabitResponseModel resp =
-                                    _habitViewModel.apiResponse.data;
-                                Get.to(
-                                    TrackingFrequencyScreen(data: resp.data));
-                              } else if (_addUserHabitIdViewModel
-                                      .apiResponse.status ==
-                                  Status.ERROR) {
-                                Get.showSnackbar(GetSnackBar(
+                                ),
+                              );
+                              // print("------------------- ${listOfHabitId()}");
+                              print(
+                                  "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
+                              HabitResponseModel resp =
+                                  _habitViewModel.apiResponse.data;
+                              Get.to(TrackingFrequencyScreen(data: resp.data));
+                            } else if (_addUserHabitIdViewModel
+                                    .apiResponse.status ==
+                                Status.ERROR) {
+                              Get.showSnackbar(
+                                GetSnackBar(
                                   message:
                                       'Something went wrong!!! \nPlease try again',
                                   duration: Duration(seconds: 2),
-                                ));
-                              }
-                            } else {
-                              Get.showSnackbar(GetSnackBar(
+                                ),
+                              );
+                            }
+                          } else {
+                            Get.showSnackbar(
+                              GetSnackBar(
                                 message: 'Please select at least one habit',
                                 duration: Duration(seconds: 1),
-                              ));
-                            }
-                          },
-                          name: 'Next')
+                              ),
+                            );
+                          }
+                        },
+                        name: 'Next',
+                      )
                     ],
                   ),
                 ),
@@ -449,16 +459,21 @@ class _HabitSelectionScreenState extends State<HabitSelectionScreen> {
                         setState(() {});
                       } else if (_customHabitViewModel.apiResponse.status ==
                           Status.ERROR) {
-                        Get.showSnackbar(GetSnackBar(
-                          message: 'Something went wrong!!! \nPlease try again',
-                          duration: Duration(seconds: 2),
-                        ));
+                        Get.showSnackbar(
+                          GetSnackBar(
+                            message:
+                                'Something went wrong!!! \nPlease try again',
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
                       }
                     } else {
-                      Get.showSnackbar(GetSnackBar(
-                        message: 'Please Enter Habit Name',
-                        duration: Duration(seconds: 2),
-                      ));
+                      Get.showSnackbar(
+                        GetSnackBar(
+                          message: 'Please Enter Habit Name',
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
                     }
                   },
                 ),

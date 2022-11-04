@@ -272,13 +272,13 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                       .saveUserCustomizedExerciseViewModel(
                                           _req);
 
-                                  if (_saveUserCustomizedExerciseViewModel
-                                          .apiResponse.status ==
-                                      Status.COMPLETE) {
-                                    SaveUserCustomizedExerciseResponseModel
-                                        resp =
-                                        SaveUserCustomizedExerciseResponseModel();
-                                  }
+                                  // if (_saveUserCustomizedExerciseViewModel
+                                  //         .apiResponse.status ==
+                                  //     Status.COMPLETE) {
+                                  //   SaveUserCustomizedExerciseResponseModel
+                                  //       resp =
+                                  //       SaveUserCustomizedExerciseResponseModel();
+                                  // }
                                 }
 
                                 if (lastBackIndex <

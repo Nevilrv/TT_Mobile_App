@@ -20,6 +20,7 @@ import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 import 'package:tcm/screen/New/workout_home_new.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -1444,7 +1445,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 );
                                                                               } catch (e) {
                                                                                 print('catchhhh');
-                                                                                Navigator.pop(context);
+                                                                                Get.offAll(HomeScreen(id: PreferenceManager.getUId(),));
                                                                               }
                                                                               /* Get.to(WorkoutHomeScreen(
                                                                                 data: workResponse.data!,

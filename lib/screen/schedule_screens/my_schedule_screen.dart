@@ -494,10 +494,19 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                         return ListTile(
                                                             title: Text(
                                                               scheduleResponse
-                                                                  .data![index]
-                                                                  .programData![
-                                                                      index1]
-                                                                  .workoutTitle!,
+                                                                      .data![
+                                                                          index]
+                                                                      .programData![
+                                                                          index1]
+                                                                      .workoutTitle!
+                                                                      .isEmpty
+                                                                  ? ""
+                                                                  : scheduleResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .programData![
+                                                                          index1]
+                                                                      .workoutTitle!,
                                                               style: FontTextStyle
                                                                   .kWhite17BoldRoboto,
                                                             ),

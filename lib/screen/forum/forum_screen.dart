@@ -105,101 +105,98 @@ class _ForumScreenState extends State<ForumScreen> {
                       height: Get.height * 0.05,
                       width: Get.width,
                       child: TextField(
-                          style: FontTextStyle.kWhite16W300Roboto,
-                          onTap: () async {
-                            forumViewModel.selectedMenu = 'All Posts'.obs;
-                            SearchForumRequestModel model1 =
-                                SearchForumRequestModel();
-                            model1.title = '';
-                            model1.userId = PreferenceManager.getUId();
+                        style: FontTextStyle.kWhite16W300Roboto,
+                        onTap: () async {
+                          forumViewModel.selectedMenu = 'All Posts'.obs;
+                          SearchForumRequestModel model1 =
+                              SearchForumRequestModel();
+                          model1.title = '';
+                          model1.userId = PreferenceManager.getUId();
 
-                            await forumViewModel.searchForumViewModel(model1);
-                          },
-                          onChanged: (value) async {
-                            forumViewModel.setAllPost(value);
-                            SearchForumRequestModel model =
-                                SearchForumRequestModel();
-                            model.title = value;
-                            model.userId = PreferenceManager.getUId();
+                          await forumViewModel.searchForumViewModel(model1);
+                        },
+                        onChanged: (value) async {
+                          forumViewModel.setAllPost(value);
+                          SearchForumRequestModel model =
+                              SearchForumRequestModel();
+                          model.title = value;
+                          model.userId = PreferenceManager.getUId();
 
-                            await forumViewModel.searchForumViewModel(model);
-                          },
-                          decoration: InputDecoration(
-                              hintText: 'Search',
-                              hintStyle: FontTextStyle.kLightGray16W300Roboto,
-                              border: InputBorder.none,
-                              prefixIcon: Icon(
-                                Icons.search,
-                                color: ColorUtils.kTint,
-                                size: Get.height * 0.03,
+                          await forumViewModel.searchForumViewModel(model);
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Search',
+                          hintStyle: FontTextStyle.kLightGray16W300Roboto,
+                          border: InputBorder.none,
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: ColorUtils.kTint,
+                            size: Get.height * 0.03,
+                          ),
+                          suffixIcon: PopupMenuButton<Menu>(
+                            color: ColorUtils.kBlack,
+                            icon: Image.asset(
+                              AppImages.filter,
+                              fit: BoxFit.contain,
+                              color: ColorUtils.kTint,
+                              height: Get.height * 0.03,
+                              width: Get.height * 0.03,
+                            ),
+                            // Callback that sets the selected popup menu item.
+                            onSelected: (Menu item) async {
+                              if (item.name == 'HotPosts') {
+                                forumViewModel.selectedMenu = 'Hot Posts'.obs;
+                                // forumViewModel.setSelectedMenu('Hot Posts');
+
+                                await forumViewModel.getAllForumsViewModel(
+                                    filter: 'hot');
+                              } else if (item.name == 'PopularPosts') {
+                                forumViewModel.selectedMenu =
+                                    'Popular Posts'.obs;
+                                // forumViewModel.setSelectedMenu('Popular Posts');
+
+                                await forumViewModel.getAllForumsViewModel(
+                                    filter: 'popular');
+                              } else if (item.name == 'All') {
+                                forumViewModel.selectedMenu = 'All Posts'.obs;
+                                // forumViewModel.setSelectedMenu('All Posts');
+
+                                SearchForumRequestModel model =
+                                    SearchForumRequestModel();
+                                model.title = '';
+                                model.userId = PreferenceManager.getUId();
+
+                                await forumViewModel
+                                    .searchForumViewModel(model);
+                              }
+                            },
+                            itemBuilder: (BuildContext context) =>
+                                <PopupMenuEntry<Menu>>[
+                              PopupMenuItem<Menu>(
+                                value: Menu.HotPosts,
+                                child: Text(
+                                  'Hot Posts',
+                                  style: FontTextStyle.kWhite16W300Roboto,
+                                ),
                               ),
-                              suffixIcon: PopupMenuButton<Menu>(
-                                  color: ColorUtils.kBlack,
-                                  icon: Image.asset(
-                                    AppImages.filter,
-                                    fit: BoxFit.contain,
-                                    color: ColorUtils.kTint,
-                                    height: Get.height * 0.03,
-                                    width: Get.height * 0.03,
-                                  ),
-                                  // Callback that sets the selected popup menu item.
-                                  onSelected: (Menu item) async {
-                                    if (item.name == 'HotPosts') {
-                                      forumViewModel.selectedMenu =
-                                          'Hot Posts'.obs;
-                                      // forumViewModel.setSelectedMenu('Hot Posts');
-
-                                      await forumViewModel
-                                          .getAllForumsViewModel(filter: 'hot');
-                                    } else if (item.name == 'PopularPosts') {
-                                      forumViewModel.selectedMenu =
-                                          'Popular Posts'.obs;
-                                      // forumViewModel.setSelectedMenu('Popular Posts');
-
-                                      await forumViewModel
-                                          .getAllForumsViewModel(
-                                              filter: 'popular');
-                                    } else if (item.name == 'All') {
-                                      forumViewModel.selectedMenu =
-                                          'All Posts'.obs;
-                                      // forumViewModel.setSelectedMenu('All Posts');
-
-                                      SearchForumRequestModel model =
-                                          SearchForumRequestModel();
-                                      model.title = '';
-                                      model.userId = PreferenceManager.getUId();
-
-                                      await forumViewModel
-                                          .searchForumViewModel(model);
-                                    }
-                                  },
-                                  itemBuilder: (BuildContext context) =>
-                                      <PopupMenuEntry<Menu>>[
-                                        PopupMenuItem<Menu>(
-                                          value: Menu.HotPosts,
-                                          child: Text(
-                                            'Hot Posts',
-                                            style: FontTextStyle
-                                                .kWhite16W300Roboto,
-                                          ),
-                                        ),
-                                        PopupMenuItem<Menu>(
-                                          value: Menu.PopularPosts,
-                                          child: Text(
-                                            'Popular Posts',
-                                            style: FontTextStyle
-                                                .kWhite16W300Roboto,
-                                          ),
-                                        ),
-                                        PopupMenuItem<Menu>(
-                                          value: Menu.All,
-                                          child: Text(
-                                            'All Posts',
-                                            style: FontTextStyle
-                                                .kWhite16W300Roboto,
-                                          ),
-                                        ),
-                                      ]))),
+                              PopupMenuItem<Menu>(
+                                value: Menu.PopularPosts,
+                                child: Text(
+                                  'Popular Posts',
+                                  style: FontTextStyle.kWhite16W300Roboto,
+                                ),
+                              ),
+                              PopupMenuItem<Menu>(
+                                value: Menu.All,
+                                child: Text(
+                                  'All Posts',
+                                  style: FontTextStyle.kWhite16W300Roboto,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Divider(
@@ -258,13 +255,14 @@ class _ForumScreenState extends State<ForumScreen> {
                         if (controller.getAllForumsApiResponse.status ==
                             Status.ERROR) {
                           return Center(
-                              child: Padding(
-                            padding: EdgeInsets.only(top: 20),
-                            child: Text(
-                              'Server Error',
-                              style: FontTextStyle.kTine16W400Roboto,
+                            child: Padding(
+                              padding: EdgeInsets.only(top: 20),
+                              child: Text(
+                                'Server Error',
+                                style: FontTextStyle.kTine16W400Roboto,
+                              ),
                             ),
-                          ));
+                          );
                         }
 
                         response = controller.getAllForumsApiResponse.data;

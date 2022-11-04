@@ -269,7 +269,8 @@ void openBottomSheet(
                 print(
                     'supersetRound >>> ${_userWorkoutsDateViewModel.userProgramDatesId}');
 
-                return scheduleByDateViewModel!.completeDate
+                return
+                    /* scheduleByDateViewModel!.completeDate
                         .contains(date.toString().split(' ').first)
                     ? TextButton(
                         onPressed: null,
@@ -285,42 +286,44 @@ void openBottomSheet(
                               "This workout is not Available",
                               style: FontTextStyle.kTint24W400Roboto,
                             ))
-                        : TextButton(
-                            onPressed: () {
-                              print('');
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => WorkoutHomeNew(
-                                    superSetRound: snapshot.data!.data!.round!,
-                                    userProgramDate: snapshot
-                                        .data!.data!.userProgramDatesId!,
-                                    warmUpList:
-                                        snapshot.data!.data!.selectedWarmup!,
-                                    withoutWarmUpExercisesList:
-                                        _userWorkoutsDateViewModel
-                                            .withOutWarmupAllExercisesList,
-                                    superSetList: snapshot
-                                        .data!.data!.supersetExercisesIds!,
-                                    exercisesList: _userWorkoutsDateViewModel
-                                        .allExercisesList,
-                                    workoutId: snapshot.data!.data!.workoutId
-                                        .toString(),
-                                    exerciseId: snapshot
-                                        .data!.data!.exercisesIds![0]
-                                        .toString(),
-                                    // exeData:
-                                    //     snapshotExercise.data!.data!,
-                                    // data: snapshotWorkOut.data!.data!,
-                                    // date: dateNew.split(' ').first,
-                                  ),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'Start Workout',
-                              style: FontTextStyle.kTint24W400Roboto,
-                            ));
+                        : */
+
+                    TextButton(
+                        onPressed: () {
+                          print('');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => WorkoutHomeNew(
+                                superSetRound: snapshot.data!.data!.round!,
+                                userProgramDate:
+                                    snapshot.data!.data!.userProgramDatesId!,
+                                warmUpList:
+                                    snapshot.data!.data!.selectedWarmup!,
+                                withoutWarmUpExercisesList:
+                                    _userWorkoutsDateViewModel
+                                        .withOutWarmupAllExercisesList,
+                                superSetList:
+                                    snapshot.data!.data!.supersetExercisesIds!,
+                                exercisesList:
+                                    _userWorkoutsDateViewModel.allExercisesList,
+                                workoutId:
+                                    snapshot.data!.data!.workoutId.toString(),
+                                exerciseId: snapshot
+                                    .data!.data!.exercisesIds![0]
+                                    .toString(),
+                                // exeData:
+                                //     snapshotExercise.data!.data!,
+                                // data: snapshotWorkOut.data!.data!,
+                                // date: dateNew.split(' ').first,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'Start Workout',
+                          style: FontTextStyle.kTint24W400Roboto,
+                        ));
               } else if (snapshot.hasError) {
                 print('HAS error');
                 // _userWorkoutsDateViewModel.withOutWarmupExercisesList.clear();

@@ -111,7 +111,6 @@ class _HomeScreenState extends State<HomeScreen> {
         userId: PreferenceManager.getUId());
     ScheduleByDateResponseModel scheduleResp =
         _scheduleByDateViewModel.apiResponse.data;
-
     status = "";
 
     for (int i = 0; i < scheduleResp.data!.length; i++) {
@@ -132,6 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List allId = [];
   List withoutWarmupAllId = [];
+
   getExercisesId() async {
     await _userWorkoutsDateViewModel.getUserWorkoutsDateDetails(
         userId: PreferenceManager.getUId(),

@@ -18,6 +18,8 @@ class ApiService {
         final result = await http.get(Uri.parse(url));
         response = returnResponse(result.statusCode, result.body);
         print("REQUEST PARAMETER url  $url");
+
+        log("resp${result.body}");
       } else if (apiType == APIType.aPost) {
         final result = await http.post(Uri.parse(url), body: body);
 

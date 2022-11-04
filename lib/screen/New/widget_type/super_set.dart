@@ -276,7 +276,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                     keys: "${response.data![0].exerciseTitle}",
                     // counter: int.parse(
                     //     "${response.data![0].exerciseReps}".split("-").first),
-                    counter: 2,
+                    // counter: 2,
                     newList: [],
                   ),
                   Positioned(
@@ -610,16 +610,15 @@ class _SuperSetTimerProgressBarState extends State<SuperSetTimerProgressBar> {
 
 /// super set card
 superSetCounterCardWidget(
-    {required int counter,
-    required String showText,
+    {required String showText,
     required int round,
     required TextEditingController? controllerText,
     required int superSetRound,
     required WorkoutBaseExerciseViewModel controller,
     required String keys,
     required List<Map<String, dynamic>> newList}) {
-  print('round >>> ${round}');
-  print('keys >>> ${keys}');
+  print('round >>> $round');
+  print('keys >>> $keys');
   return Padding(
     padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
     child: Container(
