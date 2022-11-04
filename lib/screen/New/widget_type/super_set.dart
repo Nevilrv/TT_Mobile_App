@@ -555,23 +555,20 @@ class _SuperSetTimerProgressBarState extends State<SuperSetTimerProgressBar> {
                 )
               : GestureDetector(
                   onTap: () {
-                    if (controller.timerStop == false) {
-                      controller.timerStop = true;
-                      controller.currentValue = 0;
-                      controller.setStaticTimer(staticTimerValue: false);
-                      controller.setIsClickForSuperSet(isValue: true);
-                      if (controller.isClickForSuperSet) {
-                        controller.setIsClickForSuperSet(isValue: false);
+                    controller.currentValue = 0;
+                    controller.setStaticTimer(staticTimerValue: false);
+                    controller.setIsClickForSuperSet(isValue: true);
+                    if (controller.isClickForSuperSet) {
+                      controller.setIsClickForSuperSet(isValue: false);
 
-                        if (controller.showTimer == null) {
-                        } else {
-                          controller.resTimer!.cancel();
-                        }
-                        controller.setSuperSetCurrentValue(
-                            valueForSuperSet: widget.index);
-                        controller.showTimer = widget.index;
-                        controller.startRestTimer(endTime: widget.timerEndTime);
+                      if (controller.showTimer == null) {
+                      } else {
+                        controller.resTimer!.cancel();
                       }
+                      controller.setSuperSetCurrentValue(
+                          valueForSuperSet: widget.index);
+                      controller.showTimer = widget.index;
+                      controller.startRestTimer(endTime: widget.timerEndTime);
                     }
                   },
                   child: Container(
@@ -767,7 +764,7 @@ class _SupersetStaticTimerState extends State<SupersetStaticTimer> {
       builder: (controller) {
         return Padding(
           padding: EdgeInsets.all(8.0),
-          child: controller.staticTimer == true
+          child: controller.staticTimer == true && controller.currentValue != 0
               ? Container(
                   height: widget.height,
                   width: widget.width,
@@ -787,23 +784,19 @@ class _SupersetStaticTimerState extends State<SupersetStaticTimer> {
                 )
               : GestureDetector(
                   onTap: () {
-                    if (controller.timerStop == false) {
-                      controller.timerStop = true;
-                      controller.currentValue = 0;
-                      controller.setIsClickForSuperSet(isValue: true);
-                      controller.setStaticTimer(staticTimerValue: true);
-                      controller.setSuperSetCurrentValue(
-                          valueForSuperSet: null);
-                      if (controller.isClickForSuperSet == true) {
-                        controller.setIsClickForSuperSet(isValue: false);
+                    controller.currentValue = 0;
+                    controller.setIsClickForSuperSet(isValue: true);
+                    controller.setStaticTimer(staticTimerValue: true);
+                    controller.setSuperSetCurrentValue(valueForSuperSet: null);
+                    if (controller.isClickForSuperSet == true) {
+                      controller.setIsClickForSuperSet(isValue: false);
 
-                        if (controller.showTimer == null) {
-                        } else {
-                          controller.resTimer!.cancel();
-                        }
-                        controller.showTimer = widget.index;
-                        controller.startRestTimer(endTime: widget.timerEndTime);
+                      if (controller.showTimer == null) {
+                      } else {
+                        controller.resTimer!.cancel();
                       }
+                      controller.showTimer = widget.index;
+                      controller.startRestTimer(endTime: widget.timerEndTime);
                     }
                   },
                   child: Container(

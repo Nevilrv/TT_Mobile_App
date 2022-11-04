@@ -34,7 +34,6 @@ import 'package:tcm/viewModel/training_plan_viewModel/workout_by_id_viewModel.da
 import 'package:tcm/viewModel/training_plan_viewModel/workout_exercise_conflict_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
 
-
 class ProgramSetupPage extends StatefulWidget {
   final String? exerciseId;
   final String? day;
@@ -1209,7 +1208,24 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                           ));
                                                                                         }
 
-                                                                                        controllerWork.changeConflict(false);
+                                                                                        // controllerWork.changeConflict(false);
+                                                                                        await _workoutExerciseConflictViewModel.getWorkoutExerciseConflictDetails(date: dateString(), userId: PreferenceManager.getUId());
+                                                                                        if (_workoutExerciseConflictViewModel.apiResponse.status == Status.COMPLETE) {
+                                                                                          WorkoutExerciseConflictResponseModel resConflict = _workoutExerciseConflictViewModel.apiResponse.data;
+
+                                                                                          if (resConflict.data != [] && resConflict.msg == "You are already following another program on these dates. Choose below if you want to follow them both.") {
+                                                                                            conflictWorkoutList = resConflict.data!;
+                                                                                            warningmsg = '${resConflict.msg}';
+
+                                                                                            print('-------------- msg${resConflict.msg}');
+
+                                                                                            print('conflict called on week days');
+
+                                                                                            controllerWork.changeConflict(true);
+                                                                                          } else {
+                                                                                            controllerWork.changeConflict(false);
+                                                                                          }
+                                                                                        }
                                                                                         print('Remove Pressed');
                                                                                       },
                                                                                       child: Container(
@@ -1341,6 +1357,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                         Get.back();
                                                                       }, onTapConfirmation:
                                                                           () async {
+                                                                        Get.back();
                                                                         controllerWork
                                                                             .changeConflict(false);
                                                                         if (controllerWork.apiResponse.status != Status.LOADING ||
@@ -1426,7 +1443,6 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 _userWorkoutsDateViewModel.superSetsRound = responseApi.data!.round;
                                                                                 _userWorkoutsDateViewModel.userProgramDatesId = responseApi.data!.userProgramDatesId!;
                                                                                 _userWorkoutsDateViewModel.restTime = responseApi.data!.restTime!;
-                                                                                Get.back();
 
                                                                                 Navigator.push(
                                                                                   context,
@@ -1445,7 +1461,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 );
                                                                               } catch (e) {
                                                                                 print('catchhhh');
-                                                                                Get.offAll(HomeScreen(id: PreferenceManager.getUId(),));
+
+                                                                                Get.offAll(HomeScreen(id: PreferenceManager.getUId()));
                                                                               }
                                                                               /* Get.to(WorkoutHomeScreen(
                                                                                 data: workResponse.data!,

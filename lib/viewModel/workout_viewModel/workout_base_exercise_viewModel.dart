@@ -60,6 +60,13 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   int? showTimer;
   int currentValue = 0;
 
+  resTimerCancel() {
+    showTimer = null;
+    resTimer?.cancel();
+    currentValue = 0;
+    update();
+  }
+
   void startRestTimer({required String endTime}) {
     resTimer = Timer.periodic(
       Duration(seconds: 1),
@@ -170,6 +177,37 @@ class WorkoutBaseExerciseViewModel extends GetxController {
     weightedIndexLbsMap[keys].insert(index, value);
     update();
     print('weightedIndexLbsMap >>> ${weightedIndexLbsMap}');
+  }
+
+  Timer? weightedTimer;
+  int? showWeightTimer;
+  int currentWeightTimerValue = 0;
+
+  void cancelTimer() {
+    showWeightTimer = null;
+    weightedTimer?.cancel();
+    currentWeightTimerValue = 0;
+    update();
+  }
+
+  void startWeightRestTimer({required String endTime}) {
+    weightedTimer = Timer.periodic(
+      Duration(seconds: 1),
+      (timer) {
+        if (currentWeightTimerValue >= 0 &&
+            currentWeightTimerValue < int.parse(endTime)) {
+          currentWeightTimerValue++;
+          print('count>>>>>$currentWeightTimerValue');
+          update();
+        } else {
+          print('Timer Cancel');
+          currentWeightTimerValue = 0;
+          showWeightTimer = null;
+          weightedTimer!.cancel();
+          update();
+        }
+      },
+    );
   }
 
   /// for reps screen

@@ -1,16 +1,20 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:tcm/utils/ColorUtils.dart';
+import 'package:video_thumbnail/video_thumbnail.dart';
 import 'package:video_trimmer/video_trimmer.dart';
 
-/*class HomePage extends StatelessWidget {
+import '../../viewModel/forum_viewModel/add_forum_viewmodel.dart';
+
+class CompressVideo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Video Trimmer"),
-      ),
       body: Center(
         child: Container(
           child: ElevatedButton(
@@ -34,19 +38,20 @@ import 'package:video_trimmer/video_trimmer.dart';
       ),
     );
   }
-}*/
+}
 
-/*class TrimmerView extends StatefulWidget {
+class TrimmerView extends StatefulWidget {
   final File file;
 
   TrimmerView(this.file);
 
   @override
   _TrimmerViewState createState() => _TrimmerViewState();
-}*/
+}
 
-/*class _TrimmerViewState extends State<TrimmerView> {
+class _TrimmerViewState extends State<TrimmerView> {
   final Trimmer _trimmer = Trimmer();
+  AddForumViewModel addForumViewModel = Get.put(AddForumViewModel());
 
   double _startValue = 0.0;
   double _endValue = 0.0;
@@ -93,7 +98,65 @@ import 'package:video_trimmer/video_trimmer.dart';
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Video Trimmer"),
+        backgroundColor: Colors.black,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        leading: IconButton(
+            icon: Icon(Icons.close, color: ColorUtils.kTint),
+            onPressed: () {
+              Get.back();
+            }),
+        actions: [
+          GetBuilder<AddForumViewModel>(
+            builder: (controller) {
+              return _progressVisibility
+                  ? SizedBox()
+                  : TextButton(
+                      onPressed: () async {
+                        setState(() {
+                          _progressVisibility = true;
+                        });
+                        await _trimmer.saveTrimmedVideo(
+                            startValue: _startValue,
+                            endValue: _endValue,
+                            onSave: (String? outputPath) async {
+                              // setState(() {
+                              _progressVisibility = false;
+                              value = outputPath!;
+                              // });
+                              print('fghjkl >>> $value');
+                              print('outpath **** ${outputPath}');
+                              final uint8list =
+                                  await VideoThumbnail.thumbnailData(
+                                video: widget.file.path,
+                                imageFormat: ImageFormat.JPEG,
+                                maxHeight: 250,
+                                maxWidth: 250,
+                                quality: 50,
+                              );
+                              Uint8List imageInUnit8List =
+                                  uint8list!; // store unit8List image here ;
+                              final tempDir = await getTemporaryDirectory();
+                              File file = await File(
+                                      '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.png')
+                                  .create();
+                              file.writeAsBytesSync(imageInUnit8List);
+                              var a = await controller.videoInfo
+                                  .getVideoInfo(widget.file.path);
+                              print('value ???? $value');
+                              controller.dataAddInFileAll(File(outputPath),
+                                  file, a!.filesize, a.duration);
+                              print('12122 ==== >>>> ${controller.filesAll}');
+                              Get.back();
+                            });
+                      },
+                      child: Text("Add",
+                          style:
+                              TextStyle(color: ColorUtils.kTint, fontSize: 18)),
+                    );
+            },
+          )
+        ],
       ),
       body: Builder(
         builder: (context) => Center(
@@ -110,24 +173,6 @@ import 'package:video_trimmer/video_trimmer.dart';
                     backgroundColor: Colors.red,
                   ),
                 ),
-                ElevatedButton(
-                  onPressed: _progressVisibility
-                      ? null
-                      : () async {
-                          print('wertyui ??? ${value}');
-                          _saveVideo().then((outputPath) {
-                            print('Enter $value');
-                            print('OUTPUT PATH: $outputPath');
-                            // print('value >>>> $value');
-                            final snackBar = SnackBar(
-                                content: Text('Video Saved successfully'));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              snackBar,
-                            );
-                          });
-                        },
-                  child: Text("SAVE"),
-                ),
                 Expanded(
                   child: VideoViewer(trimmer: _trimmer),
                 ),
@@ -136,7 +181,7 @@ import 'package:video_trimmer/video_trimmer.dart';
                     trimmer: _trimmer,
                     viewerHeight: 50.0,
                     viewerWidth: MediaQuery.of(context).size.width,
-                    maxVideoLength: Duration(seconds: 60),
+                    maxVideoLength: Duration(seconds: 59),
                     onChangeStart: (value) {
                       _startValue = value;
                     },
@@ -179,4 +224,4 @@ import 'package:video_trimmer/video_trimmer.dart';
       ),
     );
   }
-}*/
+}

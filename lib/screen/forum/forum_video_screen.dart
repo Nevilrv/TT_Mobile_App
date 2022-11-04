@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/utils/shimmer_loading.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
@@ -79,9 +81,15 @@ class _ForumVideoScreenState extends State<ForumVideoScreen> {
                     ? Chewie(
                         controller: chewieController!,
                       )
-                    : Center(
-                        child:
-                            CircularProgressIndicator(color: ColorUtils.kTint)),
+                    : Shimmer.fromColors(
+                        child: Container(
+                          height: Get.height * 0.23,
+                          width: Get.width,
+                          color: Colors.white,
+                        ),
+                        baseColor: Colors.white.withOpacity(0.4),
+                        highlightColor: Colors.white.withOpacity(0.2),
+                      ),
               ),
             )
           : ConnectionCheckScreen();

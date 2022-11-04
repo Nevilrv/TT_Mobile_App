@@ -498,15 +498,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                                           index]
                                                                       .programData![
                                                                           index1]
-                                                                      .workoutTitle!
-                                                                      .isEmpty
-                                                                  ? ""
-                                                                  : scheduleResponse
-                                                                      .data![
-                                                                          index]
-                                                                      .programData![
-                                                                          index1]
-                                                                      .workoutTitle!,
+                                                                      .workoutTitle ??
+                                                                  'No Title',
                                                               style: FontTextStyle
                                                                   .kWhite17BoldRoboto,
                                                             ),

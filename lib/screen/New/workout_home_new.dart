@@ -1151,7 +1151,6 @@ class _WorkoutHomeNewState extends State<WorkoutHomeNew> {
                                               //     itemBuilder: (_, index) =>
                                               //         ),
                                               // htmlToTextGrey(data: finalHTMLTips[1]),
-
                                               SizedBox(
                                                   height: Get.height * .03),
                                               widget.warmUpList.isNotEmpty

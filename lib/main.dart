@@ -2,11 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:tcm/screen/New/bottom_sheet.dart';
-
 import 'package:tcm/screen/splash_screen.dart';
-
-import 'delete_file.dart';
 
 void main() async {
   await GetStorage.init();
@@ -15,7 +11,6 @@ void main() async {
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) => runApp(MyApp()));
-
   runApp(MyApp());
 }
 
@@ -23,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: bottomSheet(),
+      // home: HomePage(),
       home: SplashScreen(),
 
       // home: YoutubePlayerDemoApp(),

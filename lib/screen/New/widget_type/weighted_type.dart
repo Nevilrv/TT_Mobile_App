@@ -84,9 +84,10 @@ class _WeightedTypeState extends State<WeightedType> {
               widget.exerciseWeight.isEmpty &&
               widget.weightData == "" &&
               widget.weightData!.isEmpty) {
-            _workoutBaseExerciseViewModel.lbsList.add("0");
+            _workoutBaseExerciseViewModel.lbsList.add(0);
           } else {
-            _workoutBaseExerciseViewModel.lbsList.add(tmpWeightDataList[i]);
+            _workoutBaseExerciseViewModel.lbsList
+                .add(int.parse(tmpWeightDataList[i].toString()));
           }
         }
         print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
@@ -106,7 +107,7 @@ class _WeightedTypeState extends State<WeightedType> {
       } catch (e) {
         for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
           _workoutBaseExerciseViewModel.weightedRepsList.add(2);
-          _workoutBaseExerciseViewModel.lbsList.add("12");
+          _workoutBaseExerciseViewModel.lbsList.add(12);
         }
 
         _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
@@ -132,6 +133,7 @@ class _WeightedTypeState extends State<WeightedType> {
 
   @override
   Widget build(BuildContext context) {
+    print('exercises reps >>> ${widget.exerciseReps}');
     weightedLoop();
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
@@ -400,11 +402,10 @@ class _WeightedCardState extends State<WeightedCard> {
                         width: 40,
                         child: TextField(
                           //  controller: widget.editingController,
-                          style:
-                              int.parse(controller.lbsList[widget.index]) == 0
-                                  ? FontTextStyle.kWhite24BoldRoboto
-                                      .copyWith(color: ColorUtils.kGray)
-                                  : FontTextStyle.kWhite24BoldRoboto,
+                          style: controller.lbsList[widget.index] == 0
+                              ? FontTextStyle.kWhite24BoldRoboto
+                                  .copyWith(color: ColorUtils.kGray)
+                              : FontTextStyle.kWhite24BoldRoboto,
                           keyboardType: TextInputType.numberWithOptions(
                               decimal: true, signed: true),
                           inputFormatters: [
@@ -435,12 +436,10 @@ class _WeightedCardState extends State<WeightedCard> {
                               hintText: '${controller.lbsList[widget.index]}',
                               counterText: '',
                               semanticCounterText: '',
-                              hintStyle:
-                                  int.parse(controller.lbsList[widget.index]) ==
-                                          0
-                                      ? FontTextStyle.kWhite24BoldRoboto
-                                          .copyWith(color: ColorUtils.kGray)
-                                      : FontTextStyle.kWhite24BoldRoboto,
+                              hintStyle: controller.lbsList[widget.index] == 0
+                                  ? FontTextStyle.kWhite24BoldRoboto
+                                      .copyWith(color: ColorUtils.kGray)
+                                  : FontTextStyle.kWhite24BoldRoboto,
                               enabledBorder: UnderlineInputBorder(
                                   borderSide:
                                       BorderSide(color: Colors.transparent)),
@@ -505,50 +504,50 @@ class _TimerProgressBarState extends State<TimerProgressBar> {
       builder: (controller) {
         return Padding(
           padding: EdgeInsets.all(8.0),
-          child: GestureDetector(
-              onTap: () {
-                if (controller.staticTimer == true) {
-                  controller.setStaticTimer(staticTimerValue: true);
-                  if (controller.showTimer == null) {
-                  } else {
-                    controller.resTimer!.cancel();
-                  }
-                  controller.showTimer = widget.index;
-                  controller.startRestTimer(endTime: widget.timerEndTime);
-                }
-              },
-              child: controller.showTimer == widget.index &&
-                      controller.staticTimer == true
-                  ? Container(
-                      height: widget.height,
-                      width: widget.width,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: ColorUtilsGradient.kGrayGradient,
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter),
-                          borderRadius: BorderRadius.circular(6)),
-                      child: FAProgressBar(
-                        animatedDuration: Duration(seconds: 1),
-                        currentValue: controller.currentValue.toDouble(),
-                        backgroundColor: ColorUtils.kGray,
-                        progressColor: ColorUtils.kGreen,
-                        maxValue: double.parse("${widget.timerEndTime}"),
-                      ),
-                    )
-                  : Container(
-                      alignment: Alignment.center,
-                      height: widget.height,
-                      width: widget.width,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: ColorUtilsGradient.kGrayGradient,
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter),
-                          borderRadius: BorderRadius.circular(6)),
-                      child: Text("${widget.timerEndTime} Seconds Rest",
-                          style: FontTextStyle.kWhite17W400Roboto),
-                    )),
+          child: controller.showWeightTimer == widget.index
+              ? Container(
+                  height: widget.height,
+                  width: widget.width,
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          colors: ColorUtilsGradient.kGrayGradient,
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: FAProgressBar(
+                    animatedDuration: Duration(seconds: 1),
+                    currentValue: controller.currentWeightTimerValue.toDouble(),
+                    backgroundColor: ColorUtils.kGray,
+                    progressColor: ColorUtils.kGreen,
+                    maxValue: double.parse("${widget.timerEndTime}"),
+                  ),
+                )
+              : GestureDetector(
+                  onTap: () {
+                    if (controller.showWeightTimer == null) {
+                    } else {
+                      controller.weightedTimer!.cancel();
+                      controller.currentWeightTimerValue = 0;
+                    }
+                    controller.showWeightTimer = widget.index;
+                    controller.currentWeightTimerValue = 0;
+                    controller.startWeightRestTimer(
+                        endTime: widget.timerEndTime);
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    height: widget.height,
+                    width: widget.width,
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            colors: ColorUtilsGradient.kGrayGradient,
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter),
+                        borderRadius: BorderRadius.circular(6)),
+                    child: Text("${widget.timerEndTime} Seconds Rest",
+                        style: FontTextStyle.kWhite17W400Roboto),
+                  ),
+                ),
         );
       },
     );

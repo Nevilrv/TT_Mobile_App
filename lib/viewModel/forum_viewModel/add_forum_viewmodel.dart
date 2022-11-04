@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:get/get.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_comments_response_model.dart';
 
@@ -14,6 +15,21 @@ import '../../repo/forum_repo/add_comment_repo.dart';
 import '../../repo/forum_repo/add_forum_repo.dart';
 
 class AddForumViewModel extends GetxController {
+  FlutterVideoInfo videoInfo = FlutterVideoInfo();
+  List<Map<String, dynamic>> filesAll = [];
+
+  dataAddInFileAll(file, thumbnailFile, fileSize, duration) {
+    filesAll.add({
+      'type': 'mp4',
+      'file': file,
+      'thumbnail': thumbnailFile,
+      'size': fileSize,
+      'duration': duration,
+    });
+
+    update();
+  }
+
   ApiResponse _addForumApiResponse =
       ApiResponse.initial(message: 'Initialization');
 

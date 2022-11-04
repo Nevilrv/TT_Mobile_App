@@ -398,60 +398,78 @@ class _CommentScreenState extends State<CommentScreen> {
                                       hintStyle:
                                           FontTextStyle.kWhite17W400Roboto,
                                       border: InputBorder.none,
-                                      suffixIcon: controller
-                                                  .addCommentApiResponse
-                                                  .status ==
-                                              Status.LOADING
-                                          ? Padding(
-                                              padding:
-                                                  const EdgeInsets.all(6.0),
-                                              child: CircularProgressIndicator(
-                                                color: ColorUtils.kTint,
-                                              ),
-                                            )
-                                          : IconButton(
-                                              icon: Icon(
-                                                Icons.send,
-                                                color: ColorUtils.kTint,
-                                                size: Get.height * 0.03,
-                                              ),
-                                              onPressed: () async {
-                                                AddCommentRequestModel model =
-                                                    AddCommentRequestModel();
-                                                model.postId = widget.postId;
-                                                model.userId =
-                                                    PreferenceManager.getUId();
-                                                model.comment =
-                                                    commentController.text;
+                                      suffixIcon: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          IconButton(
+                                            onPressed: () {},
+                                            icon: Icon(
+                                              Icons.camera_alt_outlined,
+                                              color: ColorUtils.kTint,
+                                              size: Get.height * 0.03,
+                                            ),
+                                          ),
+                                          controller.addCommentApiResponse
+                                                      .status ==
+                                                  Status.LOADING
+                                              ? Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(6.0),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    color: ColorUtils.kTint,
+                                                  ),
+                                                )
+                                              : IconButton(
+                                                  icon: Icon(
+                                                    Icons.send,
+                                                    color: ColorUtils.kTint,
+                                                    size: Get.height * 0.03,
+                                                  ),
+                                                  onPressed: () async {
+                                                    AddCommentRequestModel
+                                                        model =
+                                                        AddCommentRequestModel();
+                                                    model.postId =
+                                                        widget.postId;
+                                                    model.userId =
+                                                        PreferenceManager
+                                                            .getUId();
+                                                    model.comment =
+                                                        commentController.text;
 
-                                                print(
-                                                    'model ${model.toJson()}');
-                                                await controller
-                                                    .addCommentsViewModel(model)
-                                                    .then((value) async {
-                                                  commentController.clear();
-                                                  await controller
-                                                      .getAllCommentsViewModel(
-                                                    postId: widget.postId,
-                                                  )
-                                                      .then((value) {
-                                                    Future.delayed(
-                                                        Duration(seconds: 2),
-                                                        () {
-                                                      scrollcontroller!
-                                                          .animateTo(
-                                                        scrollcontroller!
-                                                            .position
-                                                            .maxScrollExtent,
-                                                        duration: Duration(
-                                                            seconds: 1),
-                                                        curve: Curves
-                                                            .fastOutSlowIn,
-                                                      );
+                                                    print(
+                                                        'model ${model.toJson()}');
+                                                    await controller
+                                                        .addCommentsViewModel(
+                                                            model)
+                                                        .then((value) async {
+                                                      commentController.clear();
+                                                      await controller
+                                                          .getAllCommentsViewModel(
+                                                        postId: widget.postId,
+                                                      )
+                                                          .then((value) {
+                                                        Future.delayed(
+                                                            Duration(
+                                                                seconds: 2),
+                                                            () {
+                                                          scrollcontroller!
+                                                              .animateTo(
+                                                            scrollcontroller!
+                                                                .position
+                                                                .maxScrollExtent,
+                                                            duration: Duration(
+                                                                seconds: 1),
+                                                            curve: Curves
+                                                                .fastOutSlowIn,
+                                                          );
+                                                        });
+                                                      });
                                                     });
-                                                  });
-                                                });
-                                              }))),
+                                                  }),
+                                        ],
+                                      ))),
                             ),
                           );
                         },

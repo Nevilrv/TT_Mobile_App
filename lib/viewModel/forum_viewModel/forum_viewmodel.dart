@@ -73,7 +73,7 @@ class ForumViewModel extends GetxController {
       print('==getAllForumsResponseModel=>');
       getAllForumsResponseModel =
           await GetAllForumsRepo().getAllForumsRepo(filter: filter);
-      print('==getAllForumsResponseModel=>$getAllForumsResponseModel');
+      print('==getAllForumsResponseModel=>$_getAllForumsApiResponse');
 
       _getAllForumsApiResponse =
           ApiResponse.complete(getAllForumsResponseModel);
