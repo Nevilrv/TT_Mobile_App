@@ -820,7 +820,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 onTap: () async {
                   if (response!.data![index].userDisliked == 0) {
                     if (controller.likeDisLike[index].userLiked == 0) {
-                      controller.likeDisLike[index].userDisliked = 1;K
+                      controller.likeDisLike[index].userDisliked = 1;
                       DisLikeForumRequestModel model =
                           DisLikeForumRequestModel();
                       model.postId = response.data![index].postId;
