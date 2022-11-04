@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/sign_in_request_model.dart';
@@ -121,6 +122,9 @@ class _SignInScreenState extends State<SignInScreen> {
                                 height: Get.height * 0.01,
                               ),
                               TextFormField(
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(20),
+                                  ],
                                   obscureText: selected ? false : true,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
@@ -465,7 +469,7 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  bool isPasswordValid(String password) => password.length <= 8;
+  bool isPasswordValid(String password) => password.length >= 8;
 
   bool isEmailValid(String email) {
     Pattern? pattern =

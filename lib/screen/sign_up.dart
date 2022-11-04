@@ -41,6 +41,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isPassEmpty = false;
   bool isUserNameEmpty = false;
   bool isNotValidPass = false;
+  bool isNotValid8DigitPass = false;
   bool isNotValidUserName = false;
 
   String? msg;
@@ -436,7 +437,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             itemStyle: FontTextStyle
                                                 .kWhite16W300Roboto),
                                         showTitleActions: true,
-                                        minTime: DateTime(1980, 1, 1),
+                                        minTime: DateTime(1940, 1, 1),
                                         maxTime: DateTime(2025, 12, 30),
                                         onChanged: (date) {
                                           print('change $date');
@@ -607,6 +608,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       height: Get.height * 0.01,
                                     ),
                                     TextFormField(
+                                        maxLength: 13,
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -616,6 +618,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         onTap: () {
                                           setState(() {
                                             isNotValidPass = false;
+                                            isNotValid8DigitPass = false;
                                             isPassEmpty = false;
                                           });
                                         },
@@ -651,19 +654,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             // borderSide: BorderSide.none
-                                            borderSide:
-                                                !isPassEmpty && !isNotValidPass
-                                                    ? BorderSide.none
-                                                    : BorderSide(
-                                                        color: Colors.red,
-                                                        width: 2),
+                                            borderSide: !isPassEmpty &&
+                                                    !isNotValidPass &&
+                                                    !isNotValid8DigitPass
+                                                ? BorderSide.none
+                                                : BorderSide(
+                                                    color: Colors.red,
+                                                    width: 2),
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               // borderSide: BorderSide.none
                                               borderSide: !isPassEmpty &&
-                                                      !isNotValidPass
+                                                      !isNotValidPass &&
+                                                      !isNotValid8DigitPass
                                                   ? BorderSide.none
                                                   : BorderSide(
                                                       color: Colors.red,
@@ -673,7 +678,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                   BorderRadius.circular(8),
                                               // borderSide: BorderSide.none
                                               borderSide: !isPassEmpty &&
-                                                      !isNotValidPass
+                                                      !isNotValidPass &&
+                                                      !isNotValid8DigitPass
                                                   ? BorderSide.none
                                                   : BorderSide(
                                                       color: Colors.red,
@@ -688,6 +694,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           if (password!.isEmpty) {
                                             setState(() {
                                               isPassEmpty = true;
+                                            });
+                                            return '';
+                                          } else if (!isPass8DigitValid(
+                                              password)) {
+                                            setState(() {
+                                              isNotValid8DigitPass = true;
                                             });
                                             return '';
                                           } else if (!isPasswordValid(
@@ -705,11 +717,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 fontSize: 12,
                                                 color: ColorUtils.kRed))
                                         : SizedBox(),
-                                    isNotValidPass
-                                        ? Text('   Please enter valid Password',
+                                    isNotValid8DigitPass
+                                        ? Text(
+                                            '   Please enter 8 digit valid Password',
                                             style: TextStyle(
                                                 fontSize: 12,
                                                 color: ColorUtils.kRed))
+                                        : SizedBox(),
+                                    !isPassEmpty
+                                        ? !isNotValid8DigitPass
+                                            ? isNotValidPass
+                                                ? Text(
+                                                    // '   Please enter strong Password',
+                                                    'Please enter at least one lower & upper case ,symbol & number ',
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: ColorUtils.kRed))
+                                                : SizedBox()
+                                            : SizedBox()
                                         : SizedBox(),
                                   ],
                                 ),
@@ -1437,7 +1462,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  bool isPasswordValid(String password) => password.length >= 8;
+  bool isPass8DigitValid(String password) => password.length >= 8;
+  bool isPasswordValid(String password) {
+    Pattern? pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regex = new RegExp(pattern.toString());
+    return regex.hasMatch(password);
+  }
+
   bool isEmailValid(String email) {
     Pattern? pattern =
         r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';

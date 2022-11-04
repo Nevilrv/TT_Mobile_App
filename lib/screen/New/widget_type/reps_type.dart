@@ -34,6 +34,16 @@ Widget repsType(
     }
   }
 
+  if (controller.repsList.length < int.parse(sets)) {
+    print('Enter');
+    int tmpLoopCount = int.parse(sets) - controller.repsList.length;
+    print('tmpcount>>> ${tmpLoopCount}');
+
+    for (int i = 0; i < tmpLoopCount; i++) {
+      controller.repsList.add(int.parse(reps.split("-").first));
+    }
+    print('reps list >>> ${controller.repsList}');
+  }
   controller.repsIndexMap
       .addAll({"${controller.currentIndex}": controller.repsList});
   print('repsIndexList >>> ${controller.repsIndexMap}');

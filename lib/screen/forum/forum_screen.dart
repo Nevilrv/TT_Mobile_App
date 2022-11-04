@@ -125,8 +125,14 @@ class _ForumScreenState extends State<ForumScreen> {
                             await forumViewModel.searchForumViewModel(model);
                           },
                           decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: Get.height * 0.01),
                               hintText: 'Search',
-                              hintStyle: FontTextStyle.kLightGray16W300Roboto,
+                              hintStyle: TextStyle(
+                                  color: ColorUtils.kLightGray,
+                                  fontSize: Get.height * 0.018,
+                                  fontWeight: FontWeight.w300,
+                                  fontFamily: 'Roboto'),
                               border: InputBorder.none,
                               prefixIcon: Icon(
                                 Icons.search,
@@ -427,7 +433,7 @@ class _ForumScreenState extends State<ForumScreen> {
                             ),
                           )
                     : SizedBox(
-                        height: Get.height * 0.25,
+                        height: Get.height * 0.265,
                         child: Column(
                           children: [
                             Container(
@@ -472,20 +478,23 @@ class _ForumScreenState extends State<ForumScreen> {
                                 ),
                               ),
                             ),
+                            SizedBox(
+                              height: Get.height * 0.0125,
+                            ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(
-                                  response.data![index].postImage!.length,
-                                  (index) => Padding(
-                                        padding: const EdgeInsets.all(2),
-                                        child: CircleAvatar(
-                                          radius: Get.height * 0.006,
-                                          backgroundColor: _current == index
-                                              ? ColorUtils.kTint
-                                              : ColorUtils.kTint
-                                                  .withOpacity(0.4),
-                                        ),
-                                      )),
+                                response.data![index].postImage!.length,
+                                (index) => Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: CircleAvatar(
+                                    radius: Get.height * 0.006,
+                                    backgroundColor: _current == index
+                                        ? ColorUtils.kTint
+                                        : ColorUtils.kTint.withOpacity(0.4),
+                                  ),
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -718,7 +727,6 @@ class _ForumScreenState extends State<ForumScreen> {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: Get.height * 0.005),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Row(
             children: [
@@ -815,10 +823,10 @@ class _ForumScreenState extends State<ForumScreen> {
                         fontSize: Get.height * 0.0185,
                       ),
                     ),
-              SizedBox(
+              /* SizedBox(
                 width: Get.width * 0.02,
-              ),
-              GestureDetector(
+              ),*/
+              /* GestureDetector(
                 onTap: () async {
                   if (response!.data![index].userDisliked == 0) {
                     if (controller.likeDisLike[index].userLiked == 0) {
@@ -867,13 +875,16 @@ class _ForumScreenState extends State<ForumScreen> {
                         height: Get.height * 0.022,
                         width: Get.height * 0.022,
                       ),
-              ),
+              ),*/
             ],
+          ),
+          SizedBox(
+            width: Get.width * 0.035,
           ),
           GestureDetector(
             onTap: () async {
               Get.to(CommentScreen(
-                postId: response.data![index].postId,
+                postId: response!.data![index].postId,
               ));
             },
             child: Row(
@@ -908,7 +919,7 @@ class _ForumScreenState extends State<ForumScreen> {
               ],
             ),
           ),
-          GestureDetector(
+          /*  GestureDetector(
             onTap: () async {
               Share.share(response.data![index].postTitle!,
                   subject: response.data![index].postDescription!);
@@ -932,7 +943,7 @@ class _ForumScreenState extends State<ForumScreen> {
                 ),
               ],
             ),
-          ),
+          ),*/
         ],
       ),
     );

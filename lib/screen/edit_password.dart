@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/edit_pass_request_model.dart';
@@ -29,10 +30,15 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
 
   bool isCurrentPassEmpty = false;
   bool isCurrentNotValidPass = false;
+
   bool isNewPassEmpty = false;
   bool isNewPassNotValid = false;
+  bool isNotNewValid8DigitPass = false;
+
   bool isConfirmPassEmpty = false;
   bool isConfirmPassNotValid = false;
+  bool isNotConfirmValid8DigitPass = false;
+
   bool selected = false;
   bool selectedNew = false;
   bool selectedCNew = false;
@@ -104,6 +110,10 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                         height: Get.height * 0.01,
                                       ),
                                       TextFormField(
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(
+                                                20),
+                                          ],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -186,7 +196,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                 isCurrentPassEmpty = true;
                                               });
                                               return '';
-                                            } else if (!isPasswordValid(
+                                            } else if (!isPass8DigitValid(
                                                 password)) {
                                               setState(() {
                                                 isCurrentNotValidPass = true;
@@ -226,6 +236,10 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                         height: Get.height * 0.01,
                                       ),
                                       TextFormField(
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(
+                                                20),
+                                          ],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -237,6 +251,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                             setState(() {
                                               isNewPassNotValid = false;
                                               isNewPassEmpty = false;
+                                              isNotNewValid8DigitPass = false;
                                             });
                                           },
                                           keyboardType:
@@ -271,7 +286,8 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               borderSide: !isNewPassEmpty &&
-                                                      !isNewPassNotValid
+                                                      !isNewPassNotValid &&
+                                                      !isNotNewValid8DigitPass
                                                   ? BorderSide.none
                                                   : BorderSide(
                                                       color: Colors.red,
@@ -281,7 +297,8 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                                 borderSide: !isNewPassEmpty &&
-                                                        !isNewPassNotValid
+                                                        !isNewPassNotValid &&
+                                                        !isNotNewValid8DigitPass
                                                     ? BorderSide.none
                                                     : BorderSide(
                                                         color: Colors.red,
@@ -309,6 +326,9 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                 isNewPassEmpty = true;
                                               });
                                               return '';
+                                            } else if (!isPass8DigitValid(
+                                                password)) {
+                                              isNotNewValid8DigitPass = true;
                                             } else if (!isPasswordValid(
                                                 password)) {
                                               setState(() {
@@ -325,12 +345,25 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                   fontSize: 12,
                                                   color: ColorUtils.kRed))
                                           : SizedBox(),
-                                      isNewPassNotValid
+                                      isNotNewValid8DigitPass
                                           ? Text(
-                                              '   Please enter valid New Password',
+                                              '   Please enter 8 digit valid Password',
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: ColorUtils.kRed))
+                                          : SizedBox(),
+                                      !isNewPassEmpty
+                                          ? !isNotNewValid8DigitPass
+                                              ? isNewPassNotValid
+                                                  ? Text(
+                                                      // '   Please enter strong Password',
+                                                      'Please enter at least one lower & upper case ,symbol & number ',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              ColorUtils.kRed))
+                                                  : SizedBox()
+                                              : SizedBox()
                                           : SizedBox(),
                                     ],
                                   ),
@@ -349,6 +382,10 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                         height: Get.height * 0.01,
                                       ),
                                       TextFormField(
+                                          inputFormatters: [
+                                            LengthLimitingTextInputFormatter(
+                                                20),
+                                          ],
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.white,
@@ -359,6 +396,8 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                           onTap: () {
                                             setState(() {
                                               isConfirmPassNotValid = false;
+                                              isNotConfirmValid8DigitPass =
+                                                  false;
                                               isConfirmPassEmpty = false;
                                             });
                                           },
@@ -394,7 +433,8 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                               borderSide: !isConfirmPassEmpty &&
-                                                      !isConfirmPassNotValid
+                                                      !isConfirmPassNotValid &&
+                                                      !isNotConfirmValid8DigitPass
                                                   ? BorderSide.none
                                                   : BorderSide(
                                                       color: Colors.red,
@@ -404,7 +444,8 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                                 borderSide: !isConfirmPassEmpty &&
-                                                        !isConfirmPassNotValid
+                                                        !isConfirmPassNotValid &&
+                                                        !isNotConfirmValid8DigitPass
                                                     ? BorderSide.none
                                                     : BorderSide(
                                                         color: Colors.red,
@@ -413,7 +454,8 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                                 borderSide: !isConfirmPassEmpty &&
-                                                        !isConfirmPassNotValid
+                                                        !isConfirmPassNotValid &&
+                                                        !isNotConfirmValid8DigitPass
                                                     ? BorderSide.none
                                                     : BorderSide(
                                                         color: Colors.red,
@@ -432,6 +474,10 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                 isConfirmPassEmpty = true;
                                               });
                                               return '';
+                                            } else if (!isPass8DigitValid(
+                                                password)) {
+                                              isNotConfirmValid8DigitPass =
+                                                  true;
                                             } else if (!isPasswordValid(
                                                 password)) {
                                               setState(() {
@@ -448,12 +494,25 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
                                                   fontSize: 12,
                                                   color: ColorUtils.kRed))
                                           : SizedBox(),
-                                      isConfirmPassNotValid
+                                      isNotConfirmValid8DigitPass
                                           ? Text(
-                                              '   Please enter valid Confirm New Password',
+                                              '   Please enter 8 digit valid Password',
                                               style: TextStyle(
                                                   fontSize: 12,
                                                   color: ColorUtils.kRed))
+                                          : SizedBox(),
+                                      !isConfirmPassEmpty
+                                          ? !isNotConfirmValid8DigitPass
+                                              ? isConfirmPassNotValid
+                                                  ? Text(
+                                                      // '   Please enter strong Password',
+                                                      'Please enter at least one lower & upper case ,symbol & number ',
+                                                      style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              ColorUtils.kRed))
+                                                  : SizedBox()
+                                              : SizedBox()
                                           : SizedBox(),
                                     ],
                                   ),
@@ -644,7 +703,14 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
     );
   }
 
-  bool isPasswordValid(String password) => password.length <= 8;
+  bool isPass8DigitValid(String password) => password.length >= 8;
+  bool isPasswordValid(String password) {
+    Pattern? pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regex = new RegExp(pattern.toString());
+    return regex.hasMatch(password);
+  }
+
   bool isEmailValid(String email) {
     Pattern? pattern =
         r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';

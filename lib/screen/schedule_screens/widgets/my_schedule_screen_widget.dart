@@ -71,10 +71,23 @@ Padding listViewTab(
                           return ListTile(
                             contentPadding: EdgeInsets.only(
                                 top: 0, left: 0, right: 0, bottom: 0),
-                            title: Text(
+                            /*title: Text(
                               getEventForDay[index]
-                                  .programData![index1]
-                                  .workoutTitle!,
+                                          .programData![index1]
+                                          .workoutTitle!
+                                          .isEmpty ||
+                                      getEventForDay[index]
+                                              .programData![index1]
+                                              .workoutTitle! ==
+                                          ""
+                                  ? "No Title"
+                                  : getEventForDay[index]
+                                      .programData![index1]
+                                      .workoutTitle!,
+                              style: FontTextStyle.kWhite17BoldRoboto,
+                            ),*/
+                            title: Text(
+                              ' ${getEventForDay[index].programData![index1].workoutTitle == null || getEventForDay[index].programData![index1].workoutTitle == "" || getEventForDay[index].programData![index1].workoutTitle!.isEmpty ? "No Title" : "${getEventForDay[index].programData![index1].workoutTitle}"}',
                               style: FontTextStyle.kWhite17BoldRoboto,
                             ),
                             subtitle: getEventForDay[index]
@@ -89,6 +102,7 @@ Padding listViewTab(
                                     style: FontTextStyle.kLightGray16W300Roboto,
                                   ),
                             trailing: InkWell(
+                              radius: 25,
                               onTap: () {
                                 log('-=-=-=--=-=-=-=-=-=-=-=-= Date > ${getEventForDay[index].date}');
 
@@ -191,7 +205,7 @@ void openBottomSheet(
           SizedBox(height: Get.width * .1),
           Center(
             // child: Text('${event!.programData![0].workoutTitle}',
-            child: Text('${event!.programData![0].workoutTitle}',
+            child: Text('${event!.programData![0].workoutTitle ?? 'No Title'}',
                 style: FontTextStyle.kWhite20BoldRoboto
                     .copyWith(fontSize: Get.height * .024),
                 textAlign: TextAlign.center),
@@ -269,7 +283,7 @@ void openBottomSheet(
                 print(
                     'supersetRound >>> ${_userWorkoutsDateViewModel.userProgramDatesId}');
 
-                return scheduleByDateViewModel!.completeDate
+                return /*scheduleByDateViewModel!.completeDate
                         .contains(date.toString().split(' ').first)
                     ? TextButton(
                         onPressed: null,
@@ -277,7 +291,8 @@ void openBottomSheet(
                           "This workout is Completed",
                           style: FontTextStyle.kTint24W400Roboto,
                         ))
-                    : snapshot.data!.data!.exercisesIds!.isEmpty ||
+                    :*/
+                    snapshot.data!.data!.exercisesIds!.isEmpty ||
                             snapshot.data!.data!.exercisesIds == []
                         ? TextButton(
                             onPressed: null,

@@ -141,13 +141,15 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                                                 print("button pressed");
                                               },
                                               child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
                                                   Expanded(
                                                     flex: 3,
                                                     child: Container(
-                                                      margin: EdgeInsets.only(
+                                                      /*     margin: EdgeInsets.only(
                                                           top:
-                                                              Get.height * .02),
+                                                              Get.height * .02),*/
                                                       height: Get.height * 0.1,
                                                       width: Get.height * 0.1,
                                                       decoration: BoxDecoration(

@@ -52,7 +52,7 @@ dependencies:
   expandable_text: ^2.3.0
   auto_size_text_field: ^1.0.1
   file_picker: ^4.6.1
-  video_thumbnail: ^0.5.2
+  video_thumbnail: 0.4.3
   dotted_border: ^2.0.0+1
   video_compress: ^3.1.0
   flutter_video_info: ^1.2.0
@@ -64,6 +64,8 @@ dependencies:
   animations: ^2.0.2
   flick_video_player: ^0.5.0
   shimmer: ^2.0.0
+  video_trimmer: 1.0.0
+
 
 
 

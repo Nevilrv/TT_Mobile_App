@@ -271,13 +271,19 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                     print("button pressed ");
                                                   },
                                                   child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
                                                     children: [
                                                       Expanded(
                                                         flex: 3,
                                                         child: Container(
-                                                          margin: EdgeInsets.only(
+                                                          /*margin: EdgeInsets.only(
                                                               top: Get.height *
-                                                                  .02),
+                                                                  .02),*/
                                                           height:
                                                               Get.height * 0.1,
                                                           width:
@@ -482,9 +488,9 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                       Expanded(
                                                         flex: 3,
                                                         child: Container(
-                                                          margin: EdgeInsets.only(
+                                                          /*   margin: EdgeInsets.only(
                                                               top: Get.height *
-                                                                  .02),
+                                                                  .02),*/
                                                           height:
                                                               Get.height * 0.1,
                                                           width:
@@ -541,7 +547,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                                           25
                                                                       ? response.data![index].videoDescription!.substring(
                                                                               0,
-                                                                              23) +
+                                                                              22) +
                                                                           ('...')
                                                                       : response
                                                                           .data![
@@ -693,9 +699,9 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                       Expanded(
                                                         flex: 3,
                                                         child: Container(
-                                                          margin: EdgeInsets.only(
+                                                          /*  margin: EdgeInsets.only(
                                                               top: Get.height *
-                                                                  .02),
+                                                                  .02),*/
                                                           height:
                                                               Get.height * 0.1,
                                                           width:

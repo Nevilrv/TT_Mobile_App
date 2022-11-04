@@ -119,7 +119,11 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   exerciseSets: exerciseByIdResponse.data![0].exerciseSets!,
                   exerciseId: exerciseByIdResponse.data![0].exerciseId!,
                   exerciseTitle: exerciseByIdResponse.data![0].exerciseTitle!,
-                  exerciseReps: exerciseByIdResponse.data![0].exerciseReps!,
+                  exerciseReps:
+                      exerciseByIdResponse.data![0].exerciseReps!.isEmpty ||
+                              exerciseByIdResponse.data![0].exerciseReps == ""
+                          ? "5"
+                          : exerciseByIdResponse.data![0].exerciseReps!,
                   repsData: repsById,
                   weightData: weightById,
                   exerciseRest: exerciseByIdResponse.data![0].exerciseRest!,
@@ -129,6 +133,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
       }
     } else {
       if (widget.superSetList.length != 0) {
+        print(
+            'widgetOfIndex >>>${_workoutBaseExerciseViewModel.widgetOfIndex}');
         _workoutBaseExerciseViewModel.roundCount++;
         if (_workoutBaseExerciseViewModel.allIdList.length >
             _workoutBaseExerciseViewModel.currentIndex) {
@@ -138,6 +144,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
             _workoutBaseExerciseViewModel.exerciseType = "Super Set";
             _workoutBaseExerciseViewModel.updateAppBarTitle("Super Set");
             print('Round count  =====a ${widget.superSetRound}');
+            print('roundCount >>> ${_workoutBaseExerciseViewModel.roundCount}');
+            print('all id >>> ${_workoutBaseExerciseViewModel.allIdList}');
             _workoutBaseExerciseViewModel.setWidgetOfIndex(
                 value: SuperSetExercise(
               superSetRound: widget.superSetRound,
@@ -178,11 +186,13 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
 
   getSuperSetList() {
     try {
+      print('super set round *---  ${widget.superSetRound}');
       for (int i = 0; i < widget.superSetRound; i++) {
         print(
             'widget.superSetRound =================== > ${widget.superSetList}');
         _workoutBaseExerciseViewModel.allIdList.add(widget.superSetList);
       }
+      print('all id list ???? ${_workoutBaseExerciseViewModel.allIdList}');
     } catch (e) {}
   }
 
@@ -190,7 +200,6 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
   void initState() {
     print('supersetttt ${widget.superSetList}');
     print('supersetttt round    ${widget.superSetRound}');
-
     print('>>>> InItState call exerciseList   ${widget.exerciseList}');
     _workoutBaseExerciseViewModel.isButtonShow = false;
     _workoutBaseExerciseViewModel.weightedEnter = false;
@@ -229,6 +238,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                       child: SizedBox(
                           child: commonNavigationButton(
                               onTap: () async {
+                                _workoutBaseExerciseViewModel.resTimerCancel();
+
                                 if (_workoutBaseExerciseViewModel
                                             .exerciseType ==
                                         "REPS" ||
@@ -297,6 +308,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                                   .currentIndex -
                                               widget.exerciseList.length !=
                                           widget.superSetRound) {
+                                        print(
+                                            'currentindex >>> ${_workoutBaseExerciseViewModel.currentIndex}');
                                         _workoutBaseExerciseViewModel
                                             .currentIndex++;
                                         try {
@@ -304,7 +317,15 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                               .superSetDataCountList
                                               .clear();
                                           _workoutBaseExerciseViewModel
-                                              .currentValue = 0;
+                                              .cancelTimer();
+
+                                          /*_workoutBaseExerciseViewModel
+                                              .resTimer!
+                                              .cancel();
+                                          _workoutBaseExerciseViewModel
+                                              .showTimer = null;
+                                          _workoutBaseExerciseViewModel
+                                              .currentValue = 0;*/
                                           _workoutBaseExerciseViewModel
                                               .staticTimer = false;
                                           _workoutBaseExerciseViewModel
@@ -401,6 +422,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
               title:
                   "${_workoutBaseExerciseViewModel.appBarTitle[_workoutBaseExerciseViewModel.currentIndex]}",
               backTap: () {
+                _workoutBaseExerciseViewModel.resTimerCancel();
+
                 if (isLastBackCheck == false &&
                     lastBackIndex <
                         _workoutBaseExerciseViewModel.currentIndex) {
@@ -412,6 +435,10 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                     Get.back();
                   }
                 } else {
+                  _workoutBaseExerciseViewModel.cancelTimer();
+                  /*_workoutBaseExerciseViewModel.resTimer!.cancel();
+                  _workoutBaseExerciseViewModel.showTimer = null;
+                  _workoutBaseExerciseViewModel.currentValue = 0;*/
                   if (_workoutBaseExerciseViewModel.currentIndex != 0) {
                     _workoutBaseExerciseViewModel.currentIndex--;
                   } else {

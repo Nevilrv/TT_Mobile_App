@@ -20,6 +20,7 @@ import 'package:tcm/repo/workout_repo/user_workouts_date_repo.dart';
 import 'package:tcm/screen/New/workout_home_new.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
+import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
@@ -32,7 +33,6 @@ import 'package:tcm/viewModel/training_plan_viewModel/save_workout_program_viewM
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_exercise_conflict_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
-
 
 class ProgramSetupPage extends StatefulWidget {
   final String? exerciseId;
@@ -1208,7 +1208,24 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                           ));
                                                                                         }
 
-                                                                                        controllerWork.changeConflict(false);
+                                                                                        // controllerWork.changeConflict(false);
+                                                                                        await _workoutExerciseConflictViewModel.getWorkoutExerciseConflictDetails(date: dateString(), userId: PreferenceManager.getUId());
+                                                                                        if (_workoutExerciseConflictViewModel.apiResponse.status == Status.COMPLETE) {
+                                                                                          WorkoutExerciseConflictResponseModel resConflict = _workoutExerciseConflictViewModel.apiResponse.data;
+
+                                                                                          if (resConflict.data != [] && resConflict.msg == "You are already following another program on these dates. Choose below if you want to follow them both.") {
+                                                                                            conflictWorkoutList = resConflict.data!;
+                                                                                            warningmsg = '${resConflict.msg}';
+
+                                                                                            print('-------------- msg${resConflict.msg}');
+
+                                                                                            print('conflict called on week days');
+
+                                                                                            controllerWork.changeConflict(true);
+                                                                                          } else {
+                                                                                            controllerWork.changeConflict(false);
+                                                                                          }
+                                                                                        }
                                                                                         print('Remove Pressed');
                                                                                       },
                                                                                       child: Container(
@@ -1340,6 +1357,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                         Get.back();
                                                                       }, onTapConfirmation:
                                                                           () async {
+                                                                        Get.back();
                                                                         controllerWork
                                                                             .changeConflict(false);
                                                                         if (controllerWork.apiResponse.status != Status.LOADING ||
@@ -1425,7 +1443,6 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 _userWorkoutsDateViewModel.superSetsRound = responseApi.data!.round;
                                                                                 _userWorkoutsDateViewModel.userProgramDatesId = responseApi.data!.userProgramDatesId!;
                                                                                 _userWorkoutsDateViewModel.restTime = responseApi.data!.restTime!;
-                                                                                Get.back();
 
                                                                                 Navigator.push(
                                                                                   context,
@@ -1444,7 +1461,8 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 );
                                                                               } catch (e) {
                                                                                 print('catchhhh');
-                                                                                Navigator.pop(context);
+
+                                                                                Get.offAll(HomeScreen(id: PreferenceManager.getUId()));
                                                                               }
                                                                               /* Get.to(WorkoutHomeScreen(
                                                                                 data: workResponse.data!,
