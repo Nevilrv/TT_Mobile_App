@@ -291,8 +291,7 @@ void openBottomSheet(
                           "This workout is Completed",
                           style: FontTextStyle.kTint24W400Roboto,
                         ))
-                    :
-                    snapshot.data!.data!.exercisesIds!.isEmpty ||
+                    : snapshot.data!.data!.exercisesIds!.isEmpty ||
                             snapshot.data!.data!.exercisesIds == []
                         ? TextButton(
                             onPressed: null,

@@ -706,7 +706,7 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
   bool isPass8DigitValid(String password) => password.length >= 8;
   bool isPasswordValid(String password) {
     Pattern? pattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[;_!@#\$&*~]).{8,}$';
     RegExp regex = new RegExp(pattern.toString());
     return regex.hasMatch(password);
   }

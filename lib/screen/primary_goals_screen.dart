@@ -3,7 +3,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/api_services/api_routes.dart';
+import 'package:tcm/model/request_model/create_subscription_request_model.dart';
 import 'package:tcm/model/request_model/register_request_model.dart';
 import 'package:tcm/model/response_model/goal_res_model.dart';
 import 'package:tcm/model/response_model/register_response_model.dart';
@@ -11,6 +14,7 @@ import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
+import 'package:tcm/viewModel/create_subscription_viewModel.dart';
 import 'package:tcm/viewModel/goal_view_model.dart';
 import 'package:tcm/viewModel/register_viewModel.dart';
 import 'package:dio/dio.dart' as dio;
@@ -55,7 +59,8 @@ class PrimaryGoalsScreen extends StatefulWidget {
 class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
   GoalViewModel _goalViewModel = Get.put(GoalViewModel());
   RegisterViewModel _registerViewModel = Get.put(RegisterViewModel());
-
+  CreateSubscriptionViewModel createSubscriptionViewModel =
+      Get.put(CreateSubscriptionViewModel());
   int? index = 0;
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
@@ -335,6 +340,26 @@ class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
                                                 'response.data!.id!=========== ${response.data!.id!}');
                                             print(
                                                 'EMAIL ${PreferenceManager.getEmail()}');
+
+                                            /// create subscription api
+                                            SubscriptionRequestModel model =
+                                                SubscriptionRequestModel();
+                                            print('enter---------');
+                                            model.userId =
+                                                PreferenceManager.getUId();
+                                            model.startDate =
+                                                Jiffy().dateTime.toString();
+                                            model.endDate = Jiffy()
+                                                .add(days: 7)
+                                                .dateTime
+                                                .toString();
+                                            model.currentPlan = "free";
+                                            await createSubscriptionViewModel
+                                                .subscriptionViewModel(
+                                                    model,
+                                                    ApiRoutes()
+                                                        .createSubscriptionUrl);
+
                                             Get.offAll(HomeScreen(
                                               id: PreferenceManager.getUId(),
                                             ));

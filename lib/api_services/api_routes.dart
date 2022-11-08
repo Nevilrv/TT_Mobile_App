@@ -31,6 +31,10 @@ class ApiRoutes {
 
   String editPassUrl = baseUrl + "/json/data_change_password.php";
   String editProfileUrl = baseUrl + "/json/data_user_profile_update.php";
+  String createSubscriptionUrl = baseUrl + "/json/data_create_subscription.php";
+  String updateSubscriptionUrl = baseUrl + "/json/data_update_subscription.php";
+  String subscriptionUrl =
+      baseUrl + "/json/data_get_user_subscription.php?user_id=";
 
   String saveWorkoutProgramUrl =
       baseUrl + "/json/data_save_workout_exercise.php";

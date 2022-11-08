@@ -123,6 +123,30 @@ class PreferenceManager {
     return getStorage.read('login');
   }
 
+  static Future isSetSubscriptionStartDate(String value) async {
+    await getStorage.write('startDate', value);
+  }
+
+  static isGetSubscriptionStartDate() {
+    return getStorage.read('startDate');
+  }
+
+  static Future isSetSubscriptionEndDate(String value) async {
+    await getStorage.write('endDate', value);
+  }
+
+  static isGetSubscriptionEndDate() {
+    return getStorage.read('endDate');
+  }
+
+  static Future isSetSubscriptionPlan(String value) async {
+    await getStorage.write('plan', value);
+  }
+
+  static isGetSubscriptionPlan() {
+    return getStorage.read('plan');
+  }
+
   static Future<void> clearData() async {
     // await getStorage.erase();
     await getStorage.remove('email');
@@ -133,5 +157,8 @@ class PreferenceManager {
     await getStorage.remove('address');
     await getStorage.remove('uid');
     await getStorage.remove('profile_pic');
+    await getStorage.remove('startDate');
+    await getStorage.remove('endDate');
+    await getStorage.remove('plan');
   }
 }

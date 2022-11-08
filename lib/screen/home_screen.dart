@@ -6,9 +6,9 @@ import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 import 'package:tcm/model/response_model/schedule_response_model/schedule_by_date_response_model.dart';
+import 'package:tcm/model/response_model/subscription_res_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/workout_by_id_response_model.dart';
-import 'package:tcm/model/response_model/user_detail_response_model.dart';
 import 'package:tcm/model/response_model/workout_response_model/user_workouts_date_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/New/workout_home_new.dart';
@@ -29,13 +29,14 @@ import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/home_viewModel.dart';
 import 'package:tcm/viewModel/schedule_viewModel/schedule_by_date_viewModel.dart';
 import 'package:tcm/viewModel/sign_in_viewModel.dart';
+import 'package:tcm/viewModel/subscription_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 import 'package:tcm/viewModel/user_detail_viewModel.dart';
 import 'package:tcm/viewModel/workout_viewModel/user_workouts_date_viewModel.dart';
-
 import '../model/request_model/habit_tracker_request_model/get_habit_record_date_request_model.dart';
 import '../viewModel/habit_tracking_viewModel/get_habit_record_viewModel.dart';
+import 'subscription/subscription_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? id;
@@ -65,6 +66,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.put(UserWorkoutsDateViewModel());
   ExerciseByIdViewModel _exerciseByIdViewModel =
       Get.put(ExerciseByIdViewModel());
+  SubscriptionViewModel subscriptionViewModel =
+      Get.put(SubscriptionViewModel());
   UserDetailViewModel _userDetailViewModel = Get.put(UserDetailViewModel());
   HomeViewModel _homeViewModel = Get.put(HomeViewModel());
   SignInViewModel _signInViewModel = Get.put(SignInViewModel());
@@ -74,7 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void initState() {
     super.initState();
+
     _connectivityCheckViewModel.startMonitoring();
+    getSubscriptionDetails();
+
     _userDetailViewModel.userDetailViewModel(
         id: widget.id ?? PreferenceManager.getUId());
 
@@ -87,6 +93,86 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     super.dispose();
     _homeViewModel.dispose();
+  }
+
+  getSubscriptionDetails() async {
+    await subscriptionViewModel.subscriptionDetails(
+        userId: widget.id ?? PreferenceManager.getUId());
+    if (subscriptionViewModel.apiResponse.status == Status.COMPLETE) {
+      SubscriptionResponseModel responseModel =
+          subscriptionViewModel.apiResponse.data;
+      print('subscription details >>>>>> $responseModel');
+      PreferenceManager.isSetSubscriptionStartDate(
+          responseModel.data!.startDate.toString());
+      PreferenceManager.isSetSubscriptionEndDate(
+          responseModel.data!.endDate.toString());
+      PreferenceManager.isSetSubscriptionPlan(
+          responseModel.data!.currentPlan.toString());
+      DateTime dt1 = DateTime.now();
+      DateTime dt2 = DateTime.parse("${responseModel.data!.endDate}");
+
+      if (dt2.isBefore(dt1)) {
+        print(">>> Plan end ");
+        Get.dialog(
+            AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18)),
+              backgroundColor: ColorUtils.kBlack,
+              actionsOverflowDirection: VerticalDirection.down,
+              title: Center(
+                child: Text('Your plan has expired',
+                    style: FontTextStyle.kBlack24W400Roboto.copyWith(
+                        fontWeight: FontWeight.bold, color: ColorUtils.kTint)),
+              ),
+              actions: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.resolveWith<Color?>(
+                            (Set<MaterialState> states) {
+                              if (states.contains(MaterialState.pressed))
+                                return ColorUtils.kTint.withOpacity(0.2);
+                              return null;
+                            },
+                          ),
+                        ),
+                        child: Text('Cancel',
+                            style: FontTextStyle.kBlack24W400Roboto
+                                .copyWith(color: ColorUtils.kTint)),
+                        onPressed: () {
+                          Get.back();
+                        }),
+                    TextButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith<Color?>(
+                          (Set<MaterialState> states) {
+                            if (states.contains(MaterialState.pressed))
+                              return ColorUtils.kTint.withOpacity(0.2);
+                            return null;
+                          },
+                        ),
+                      ),
+                      child: Text('Subscribe',
+                          style: FontTextStyle.kTint24W400Roboto
+                              .copyWith(fontWeight: FontWeight.bold)),
+                      onPressed: () {
+                        Get.back();
+                        Get.to(SubscriptionScreen());
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            barrierColor: ColorUtils.kBlack.withOpacity(0.6));
+      } else {
+        print(">>> Plan Continue ");
+      }
+    }
   }
 
   dateApiCall() async {
@@ -315,9 +401,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 allId.add(element);
                                 withoutWarmupAllId.add(element);
                               });
-                              print('Idssss >>> ${allId}');
+                              print('Idssss >>> $allId');
                               print(
-                                  'withoutWarmupAllId Idssss >>> ${withoutWarmupAllId}');
+                                  'withoutWarmupAllId Idssss >>> $withoutWarmupAllId');
                               return GetBuilder<WorkoutByIdViewModel>(
                                   builder: (controllerWork) {
                                 return GetBuilder<ExerciseByIdViewModel>(
@@ -954,24 +1040,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     )),
               ),
               Positioned(
-                  bottom: Get.height * 0.02,
-                  left: Get.width * .05,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: Get.width * .013,
-                        color: ColorUtils.kTint,
-                        height: Get.height * .03,
-                      ),
-                      SizedBox(
-                        width: Get.width * .02,
-                      ),
-                      Text(
-                        text!,
-                        style: FontTextStyle.kWhite24BoldRoboto,
-                      ),
-                    ],
-                  ))
+                bottom: Get.height * 0.02,
+                left: Get.width * .05,
+                child: Row(
+                  children: [
+                    Container(
+                      width: Get.width * .013,
+                      color: ColorUtils.kTint,
+                      height: Get.height * .03,
+                    ),
+                    SizedBox(
+                      width: Get.width * .02,
+                    ),
+                    Text(
+                      text!,
+                      style: FontTextStyle.kWhite24BoldRoboto,
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
@@ -1166,6 +1253,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Get.to(MyScheduleScreen());
 
                 oneTime = false;
+              }),
+          SizedBox(
+            height: Get.height * .03,
+          ),
+          bild(
+              image: AppIcons.subscription,
+              text: 'Subscription',
+              onTap: () {
+                Get.to(SubscriptionScreen());
               }),
           SizedBox(
             height: Get.height * .03,

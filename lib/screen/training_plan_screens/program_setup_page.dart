@@ -24,7 +24,6 @@ import 'package:tcm/screen/home_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/app_text.dart';
 import 'package:tcm/utils/font_styles.dart';
-import 'package:tcm/utils/shimmer_loading.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/day_based_exercise_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
@@ -779,7 +778,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                     Center(
                                                                                       child: Text(AppText.weekDays[index], style: controllerWork.dayAddedList.contains(AppText.weekDays[index]) ? FontTextStyle.kBlack20BoldRoboto : FontTextStyle.kTint20BoldRoboto),
                                                                                     ),
-                                                                                    apiDayDataList.contains(AppText.weekDays[index])
+                                                                                   /* apiDayDataList.contains(AppText.weekDays[index])
                                                                                         // &&
                                                                                         //     _workoutByIdViewModel
                                                                                         //         .dayAddedList
@@ -792,7 +791,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                             decoration: BoxDecoration(color: ColorUtils.kBlack, shape: BoxShape.circle),
                                                                                             child: Text('Rec.', style: FontTextStyle.kTint12BoldRoboto),
                                                                                           )
-                                                                                        : SizedBox(
+                                                                                        :*/ SizedBox(
                                                                                             height: Get.height * 0.05,
                                                                                             width: Get.height * 0.05,
                                                                                           )
