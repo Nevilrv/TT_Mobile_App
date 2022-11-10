@@ -1,9 +1,11 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/vimeo_video_player/vimeo_video_player.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/check_workout_program_request_model.dart';
@@ -15,6 +17,7 @@ import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/training_plan_screens/program_setup_page.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/check_workout_program_viewModel.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/exercise_by_id_viewModel.dart';
@@ -1000,15 +1003,28 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                                   ? Chewie(
                                       controller: _chewieController!,
                                     )
-                                  : response.data![0].exerciseImage == null
+                                  : /*response.data![0].exerciseImage == null
                                       ? noData()
-                                      : Image.network(
+                                      :*/
+                                  CachedNetworkImage(
+                                      imageUrl:
                                           response.data![0].exerciseImage!,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return noData();
-                                          },
-                                        )),
+                                      fit: BoxFit.cover,
+                                      errorWidget: (context, url, error) =>
+                                          noData(),
+                                      progressIndicatorBuilder:
+                                          (context, url, downloadProgress) =>
+                                              Shimmer.fromColors(
+                                        baseColor:
+                                            Colors.white.withOpacity(0.4),
+                                        highlightColor:
+                                            Colors.white.withOpacity(0.2),
+                                        enabled: true,
+                                        child: Container(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )),
                         ),
                         SizedBox(height: 15),
                         Padding(

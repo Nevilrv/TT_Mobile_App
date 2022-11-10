@@ -76,10 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
       Get.put(ConnectivityCheckViewModel());
 
   void initState() {
+    getSubscriptionDetails();
+
     super.initState();
 
     _connectivityCheckViewModel.startMonitoring();
-    getSubscriptionDetails();
 
     _userDetailViewModel.userDetailViewModel(
         id: widget.id ?? PreferenceManager.getUId());

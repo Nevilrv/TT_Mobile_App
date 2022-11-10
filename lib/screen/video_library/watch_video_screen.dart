@@ -1,9 +1,12 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chewie/chewie.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/custom_packages/vimeo_video_player/vimeo_video_player.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
@@ -13,6 +16,7 @@ import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/video_library/related_video_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
+import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/video_library_viewModel/recent_video_viewModel.dart';
 import 'package:tcm/custom_packages/vimeo_video_player/vimeo_controller.dart';
@@ -147,6 +151,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                           bufferedColor: ColorUtils.kLightGray),
                     ),
                     builder: (context, player) {
+                      print('>>>> enter in youtube');
                       return Scaffold(
                         backgroundColor: ColorUtils.kBlack,
                         appBar: AppBar(
@@ -180,17 +185,18 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                           child: Column(
                             children: [
                               Container(
-                                  height: Get.height / 3,
-                                  width: Get.width,
-                                  child: Center(
-                                    child: _youTubePlayerController != null ||
-                                            _youTubePlayerController != ''
-                                        ? player
-                                        : Center(
-                                            child: CircularProgressIndicator(
-                                            color: ColorUtils.kTint,
-                                          )),
-                                  )),
+                                height: Get.height / 3,
+                                width: Get.width,
+                                child: Center(
+                                  child: _youTubePlayerController != null ||
+                                          _youTubePlayerController != ''
+                                      ? player
+                                      : Center(
+                                          child: CircularProgressIndicator(
+                                          color: ColorUtils.kTint,
+                                        )),
+                                ),
+                              ),
                               Padding(
                                 padding: EdgeInsets.only(
                                     top: 0,
@@ -270,25 +276,30 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
 
                                                     print("button pressed ");
                                                   },
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Container(
-                                                          /*margin: EdgeInsets.only(
-                                                              top: Get.height *
-                                                                  .02),*/
-                                                          height:
-                                                              Get.height * 0.1,
-                                                          width:
-                                                              Get.height * 0.1,
-                                                          decoration: BoxDecoration(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 8.0),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: Container(
+                                                            /*margin: EdgeInsets.only(
+                                                                top: Get.height *
+                                                                    .02),*/
+                                                            height: Get.height *
+                                                                0.1,
+                                                            width: Get.height *
+                                                                0.1,
+                                                            decoration:
+                                                                BoxDecoration(
                                                               border: Border.all(
                                                                   color:
                                                                       ColorUtils
@@ -298,48 +309,96 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           15),
-                                                              image: DecorationImage(
-                                                                  image: NetworkImage(response
-                                                                      .data![
-                                                                          index]
-                                                                      .videoThumbnail!),
-                                                                  scale: 2.5)),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width:
-                                                              Get.height * .03),
-                                                      Expanded(
-                                                        flex: 4,
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              '${response.data![index].videoTitle}',
-                                                              style: FontTextStyle
-                                                                  .kWhite17BoldRoboto,
-                                                            ),
-                                                            htmlToTextGreyVidDesc(
-                                                                data: '${response.data![index].videoDescription!}'
-                                                                            .length >
-                                                                        30
-                                                                    ? response
-                                                                            .data![
-                                                                                index]
-                                                                            .videoDescription!
-                                                                            .substring(0,
-                                                                                30) +
-                                                                        ('...')
-                                                                    : response
+                                                              /*image: DecorationImage(
+                                                                    image: NetworkImage(response
                                                                         .data![
                                                                             index]
-                                                                        .videoDescription!),
-                                                          ],
+                                                                        .videoThumbnail!),
+                                                                    scale: 2.5)*/
+                                                            ),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15),
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: response
+                                                                    .data![
+                                                                        index]
+                                                                    .videoThumbnail!,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                errorWidget:
+                                                                    (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              15.0),
+                                                                  child: Image.asset(
+                                                                      AppImages
+                                                                          .logo),
+                                                                ),
+                                                                progressIndicatorBuilder:
+                                                                    (context,
+                                                                            url,
+                                                                            downloadProgress) =>
+                                                                        Shimmer
+                                                                            .fromColors(
+                                                                  baseColor: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.4),
+                                                                  highlightColor: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.2),
+                                                                  enabled: true,
+                                                                  child:
+                                                                      Container(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
                                                         ),
-                                                      )
-                                                    ],
+                                                        SizedBox(
+                                                            width: Get.height *
+                                                                .03),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                '${response.data![index].videoTitle}',
+                                                                style: FontTextStyle
+                                                                    .kWhite17BoldRoboto,
+                                                              ),
+                                                              htmlToTextGreyVidDesc(
+                                                                  data: '${response.data![index].videoDescription!}'
+                                                                              .length >
+                                                                          30
+                                                                      ? response.data![index].videoDescription!.substring(
+                                                                              0,
+                                                                              30) +
+                                                                          ('...')
+                                                                      : response
+                                                                          .data![
+                                                                              index]
+                                                                          .videoDescription!),
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 );
                                               }),
@@ -483,19 +542,27 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
 
                                                     print("button pressed ");
                                                   },
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Container(
-                                                          /*   margin: EdgeInsets.only(
-                                                              top: Get.height *
-                                                                  .02),*/
-                                                          height:
-                                                              Get.height * 0.1,
-                                                          width:
-                                                              Get.height * 0.1,
-                                                          decoration: BoxDecoration(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 8.0),
+                                                    child: Row(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: Container(
+                                                            /*   margin: EdgeInsets.only(
+                                                                top: Get.height *
+                                                                    .02),*/
+                                                            height: Get.height *
+                                                                0.1,
+                                                            width: Get.height *
+                                                                0.1,
+                                                            decoration:
+                                                                BoxDecoration(
                                                               border: Border.all(
                                                                   color:
                                                                       ColorUtils
@@ -505,63 +572,111 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           15),
-                                                              image: DecorationImage(
-                                                                  image: NetworkImage(response
-                                                                      .data![
-                                                                          index]
-                                                                      .videoThumbnail!),
-                                                                  scale: 2.5)),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width:
-                                                              Get.height * .03),
-                                                      Expanded(
-                                                        flex: 4,
-                                                        child: SizedBox(
-                                                          height:
-                                                              Get.height * .1,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                '${response.data![index].videoTitle}'
-                                                                            .length >
-                                                                        30
-                                                                    ? '${response.data![index].videoTitle}'.substring(
-                                                                            0,
-                                                                            28) +
-                                                                        "..."
-                                                                    : '${response.data![index].videoTitle}',
-                                                                style: FontTextStyle
-                                                                    .kWhite17BoldRoboto,
+                                                              /*  image: DecorationImage(
+                                                                    image: NetworkImage(response
+                                                                        .data![
+                                                                            index]
+                                                                        .videoThumbnail!),
+                                                                    scale: 2.5)*/
+                                                            ),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15),
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: response
+                                                                    .data![
+                                                                        index]
+                                                                    .videoThumbnail!,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                errorWidget:
+                                                                    (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              15.0),
+                                                                  child: Image.asset(
+                                                                      AppImages
+                                                                          .logo),
+                                                                ),
+                                                                progressIndicatorBuilder:
+                                                                    (context,
+                                                                            url,
+                                                                            downloadProgress) =>
+                                                                        Shimmer
+                                                                            .fromColors(
+                                                                  baseColor: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.4),
+                                                                  highlightColor: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.2),
+                                                                  enabled: true,
+                                                                  child:
+                                                                      Container(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                              htmlToTextGrey(
-                                                                  data: '${response.data![index].videoDescription!}'
-                                                                              .length >
-                                                                          25
-                                                                      ? response.data![index].videoDescription!.substring(
-                                                                              0,
-                                                                              22) +
-                                                                          ('...')
-                                                                      : response
-                                                                          .data![
-                                                                              index]
-                                                                          .videoDescription!),
-
-                                                              // maxLines: 1,
-                                                              // style: FontTextStyle
-                                                              //     .kLightGray16W300Roboto,
-                                                            ],
+                                                            ),
                                                           ),
                                                         ),
-                                                      )
-                                                    ],
+                                                        SizedBox(
+                                                            width: Get.height *
+                                                                .03),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: SizedBox(
+                                                            height:
+                                                                Get.height * .1,
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceEvenly,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  '${response.data![index].videoTitle}'
+                                                                              .length >
+                                                                          30
+                                                                      ? '${response.data![index].videoTitle}'.substring(
+                                                                              0,
+                                                                              28) +
+                                                                          "..."
+                                                                      : '${response.data![index].videoTitle}',
+                                                                  style: FontTextStyle
+                                                                      .kWhite17BoldRoboto,
+                                                                ),
+                                                                htmlToTextGrey(
+                                                                    data: '${response.data![index].videoDescription!}'.length >
+                                                                            25
+                                                                        ? response.data![index].videoDescription!.substring(0,
+                                                                                22) +
+                                                                            ('...')
+                                                                        : response
+                                                                            .data![index]
+                                                                            .videoDescription!),
+
+                                                                // maxLines: 1,
+                                                                // style: FontTextStyle
+                                                                //     .kLightGray16W300Roboto,
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 );
                                               }),
@@ -694,19 +809,24 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
 
                                                     print("button pressed ");
                                                   },
-                                                  child: Row(
-                                                    children: [
-                                                      Expanded(
-                                                        flex: 3,
-                                                        child: Container(
-                                                          /*  margin: EdgeInsets.only(
-                                                              top: Get.height *
-                                                                  .02),*/
-                                                          height:
-                                                              Get.height * 0.1,
-                                                          width:
-                                                              Get.height * 0.1,
-                                                          decoration: BoxDecoration(
+                                                  child: Padding(
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 8.0),
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                          flex: 3,
+                                                          child: Container(
+                                                            /*  margin: EdgeInsets.only(
+                                                                top: Get.height *
+                                                                    .02),*/
+                                                            height: Get.height *
+                                                                0.1,
+                                                            width: Get.height *
+                                                                0.1,
+                                                            decoration:
+                                                                BoxDecoration(
                                                               border: Border.all(
                                                                   color:
                                                                       ColorUtils
@@ -716,48 +836,99 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                                                   BorderRadius
                                                                       .circular(
                                                                           15),
-                                                              image: DecorationImage(
-                                                                  image: NetworkImage(response
-                                                                      .data![
-                                                                          index]
-                                                                      .videoThumbnail!),
-                                                                  scale: 2.5)),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                          width:
-                                                              Get.height * .03),
-                                                      Expanded(
-                                                        flex: 4,
-                                                        child: SizedBox(
-                                                          height:
-                                                              Get.height * .1,
-                                                          child: Column(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceEvenly,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Text(
-                                                                '${response.data![index].videoTitle}',
-                                                                style: FontTextStyle
-                                                                    .kWhite17BoldRoboto,
+                                                              /* image: DecorationImage(
+                                                                    image: NetworkImage(response
+                                                                        .data![
+                                                                            index]
+                                                                        .videoThumbnail!),
+                                                                    scale: 2.5)*/
+                                                            ),
+                                                            child: ClipRRect(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15),
+                                                              child:
+                                                                  CachedNetworkImage(
+                                                                imageUrl: response
+                                                                    .data![
+                                                                        index]
+                                                                    .videoThumbnail!,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                errorWidget:
+                                                                    (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              15.0),
+                                                                  child: Image.asset(
+                                                                      AppImages
+                                                                          .logo),
+                                                                ),
+                                                                progressIndicatorBuilder:
+                                                                    (context,
+                                                                            url,
+                                                                            downloadProgress) =>
+                                                                        Shimmer
+                                                                            .fromColors(
+                                                                  baseColor: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.4),
+                                                                  highlightColor: Colors
+                                                                      .white
+                                                                      .withOpacity(
+                                                                          0.2),
+                                                                  enabled: true,
+                                                                  child:
+                                                                      Container(
+                                                                    color: Colors
+                                                                        .white,
+                                                                  ),
+                                                                ),
                                                               ),
-                                                              htmlToTextGrey(
-                                                                data:
-                                                                    '${response.data![index].videoDescription}',
-
-                                                                // maxLines: 1,
-                                                                // style: FontTextStyle
-                                                                //     .kLightGray16W300Roboto,
-                                                              )
-                                                            ],
+                                                            ),
                                                           ),
                                                         ),
-                                                      )
-                                                    ],
+                                                        SizedBox(
+                                                            width: Get.height *
+                                                                .03),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: SizedBox(
+                                                            height:
+                                                                Get.height * .1,
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceEvenly,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                Text(
+                                                                  '${response.data![index].videoTitle}',
+                                                                  style: FontTextStyle
+                                                                      .kWhite17BoldRoboto,
+                                                                ),
+                                                                htmlToTextGrey(
+                                                                  data:
+                                                                      '${response.data![index].videoDescription}',
+
+                                                                  // maxLines: 1,
+                                                                  // style: FontTextStyle
+                                                                  //     .kLightGray16W300Roboto,
+                                                                )
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 );
                                               }),

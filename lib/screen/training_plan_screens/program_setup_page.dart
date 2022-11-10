@@ -1616,7 +1616,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                   child: Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 10),
                                 child: noData(),
-                              )));
+                              ),),);
                         }
                       });
                     } else {

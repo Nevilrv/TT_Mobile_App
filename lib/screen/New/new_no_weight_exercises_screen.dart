@@ -4,7 +4,6 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/save_user_customized_exercise_request_model.dart';
 import 'package:tcm/model/request_model/update_status_user_program_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
-import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
 import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/New/widget_type/reps_type.dart';
@@ -169,9 +168,9 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
             workoutId: widget.userProgramDatesId,
           ));
           print(
-              'widgetOfIndexwidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex}');
+              'widgetOfIndexWidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex}');
           print(
-              'widgetOfIndexwidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex.length}');
+              'widgetOfIndexWidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex.length}');
           print('${_workoutBaseExerciseViewModel.currentIndex}');
         }
       } else {
@@ -266,6 +265,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                               "WEIGHTED"
                                           ? "weight"
                                           : "reps";
+                                  print(
+                                      'list of weight >>>> ${_workoutBaseExerciseViewModel.weightedRepsList}');
                                   _req.repsData = _workoutBaseExerciseViewModel
                                               .exerciseType ==
                                           "WEIGHTED"

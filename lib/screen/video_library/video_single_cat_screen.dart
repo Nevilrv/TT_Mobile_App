@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/video_library_response_model/all_video_res_model.dart';
 import 'package:tcm/screen/common_widget/common_widget.dart';
@@ -166,35 +168,66 @@ class _VideoSingleCatScreenState extends State<VideoSingleCatScreen> {
                                                             BorderRadius
                                                                 .circular(15),
                                                         child: Center(
-                                                            child: videoResponse
-                                                                            .data![
-                                                                                index]
-                                                                            .videoThumbnail ==
-                                                                        null ||
-                                                                    videoResponse
-                                                                            .data![
-                                                                                index]
-                                                                            .videoThumbnail ==
-                                                                        ''
-                                                                ? Padding(
+                                                          child: videoResponse
+                                                                          .data![
+                                                                              index]
+                                                                          .videoThumbnail ==
+                                                                      null ||
+                                                                  videoResponse
+                                                                          .data![
+                                                                              index]
+                                                                          .videoThumbnail ==
+                                                                      ''
+                                                              ? Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .all(
+                                                                              15.0),
+                                                                  child: Image.asset(
+                                                                      AppImages
+                                                                          .logo),
+                                                                )
+                                                              : CachedNetworkImage(
+                                                                  imageUrl: videoResponse
+                                                                      .data![
+                                                                          index]
+                                                                      .videoThumbnail!,
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                  errorWidget: (context,
+                                                                          url,
+                                                                          error) =>
+                                                                      Padding(
                                                                     padding:
                                                                         EdgeInsets.all(
                                                                             15.0),
                                                                     child: Image.asset(
                                                                         AppImages
                                                                             .logo),
-                                                                  )
-                                                                : Image.network(
-                                                                    videoResponse
-                                                                        .data![
-                                                                            index]
-                                                                        .videoThumbnail!,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                    height: Get
-                                                                        .height,
-                                                                    width: Get
-                                                                        .width)),
+                                                                  ),
+                                                                  progressIndicatorBuilder: (context,
+                                                                          url,
+                                                                          downloadProgress) =>
+                                                                      Shimmer
+                                                                          .fromColors(
+                                                                    baseColor: Colors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            0.4),
+                                                                    highlightColor: Colors
+                                                                        .white
+                                                                        .withOpacity(
+                                                                            0.2),
+                                                                    enabled:
+                                                                        true,
+                                                                    child:
+                                                                        Container(
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),

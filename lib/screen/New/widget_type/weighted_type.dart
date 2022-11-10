@@ -53,72 +53,124 @@ class _WeightedTypeState extends State<WeightedType> {
   }
 
   weightedLoop() {
-    if (_workoutBaseExerciseViewModel.weightedEnter == false) {
-      _workoutBaseExerciseViewModel.weightedEnter = true;
+    print('Enter in weighted loop');
+    print('Enter in second time weighted loop');
+    print('enter in weighted loop ${widget.exerciseId}');
+    _workoutBaseExerciseViewModel.weightedRepsList.clear();
+    _workoutBaseExerciseViewModel.lbsList.clear();
+    try {
+      List tmpRepsDataList = widget.repsData!
+          .replaceAll("[", "")
+          .replaceAll("]", "")
+          .removeAllWhitespace
+          .split(",");
+      List tmpWeightDataList = widget.weightData!
+          .replaceAll("[", "")
+          .replaceAll("]", "")
+          .removeAllWhitespace
+          .split(",");
 
-      print('enter in weighted loop ${widget.exerciseId}');
-      _workoutBaseExerciseViewModel.weightedRepsList.clear();
-      _workoutBaseExerciseViewModel.lbsList.clear();
-      try {
-        List tmpRepsDataList = widget.repsData!
-            .replaceAll("[", "")
-            .replaceAll("]", "")
-            .removeAllWhitespace
-            .split(",");
-        List tmpWeightDataList = widget.weightData!
-            .replaceAll("[", "")
-            .replaceAll("]", "")
-            .removeAllWhitespace
-            .split(",");
+      print("tmpRepsDataListtmpRepsDataList ========== > ${tmpRepsDataList}");
+      print(
+          "tmpWeightDataListtmpWeightDataList =========== > ${tmpWeightDataList}");
+      print(
+          'weighted reps list ???  ${_workoutBaseExerciseViewModel.weightedRepsList}');
 
-        print("tmpRepsDataListtmpRepsDataList ========== > ${tmpRepsDataList}");
-        print(
-            "tmpWeightDataListtmpWeightDataList =========== > ${tmpWeightDataList}");
-
-        for (int i = 0; i < tmpRepsDataList.length; i++) {
-          _workoutBaseExerciseViewModel.weightedRepsList
-              .add(int.parse(tmpRepsDataList[i]));
-          // _workoutBaseExerciseViewModel.weightedLBSList
-          //     .add(int.parse("${widget}"));
-          if (widget.exerciseWeight == "" &&
-              widget.exerciseWeight.isEmpty &&
-              widget.weightData == "" &&
-              widget.weightData!.isEmpty) {
-            _workoutBaseExerciseViewModel.lbsList.add(0);
-          } else {
-            _workoutBaseExerciseViewModel.lbsList
-                .add(int.parse(tmpWeightDataList[i].toString()));
-          }
+      for (int i = 0; i < tmpRepsDataList.length; i++) {
+        _workoutBaseExerciseViewModel.weightedRepsList
+            .add(int.parse(tmpRepsDataList[i]));
+        // _workoutBaseExerciseViewModel.weightedLBSList
+        //     .add(int.parse("${widget}"));
+        if (widget.exerciseWeight == "" &&
+            widget.exerciseWeight.isEmpty &&
+            widget.weightData == "" &&
+            widget.weightData!.isEmpty) {
+          _workoutBaseExerciseViewModel.lbsList.add(0);
+        } else {
+          _workoutBaseExerciseViewModel.lbsList
+              .add(int.parse(tmpWeightDataList[i].toString()));
         }
-        print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
-
-        _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.weightedRepsList
-        });
-        _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.lbsList
-        });
-        print(
-            'weightedIndexRepsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexRepsMap}');
-        print(
-            'weightedIndexLbsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexLbsMap}');
-      } catch (e) {
-        for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
-          _workoutBaseExerciseViewModel.weightedRepsList.add(2);
-          _workoutBaseExerciseViewModel.lbsList.add(12);
-        }
-
-        _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.weightedRepsList
-        });
-        _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.lbsList
-        });
       }
+      print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
+      if (_workoutBaseExerciseViewModel.weightedRepsList.length <
+          int.parse(widget.exerciseSets)) {
+        print(
+            '>>>>>>>  weighted reps list is not equal to exercises set type loop enter');
+
+        int tmpLoopCount = int.parse(widget.exerciseSets) -
+            _workoutBaseExerciseViewModel.weightedRepsList.length;
+        print('>>>>>> temporary exercises loop count >>> $tmpLoopCount');
+        for (int i = 0; i < tmpLoopCount; i++) {
+          _workoutBaseExerciseViewModel.weightedRepsList
+              .add(int.parse(widget.exerciseReps.split("-").first));
+        }
+      }
+      if (_workoutBaseExerciseViewModel.lbsList.length <
+          int.parse(widget.exerciseSets)) {
+        print(
+            '>>>>>>>  weighted lbs list is not equal to exercises set type loop enter');
+
+        int tmpLoopCount = int.parse(widget.exerciseSets) -
+            _workoutBaseExerciseViewModel.lbsList.length;
+        print('>>>>>> temporary weight lbs loop count >>> $tmpLoopCount');
+        for (int i = 0; i < tmpLoopCount; i++) {
+          _workoutBaseExerciseViewModel.lbsList
+              .add(int.parse(widget.weightData.toString()));
+        }
+      }
+
+      _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
+        "${_workoutBaseExerciseViewModel.currentIndex}":
+            _workoutBaseExerciseViewModel.weightedRepsList
+      });
+      _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
+        "${_workoutBaseExerciseViewModel.currentIndex}":
+            _workoutBaseExerciseViewModel.lbsList
+      });
+      print(
+          'weightedIndexRepsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexRepsMap}');
+      print(
+          'weightedIndexLbsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexLbsMap}');
+    } catch (e) {
+      for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
+        _workoutBaseExerciseViewModel.weightedRepsList.add(2);
+        _workoutBaseExerciseViewModel.lbsList.add(12);
+      }
+      if (_workoutBaseExerciseViewModel.weightedRepsList.length <
+          int.parse(widget.exerciseSets)) {
+        print(
+            '>>>>>>>  weighted reps list is not equal to exercises set type loop enter');
+
+        int tmpLoopCount = int.parse(widget.exerciseSets) -
+            _workoutBaseExerciseViewModel.weightedRepsList.length;
+        print('>>>>>> temporary loop count >>> $tmpLoopCount');
+        for (int i = 0; i < tmpLoopCount; i++) {
+          _workoutBaseExerciseViewModel.weightedRepsList
+              .add(int.parse(widget.exerciseReps.split("-").first));
+        }
+      }
+      if (_workoutBaseExerciseViewModel.lbsList.length <
+          int.parse(widget.exerciseSets)) {
+        print(
+            '>>>>>>>  weighted lbs list is not equal to exercises set type loop enter');
+
+        int tmpLoopCount = int.parse(widget.exerciseSets) -
+            _workoutBaseExerciseViewModel.lbsList.length;
+        print('>>>>>> temporary weight lbs loop count >>> $tmpLoopCount');
+        for (int i = 0; i < tmpLoopCount; i++) {
+          _workoutBaseExerciseViewModel.lbsList
+              .add(int.parse(widget.weightData.toString()));
+        }
+      }
+
+      _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
+        "${_workoutBaseExerciseViewModel.currentIndex}":
+            _workoutBaseExerciseViewModel.weightedRepsList
+      });
+      _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
+        "${_workoutBaseExerciseViewModel.currentIndex}":
+            _workoutBaseExerciseViewModel.lbsList
+      });
     }
   }
 
@@ -134,6 +186,7 @@ class _WeightedTypeState extends State<WeightedType> {
   @override
   Widget build(BuildContext context) {
     print('exercises reps >>> ${widget.exerciseReps}');
+    print('exerciseSets >>> ${widget.exerciseSets}');
     weightedLoop();
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
@@ -195,17 +248,21 @@ class _WeightedTypeState extends State<WeightedType> {
                     physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     // itemCount: int.parse(widget.exerciseSets.toString()),
-                    itemCount: controller.weightedIndexLbsMap[
+                    itemCount: int.parse(widget.exerciseSets)
+
+                    /* controller.weightedIndexLbsMap[
                                 "${controller.currentIndex}"] ==
                             null
                         ? 0
                         : controller
                             .weightedIndexLbsMap["${controller.currentIndex}"]
-                            .length,
+                            .length*/
+                    ,
                     padding: EdgeInsets.only(
                         top: 0, right: Get.width * .06, left: Get.width * .06),
                     separatorBuilder: (_, index) {
                       print('exerciseRest >> ${widget.exerciseRest}');
+                      print('MAP >?>> ${controller.weightedIndexLbsMap}');
                       return TimerProgressBar(
                         // superSetScreen: false,
                         height: Get.height * .03,
@@ -215,13 +272,8 @@ class _WeightedTypeState extends State<WeightedType> {
                       );
                     },
                     itemBuilder: (_, index) {
-                      for (int i = 0;
-                          i <
-                              controller
-                                  .weightedIndexLbsMap[
-                                      "${controller.currentIndex}"]
-                                  .length;
-                          i++) _controller.add(TextEditingController());
+                      for (int i = 0; i < int.parse(widget.exerciseSets); i++)
+                        _controller.add(TextEditingController());
                       return Stack(
                         alignment: Alignment.topRight,
                         children: [
