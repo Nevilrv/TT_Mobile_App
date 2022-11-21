@@ -84,7 +84,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _editProfileViewModel.isUpload = false;
     _connectivityCheckViewModel.startMonitoring();
     super.initState();
-    email = TextEditingController(text: PreferenceManager.getEmail());
+    email = TextEditingController(
+      text: PreferenceManager.getEmail(),
+    );
     userName = TextEditingController(text: PreferenceManager.getUserName());
     fName = TextEditingController(text: PreferenceManager.getFirstName());
     lName = TextEditingController(text: PreferenceManager.getLastName());
@@ -95,6 +97,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     try {
       return GetBuilder<EditProfileViewModel>(builder: (controller) {
+        print('DOB >>>> ${PreferenceManager.getDOB()}');
         prefDOB = DateTime.parse(PreferenceManager.getDOB());
         return GetBuilder<ConnectivityCheckViewModel>(
           builder: (control) => control.isOnline
@@ -735,6 +738,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                 pickedDate == null
                                                     ? PreferenceManager.getDOB()
                                                     : pickedDate.toString();
+                                            print(
+                                                'DATE OF BIRTH >>> ${PreferenceManager.getDOB()}');
+                                            print(
+                                                'PICK DATE >>> ${pickedDate.toString()}');
                                             _request.weight = weight!
                                                     .text.isEmpty
                                                 ? PreferenceManager.getWeight()
@@ -771,11 +778,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                   PreferenceManager.setWeight(
                                                       response
                                                           .data![0].weight!);
+                                                  print('RESPONSE DATE > ' +
+                                                      response
+                                                          .data![0].birthday!
+                                                          .toString());
                                                   PreferenceManager.setDOB(
                                                       response
                                                           .data![0].birthday!
                                                           .toString());
-
+                                                  print(
+                                                      'NEW PREFERENCE >> ${PreferenceManager.getDOB()}');
                                                   PreferenceManager.isSetLogin(
                                                       true);
 
@@ -845,7 +857,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                         '',
                                                   );
                                                   print(
-                                                      'proooo 1     ${PreferenceManager.getProfilePic()}');
+                                                      'proooo 1     ${PreferenceManager.getDOB()}');
+                                                  print(
+                                                      'dob >>>>. ${_connectivityCheckViewModel.userData['dob']}');
 
                                                   Navigator.pop(context);
                                                   Get.showSnackbar(GetSnackBar(

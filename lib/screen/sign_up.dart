@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -45,6 +46,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isNotValidUserName = false;
 
   String? msg;
+
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
   @override
@@ -55,6 +57,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('Date >>> ${DateTime.now().toString().split(" ").first}');
+    print(
+        'endDate >>> ${DateTime.now().add(Duration(days: 7)).toString().split(" ").first}');
     return GetBuilder<ConnectivityCheckViewModel>(
       builder: (control) => control.isOnline
           ? Scaffold(
@@ -608,7 +613,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       height: Get.height * 0.01,
                                     ),
                                     TextFormField(
-                                        maxLength: 13,
+                                        inputFormatters: [
+                                          LengthLimitingTextInputFormatter(20),
+                                        ],
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
@@ -1170,7 +1177,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   padding: EdgeInsets.symmetric(
                                       horizontal: Get.width * 0.05),
                                   child: GestureDetector(
-                                    onTap: () {
+                                    onTap: () async {
                                       if (_formKeySignUp.currentState!
                                           .validate()) {
                                         Get.to(SetProfilePage(
@@ -1465,7 +1472,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool isPass8DigitValid(String password) => password.length >= 8;
   bool isPasswordValid(String password) {
     Pattern? pattern =
-        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[;_@#\$&*~]).{8,}$';
     RegExp regex = new RegExp(pattern.toString());
     return regex.hasMatch(password);
   }

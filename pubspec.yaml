@@ -65,6 +65,8 @@ dependencies:
   flick_video_player: ^0.5.0
   shimmer: ^2.0.0
   video_trimmer: 1.0.0
+  in_app_purchase: ^3.0.8
+
 
 
 

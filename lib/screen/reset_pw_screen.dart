@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
@@ -78,6 +79,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: Get.height * 0.01,
                         ),
                         TextFormField(
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(20),
+                            ],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -142,6 +146,9 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           height: Get.height * 0.01,
                         ),
                         TextFormField(
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(20),
+                            ],
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,

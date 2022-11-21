@@ -11,6 +11,18 @@ import '../../model/response_model/forum_response_model/add_comment_response_mod
 import '../../repo/forum_repo/add_comment_repo.dart';
 
 class AllCommentViewModel extends GetxController {
+  bool loader = false;
+  setLoaderValue(value) {
+    loader = value;
+    update();
+  }
+
+  String? textFiledValue;
+  setTextFiledValue(value) {
+    textFiledValue = value;
+    update();
+  }
+
   ApiResponse _getAllCommentsApiResponse =
       ApiResponse.initial(message: 'Initialization');
 

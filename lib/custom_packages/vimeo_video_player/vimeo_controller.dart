@@ -6,14 +6,17 @@ class VimeoController extends GetxController {
 
   videoUrl({String? url}) {
     videoPlayerController = VideoPlayerController.network(url!);
+    update();
   }
 
   videoDispose() {
     videoPlayerController.dispose();
+    update();
   }
 
   videoPause() {
     videoPlayerController.pause();
+    update();
   }
 
   var _res;

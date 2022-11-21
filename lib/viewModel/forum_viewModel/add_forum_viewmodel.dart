@@ -35,6 +35,7 @@ class AddForumViewModel extends GetxController {
 
   ApiResponse get addForumApiResponse => _addForumApiResponse;
   late AddForumResponseModel response;
+
   Future<void> addForumViewModel(AddForumRequestModel model) async {
     _addForumApiResponse = ApiResponse.loading(message: 'Loading');
     update();

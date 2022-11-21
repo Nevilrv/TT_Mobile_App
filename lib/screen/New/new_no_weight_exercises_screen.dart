@@ -4,7 +4,6 @@ import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/request_model/training_plan_request_model/save_user_customized_exercise_request_model.dart';
 import 'package:tcm/model/request_model/update_status_user_program_request_model.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
-import 'package:tcm/model/response_model/training_plans_response_model/save_user_customized_exercise_response_model.dart';
 import 'package:tcm/model/response_model/update_status_user_program_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/New/widget_type/reps_type.dart';
@@ -50,6 +49,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
       Get.put(SaveUserCustomizedExerciseViewModel());
   int lastBackIndex = 0;
   bool isLastBackCheck = false;
+  List<TextEditingController> editingController = [];
 
   dataFetchById({required String id}) async {
     print('id idiiiidididi $id');
@@ -108,6 +108,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
           String? weightById;
           try {
             repsById = exerciseByIdResponse.data![0].userExercise!.repsData;
+            print('>\ reps by id ??? ${repsById}');
             weightById = exerciseByIdResponse.data![0].userExercise!.weightData;
           } catch (e) {
             repsById = '';
@@ -115,7 +116,9 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
           }
 
           _workoutBaseExerciseViewModel.setWidgetOfIndex(
-              value: WeightedType(
+              value: weightNewType(
+                  workoutBaseExerciseViewModel: _workoutBaseExerciseViewModel,
+                  editingController: editingController,
                   exerciseSets: exerciseByIdResponse.data![0].exerciseSets!,
                   exerciseId: exerciseByIdResponse.data![0].exerciseId!,
                   exerciseTitle: exerciseByIdResponse.data![0].exerciseTitle!,
@@ -129,6 +132,22 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   exerciseRest: exerciseByIdResponse.data![0].exerciseRest!,
                   exerciseWeight: exerciseByIdResponse.data![0].exerciseWeight!,
                   exerciseColor: exerciseByIdResponse.data![0].exerciseColor!));
+
+          /* _workoutBaseExerciseViewModel.setWidgetOfIndex(
+              value: WeightedType(
+                  exerciseSets: exerciseByIdResponse.data![0].exerciseSets!,
+                  exerciseId: exerciseByIdResponse.data![0].exerciseId!,
+                  exerciseTitle: exerciseByIdResponse.data![0].exerciseTitle!,
+                  exerciseReps:
+                      exerciseByIdResponse.data![0].exerciseReps!.isEmpty ||
+                              exerciseByIdResponse.data![0].exerciseReps == ""
+                          ? "5"
+                          : exerciseByIdResponse.data![0].exerciseReps!,
+                  repsData: repsById,
+                  weightData: weightById,
+                  exerciseRest: exerciseByIdResponse.data![0].exerciseRest!,
+                  exerciseWeight: exerciseByIdResponse.data![0].exerciseWeight!,
+                  exerciseColor: exerciseByIdResponse.data![0].exerciseColor!));*/
         }
       }
     } else {
@@ -169,9 +188,9 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
             workoutId: widget.userProgramDatesId,
           ));
           print(
-              'widgetOfIndexwidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex}');
+              'widgetOfIndexWidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex}');
           print(
-              'widgetOfIndexwidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex.length}');
+              'widgetOfIndexWidgetOfIndex  ${_workoutBaseExerciseViewModel.widgetOfIndex.length}');
           print('${_workoutBaseExerciseViewModel.currentIndex}');
         }
       } else {
@@ -266,6 +285,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                                               "WEIGHTED"
                                           ? "weight"
                                           : "reps";
+                                  print(
+                                      'list of weight >>>> ${_workoutBaseExerciseViewModel.weightedRepsList}');
                                   _req.repsData = _workoutBaseExerciseViewModel
                                               .exerciseType ==
                                           "WEIGHTED"

@@ -19,6 +19,7 @@ class AppImages {
   static const String perfectDayIllustration =
       'asset/images/perfect_day_illustration.png';
   static const String workoutProgress = 'asset/images/workout_progress.png';
+
   static const String training = 'asset/images/training.png';
   static const String pick = 'asset/images/pick.png';
   static const String noImage = 'asset/images/noImage.png';
@@ -48,7 +49,7 @@ class AppIcons {
   static const String checked = 'asset/icons/checked.png';
   static const String info = 'asset/icons/info.png';
   static const String compareArrow = 'asset/icons/compare_arrow.png';
-
+  static const String subscription = 'asset/icons/subscription.png';
   static const String sms = "asset/images/sms.png";
   static const String more = "asset/images/more.png";
   static const String calendar = 'asset/icons/calendar.png';

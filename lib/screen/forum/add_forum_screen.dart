@@ -187,7 +187,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                     //       'mp4',
                                     //       'png',
                                     //       'mov'
-                                    //     ]);
+                                    //     ]);+
 
                                     Get.dialog(Center(
                                       child: Container(
@@ -273,7 +273,9 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                                     print(
                                                         'imageimage? $selectFile');
                                                     Get.to(TrimmerView(
-                                                        selectFile!));
+                                                        selectFile!,
+                                                        false,
+                                                        ""));
                                                     // Get.back();
                                                     /* final uint8list =
                                                         await VideoThumbnail
@@ -444,6 +446,8 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                         GestureDetector(
                                           onTap: () {
                                             Get.to(ImagePreviewScreen(
+                                              path: "",
+                                              commentScreen: false,
                                               image: controller22
                                                   .filesAll[index]['file'],
                                             ));

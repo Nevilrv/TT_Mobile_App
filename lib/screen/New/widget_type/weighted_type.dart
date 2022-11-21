@@ -8,272 +8,274 @@ import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/workout_viewModel/workout_base_exercise_viewModel.dart';
 
-class WeightedType extends StatefulWidget {
-  final String exerciseSets;
-  final String exerciseId;
-  final String exerciseTitle;
-  final String exerciseReps;
-  final String exerciseRest;
-  final String exerciseWeight;
-  final String exerciseColor;
-  final String? repsData;
-  final String? weightData;
+Widget weightNewType(
+    {required String exerciseSets,
+    required String exerciseId,
+    required String exerciseTitle,
+    required String exerciseReps,
+    required String exerciseRest,
+    required String exerciseWeight,
+    required String exerciseColor,
+    required List<TextEditingController> editingController,
+    required WorkoutBaseExerciseViewModel workoutBaseExerciseViewModel,
+    required String? repsData,
+    required String? weightData}) {
+  String weight = "${exerciseWeight}";
 
-  const WeightedType(
-      {Key? key,
-      required this.exerciseSets,
-      required this.exerciseId,
-      required this.exerciseTitle,
-      required this.exerciseReps,
-      required this.exerciseRest,
-      this.repsData,
-      this.weightData,
-      required this.exerciseWeight,
-      required this.exerciseColor})
-      : super(key: key);
+  print('Enter in weighted loop');
+  print('Enter in second time weighted loop');
+  print('enter in weighted loop ${exerciseId}');
+  workoutBaseExerciseViewModel.weightedRepsList.clear();
+  workoutBaseExerciseViewModel.weightedRepsList = [];
+  workoutBaseExerciseViewModel.lbsList.clear();
+  try {
+    List tmpRepsDataList = repsData!
+        .replaceAll("[", "")
+        .replaceAll("]", "")
+        .removeAllWhitespace
+        .split(",");
+    List tmpWeightDataList = weightData!
+        .replaceAll("[", "")
+        .replaceAll("]", "")
+        .removeAllWhitespace
+        .split(",");
 
-  @override
-  State<WeightedType> createState() => _WeightedTypeState();
-}
+    print("tmpRepsDataListtmpRepsDataList ========== > ${tmpRepsDataList}");
+    print(
+        "tmpWeightDataListtmpWeightDataList =========== > ${tmpWeightDataList}");
+    print(
+        'weighted reps list ???  ${workoutBaseExerciseViewModel.weightedRepsList}');
 
-class _WeightedTypeState extends State<WeightedType> {
-  // SaveUserCustomizedExerciseViewModel _customizedExerciseViewModel =
-  //     Get.put(SaveUserCustomizedExerciseViewModel());
-
-  String? weight;
-  WorkoutBaseExerciseViewModel _workoutBaseExerciseViewModel =
-      Get.put(WorkoutBaseExerciseViewModel());
-
-  @override
-  void initState() {
-    super.initState();
-    weight = "${widget.exerciseWeight}";
-
-    weightedLoop();
-  }
-
-  weightedLoop() {
-    if (_workoutBaseExerciseViewModel.weightedEnter == false) {
-      _workoutBaseExerciseViewModel.weightedEnter = true;
-
-      print('enter in weighted loop ${widget.exerciseId}');
-      _workoutBaseExerciseViewModel.weightedRepsList.clear();
-      _workoutBaseExerciseViewModel.lbsList.clear();
-      try {
-        List tmpRepsDataList = widget.repsData!
-            .replaceAll("[", "")
-            .replaceAll("]", "")
-            .removeAllWhitespace
-            .split(",");
-        List tmpWeightDataList = widget.weightData!
-            .replaceAll("[", "")
-            .replaceAll("]", "")
-            .removeAllWhitespace
-            .split(",");
-
-        print("tmpRepsDataListtmpRepsDataList ========== > ${tmpRepsDataList}");
-        print(
-            "tmpWeightDataListtmpWeightDataList =========== > ${tmpWeightDataList}");
-
-        for (int i = 0; i < tmpRepsDataList.length; i++) {
-          _workoutBaseExerciseViewModel.weightedRepsList
-              .add(int.parse(tmpRepsDataList[i]));
-          // _workoutBaseExerciseViewModel.weightedLBSList
-          //     .add(int.parse("${widget}"));
-          if (widget.exerciseWeight == "" &&
-              widget.exerciseWeight.isEmpty &&
-              widget.weightData == "" &&
-              widget.weightData!.isEmpty) {
-            _workoutBaseExerciseViewModel.lbsList.add(0);
-          } else {
-            _workoutBaseExerciseViewModel.lbsList
-                .add(int.parse(tmpWeightDataList[i].toString()));
-          }
-        }
-        print('>>>>> lbs List >>>  ${_workoutBaseExerciseViewModel.lbsList}');
-
-        _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.weightedRepsList
-        });
-        _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.lbsList
-        });
-        print(
-            'weightedIndexRepsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexRepsMap}');
-        print(
-            'weightedIndexLbsMap >>> ${_workoutBaseExerciseViewModel.weightedIndexLbsMap}');
-      } catch (e) {
-        for (int i = 0; i < int.parse("${widget.exerciseSets}"); i++) {
-          _workoutBaseExerciseViewModel.weightedRepsList.add(2);
-          _workoutBaseExerciseViewModel.lbsList.add(12);
-        }
-
-        _workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.weightedRepsList
-        });
-        _workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
-          "${_workoutBaseExerciseViewModel.currentIndex}":
-              _workoutBaseExerciseViewModel.lbsList
-        });
+    for (int i = 0; i < tmpRepsDataList.length; i++) {
+      workoutBaseExerciseViewModel.weightedRepsList
+          .add(int.parse(tmpRepsDataList[i]));
+      // _workoutBaseExerciseViewModel.weightedLBSList
+      //     .add(int.parse("${widget}"));
+      if (exerciseWeight == "" &&
+          exerciseWeight.isEmpty &&
+          weightData == "" &&
+          weightData.isEmpty) {
+        workoutBaseExerciseViewModel.lbsList.add(0);
+      } else {
+        workoutBaseExerciseViewModel.lbsList
+            .add(int.parse(tmpWeightDataList[i].toString()));
       }
     }
+    print('>>>>> lbs List >>>  ${workoutBaseExerciseViewModel.lbsList}');
+    if (workoutBaseExerciseViewModel.weightedRepsList.length <
+        int.parse(exerciseSets)) {
+      print(
+          '>>>>>>>  weighted reps list is not equal to exercises set type loop enter');
+
+      int tmpLoopCount = int.parse(exerciseSets) -
+          workoutBaseExerciseViewModel.weightedRepsList.length;
+      print('>>>>>> temporary exercises loop count >>> $tmpLoopCount');
+      for (int i = 0; i < tmpLoopCount; i++) {
+        workoutBaseExerciseViewModel.weightedRepsList
+            .add(int.parse(exerciseReps.split("-").first));
+      }
+    }
+    if (workoutBaseExerciseViewModel.lbsList.length < int.parse(exerciseSets)) {
+      print(
+          '>>>>>>>  weighted lbs list is not equal to exercises set type loop enter');
+
+      int tmpLoopCount =
+          int.parse(exerciseSets) - workoutBaseExerciseViewModel.lbsList.length;
+      print('>>>>>> temporary weight lbs loop count >>> $tmpLoopCount');
+      for (int i = 0; i < tmpLoopCount; i++) {
+        workoutBaseExerciseViewModel.lbsList
+            .add(int.parse(weightData.toString()));
+      }
+    }
+
+    workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
+      "${workoutBaseExerciseViewModel.currentIndex}":
+          workoutBaseExerciseViewModel.weightedRepsList
+    });
+    workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
+      "${workoutBaseExerciseViewModel.currentIndex}":
+          workoutBaseExerciseViewModel.lbsList
+    });
+    print(
+        'weightedIndexRepsMap >>> ${workoutBaseExerciseViewModel.weightedIndexRepsMap}');
+    print(
+        'weightedIndexLbsMap >>> ${workoutBaseExerciseViewModel.weightedIndexLbsMap}');
+  } catch (e) {
+    for (int i = 0; i < int.parse("${exerciseSets}"); i++) {
+      workoutBaseExerciseViewModel.weightedRepsList.add(2);
+      workoutBaseExerciseViewModel.lbsList.add(12);
+    }
+    if (workoutBaseExerciseViewModel.weightedRepsList.length <
+        int.parse(exerciseSets)) {
+      print(
+          '>>>>>>>  weighted reps list is not equal to exercises set type loop enter');
+
+      int tmpLoopCount = int.parse(exerciseSets) -
+          workoutBaseExerciseViewModel.weightedRepsList.length;
+      print('>>>>>> temporary loop count >>> $tmpLoopCount');
+      for (int i = 0; i < tmpLoopCount; i++) {
+        workoutBaseExerciseViewModel.weightedRepsList
+            .add(int.parse(exerciseReps.split("-").first));
+      }
+    }
+    if (workoutBaseExerciseViewModel.lbsList.length < int.parse(exerciseSets)) {
+      print(
+          '>>>>>>>  weighted lbs list is not equal to exercises set type loop enter');
+
+      int tmpLoopCount =
+          int.parse(exerciseSets) - workoutBaseExerciseViewModel.lbsList.length;
+      print('>>>>>> temporary weight lbs loop count >>> $tmpLoopCount');
+      for (int i = 0; i < tmpLoopCount; i++) {
+        workoutBaseExerciseViewModel.lbsList
+            .add(int.parse(weightData.toString()));
+      }
+    }
+
+    workoutBaseExerciseViewModel.weightedIndexRepsMap.addAll({
+      "${workoutBaseExerciseViewModel.currentIndex}":
+          workoutBaseExerciseViewModel.weightedRepsList
+    });
+    workoutBaseExerciseViewModel.weightedIndexLbsMap.addAll({
+      "${workoutBaseExerciseViewModel.currentIndex}":
+          workoutBaseExerciseViewModel.lbsList
+    });
   }
 
-  List<TextEditingController> _controller = [];
-  List? restTimer;
-  int currentValue = 0;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    print('exercises reps >>> ${widget.exerciseReps}');
-    weightedLoop();
-    return Scaffold(
-      backgroundColor: ColorUtils.kBlack,
-      resizeToAvoidBottomInset: false,
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          Container(
-            width: Get.width * 0.7,
-            child: Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Flexible(
-                    child: Text(
-                      '${widget.exerciseTitle}',
-                      style: FontTextStyle.kWhite24BoldRoboto,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                      textAlign: TextAlign.center,
-                    ),
+  return Scaffold(
+    backgroundColor: ColorUtils.kBlack,
+    resizeToAvoidBottomInset: false,
+    body: SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        Container(
+          width: Get.width * 0.7,
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                  child: Text(
+                    '${exerciseTitle}',
+                    style: FontTextStyle.kWhite24BoldRoboto,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 3,
+                    textAlign: TextAlign.center,
                   ),
-                  SizedBox(
-                    width: 10,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Get.to(() => ExerciseDetailPage(
+                        exerciseId: exerciseId, isFromExercise: true));
+                  },
+                  child: Image.asset(
+                    AppIcons.info,
+                    height: Get.height * 0.03,
+                    width: Get.height * 0.03,
+                    color: ColorUtils.kTint,
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(() => ExerciseDetailPage(
-                          exerciseId: widget.exerciseId, isFromExercise: true));
-                    },
-                    child: Image.asset(
-                      AppIcons.info,
-                      height: Get.height * 0.03,
-                      width: Get.height * 0.03,
-                      color: ColorUtils.kTint,
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
-          SizedBox(
-            height: Get.height * 0.015,
-          ),
-          Text('${widget.exerciseSets} sets of ${widget.exerciseReps} reps',
-              style: FontTextStyle.kLightGray16W300Roboto.copyWith(
-                  fontSize: Get.height * 0.023,
-                  color: Colors.white.withOpacity(0.8),
-                  fontWeight: FontWeight.w300)),
-          SizedBox(
-            height: Get.height * 0.05,
-          ),
-          GetBuilder<WorkoutBaseExerciseViewModel>(
-            builder: (controller) {
-              // try {
-              return SizedBox(
-                child: ListView.separated(
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    // itemCount: int.parse(widget.exerciseSets.toString()),
-                    itemCount: controller.weightedIndexLbsMap[
+        ),
+        SizedBox(
+          height: Get.height * 0.015,
+        ),
+        Text('${exerciseSets} sets of ${exerciseReps} reps',
+            style: FontTextStyle.kLightGray16W300Roboto.copyWith(
+                fontSize: Get.height * 0.023,
+                color: Colors.white.withOpacity(0.8),
+                fontWeight: FontWeight.w300)),
+        SizedBox(
+          height: Get.height * 0.05,
+        ),
+        GetBuilder<WorkoutBaseExerciseViewModel>(
+          builder: (controller) {
+            // try {
+            return SizedBox(
+              child: ListView.separated(
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  // itemCount: int.parse(widget.exerciseSets.toString()),
+                  itemCount: int.parse(exerciseSets)
+
+                  /* controller.weightedIndexLbsMap[
                                 "${controller.currentIndex}"] ==
                             null
                         ? 0
                         : controller
                             .weightedIndexLbsMap["${controller.currentIndex}"]
-                            .length,
-                    padding: EdgeInsets.only(
-                        top: 0, right: Get.width * .06, left: Get.width * .06),
-                    separatorBuilder: (_, index) {
-                      print('exerciseRest >> ${widget.exerciseRest}');
-                      return TimerProgressBar(
-                        // superSetScreen: false,
-                        height: Get.height * .03,
-                        width: Get.width,
-                        timerEndTime: widget.exerciseRest.split(" ").first,
-                        index: index,
-                      );
-                    },
-                    itemBuilder: (_, index) {
-                      for (int i = 0;
-                          i <
-                              controller
-                                  .weightedIndexLbsMap[
-                                      "${controller.currentIndex}"]
-                                  .length;
-                          i++) _controller.add(TextEditingController());
-                      return Stack(
-                        alignment: Alignment.topRight,
-                        children: [
-                          WeightedCard(
-                            weight: "$weight",
-                            counter:
-                                int.parse(widget.exerciseReps.split("-").first),
-                            index: index,
-                            editingController: _controller[index],
-                            // controller: _workoutBaseExerciseViewModel,
-                            // weight: "$weight"
+                            .length*/
+                  ,
+                  padding: EdgeInsets.only(
+                      top: 0, right: Get.width * .06, left: Get.width * .06),
+                  separatorBuilder: (_, index) {
+                    print('exerciseRest >> ${exerciseRest}');
+                    print('MAP >?>> ${controller.weightedIndexLbsMap}');
+                    return TimerProgressBar(
+                      // superSetScreen: false,
+                      height: Get.height * .03,
+                      width: Get.width,
+                      timerEndTime: exerciseRest.split(" ").first,
+                      index: index,
+                    );
+                  },
+                  itemBuilder: (_, index) {
+                    for (int i = 0; i < int.parse(exerciseSets); i++)
+                      editingController.add(TextEditingController());
+                    return Stack(
+                      alignment: Alignment.topRight,
+                      children: [
+                        WeightedCard(
+                          weight: "$weight",
+                          counter: int.parse(exerciseReps.split("-").first),
+                          index: index,
+                          editingController: editingController[index],
+                          // controller: _workoutBaseExerciseViewModel,
+                          // weight: "$weight"
+                        ),
+                        Positioned(
+                          top: Get.height * .01,
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: Get.height * .027,
+                            width: Get.height * .09,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    colors: exerciseColor == "green"
+                                        ? ColorUtilsGradient.kGreenGradient
+                                        : exerciseColor == "yellow"
+                                            ? ColorUtilsGradient.kOrangeGradient
+                                            : ColorUtilsGradient.kRedGradient,
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter),
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(6),
+                                    bottomLeft: Radius.circular(6))),
+                            child: Text('RIR ${exerciseReps}',
+                                style: FontTextStyle.kWhite12BoldRoboto
+                                    .copyWith(fontWeight: FontWeight.w500)),
                           ),
-                          Positioned(
-                            top: Get.height * .01,
-                            child: Container(
-                              alignment: Alignment.center,
-                              height: Get.height * .027,
-                              width: Get.height * .09,
-                              decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                      colors: widget.exerciseColor == "green"
-                                          ? ColorUtilsGradient.kGreenGradient
-                                          : widget.exerciseColor == "yellow"
-                                              ? ColorUtilsGradient
-                                                  .kOrangeGradient
-                                              : ColorUtilsGradient.kRedGradient,
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter),
-                                  borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(6),
-                                      bottomLeft: Radius.circular(6))),
-                              child: Text('RIR ${widget.exerciseReps}',
-                                  style: FontTextStyle.kWhite12BoldRoboto
-                                      .copyWith(fontWeight: FontWeight.w500)),
-                            ),
-                          )
-                        ],
-                      );
-                    }),
-              );
-              // } catch (e) {
-              //   return SizedBox();
-              // }
-            },
-          )
-          // isShow == false
-          //     ? SizedBox(height: Get.height * .25)
-          //     : SizedBox(height: Get.height * .025),
-        ]),
-      ),
-    );
-  }
+                        )
+                      ],
+                    );
+                  }),
+            );
+            // } catch (e) {
+            //   return SizedBox();
+            // }
+          },
+        )
+        // isShow == false
+        //     ? SizedBox(height: Get.height * .25)
+        //     : SizedBox(height: Get.height * .025),
+      ]),
+    ),
+  );
 }
 
 class WeightedCard extends StatefulWidget {
@@ -299,6 +301,7 @@ class _WeightedCardState extends State<WeightedCard> {
       Get.put(WorkoutBaseExerciseViewModel());
   void initState() {
     super.initState();
+
 /*    widget.editingController = TextEditingController(
         text: _workoutBaseExerciseViewModel.weightedIndexLbsMap[
             '${_workoutBaseExerciseViewModel.currentIndex}'][widget.index]);*/
@@ -314,6 +317,8 @@ class _WeightedCardState extends State<WeightedCard> {
       child: GetBuilder<WorkoutBaseExerciseViewModel>(
         builder: (controller) {
           print('hello =========== > ${controller.lbsList[widget.index]}');
+          print(
+              'weighted reps list =========== > ${controller.weightedRepsList}');
 
           return Container(
             height: Get.height * .1,
@@ -329,7 +334,7 @@ class _WeightedCardState extends State<WeightedCard> {
               InkWell(
                 onTap: () {
                   controller.updateWeightRepsList(
-                      // keys: "${controller.currentIndex}",
+                      keys: "${controller.currentIndex}",
                       index: widget.index,
                       isPlus: false);
                 },
@@ -349,11 +354,9 @@ class _WeightedCardState extends State<WeightedCard> {
               SizedBox(width: Get.width * .08),
               RichText(
                 text: TextSpan(
-                    text: "${controller.weightedRepsList[widget.index]} ",
-                    style: widget.counter == 0
-                        ? FontTextStyle.kWhite24BoldRoboto
-                            .copyWith(color: ColorUtils.kGray)
-                        : FontTextStyle.kWhite24BoldRoboto,
+                    text:
+                        "${controller.weightedIndexRepsMap['${controller.currentIndex}'][widget.index]} ",
+                    style: controller.weightedIndexRepsMap['${controller.currentIndex}'][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
                     // text:
                     //     '${controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index]} ',
                     // style: controller.weightedIndexRepsMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
@@ -368,7 +371,7 @@ class _WeightedCardState extends State<WeightedCard> {
                   print('Index >>> ${widget.index}');
                   print('${widget.index.runtimeType}');
                   controller.updateWeightRepsList(
-                      // keys: "${controller.currentIndex}",
+                      keys: "${controller.currentIndex}",
                       index: widget.index,
                       isPlus: true);
                 },

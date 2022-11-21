@@ -18,14 +18,33 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   }
 
   Map<String, dynamic> superSetRepsSaveMap = {};
+  setSuperSetRepsSaveMap({required String index, required Map repsMap}) {
+    superSetRepsSaveMap.addAll({index: repsMap});
+    update();
+  }
+
   bool isOneTimeApiCall = true;
-  List<Map<String, dynamic>> listOfSetRepesSave = [];
   updateSuperSetRepsSaveMap(
       {required String keyMain,
       required String subKey,
       required String value}) {
     superSetRepsSaveMap[keyMain][subKey] = value;
 
+    update();
+  }
+
+  /// weight card update for super set
+  Map<String, dynamic> superSetLbsSaveMap = {};
+  setSuperSetLbsSaveMap({required String index, required Map repsMap}) {
+    superSetLbsSaveMap.addAll({index: repsMap});
+    update();
+  }
+
+  updateSuperSetLbsSaveMap(
+      {required String keyMain,
+      required String subKey,
+      required String value}) {
+    superSetLbsSaveMap[keyMain][subKey] = value;
     update();
   }
 
@@ -154,21 +173,27 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   bool weightedEnter = false;
   List weightedRepsList = [];
 
-  updateWeightRepsList({required int index, required bool isPlus}) {
+  updateWeightRepsList(
+      {required int index, required bool isPlus, required String keys}) {
     if (isPlus) {
-      int mil = int.parse("${weightedRepsList[index]}");
+      int mil = int.parse("${weightedIndexRepsMap[keys][index]}");
       mil++;
-      weightedRepsList.removeAt(index);
-      weightedRepsList.insert(index, mil);
+      weightedIndexRepsMap[keys].removeAt(index);
+      weightedIndexRepsMap[keys].insert(index, mil);
+      // weightedRepsList.removeAt(index);
+      // weightedRepsList.insert(index, mil);
     } else {
-      if (weightedRepsList[index] != 0) {
-        int mil = int.parse("${weightedRepsList[index]}");
+      if (weightedIndexRepsMap[keys][index] != 0) {
+        int mil = int.parse("${weightedIndexRepsMap[keys][index]}");
         mil--;
-        weightedRepsList.removeAt(index);
-        weightedRepsList.insert(index, mil);
+        weightedIndexRepsMap[keys].removeAt(index);
+        weightedIndexRepsMap[keys].insert(index, mil);
+        // weightedRepsList.removeAt(index);
+        // weightedRepsList.insert(index, mil);
       }
     }
     update();
+    print('weighted list ?>?>? ${weightedIndexRepsMap}');
   }
 
   updateLbsList(
@@ -179,6 +204,17 @@ class WorkoutBaseExerciseViewModel extends GetxController {
     print('weightedIndexLbsMap >>> ${weightedIndexLbsMap}');
   }
 
+  /*updateSuperSetLbsList(
+      {required int index,
+      required String value,
+      required String keys,
+      required round}) {
+    superSetWeightSaveMap[round][keys].removeAt(index);
+    superSetWeightSaveMap[round][keys].insert(index, value);
+    update();
+    print('weightedIndexLbsMap >>> ${superSetWeightSaveMap}');
+  }
+*/
   Timer? weightedTimer;
   int? showWeightTimer;
   int currentWeightTimerValue = 0;

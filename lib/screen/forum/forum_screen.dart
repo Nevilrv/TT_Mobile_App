@@ -1,19 +1,12 @@
 import 'dart:developer' as d;
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:shimmer/shimmer.dart';
-
-import 'package:social_share/social_share.dart';
-import 'package:tcm/model/request_model/forum_request_model/dislike_forum_request_model.dart';
 import 'package:tcm/model/request_model/forum_request_model/like_forum_request_model.dart';
 import 'package:tcm/model/request_model/forum_request_model/search_forum_request_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
@@ -21,8 +14,6 @@ import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
-import 'package:tcm/screen/home_screen.dart';
-
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
@@ -456,10 +447,25 @@ class _ForumScreenState extends State<ForumScreen> {
                                                 : false,
                                             video: response.data![index]
                                                 .postImage![itemIndex])
-                                        : Image.network(
-                                            response.data![index]
-                                                .postImage![itemIndex],
+                                        : CachedNetworkImage(
+                                            imageUrl:
+                                                '${response.data![index].postImage![itemIndex]}',
                                             fit: BoxFit.cover,
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    SizedBox(),
+                                            progressIndicatorBuilder: (context,
+                                                    url, downloadProgress) =>
+                                                Shimmer.fromColors(
+                                              baseColor:
+                                                  Colors.white.withOpacity(0.4),
+                                              highlightColor:
+                                                  Colors.white.withOpacity(0.2),
+                                              enabled: true,
+                                              child: Container(
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                   );
                                 },
@@ -569,9 +575,9 @@ class _ForumScreenState extends State<ForumScreen> {
                           height: Get.height * 0.3,
                           width: Get.height * 0.3,
                           decoration: BoxDecoration(
-                              color: ColorUtils.kBlack,
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
+                            color: ColorUtils.kBlack,
+                            shape: BoxShape.circle,
+                            /* image: DecorationImage(
                                   image: response!.data![index!].profilePic ==
                                           ''
                                       ? NetworkImage(
@@ -579,7 +585,30 @@ class _ForumScreenState extends State<ForumScreen> {
                                         )
                                       : NetworkImage(
                                           response.data![index].profilePic!),
-                                  fit: BoxFit.cover))),
+                                  fit: BoxFit.cover)*/
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(150),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  '${response!.data![index!].profilePic!}',
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) =>
+                                  Image.network(
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
+                              ),
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                      Shimmer.fromColors(
+                                baseColor: Colors.white.withOpacity(0.4),
+                                highlightColor: Colors.white.withOpacity(0.2),
+                                enabled: true,
+                                child: Container(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )),
                       SizedBox(
                         height: Get.height * 0.02,
                       ),
@@ -598,16 +627,36 @@ class _ForumScreenState extends State<ForumScreen> {
                 height: Get.height * 0.06,
                 width: Get.height * 0.06,
                 decoration: BoxDecoration(
-                    color: ColorUtils.kBlack,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: ColorUtils.kTint),
-                    image: DecorationImage(
+                  color: ColorUtils.kBlack,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ColorUtils.kTint),
+                  /* image: DecorationImage(
                         image: response!.data![index!].profilePic == ''
                             ? NetworkImage(
                                 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
                               )
                             : NetworkImage(response.data![index].profilePic!),
-                        fit: BoxFit.cover)),
+                        fit: BoxFit.cover)*/
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: CachedNetworkImage(
+                    imageUrl: '${response!.data![index!].profilePic!}',
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Image.network(
+                      'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
+                    ),
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) => Shimmer.fromColors(
+                      baseColor: Colors.white.withOpacity(0.4),
+                      highlightColor: Colors.white.withOpacity(0.2),
+                      enabled: true,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
             SizedBox(
@@ -790,17 +839,25 @@ class _ForumScreenState extends State<ForumScreen> {
                   }
                 },
                 child: controller!.likeDisLike[index!].userLiked == 0
-                    ? Image.asset(
-                        AppImages.arrowUpBorder,
-                        color: ColorUtils.kTint,
-                        height: Get.height * 0.022,
-                        width: Get.height * 0.022,
+                    ? Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
+                        child: Image.asset(
+                          AppImages.arrowUpBorder,
+                          color: ColorUtils.kTint,
+                          height: Get.height * 0.022,
+                          width: Get.height * 0.022,
+                        ),
                       )
-                    : Image.asset(
-                        AppImages.arrowUp,
-                        color: ColorUtils.kTint,
-                        height: Get.height * 0.022,
-                        width: Get.height * 0.022,
+                    : Padding(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
+                        child: Image.asset(
+                          AppImages.arrowUp,
+                          color: ColorUtils.kTint,
+                          height: Get.height * 0.022,
+                          width: Get.height * 0.022,
+                        ),
                       ),
               ),
               SizedBox(
@@ -887,36 +944,41 @@ class _ForumScreenState extends State<ForumScreen> {
                 postId: response!.data![index].postId,
               ));
             },
-            child: Row(
-              children: [
-                Image.asset(
-                  AppImages.comment,
-                  color: ColorUtils.kTint,
-                  height: Get.height * 0.022,
-                  width: Get.height * 0.022,
-                ),
-                SizedBox(
-                  width: Get.width * 0.02,
-                ),
-                controller.likeDisLike[index].totalComments.toString().length <=
-                        3
-                    ? Text(
-                        '${controller.likeDisLike[index].totalComments}',
-                        style: FontTextStyle.kWhite17W400Roboto.copyWith(
-                          fontSize: Get.height * 0.0185,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 2.0, vertical: 2),
+              child: Row(
+                children: [
+                  Image.asset(
+                    AppImages.comment,
+                    color: ColorUtils.kTint,
+                    height: Get.height * 0.022,
+                    width: Get.height * 0.022,
+                  ),
+                  SizedBox(
+                    width: Get.width * 0.02,
+                  ),
+                  controller.likeDisLike[index].totalComments
+                              .toString()
+                              .length <=
+                          3
+                      ? Text(
+                          '${controller.likeDisLike[index].totalComments}',
+                          style: FontTextStyle.kWhite17W400Roboto.copyWith(
+                            fontSize: Get.height * 0.0185,
+                          ),
+                        )
+                      : Text(
+                          '${NumberFormat.compactCurrency(
+                            decimalDigits: 2,
+                            symbol:
+                                '', // if you want to add currency symbol then pass that in this else leave it empty.
+                          ).format(controller.likeDisLike[index].totalComments)}',
+                          style: FontTextStyle.kWhite17W400Roboto.copyWith(
+                            fontSize: Get.height * 0.0185,
+                          ),
                         ),
-                      )
-                    : Text(
-                        '${NumberFormat.compactCurrency(
-                          decimalDigits: 2,
-                          symbol:
-                              '', // if you want to add currency symbol then pass that in this else leave it empty.
-                        ).format(controller.likeDisLike[index].totalComments)}',
-                        style: FontTextStyle.kWhite17W400Roboto.copyWith(
-                          fontSize: Get.height * 0.0185,
-                        ),
-                      ),
-              ],
+                ],
+              ),
             ),
           ),
           // /*  GestureDetector(

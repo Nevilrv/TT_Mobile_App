@@ -1,8 +1,8 @@
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
-import 'package:video_trimmer/video_trimmer.dart';
+// import 'dart:io';
+//
+// import 'package:file_picker/file_picker.dart';
+// import 'package:flutter/material.dart';
+// import 'package:video_trimmer/video_trimmer.dart';
 
 /*class HomePage extends StatelessWidget {
   @override
@@ -180,3 +180,27 @@ import 'package:video_trimmer/video_trimmer.dart';
     );
   }
 }*/
+
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+class DeleteFile extends StatefulWidget {
+  final File outputFile;
+  const DeleteFile({Key? key, required this.outputFile}) : super(key: key);
+
+  @override
+  State<DeleteFile> createState() => _DeleteFileState();
+}
+
+class _DeleteFileState extends State<DeleteFile> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: Get.height * 0.8,
+      width: Get.width,
+      child: Image.file(widget.outputFile),
+    );
+  }
+}

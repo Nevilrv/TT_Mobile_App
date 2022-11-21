@@ -27,14 +27,15 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
   @override
   void initState() {
     _connectivityCheckViewModel.startMonitoring();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     try {
+      print('dob1 >>> ${_connectivityCheckViewModel.userData['dob']}');
       prefDOB = DateTime.parse(_connectivityCheckViewModel.userData['dob']);
-
       return GetBuilder<ConnectivityCheckViewModel>(
         builder: (control) => control.isOnline
             ? Scaffold(
@@ -235,7 +236,7 @@ class _ProfileViewScreenState extends State<ProfileViewScreen> {
                                 border: Border.all(
                                     color: ColorUtils.kTint, width: 1.5)),
                             child: Text(
-                              '${DateFormat.yMMMMd().format(prefDOB!)}',
+                              '${DateFormat.yMMMMd().format(DateTime.parse(_connectivityCheckViewModel.userData['dob']))}',
                               style: FontTextStyle.kWhite17BoldRoboto,
                             ),
                           ),

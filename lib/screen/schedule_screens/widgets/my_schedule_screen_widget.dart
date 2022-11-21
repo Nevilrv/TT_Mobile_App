@@ -261,7 +261,6 @@ void openBottomSheet(
                       'allExercisesList >>> ${_userWorkoutsDateViewModel.allExercisesList}');
                   print(
                       'withOutWarmupAllExercisesList >>> ${_userWorkoutsDateViewModel.withOutWarmupAllExercisesList}');
-
                   _userWorkoutsDateViewModel.superSetsRound =
                       snapshot.data!.data!.round;
                   _userWorkoutsDateViewModel.userProgramDatesId =
@@ -283,7 +282,7 @@ void openBottomSheet(
                 print(
                     'supersetRound >>> ${_userWorkoutsDateViewModel.userProgramDatesId}');
 
-                return scheduleByDateViewModel!.completeDate
+                return /*scheduleByDateViewModel!.completeDate
                         .contains(date.toString().split(' ').first)
                     ? TextButton(
                         onPressed: null,
@@ -291,7 +290,7 @@ void openBottomSheet(
                           "This workout is Completed",
                           style: FontTextStyle.kTint24W400Roboto,
                         ))
-                    :
+                    :*/
                     snapshot.data!.data!.exercisesIds!.isEmpty ||
                             snapshot.data!.data!.exercisesIds == []
                         ? TextButton(
