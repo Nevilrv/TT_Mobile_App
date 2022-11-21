@@ -7,10 +7,8 @@ import 'package:tcm/utils/images.dart';
 class HabitViewModel extends GetxController {
   List firstSelectedHabitList = [];
   String? habitIdString;
-
   List tmpHabitUpdatesList = [];
   double? percent = 0;
-
   // String selectedBodyIllu = AppImages.body_illustration[0];
 
   DateTime defDate = DateTime.now();

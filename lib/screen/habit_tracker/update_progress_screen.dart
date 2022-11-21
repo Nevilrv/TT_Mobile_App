@@ -590,6 +590,8 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                           onTap: () async {
                                             controller.updateSelectedHabits(
                                                 id: '${recordResponse!.data![index].habitId}');
+                                            print(
+                                                'tmphabitupdatelist >>> ${controller.tmpHabitUpdatesList}');
                                             controller.progressCounter(
                                                 selectedHabitListLength:
                                                     controller

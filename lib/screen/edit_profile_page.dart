@@ -735,6 +735,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                 pickedDate == null
                                                     ? PreferenceManager.getDOB()
                                                     : pickedDate.toString();
+                                            print(
+                                                'DATE OF BIRTH >>> ${PreferenceManager.getDOB()}');
+                                            print(
+                                                'PICK DATE >>> ${pickedDate.toString()}');
                                             _request.weight = weight!
                                                     .text.isEmpty
                                                 ? PreferenceManager.getWeight()
@@ -771,11 +775,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                   PreferenceManager.setWeight(
                                                       response
                                                           .data![0].weight!);
+                                                  print('RESPONSE DATE > ' +
+                                                      response
+                                                          .data![0].birthday!
+                                                          .toString());
                                                   PreferenceManager.setDOB(
                                                       response
                                                           .data![0].birthday!
                                                           .toString());
-
+                                                  print(
+                                                      'NEW PREFERENCE >> ${PreferenceManager.getDOB()}');
                                                   PreferenceManager.isSetLogin(
                                                       true);
 
@@ -845,7 +854,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                         '',
                                                   );
                                                   print(
-                                                      'proooo 1     ${PreferenceManager.getProfilePic()}');
+                                                      'proooo 1     ${PreferenceManager.getDOB()}');
+                                                  print(
+                                                      'dob >>>>. ${_connectivityCheckViewModel.userData['dob']}');
 
                                                   Navigator.pop(context);
                                                   Get.showSnackbar(GetSnackBar(

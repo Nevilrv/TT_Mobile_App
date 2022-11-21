@@ -260,8 +260,9 @@ void openBottomSheet(
                   print(
                       'allExercisesList >>> ${_userWorkoutsDateViewModel.allExercisesList}');
                   print(
+                      'scheduleByDateViewModel!.completeDate >>> ${_userWorkoutsDateViewModel.allExercisesList}');
+                  print(
                       'withOutWarmupAllExercisesList >>> ${_userWorkoutsDateViewModel.withOutWarmupAllExercisesList}');
-
                   _userWorkoutsDateViewModel.superSetsRound =
                       snapshot.data!.data!.round;
                   _userWorkoutsDateViewModel.userProgramDatesId =
@@ -301,7 +302,8 @@ void openBottomSheet(
                             ))
                         : TextButton(
                             onPressed: () {
-                              print('');
+                              print(
+                                  'snapshot.data!.data ${snapshot.data!.data == []}');
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

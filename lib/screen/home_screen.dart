@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -162,7 +164,36 @@ class _HomeScreenState extends State<HomeScreen> {
                               .copyWith(fontWeight: FontWeight.bold)),
                       onPressed: () {
                         Get.back();
-                        Get.to(SubscriptionScreen());
+
+                        if (Platform.isIOS) {
+                          Get.to(SubscriptionScreen());
+                        } else {
+                          Get.dialog(
+                            Material(
+                              color: Colors.transparent,
+                              child: Center(
+                                child: Container(
+                                  height: Get.height * 0.25,
+                                  width: Get.height * 0.25,
+                                  decoration: BoxDecoration(
+                                      color: ColorUtils.kBlack,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  child: Center(
+                                    child: Text(
+                                      'This Functionality is has not been Implemented in Android',
+                                      textAlign: TextAlign.center,
+                                      style: FontTextStyle.kBlack22BoldRoboto
+                                          .copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: ColorUtils.kTint,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
                       },
                     ),
                   ],
@@ -399,8 +430,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                               responseDate.data!.exercisesIds!
                                   .forEach((element) {
-                                allId.add(element);
-                                withoutWarmupAllId.add(element);
+                                if (element == 1) {
+                                } else {
+                                  allId.add(element);
+                                  withoutWarmupAllId.add(element);
+                                }
                               });
                               print('Idssss >>> $allId');
                               print(
@@ -1262,7 +1296,34 @@ class _HomeScreenState extends State<HomeScreen> {
               image: AppIcons.subscription,
               text: 'Subscription',
               onTap: () {
-                Get.to(SubscriptionScreen());
+                if (Platform.isIOS) {
+                  Get.to(SubscriptionScreen());
+                } else {
+                  Get.dialog(
+                    Material(
+                      color: Colors.transparent,
+                      child: Center(
+                        child: Container(
+                          height: Get.height * 0.25,
+                          width: Get.height * 0.25,
+                          decoration: BoxDecoration(
+                              color: ColorUtils.kBlack,
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Center(
+                            child: Text(
+                              'This Functionality is has not been Implemented in Android',
+                              textAlign: TextAlign.center,
+                              style: FontTextStyle.kBlack22BoldRoboto.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: ColorUtils.kTint,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }
               }),
           SizedBox(
             height: Get.height * .03,

@@ -1,13 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/exp_res_model.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
-import 'package:tcm/screen/primary_goals_screen.dart';
+import 'package:tcm/screen/primary_goals_screen%20.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
-
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
 import '../viewModel/experience_view_model.dart';

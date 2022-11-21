@@ -18,8 +18,9 @@ class WeightedType extends StatefulWidget {
   final String exerciseColor;
   final String? repsData;
   final String? weightData;
+  bool? isCall;
 
-  const WeightedType(
+  WeightedType(
       {Key? key,
       required this.exerciseSets,
       required this.exerciseId,
@@ -28,6 +29,7 @@ class WeightedType extends StatefulWidget {
       required this.exerciseRest,
       this.repsData,
       this.weightData,
+      required this.isCall,
       required this.exerciseWeight,
       required this.exerciseColor})
       : super(key: key);
@@ -48,8 +50,10 @@ class _WeightedTypeState extends State<WeightedType> {
   void initState() {
     super.initState();
     weight = "${widget.exerciseWeight}";
-
-    weightedLoop();
+    if (widget.isCall == true) {
+      weightedLoop();
+      widget.isCall = false;
+    }
   }
 
   weightedLoop() {
@@ -187,7 +191,7 @@ class _WeightedTypeState extends State<WeightedType> {
   Widget build(BuildContext context) {
     print('exercises reps >>> ${widget.exerciseReps}');
     print('exerciseSets >>> ${widget.exerciseSets}');
-    weightedLoop();
+    // weightedLoop();
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
       resizeToAvoidBottomInset: false,

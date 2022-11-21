@@ -181,26 +181,46 @@
   }
 }*/
 
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
-class DeleteFile extends StatefulWidget {
-  final File outputFile;
-  const DeleteFile({Key? key, required this.outputFile}) : super(key: key);
+class dropdown extends StatefulWidget {
+  const dropdown({Key? key}) : super(key: key);
 
   @override
-  State<DeleteFile> createState() => _DeleteFileState();
+  _dropdownState createState() => _dropdownState();
 }
 
-class _DeleteFileState extends State<DeleteFile> {
+List cities = ['india', 'pakistan', 'china', 'dubai', 'Australia'];
+String _salutation =
+    "Mr."; //This is the selection value. It is also present in my array.
+final _salutations = ["Mr.", "Mrs.", "Master", "Mistress"]; //
+var selectCities = 'india';
+
+class _dropdownState extends State<dropdown> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Get.height * 0.8,
-      width: Get.width,
-      child: Image.file(widget.outputFile),
+    return Scaffold(
+      body: Column(
+        children: [
+          SizedBox(
+            height: 100,
+          ),
+          Container(
+            child: DropdownButton(
+              items: _salutations
+                  .map((String item) =>
+                      DropdownMenuItem<String>(child: Text(item), value: item))
+                  .toList(),
+              onChanged: (String? value) {
+                setState(() {
+                  _salutation = value!;
+                });
+              },
+              value: _salutation,
+            ),
+          )
+        ],
+      ),
     );
   }
 }

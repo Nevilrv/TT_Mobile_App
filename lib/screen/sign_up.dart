@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/set_profile_page.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
-import 'package:tcm/viewModel/create_subscription_viewModel.dart';
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
 

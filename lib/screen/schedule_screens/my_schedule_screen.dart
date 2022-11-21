@@ -52,7 +52,6 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
   void initState() {
     super.initState();
     _connectivityCheckViewModel.startMonitoring();
-
     _scheduleByDateViewModel.getScheduleByDateDetails(
         userId: PreferenceManager.getUId());
   }

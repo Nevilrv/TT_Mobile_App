@@ -1,14 +1,13 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:social_share/social_share.dart';
 import 'package:tcm/utils/ColorUtils.dart';
-
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
 
 class HabitProgressShare extends StatefulWidget {
   HabitProgressShare({Key? key}) : super(key: key);
@@ -19,6 +18,7 @@ class HabitProgressShare extends StatefulWidget {
 
 class _HabitProgressShareState extends State<HabitProgressShare> {
   ScreenshotController screenshotController = ScreenshotController();
+  HabitViewModel habitViewModel = Get.put(HabitViewModel());
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class _HabitProgressShareState extends State<HabitProgressShare> {
                             height: Get.height * 0.02,
                           ),
                           Text(
-                            '8 Habits Completed',
+                            '${habitViewModel.tmpHabitUpdatesList.length} Habits Completed',
                             style: FontTextStyle.kWhite24BoldRoboto
                                 .copyWith(fontSize: Get.height * 0.023),
                             maxLines: 4,
@@ -126,7 +126,7 @@ class _HabitProgressShareState extends State<HabitProgressShare> {
                             commonMethod(
                                 onTap: () {
                                   SocialShare.shareSms(
-                                    "8 Habits Completed\n",
+                                    "${habitViewModel.tmpHabitUpdatesList.length} Habits Completed\n",
                                     url:
                                         "https://i.pinimg.com/222x/7a/11/b9/7a11b9f739c130eed437d1a237cc3b7d.jpg",
                                     trailingText: "\n21/30 days",
@@ -205,7 +205,7 @@ class _HabitProgressShareState extends State<HabitProgressShare> {
                             commonMethod(
                                 onTap: () {
                                   SocialShare.shareWhatsapp(
-                                    "8 Habits Completed \n https://i.pinimg.com/222x/7a/11/b9/7a11b9f739c130eed437d1a237cc3b7d.jpg",
+                                    "${habitViewModel.tmpHabitUpdatesList.length} Habits Completed \n https://i.pinimg.com/222x/7a/11/b9/7a11b9f739c130eed437d1a237cc3b7d.jpg",
                                   ).then((data) {
                                     print(data);
                                   });
@@ -215,7 +215,7 @@ class _HabitProgressShareState extends State<HabitProgressShare> {
                             commonMethod(
                                 onTap: () {
                                   SocialShare.shareTwitter(
-                                    "8 Habits Completed",
+                                    "${habitViewModel.tmpHabitUpdatesList.length} Habits Completed",
                                     url:
                                         "https://i.pinimg.com/222x/7a/11/b9/7a11b9f739c130eed437d1a237cc3b7d.jpg",
                                     trailingText: "\n21/30 days",
@@ -228,7 +228,7 @@ class _HabitProgressShareState extends State<HabitProgressShare> {
                             commonMethod(
                                 onTap: () {
                                   SocialShare.shareOptions(
-                                    "8 Habits Completed \n https://i.pinimg.com/222x/7a/11/b9/7a11b9f739c130eed437d1a237cc3b7d.jpg",
+                                    "${habitViewModel.tmpHabitUpdatesList.length} Habits Completed \n https://i.pinimg.com/222x/7a/11/b9/7a11b9f739c130eed437d1a237cc3b7d.jpg",
                                   ).then((data) {
                                     print(data);
                                   });

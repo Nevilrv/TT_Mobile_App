@@ -322,6 +322,10 @@ class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
                                             ids = response.data!.id;
                                             PreferenceManager.setEmail(
                                                 response.data!.email!);
+                                            PreferenceManager.setFirstName(
+                                                response.data!.fname!);
+                                            PreferenceManager.setLastName(
+                                                response.data!.lname!);
                                             PreferenceManager.setPassword(
                                                 response.data!.password!);
                                             PreferenceManager.setUserName(
@@ -332,6 +336,9 @@ class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
                                                 response.data!.weight!);
                                             PreferenceManager.setPhoneNumber(
                                                 response.data!.phone!);
+                                            PreferenceManager.setDOB(response
+                                                .data!.birthday
+                                                .toString());
                                             PreferenceManager.setUserType(
                                                 response.data!.gender!);
                                             PreferenceManager.isSetLogin(true);

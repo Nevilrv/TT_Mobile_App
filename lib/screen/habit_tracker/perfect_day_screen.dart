@@ -26,18 +26,22 @@ class PerfectDayScreen extends StatelessWidget {
               Icons.arrow_back_ios_sharp,
               color: ColorUtils.kTint,
             )),
-        backgroundColor: ColorUtils.kBlack,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text('HABITS COMPLETE', style: FontTextStyle.kWhite16BoldRoboto),
-            SizedBox(width: 5),
-            Image.asset(
+        actions: [
+          GestureDetector(
+            onTap: () {},
+            child: Image.asset(
               AppIcons.checked,
               height: Get.height * .025,
               width: Get.height * .025,
               color: ColorUtils.kWhite,
             ),
+          ),
+        ],
+        backgroundColor: ColorUtils.kBlack,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text('HABITS COMPLETE', style: FontTextStyle.kWhite16BoldRoboto),
           ],
         ),
         centerTitle: true,

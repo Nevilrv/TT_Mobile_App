@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -44,8 +45,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   bool _loading = false;
 
   String discount = '';
+
   List<ProductDetails> _products = [];
   List<PurchaseDetails> _purchases = [];
+
   StreamSubscription<List<PurchaseDetails>>? _subscription;
 
   @override
@@ -55,20 +58,40 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     _loading = true;
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _inAppPurchase.purchaseStream;
+
     try {
       _subscription = purchaseUpdated.listen(
         (purchaseDetailsList) {
+          setState(() {
+            _loading = true;
+          });
+
           purchaseDetailsList.forEach((element) {
             log("purchaseDetails productID ${element.productID}");
             log("purchaseDetails purchaseID ${element.purchaseID}");
+            log("purchaseDetails pendingCompletePurchase ${element.status}");
           });
           _purchases.addAll(purchaseDetailsList);
+          setState(() {
+            _loading = false;
+          });
+          log("purchaseDetails _purchases ${_purchases.last}");
           _listenToPurchaseUpdated(purchaseDetailsList);
+          setState(() {
+            _loading = false;
+          });
         },
         onDone: () {
+          setState(() {
+            _loading = false;
+          });
           _subscription!.cancel();
         },
         onError: (error) {
+          setState(() {
+            _loading = false;
+          });
+
           _subscription!.cancel();
         },
       );
@@ -86,6 +109,8 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     _products = await _getProducts(
       productIds: _productID.toSet(),
     );
+    int price = double.parse(_products[0].price.substring(1)).round();
+    print("products $price");
     print("products ${_products[0].title}");
     // amount = _products[0].price;
     chaeckPlanIsExpired();
@@ -98,7 +123,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
     purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
       switch (purchaseDetails.status) {
         case PurchaseStatus.pending:
+          print('hii');
+
           _loading = true;
+
           break;
         case PurchaseStatus.purchased:
           setState(() {
@@ -119,8 +147,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           validateReceiptIos(receiptBody, true, purchaseDetails);
           break;
         case PurchaseStatus.error:
-          print(
-              "purchaseD      etails.error.message ${purchaseDetails.error!.message}");
+          log("purchaseD etails.error.message ${purchaseDetails.error!.message}");
           print(
               "purchaseDetails.error.message ${purchaseDetails.error!.details}");
           Get.dialog(
@@ -143,6 +170,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
           break;
       }
       if (purchaseDetails.pendingCompletePurchase) {
+        log('hellio....${purchaseDetails.pendingCompletePurchase}');
         await _inAppPurchase.completePurchase(purchaseDetails);
       }
     });
@@ -151,42 +179,66 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   Future<List<ProductDetails>> _getProducts({Set<String>? productIds}) async {
     ProductDetailsResponse response =
         await _inAppPurchase.queryProductDetails(productIds!);
-    _loading = false;
+    setState(() {
+      _loading = false;
+    });
     return response.productDetails;
   }
 
   void _subscribe({ProductDetails? product}) {
-    final PurchaseParam purchaseParam = PurchaseParam(productDetails: product!);
-    _inAppPurchase.buyNonConsumable(
-      purchaseParam: purchaseParam,
-    );
+    setState(() {
+      _loading = false;
+    });
+    print('_loading>>>>1 ${_loading}');
+    try {
+      print('hello....');
+      try {
+        final PurchaseParam purchaseParam = PurchaseParam(
+          productDetails: product!,
+        );
+        _inAppPurchase
+            .buyNonConsumable(
+              purchaseParam: purchaseParam,
+            )
+            .then((value) => print('value>>>  $value'));
+        setState(() {
+          _loading = false;
+        });
+      } catch (e) {
+        print('eeeeee>> 1$e');
+      }
+    } catch (e) {
+      print('eeeeee>> $e');
+    }
   }
 
   chaeckPlanIsExpired() {
     DateTime dt1 = DateTime.now();
     DateTime dt2 =
         DateTime.parse("${PreferenceManager.isGetSubscriptionEndDate()}");
-
+    int price = double.parse(_products[0].price.substring(1)).round();
+    print("products $price");
     if (dt2.isBefore(dt1)) {
       if (PreferenceManager.isGetSubscriptionPlan() == 'free') {
         print(">>> finish free plan ");
+
         setState(() {
           isFreePlanExpired = true;
           index = 2;
-          amount = _products[0].price;
+          amount = '${_products[0].price.characters.first}$price';
           isExpired = true;
         });
       } else {
         print(">>> Plan end ");
         setState(() {
           index = 2;
-          amount = _products[0].price;
+          amount = '${_products[0].price.characters.first}$price';
           isExpired = true;
         });
       }
     } else if (PreferenceManager.isGetSubscriptionPlan() == 'free') {
       index = 2;
-      amount = _products[0].price;
+      amount = '${_products[0].price.characters.first}$price';
       isExpired = true;
     } else {
       isExpired = false;
@@ -227,10 +279,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                     children: [
                       GestureDetector(
                         onTap: () {
+                          int price =
+                              double.parse(_products[0].price.substring(1))
+                                  .round();
+                          print("products $price");
                           if (isExpired == true) {
                             setState(() {
                               index = 2;
-                              amount = _products[0].price;
+                              amount =
+                                  '${_products[0].price.characters.first}$price';
                             });
                           }
                         },
@@ -272,7 +329,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                               color: ColorUtils.kTint)),
                               child: Center(
                                   child: Text(
-                                '${_products[0].price} / ${_products[0].title}',
+                                '${_products[0].price.characters.first}${double.parse(_products[0].price.substring(1)).round()} / Monthly',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: PreferenceManager
@@ -320,10 +377,15 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       ),
                       GestureDetector(
                         onTap: () {
+                          int price =
+                              double.parse(_products[1].price.substring(1))
+                                  .round();
+                          print("products $price");
                           if (isExpired == true) {
                             setState(() {
                               index = 3;
-                              amount = _products[1].price;
+                              amount =
+                                  '${_products[1].price.characters.first}$price';
                             });
                           }
                         },
@@ -371,7 +433,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                     height: Get.height * 0.009,
                                   ),
                                   Text(
-                                    '${_products[1].price} / ${_products[1].title}',
+                                    '${_products[1].price.characters.first}${double.parse(_products[1].price.substring(1)).round()} / Yearly',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: PreferenceManager
@@ -385,7 +447,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                         fontSize: Get.height * 0.023),
                                   ),
                                   Text(
-                                    'Save ${_products[0].price.characters.first}${int.parse(_products[0].price.substring(1)) * 12 - int.parse(_products[1].price.substring(1))} a year',
+                                    'Save ${_products[0].price.characters.first}${double.parse(_products[0].price.substring(1)).round() * 12 - double.parse(_products[1].price.substring(1)).round()} a year',
                                     style: TextStyle(
                                         color: PreferenceManager
                                                         .isGetSubscriptionPlan() ==
@@ -509,7 +571,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 Spacer(),
                                 GestureDetector(
                                   onTap: () {
-                                    _loading = true;
+                                    setState(() {
+                                      _loading = true;
+                                    });
                                     if (index == 2) {
                                       _subscribe(product: _products[0]);
                                     } else {

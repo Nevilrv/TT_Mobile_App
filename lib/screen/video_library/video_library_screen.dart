@@ -181,6 +181,8 @@ class _VideoLibraryScreenState extends State<VideoLibraryScreen> {
                                                                 left: 5),
                                                         child: InkWell(
                                                           onTap: () {
+                                                            print(
+                                                                'catResponse.data![index].categoryId  ${catResponse.data![index].categoryId}');
                                                             Get.to(
                                                                 VideoSingleCatScreen(
                                                               videoCatID:

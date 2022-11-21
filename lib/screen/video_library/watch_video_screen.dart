@@ -83,7 +83,8 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
     // print('${_videoByIdViewModel.apiResponse.status}');
     // if (_videoByIdViewModel.apiResponse.status == Status.COMPLETE) {}
     // AllVideoResponseModel response = _videoByIdViewModel.apiResponse.data;
-
+    print(
+        'widget.data[widget.id].videoUrl!  ${widget.data[widget.id].videoUrl!}');
     if ('${widget.data[widget.id].videoUrl}'.contains('www.youtube.com')) {
       // String? videoID;
       // videoID =
@@ -456,6 +457,7 @@ class _WatchVideoScreenState extends State<WatchVideoScreen> {
                                 width: Get.width,
                                 child: Center(
                                   child: VimeoVideoPlayer(
+                                    // url: 'https://vimeo.com/744367647',
                                     url: widget.data[widget.id].videoUrl!,
                                     deviceOrientation:
                                         DeviceOrientation.portraitUp,

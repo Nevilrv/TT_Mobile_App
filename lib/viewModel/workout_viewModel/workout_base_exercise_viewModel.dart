@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:get/get.dart';
 
 class WorkoutBaseExerciseViewModel extends GetxController {
@@ -18,14 +17,35 @@ class WorkoutBaseExerciseViewModel extends GetxController {
   }
 
   Map<String, dynamic> superSetRepsSaveMap = {};
+  // Map<String, dynamic> superSetLbsSaveMap = {};
+
+  setSuperSetRepsSaveMap({required String index, required Map repsMap}) {
+    superSetRepsSaveMap.addAll({index: repsMap});
+    update();
+  }
+
   bool isOneTimeApiCall = true;
-  List<Map<String, dynamic>> listOfSetRepesSave = [];
   updateSuperSetRepsSaveMap(
       {required String keyMain,
       required String subKey,
       required String value}) {
     superSetRepsSaveMap[keyMain][subKey] = value;
 
+    update();
+  }
+
+  /// weight card update for super set
+  Map<String, dynamic> superSetLbsSaveMap = {};
+  setSuperSetLbsSaveMap({required String index, required Map repsMap}) {
+    superSetLbsSaveMap.addAll({index: repsMap});
+    update();
+  }
+
+  updateSuperSetLbsSaveMap(
+      {required String keyMain,
+      required String subKey,
+      required String value}) {
+    superSetLbsSaveMap[keyMain][subKey] = value;
     update();
   }
 
@@ -179,6 +199,17 @@ class WorkoutBaseExerciseViewModel extends GetxController {
     print('weightedIndexLbsMap >>> ${weightedIndexLbsMap}');
   }
 
+  /*updateSuperSetLbsList(
+      {required int index,
+      required String value,
+      required String keys,
+      required round}) {
+    superSetWeightSaveMap[round][keys].removeAt(index);
+    superSetWeightSaveMap[round][keys].insert(index, value);
+    update();
+    print('weightedIndexLbsMap >>> ${superSetWeightSaveMap}');
+  }
+*/
   Timer? weightedTimer;
   int? showWeightTimer;
   int currentWeightTimerValue = 0;

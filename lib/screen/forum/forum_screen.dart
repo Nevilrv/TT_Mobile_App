@@ -1,16 +1,10 @@
-import 'dart:developer' as d;
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:carousel_slider/carousel_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:expandable_text/expandable_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:shimmer/shimmer.dart';
-
 import 'package:tcm/model/request_model/forum_request_model/like_forum_request_model.dart';
 import 'package:tcm/model/request_model/forum_request_model/search_forum_request_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
@@ -18,7 +12,6 @@ import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
-
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
@@ -580,9 +573,9 @@ class _ForumScreenState extends State<ForumScreen> {
                           height: Get.height * 0.3,
                           width: Get.height * 0.3,
                           decoration: BoxDecoration(
-                              color: ColorUtils.kBlack,
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
+                            color: ColorUtils.kBlack,
+                            shape: BoxShape.circle,
+                            /* image: DecorationImage(
                                   image: response!.data![index!].profilePic ==
                                           ''
                                       ? NetworkImage(
@@ -590,7 +583,30 @@ class _ForumScreenState extends State<ForumScreen> {
                                         )
                                       : NetworkImage(
                                           response.data![index].profilePic!),
-                                  fit: BoxFit.cover))),
+                                  fit: BoxFit.cover)*/
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(150),
+                            child: CachedNetworkImage(
+                              imageUrl:
+                                  '${response!.data![index!].profilePic!}',
+                              fit: BoxFit.cover,
+                              errorWidget: (context, url, error) =>
+                                  Image.network(
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
+                              ),
+                              progressIndicatorBuilder:
+                                  (context, url, downloadProgress) =>
+                                      Shimmer.fromColors(
+                                baseColor: Colors.white.withOpacity(0.4),
+                                highlightColor: Colors.white.withOpacity(0.2),
+                                enabled: true,
+                                child: Container(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          )),
                       SizedBox(
                         height: Get.height * 0.02,
                       ),
@@ -609,16 +625,36 @@ class _ForumScreenState extends State<ForumScreen> {
                 height: Get.height * 0.06,
                 width: Get.height * 0.06,
                 decoration: BoxDecoration(
-                    color: ColorUtils.kBlack,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: ColorUtils.kTint),
-                    image: DecorationImage(
+                  color: ColorUtils.kBlack,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ColorUtils.kTint),
+                  /* image: DecorationImage(
                         image: response!.data![index!].profilePic == ''
                             ? NetworkImage(
                                 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
                               )
                             : NetworkImage(response.data![index].profilePic!),
-                        fit: BoxFit.cover)),
+                        fit: BoxFit.cover)*/
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: CachedNetworkImage(
+                    imageUrl: '${response!.data![index!].profilePic!}',
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) => Image.network(
+                      'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460__340.png',
+                    ),
+                    progressIndicatorBuilder:
+                        (context, url, downloadProgress) => Shimmer.fromColors(
+                      baseColor: Colors.white.withOpacity(0.4),
+                      highlightColor: Colors.white.withOpacity(0.2),
+                      enabled: true,
+                      child: Container(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
               ),
             ),
             SizedBox(

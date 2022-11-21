@@ -559,8 +559,6 @@ class _EditPasswordPageState extends State<EditPasswordPage> {
 
                                           if (response.msg ==
                                               'New password and Confirm password  is not match!') {
-                                            isConfirmPassNotValid = true;
-                                            isNewPassNotValid = true;
                                             Get.showSnackbar(GetSnackBar(
                                               message: '${response.msg}',
                                               duration: Duration(seconds: 2),

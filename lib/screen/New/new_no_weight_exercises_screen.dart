@@ -115,6 +115,7 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
 
           _workoutBaseExerciseViewModel.setWidgetOfIndex(
               value: WeightedType(
+                  isCall: true,
                   exerciseSets: exerciseByIdResponse.data![0].exerciseSets!,
                   exerciseId: exerciseByIdResponse.data![0].exerciseId!,
                   exerciseTitle: exerciseByIdResponse.data![0].exerciseTitle!,

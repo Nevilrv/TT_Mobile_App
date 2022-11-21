@@ -154,7 +154,12 @@ class PreferenceManager {
     await getStorage.remove('password');
     await getStorage.remove('phoneno');
     await getStorage.remove('user_name');
+    await getStorage.remove('first_name');
+    await getStorage.remove('last_name');
+    await getStorage.remove('dob');
+    await getStorage.remove('weight');
     await getStorage.remove('address');
+    await getStorage.remove('image');
     await getStorage.remove('uid');
     await getStorage.remove('profile_pic');
     await getStorage.remove('startDate');

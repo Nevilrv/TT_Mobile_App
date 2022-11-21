@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:tcm/screen/splash_screen.dart';
 
+import 'demo.dart';
+
 void main() async {
   await GetStorage.init();
 
@@ -20,6 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // home: HomePage(),
       home: SplashScreen(),
+      // home: DemoPage(),
 
       // home: YoutubePlayerDemoApp(),
     );
