@@ -537,7 +537,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Your plan will be expired on ${DateFormat('dd, MMMM yyyy').format(DateTime.parse(PreferenceManager.isGetSubscriptionEndDate()))} ",
+                                  "Your plan will be expired on ${DateFormat('dd, M MM yyyy').format(DateTime.parse(PreferenceManager.isGetSubscriptionEndDate()))} ",
                                   style: FontTextStyle.kWhite16BoldRoboto
                                       .copyWith(
                                           fontSize: Get.height * 0.018,

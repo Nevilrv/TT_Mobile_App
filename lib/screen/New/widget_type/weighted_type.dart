@@ -13,6 +13,7 @@ class WeightedType extends StatefulWidget {
   final String exerciseId;
   final String exerciseTitle;
   final String exerciseReps;
+  final String exerciseMaxReps;
   final String exerciseRest;
   final String exerciseWeight;
   final String exerciseColor;
@@ -26,6 +27,7 @@ class WeightedType extends StatefulWidget {
       required this.exerciseId,
       required this.exerciseTitle,
       required this.exerciseReps,
+      required this.exerciseMaxReps,
       required this.exerciseRest,
       this.repsData,
       this.weightData,
@@ -178,6 +180,11 @@ class _WeightedTypeState extends State<WeightedType> {
     }
   }
 
+  weightRepsText() {
+    String s = widget.exerciseMaxReps == '1' ? "Maximum" : widget.exerciseReps;
+    return s;
+  }
+
   List<TextEditingController> _controller = [];
   List? restTimer;
   int currentValue = 0;
@@ -236,7 +243,7 @@ class _WeightedTypeState extends State<WeightedType> {
           SizedBox(
             height: Get.height * 0.015,
           ),
-          Text('${widget.exerciseSets} sets of ${widget.exerciseReps} reps',
+          Text('${widget.exerciseSets} sets of ${weightRepsText()} reps',
               style: FontTextStyle.kLightGray16W300Roboto.copyWith(
                   fontSize: Get.height * 0.023,
                   color: Colors.white.withOpacity(0.8),

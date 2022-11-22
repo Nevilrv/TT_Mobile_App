@@ -21,10 +21,13 @@ import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/get_habit_record_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_record_add_update_viewModel.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/user_habit_track_status_viewModel.dart';
 
 class UpdateProgressScreen extends StatefulWidget {
+  final List<DateTime> selectedDateList;
   UpdateProgressScreen({
     Key? key,
+    required this.selectedDateList,
   }) : super(key: key);
 
   @override
@@ -39,6 +42,8 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
       Get.put(GetHabitRecordDateViewModel());
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
+  UserHabitTrackStatusViewModel userHabitTrackStatusViewModel =
+      Get.put(UserHabitTrackStatusViewModel());
   int index = 0;
   List tmpDateList = [];
   String? finalDate;
@@ -48,7 +53,7 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
   DateTime? userSelectedDate = DateTime.now();
   dateIncrement() {
     print('------------- +++ date $userSelectedDate');
-    DateTime today = DateTime.now();
+    DateTime today = widget.selectedDateList.last;
     if (userSelectedDate!
         .isBefore(DateTime(today.year, today.month, today.day))) {
       userSelectedDate = DateTime(userSelectedDate!.year,
@@ -60,8 +65,12 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
   }
 
   dateDecrement() {
-    userSelectedDate = DateTime(userSelectedDate!.year, userSelectedDate!.month,
-        userSelectedDate!.day - 1);
+    DateTime today = widget.selectedDateList.first;
+    if (userSelectedDate!
+        .isAfter(DateTime(today.year, today.month, today.day))) {
+      userSelectedDate = DateTime(userSelectedDate!.year,
+          userSelectedDate!.month, userSelectedDate!.day - 1);
+    }
     print('------------- --- date $userSelectedDate');
     setState(() {});
   }
@@ -137,10 +146,18 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print('selected list >>>> ${widget.selectedDateList.first}');
+
     print("init call response $recordResponse");
 
     print(
         ' _habitViewModel.tmpHabitUpdatesList ${_habitViewModel.tmpHabitUpdatesList}');
+    print(
+        'selectedDateList >>> ${widget.selectedDateList}-------${widget.selectedDateList.length}');
+    print(
+        'weeek list >>> ${userHabitTrackStatusViewModel.weekList}--------${userHabitTrackStatusViewModel.weekList.length}');
+    print(
+        'compltee habit list >>> ${userHabitTrackStatusViewModel.completeHabitList}-------------${userHabitTrackStatusViewModel.completeHabitList.length}');
 
     return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
       return control.isOnline
@@ -264,8 +281,8 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                             itemStyle: FontTextStyle
                                                 .kWhite16W300Roboto),
                                         showTitleActions: true,
-                                        minTime: DateTime(2019, 1, 1),
-                                        maxTime: DateTime.now(),
+                                        minTime: widget.selectedDateList.first,
+                                        maxTime: widget.selectedDateList.last,
                                         onChanged: (date) {
                                       userSelectedDate = date;
                                       print('change $date');
@@ -779,7 +796,25 @@ class _UpdateProgressScreenState extends State<UpdateProgressScreen> {
                                     _request.habitIds =
                                         _habitViewModel.habitIdString;
                                     _request.date = finalDate!;
-
+                                    print('>>>final Date $finalDate');
+                                    print(
+                                        'week list >>>> ${userHabitTrackStatusViewModel.weekList}');
+                                    print(
+                                        'complete habit lisrt >>. ${userHabitTrackStatusViewModel.completeHabitList}');
+                                    if (userHabitTrackStatusViewModel.weekList
+                                        .contains(finalDate)) {
+                                      print('enter 1');
+                                      if (userHabitTrackStatusViewModel
+                                          .completeHabitList
+                                          .contains(finalDate)) {
+                                        print('enter 2');
+                                        userHabitTrackStatusViewModel
+                                            .completeHabitList
+                                            .remove(finalDate);
+                                      }
+                                      print(
+                                          '>>> Complete habit list >>> ${userHabitTrackStatusViewModel.completeHabitList}');
+                                    }
                                     await _habitRecordAddUpdateViewModel
                                         .habitRecordAddUpdateViewModel(
                                             _request);

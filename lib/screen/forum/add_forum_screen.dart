@@ -26,6 +26,7 @@ import 'package:video_compress/video_compress.dart';
 import 'package:video_player/video_player.dart';
 import '../../api_services/api_routes.dart';
 import '../../model/request_model/forum_request_model/search_forum_request_model.dart';
+import '../../model/response_model/forum_response_model/get_tags_response_model.dart';
 import '../../viewModel/forum_viewModel/add_forum_viewmodel.dart';
 import '../../viewModel/forum_viewModel/forum_viewmodel.dart';
 import 'compress_video_screen.dart';
@@ -68,7 +69,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
   void initState() {
     // TODO: implement initState
     _connectivityCheckViewModel.startMonitoring();
-    getTagsViewModel.getTagsViewModel(title: '');
+    // getTagsViewModel.getTagsViewModel(title: '');
     getCategory();
   }
 
@@ -633,61 +634,137 @@ class _AddForumScreenState extends State<AddForumScreen> {
                   GetBuilder<GetAllForumCategoryViewModel>(
                     builder: (contrller) {
                       if (contrller.apiResponse.status == Status.LOADING) {
-                        return SizedBox();
-                      }
-                      GetAllForumCategoryResponseModel responseModel =
-                          getAllForumCategoryViewModel.apiResponse.data;
-                      return Container(
-                        height: Get.height * 0.05,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(6),
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            stops: [0.0, 1.0],
-                            colors: ColorUtilsGradient.kTintGradient,
+                        return GestureDetector(
+                          onTap: () {
+                            Get.showSnackbar(
+                              GetSnackBar(
+                                duration: Duration(seconds: 2),
+                                messageText: Text(
+                                  'Category Loading...',
+                                  style: FontTextStyle.kTine17BoldRoboto,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                              height: Get.height * 0.05,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(6),
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  stops: [0.0, 1.0],
+                                  colors: ColorUtilsGradient.kTintGradient,
+                                ),
+                              ),
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        "Category",
+                                        style: FontTextStyle.kBlack16BoldRoboto,
+                                      ),
+                                      Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: Colors.black,
+                                      ),
+                                    ]),
+                              )),
+                        );
+                      } else {
+                        GetAllForumCategoryResponseModel responseModel =
+                            getAllForumCategoryViewModel.apiResponse.data;
+                        /*getAllForumCategoryViewModel.allCategory.clear();
+                        getAllForumCategoryViewModel.allCategoryId.clear();
+                        for (int i = 0; i < responseModel.data!.length; i++) {
+                          if (getAllForumCategoryViewModel.allCategory.contains(
+                              responseModel.data![i].categoryTitle!.trim())) {
+                            print('Enter in=====');
+                          } else {
+                            getAllForumCategoryViewModel.allCategory.add(
+                                responseModel.data![i].categoryTitle!.trim());
+                            getAllForumCategoryViewModel.allCategoryId
+                                .add(responseModel.data![i].categoryId!.trim());
+                          }
+                        }
+                        print(
+                            'List of all category >>. ${getAllForumCategoryViewModel.allCategory}');
+                        print(
+                            'List of all category ID >>. ${getAllForumCategoryViewModel.allCategoryId}');
+*/
+                        return Container(
+                          height: Get.height * 0.05,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(6),
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              stops: [0.0, 1.0],
+                              colors: ColorUtilsGradient.kTintGradient,
+                            ),
                           ),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 8.0),
-                          child: DropdownButton(
-                            items: responseModel.data!
-                                .map((item) => DropdownMenuItem<String>(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 8.0),
+                            child: DropdownButton(
+                              items: responseModel.data!.map((item) {
+                                return DropdownMenuItem<String>(
                                     child: Text(
                                       item.categoryTitle!,
                                       style: FontTextStyle.kBlack16BoldRoboto,
                                     ),
-                                    onTap: () {
+                                    onTap: () async {
                                       setState(() {
                                         selectCategoryId = item.categoryId;
                                         print(
                                             'selected categoryId >>.. $selectCategoryId');
                                       });
+                                      await getTagsViewModel.getTagsViewModel(
+                                          title: '',
+                                          categoryId: item.categoryId);
+                                      getTagsViewModel.allTagTitle.clear();
+                                      if (getTagsViewModel
+                                              .getTagsApiResponse.status ==
+                                          Status.COMPLETE) {
+                                        GetTagsResponseModel response =
+                                            getTagsViewModel
+                                                .getTagsApiResponse.data;
+                                        for (var i = 0;
+                                            i < response.data!.length;
+                                            i++) {
+                                          getTagsViewModel.allTagTitle
+                                              .add(response.data![i].title);
+                                        }
+                                        print(
+                                            'AllTagTitle >>>>> ${getTagsViewModel.allTagTitle}');
+                                      }
                                     },
-                                    value: item.categoryTitle!))
-                                .toList(),
-                            underline: SizedBox(),
-                            isExpanded: false,
-                            hint: Text(
-                              "Category",
-                              style: FontTextStyle.kBlack16BoldRoboto,
+                                    value: item.categoryTitle!);
+                              }).toList(),
+                              underline: SizedBox(),
+                              isExpanded: false,
+                              hint: Text(
+                                "Category",
+                                style: FontTextStyle.kBlack16BoldRoboto,
+                              ),
+                              icon: Icon(
+                                Icons.keyboard_arrow_down,
+                                color: Colors.black,
+                              ),
+                              onChanged: (String? value) {
+                                setState(() {
+                                  selectCategory = value!;
+                                  print('item.categoryTitle>> $selectCategory');
+                                });
+                                print(
+                                    'selected category of user >>.. $selectCategory');
+                              },
+                              value: selectCategory,
                             ),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              color: Colors.black,
-                            ),
-                            onChanged: (String? value) {
-                              setState(() {
-                                selectCategory = value!;
-                                print('item.categoryTitle>> ${selectCategory}');
-                              });
-                              print(
-                                  'selected category of user >>.. $selectCategory');
-                            },
-                            value: selectCategory,
                           ),
-                        ),
-                      );
+                        );
+                      }
                     },
                   ),
                   SizedBox(
@@ -695,7 +772,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (selectCategoryId!.isEmpty) {
+                      if (selectCategoryId == null) {
                         Get.showSnackbar(GetSnackBar(
                           duration: Duration(seconds: 2),
                           messageText: Text(
@@ -704,381 +781,8 @@ class _AddForumScreenState extends State<AddForumScreen> {
                           ),
                         ));
                       } else {
-                        // await getTagsViewModel.getTagsViewModel(title: '');
-                        await getCategoryTagViewModel.getCategoryTagViewModel(
-                            categoryId: selectCategoryId);
-                        tag.clear();
-                        FocusNode inputNode = FocusNode();
-                        void data() {
-                          FocusScope.of(context).requestFocus(inputNode);
-                        }
-
-                        Get.dialog(
-                          Container(
-                            child: Material(
-                              color: Colors.transparent,
-                              textStyle:
-                                  TextStyle(decoration: TextDecoration.none),
-                              child:
-                                  StatefulBuilder(builder: (context, setState) {
-                                setState(() {
-                                  keybardHeight =
-                                      MediaQuery.of(context).viewInsets.bottom;
-                                });
-                                return GetBuilder<GetCategoryTagViewModel>(
-                                  builder: (controller) {
-                                    if (controller.apiResponse.status ==
-                                        Status.LOADING) {
-                                      return Center(
-                                        child: CircularProgressIndicator(
-                                          color: ColorUtils.kTint,
-                                        ),
-                                      );
-                                    }
-
-                                    GetCategoryTagResponseModel response =
-                                        controller.apiResponse.data;
-                                    return Column(
-                                      children: [
-                                        SizedBox(
-                                          height: Get.height * 0.04,
-                                        ),
-                                        Row(
-                                          children: [
-                                            IconButton(
-                                                onPressed: () async {
-                                                  Get.back();
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                  controller.setSelectTagId('');
-                                                  controller
-                                                      .setSelectedTagTitle('');
-                                                },
-                                                icon: Icon(
-                                                  Icons.clear,
-                                                  color: Colors.white,
-                                                )),
-                                            Spacer(),
-                                            GestureDetector(
-                                              onTap: () async {
-                                                if (tag.text.isNotEmpty) {
-                                                  if (controller
-                                                      .selectedTagTitle
-                                                      .isEmpty) {
-                                                    Navigator.pop(context);
-
-                                                    controller
-                                                        .setSelectTagId('');
-                                                    controller
-                                                        .setSelectedTagTitle(
-                                                            '');
-                                                  } else {
-                                                    controller.valueFinal.add({
-                                                      'id': controller
-                                                          .selectTagId,
-                                                      'title': controller
-                                                          .selectedTagTitle
-                                                    });
-
-                                                    final jsonList = controller
-                                                        .valueFinal
-                                                        .map((item) =>
-                                                            jsonEncode(item))
-                                                        .toList();
-
-                                                    // using toSet - toList strategy
-                                                    final uniqueJsonList =
-                                                        jsonList
-                                                            .toSet()
-                                                            .toList();
-
-                                                    // convert each item back to the original form using JSON decoding
-                                                    final result =
-                                                        uniqueJsonList
-                                                            .map((item) =>
-                                                                jsonDecode(
-                                                                    item))
-                                                            .toList();
-
-                                                    controller
-                                                        .setValueFinal(result);
-                                                    FocusScope.of(context)
-                                                        .unfocus();
-                                                    Navigator.pop(context);
-
-                                                    controller
-                                                        .setSelectTagId('');
-                                                    controller
-                                                        .setSelectedTagTitle(
-                                                            '');
-                                                  }
-                                                } else {
-                                                  Get.back();
-                                                  FocusScope.of(context)
-                                                      .unfocus();
-                                                  controller.setSelectTagId('');
-                                                  controller
-                                                      .setSelectedTagTitle('');
-                                                }
-                                              },
-                                              child: Text(
-                                                'Done',
-                                                style: FontTextStyle
-                                                    .kWhite20BoldRoboto,
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: Get.width * 0.04,
-                                            )
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: Get.height * 0.04,
-                                        ),
-                                        AutoSizeTextField(
-                                          onChanged: (String val) async {
-                                            print('val $val');
-                                            await getTagsViewModel
-                                                .getTagsViewModel(title: val);
-                                          },
-                                          fullwidth: false,
-                                          onSubmitted: (val) async {
-                                            if (tag.text.isNotEmpty) {
-                                              if (controller
-                                                  .selectedTagTitle.isEmpty) {
-                                                Navigator.pop(context);
-                                                FocusScope.of(context)
-                                                    .unfocus();
-                                                controller.setSelectTagId('');
-                                                controller
-                                                    .setSelectedTagTitle('');
-                                              } else {
-                                                controller.valueFinal.add({
-                                                  'id': controller.selectTagId,
-                                                  'title': controller
-                                                      .selectedTagTitle
-                                                });
-
-                                                final jsonList = controller
-                                                    .valueFinal
-                                                    .map((item) =>
-                                                        jsonEncode(item))
-                                                    .toList();
-
-                                                // using toSet - toList strategy
-                                                final uniqueJsonList =
-                                                    jsonList.toSet().toList();
-
-                                                // convert each item back to the original form using JSON decoding
-                                                final result = uniqueJsonList
-                                                    .map((item) =>
-                                                        jsonDecode(item))
-                                                    .toList();
-
-                                                controller
-                                                    .setValueFinal(result);
-                                                Navigator.pop(context);
-                                                FocusScope.of(context)
-                                                    .unfocus();
-                                                controller.setSelectTagId('');
-                                                controller
-                                                    .setSelectedTagTitle('');
-                                              }
-                                            } else {
-                                              Get.back();
-                                              FocusScope.of(context).unfocus();
-                                              controller.setSelectTagId('');
-                                              controller
-                                                  .setSelectedTagTitle('');
-                                            }
-                                          },
-                                          minWidth: Get.height * 0.153,
-                                          minFontSize: 20,
-                                          wrapWords: true,
-                                          stepGranularity: 2,
-                                          showCursor: false,
-                                          autofocus: true,
-                                          controller: tag,
-                                          focusNode: inputNode,
-                                          maxLines: 1,
-                                          onTap: () {
-                                            print('hello...');
-                                          },
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: ColorUtils.kTint,
-                                              fontSize: Get.height * .05,
-                                              decoration: TextDecoration.none,
-                                              decorationColor: Colors.white
-                                                  .withOpacity(0.01)),
-                                          decoration: InputDecoration(
-                                            isDense: true,
-                                            prefixText: '#',
-                                            prefixStyle: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: ColorUtils.kTint,
-                                              fontSize: Get.height * .05,
-                                            ),
-                                            hintText: 'TAG',
-                                            hintStyle: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: ColorUtils.kTint,
-                                              fontSize: Get.height * .05,
-                                            ),
-                                            fillColor: Colors.white,
-                                            filled: true,
-                                            contentPadding:
-                                                EdgeInsets.symmetric(
-                                                    vertical:
-                                                        Get.height * 0.007,
-                                                    horizontal:
-                                                        Get.height * 0.01),
-                                            border: InputBorder.none,
-                                            focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(7)),
-                                            enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(7)),
-                                          ),
-                                        ),
-                                        Spacer(),
-                                        Container(
-                                          width: Get.width,
-                                          height: Get.height * 0.05,
-                                          child: ListView.builder(
-                                            padding: EdgeInsets.only(
-                                                right: 15, left: 15),
-                                            shrinkWrap: true,
-                                            physics: BouncingScrollPhysics(),
-                                            itemCount: response.data!.length,
-                                            scrollDirection: Axis.horizontal,
-                                            itemBuilder: (context, index) {
-                                              return Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      controller.setSelectTagId(
-                                                          /*response
-                                                              .data![index].id
-                                                              .toString()*/
-
-                                                          response.data![index]
-                                                              .tagId
-                                                              .toString());
-                                                      controller
-                                                          .setSelectedTagTitle(
-                                                              /*response
-                                                                  .data![index]
-                                                                  .title
-                                                                  .toString());*/
-                                                              response
-                                                                  .data![index]
-                                                                  .tagTitle
-                                                                  .toString());
-
-                                                      setState(() {
-                                                        tag.text = response
-                                                            .data![index]
-                                                            .tagTitle!
-                                                            .capitalize
-                                                            .toString();
-                                                      });
-                                                      tag.selection = TextSelection
-                                                          .fromPosition(
-                                                              TextPosition(
-                                                                  offset: tag
-                                                                      .text
-                                                                      .length));
-                                                    },
-                                                    child: Container(
-                                                      height: Get.height * 0.05,
-                                                      decoration: BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                          color:
-                                                              ColorUtils.kBlack,
-                                                          border: Border.all(
-                                                              color: ColorUtils
-                                                                  .kTint)),
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                horizontal:
-                                                                    Get.height *
-                                                                        0.02),
-                                                        child: Center(
-                                                          child: Text(
-                                                            '#${response.data![index].tagTitle}',
-                                                            style: FontTextStyle
-                                                                .kTine16W400Roboto,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: Get.width * 0.03,
-                                                  )
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        SizedBox(
-                                          height: keybardHeight,
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }),
-                            ),
-                          ),
-                          barrierColor: Colors.black.withOpacity(0.8),
-                        );
-                      }
-                    },
-                    child: Container(
-                      height: Get.height * 0.05,
-                      width: Get.width * 0.365,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(6),
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          stops: [0.0, 1.0],
-                          colors: ColorUtilsGradient.kTintGradient,
-                        ),
-                      ),
-                      child: Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: Get.height * 0.02),
-                        child: Center(
-                          child: Text(
-                            'SELECT TAG',
-                            style: FontTextStyle.kBlack16BoldRoboto,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  /*   GestureDetector(
-                    onTap: () async {
-                      if (selectCategoryId!.isEmpty) {
-                        Get.showSnackbar(GetSnackBar(
-                          duration: Duration(seconds: 2),
-                          messageText: Text(
-                            'Please select category',
-                            style: FontTextStyle.kTine17BoldRoboto,
-                          ),
-                        ));
-                      } else {
-                        await getTagsViewModel.getTagsViewModel(title: '');
+                        await getTagsViewModel.getTagsViewModel(
+                            title: '', categoryId: selectCategoryId);
                         tag.clear();
                         FocusNode inputNode = FocusNode();
                         void data() {
@@ -1211,7 +915,10 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                           onChanged: (String val) async {
                                             print('val $val');
                                             await getTagsViewModel
-                                                .getTagsViewModel(title: val);
+                                                .getTagsViewModel(
+                                                    title: val,
+                                                    categoryId:
+                                                        selectCategoryId);
                                           },
                                           fullwidth: false,
                                           onSubmitted: (val) async {
@@ -1430,11 +1137,11 @@ class _AddForumScreenState extends State<AddForumScreen> {
                         ),
                       ),
                     ),
-                  ),*/
+                  ),
                   SizedBox(
                     height: Get.height * 0.02,
                   ),
-                  /*     GetBuilder<GetTagsViewModel>(
+                  GetBuilder<GetTagsViewModel>(
                     builder: (controller) {
                       data.clear();
                       print(
@@ -1449,109 +1156,53 @@ class _AddForumScreenState extends State<AddForumScreen> {
                         scrollDirection: Axis.horizontal,
                         physics: BouncingScrollPhysics(),
                         child: Row(
-                          children: List.generate(
-                              controller.valueFinal.length,
-                              (index1) => Padding(
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Container(
-                                      height: Get.height * 0.05,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: ColorUtils.kTint)),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: Get.height * 0.02),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              '${controller.valueFinal[index1]['title']}',
-                                              style: FontTextStyle
-                                                  .kTint20BoldRoboto,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                controller.valueFinal
-                                                    .removeAt(index1);
-                                                setState(() {});
-                                                print(
-                                                    'controller.valueFinal ${controller.valueFinal}');
-                                              },
-                                              child: Icon(
-                                                Icons.cancel,
-                                                color: ColorUtils.kTint,
-                                              ),
-                                            )
-                                          ],
+                          children: List.generate(controller.valueFinal.length,
+                              (index1) {
+                            if (controller.allTagTitle.contains(
+                                controller.valueFinal[index1]['title'])) {
+                              return Padding(
+                                padding: EdgeInsets.only(right: 10),
+                                child: Container(
+                                  height: Get.height * 0.05,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      border:
+                                          Border.all(color: ColorUtils.kTint)),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Get.height * 0.02),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          '${controller.valueFinal[index1]['title']}',
+                                          style:
+                                              FontTextStyle.kTint20BoldRoboto,
                                         ),
-                                      ),
-                                    ),
-                                  )),
-                        ),
-                      );
-                    },
-                  ),*/
-                  GetBuilder<GetCategoryTagViewModel>(
-                    builder: (controller) {
-                      data.clear();
-                      print(
-                          'controller.valueFinal.length ${controller.valueFinal.length}');
-
-                      controller.valueFinal.forEach((element) {
-                        print(element['id']);
-                        data.add(element['id']);
-                      });
-                      print('DATA data>>>>. ${data}');
-                      return SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
-                        child: Row(
-                          children: List.generate(
-                              controller.valueFinal.length,
-                              (index1) => Padding(
-                                    padding: EdgeInsets.only(right: 10),
-                                    child: Container(
-                                      height: Get.height * 0.05,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: Border.all(
-                                              color: ColorUtils.kTint)),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: Get.height * 0.02),
-                                        child: Row(
-                                          children: [
-                                            Text(
-                                              '${controller.valueFinal[index1]['title']}',
-                                              style: FontTextStyle
-                                                  .kTint20BoldRoboto,
-                                            ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                controller.valueFinal
-                                                    .removeAt(index1);
-                                                setState(() {});
-                                                print(
-                                                    'controller.valueFinal ${controller.valueFinal}');
-                                              },
-                                              child: Icon(
-                                                Icons.cancel,
-                                                color: ColorUtils.kTint,
-                                              ),
-                                            )
-                                          ],
+                                        SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            controller.valueFinal
+                                                .removeAt(index1);
+                                            setState(() {});
+                                            print(
+                                                'controller.valueFinal ${controller.valueFinal}');
+                                          },
+                                          child: Icon(
+                                            Icons.cancel,
+                                            color: ColorUtils.kTint,
+                                          ),
+                                        )
+                                      ],
                                     ),
-                                  )),
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return SizedBox();
+                            }
+                          }),
                         ),
                       );
                     },
@@ -1730,14 +1381,15 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                           d.log(
                                               'dataFiledataFiledataFile>>>>>>  ${dataFile}');
                                         }
-
+                                        print(
+                                            'selected category id>>> $selectCategoryId');
                                         Map<String, dynamic> body = {
                                           'title': title.text,
                                           'description': description.text,
                                           'tag_id': data2,
                                           'user_id': PreferenceManager.getUId(),
                                           'post_images[]': await dataFile,
-                                          'category': selectCategoryId,
+                                          'caregory': selectCategoryId,
                                         };
 
                                         d.log(
@@ -1774,7 +1426,6 @@ class _AddForumScreenState extends State<AddForumScreen> {
                                                   .kTine17BoldRoboto,
                                             ),
                                           ));
-                                          https: //tcm.sataware.dev/images/uploads/VID_2022-08-02 10-58-22_2022-08-02_1659418114.mp4
                                           Future.delayed(Duration(seconds: 2),
                                               () async {
                                             forumViewModel.selectedMenu =
@@ -1856,7 +1507,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
                     color: ColorUtils.kTint,
                   )))
               : SizedBox(),
-          GetBuilder<AddForumViewModel>(
+          /* GetBuilder<AddForumViewModel>(
             builder: (addForumViewModel) {
               if (addForumViewModel.addForumApiResponse.status ==
                   Status.LOADING) {
@@ -1882,7 +1533,7 @@ class _AddForumScreenState extends State<AddForumScreen> {
               }
               return SizedBox();
             },
-          )
+          )*/
         ],
       ),
     );

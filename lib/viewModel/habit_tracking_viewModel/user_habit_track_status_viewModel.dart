@@ -11,6 +11,9 @@ class UserHabitTrackStatusViewModel extends GetxController {
   // bool isFrequencyChange = false;
 
   List<DateTime> defSelectedList = [];
+  List weekList = [];
+  List completeHabitList = [];
+
   DateRangePickerController dateRangePickerController =
       DateRangePickerController();
 

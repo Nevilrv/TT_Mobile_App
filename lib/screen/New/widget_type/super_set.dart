@@ -190,12 +190,15 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
           if (controllerWorkoutBaseExercise.isOneTimeApiCall) {
             repsMap.addAll({
               "${snapshot.data!.data![0].exerciseTitle}":
-                  snapshot.data!.data![0].exerciseReps!.isEmpty ||
-                          snapshot.data!.data![0].exerciseReps == ""
-                      ? "12"
-                      : snapshot.data!.data![0].exerciseReps
+                  snapshot.data!.data![0].exerciseMaxReps == '1'
+                      ? '0'
+                      : snapshot.data!.data![0].exerciseReps!.isEmpty ||
+                              snapshot.data!.data![0].exerciseReps == ""
+                          ? "12"
+                          : snapshot.data!.data![0].exerciseReps
             });
           }
+          print('reps amp >>. ${repsMap}');
 
           if (repsMap.keys.length == widget.superSetIdList.length) {
             if (_workoutBaseExerciseViewModel.showReps == false) {
@@ -262,7 +265,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                 ),
                 SizedBox(height: Get.height * .005),
                 Text(
-                  '${response.data![0].exerciseReps} reps',
+                  '${response.data![0].exerciseMaxReps == '1' ? 'Max.' : response.data![0].exerciseReps} reps',
                   style: FontTextStyle.kLightGray18W300Roboto,
                 ),
                 SizedBox(height: Get.height * .0075),
@@ -270,6 +273,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
                   superSetCounterCardWidget(
                     controllerText: textEditingController,
                     showText: '${response.data![0].exerciseReps}',
+                    exercisesMaxRep: response.data![0].exerciseMaxReps!,
                     controller: _workoutBaseExerciseViewModel,
                     superSetRound: int.parse("${widget.superSetRound}"),
                     round: widget.roundCount,
@@ -609,6 +613,7 @@ class _SuperSetTimerProgressBarState extends State<SuperSetTimerProgressBar> {
 superSetCounterCardWidget(
     {required String showText,
     required int round,
+    required String exercisesMaxRep,
     required TextEditingController? controllerText,
     required int superSetRound,
     required WorkoutBaseExerciseViewModel controller,
@@ -616,6 +621,7 @@ superSetCounterCardWidget(
     required List<Map<String, dynamic>> newList}) {
   print('round >>> $round');
   print('keys >>> $keys');
+  print('exercisesMaxreps >>>> $exercisesMaxRep');
   return Padding(
     padding: EdgeInsets.symmetric(vertical: Get.height * 0.01),
     child: Container(
@@ -664,7 +670,12 @@ superSetCounterCardWidget(
           ),
         ),
         SizedBox(width: Get.width * .08),
-        showTextWidget(controller, round, keys, showText),
+        showTextWidget(
+            controller: controller,
+            round: round,
+            keys: keys,
+            showText: showText,
+            max: exercisesMaxRep),
         SizedBox(width: Get.width * .08),
         InkWell(
             onTap: () {
@@ -712,21 +723,32 @@ superSetCounterCardWidget(
   );
 }
 
-RichText showTextWidget(WorkoutBaseExerciseViewModel controller, int round,
-    String keys, String showText) {
+RichText showTextWidget(
+    {required WorkoutBaseExerciseViewModel controller,
+    required int round,
+    required String max,
+    required String keys,
+    required String showText}) {
+  print('maximum reps >>> $max');
   try {
     return RichText(
         text: TextSpan(
-            text:
-                '${controller.superSetRepsSaveMap['$round'][keys].toString().split('-').first} ',
-            style: controller.superSetRepsSaveMap['$round'][keys] == '0' ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
+            text: max == '1'
+                ? ' ${controller.superSetRepsSaveMap['$round'][keys].toString().split('-').first == "0" ? "-   " : '${controller.superSetRepsSaveMap['$round'][keys].toString().split('-').first} '}'
+                : '${controller.superSetRepsSaveMap['$round'][keys].toString().split('-').first} ',
+            style: max == '1'
+                ? FontTextStyle.kWhite24BoldRoboto
+                : controller.superSetRepsSaveMap['$round'][keys] == '0'
+                    ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray)
+                    : FontTextStyle.kWhite24BoldRoboto,
             children: [
           TextSpan(text: 'reps', style: FontTextStyle.kWhite17W400Roboto)
         ]));
   } catch (e) {
     return RichText(
         text: TextSpan(
-            text: '${showText.toString().split('-').first} ',
+            text:
+                max == '1' ? "-  " : '${showText.toString().split('-').first} ',
             style: FontTextStyle.kWhite24BoldRoboto,
             children: [
           TextSpan(text: 'reps', style: FontTextStyle.kWhite17W400Roboto)

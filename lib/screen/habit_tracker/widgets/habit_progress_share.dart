@@ -8,6 +8,7 @@ import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/habit_tracking_viewModel/habit_viewModel.dart';
+import 'package:tcm/viewModel/habit_tracking_viewModel/user_habit_track_status_viewModel.dart';
 
 class HabitProgressShare extends StatefulWidget {
   HabitProgressShare({Key? key}) : super(key: key);
@@ -19,6 +20,8 @@ class HabitProgressShare extends StatefulWidget {
 class _HabitProgressShareState extends State<HabitProgressShare> {
   ScreenshotController screenshotController = ScreenshotController();
   HabitViewModel habitViewModel = Get.put(HabitViewModel());
+  UserHabitTrackStatusViewModel userHabitTrackStatusViewModel =
+      Get.put(UserHabitTrackStatusViewModel());
 
   @override
   Widget build(BuildContext context) {
@@ -90,11 +93,21 @@ class _HabitProgressShareState extends State<HabitProgressShare> {
                           SizedBox(
                             height: Get.height * 0.02,
                           ),
-                          Text(
-                            '21/30 days',
-                            style: FontTextStyle.kWhite20BoldRoboto.copyWith(
-                                fontWeight: FontWeight.w300,
-                                color: Colors.grey),
+                          GetBuilder<UserHabitTrackStatusViewModel>(
+                            builder: (controller) {
+                              var weekListLength = controller.weekList.length;
+                              var completeListLength =
+                                  controller.completeHabitList.length;
+                              print('weeklist ???? $weekListLength}');
+                              print('complete list ??? $completeListLength}');
+                              return Text(
+                                '${weekListLength - completeListLength}/$weekListLength days',
+                                style: FontTextStyle.kWhite20BoldRoboto
+                                    .copyWith(
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.grey),
+                              );
+                            },
                           ),
                           SizedBox(
                             height: Get.height * 0.01,

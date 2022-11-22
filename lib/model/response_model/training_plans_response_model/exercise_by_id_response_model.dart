@@ -201,6 +201,7 @@ class ExerciseById {
     this.exerciseInstructions,
     this.isFavorite,
     this.categoryType,
+    this.exerciseMaxReps,
     this.bodypartTitle,
     this.equipmentTitle,
     this.levelTitle,
@@ -229,6 +230,7 @@ class ExerciseById {
   dynamic exerciseInstructions;
   String? isFavorite;
   String? categoryType;
+  String? exerciseMaxReps;
   String? bodypartTitle;
   String? equipmentTitle;
   String? levelTitle;
@@ -278,6 +280,9 @@ class ExerciseById {
         isFavorite: json["is_favorite"] == null ? null : json["is_favorite"],
         categoryType:
             json["category_type"] == null ? null : json["category_type"],
+        exerciseMaxReps: json["exercise_max_reps"] == null
+            ? null
+            : json["exercise_max_reps"],
         bodypartTitle:
             json["bodypart_title"] == null ? null : json["bodypart_title"],
         equipmentTitle:
@@ -317,6 +322,7 @@ class ExerciseById {
         "exercise_instructions": exerciseInstructions,
         "is_favorite": isFavorite == null ? null : isFavorite,
         "category_type": categoryType == null ? null : categoryType,
+        "exercise_max_reps": exerciseMaxReps == null ? null : exerciseMaxReps,
         "bodypart_title": bodypartTitle == null ? null : bodypartTitle,
         "equipment_title": equipmentTitle == null ? null : equipmentTitle,
         "level_title": levelTitle == null ? null : levelTitle,

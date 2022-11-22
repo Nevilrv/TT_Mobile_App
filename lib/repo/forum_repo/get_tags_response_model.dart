@@ -6,9 +6,12 @@ import 'package:tcm/model/response_model/forum_response_model/get_tags_response_
 import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
 
 class GetTagsRepo extends ApiRoutes {
-  Future<dynamic> getTagsRepo({String? title}) async {
+  Future<dynamic> getTagsRepo(
+      {String? title, required String? categoryId}) async {
     var response = await ApiService().getResponse(
-        apiType: APIType.aPost, url: searchTagUrl, body: {'title': title});
+        apiType: APIType.aPost,
+        url: searchTagUrl,
+        body: {'title': title, 'forum_category_id': categoryId});
 
     print('getTagsResponseModel ----------- $response');
 

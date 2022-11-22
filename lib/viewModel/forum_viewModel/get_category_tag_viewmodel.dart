@@ -4,6 +4,7 @@ import 'package:tcm/model/response_model/forum_response_model/get_category_tag_r
 import 'package:tcm/repo/forum_repo/get_category_tag_repo.dart';
 
 class GetCategoryTagViewModel extends GetxController {
+  List allTagTitle = [];
   List valueFinal = [];
   void setValueFinal(var value) {
     valueFinal = value;

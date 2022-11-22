@@ -59,7 +59,6 @@ class _HomeScreenState extends State<HomeScreen> {
   ScheduleByDateResponseModel? scheduleResponse;
   ExerciseByIdResponseModel? exerciseResponse;
   WorkoutByIdResponseModel? workoutResponse;
-
   GetHabitRecordDateViewModel _getHabitRecordDateViewModel =
       Get.put(GetHabitRecordDateViewModel());
   ScheduleByDateViewModel _scheduleByDateViewModel =
@@ -1023,7 +1022,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                       response!.data![0].completed == "false") {
                                 Get.to(HabitTrackerHomeScreen());
                               } else {
-                                Get.to(UpdateProgressScreen());
+                                Get.to(UpdateProgressScreen(
+                                  selectedDateList: [
+                                    DateTime(2022, 11, 21),
+                                    DateTime(2022, 11, 22),
+                                    DateTime(2022, 11, 23),
+                                    DateTime(2022, 11, 24),
+                                    DateTime(2022, 11, 25),
+                                    DateTime(2022, 11, 26),
+                                  ],
+                                ));
                               }
 
                               oneTime = false;
@@ -1250,7 +1258,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         response!.data![0].completed! == "false") {
                   Get.to(HabitTrackerHomeScreen());
                 } else {
-                  Get.to(UpdateProgressScreen());
+                  Get.to(UpdateProgressScreen(
+                    selectedDateList: [
+                      DateTime(2022, 11, 21),
+                      DateTime(2022, 11, 22),
+                      DateTime(2022, 11, 23),
+                      DateTime(2022, 11, 24),
+                      DateTime(2022, 11, 25),
+                      DateTime(2022, 11, 26),
+                    ],
+                  ));
                 }
 
                 oneTime = false;

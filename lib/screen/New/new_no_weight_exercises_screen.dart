@@ -88,6 +88,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                   sets: exerciseByIdResponse.data![0].exerciseSets!,
                   exercisesId: exerciseByIdResponse.data![0].exerciseId!,
                   reps: exerciseByIdResponse.data![0].exerciseReps!,
+                  exercisesMaxRep:
+                      exerciseByIdResponse.data![0].exerciseMaxReps!,
                   repsData: repsById,
                   exerciseColor: exerciseByIdResponse.data![0].exerciseColor!));
         } else if (exerciseByIdResponse.data![0].exerciseType == "TIME") {
@@ -124,6 +126,8 @@ class _NewNoWeightExerciseState extends State<NewNoWeightExercise> {
                               exerciseByIdResponse.data![0].exerciseReps == ""
                           ? "5"
                           : exerciseByIdResponse.data![0].exerciseReps!,
+                  exerciseMaxReps:
+                      exerciseByIdResponse.data![0].exerciseMaxReps!,
                   repsData: repsById,
                   weightData: weightById,
                   exerciseRest: exerciseByIdResponse.data![0].exerciseRest!,

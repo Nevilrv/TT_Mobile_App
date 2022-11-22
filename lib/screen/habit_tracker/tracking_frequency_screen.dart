@@ -55,12 +55,17 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
         if (weekList!.contains(weekDates)) {
         } else {
           weekList!.add(weekDates);
+          _habitTrackStatusViewModel.weekList
+              .add(weekDates.toString().split(" ").first);
+          _habitTrackStatusViewModel.completeHabitList
+              .add(weekDates.toString().split(" ").first);
         }
       }
     }
     days!.clear();
     _habitTrackStatusViewModel.dateRangePickerController.selectedDates!
         .addAll(weekList!);
+
     print('weekList $weekList');
   }
 
@@ -76,6 +81,10 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
         if (weekList!.contains(weekDates)) {
         } else {
           weekList!.add(weekDates);
+          _habitTrackStatusViewModel.weekList
+              .add(weekDates.toString().split(" ").first);
+          _habitTrackStatusViewModel.completeHabitList
+              .add(weekDates.toString().split(" ").first);
         }
       }
     }
@@ -327,6 +336,9 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                       (DateRangePickerSelectionChangedArgs
                                           args) {
                                     weekList!.clear();
+                                    _habitTrackStatusViewModel.weekList.clear();
+                                    _habitTrackStatusViewModel.completeHabitList
+                                        .clear();
                                     print("args ---------- ${args.value}");
                                     // args.value.clear();
                                     // print("args 222 ---------- ${args.value}");
@@ -342,6 +354,13 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                     days = args.value;
                                     if (controller.selectedIndex == 0) {
                                       weekList = days;
+                                      print('Days --- $days');
+
+                                      var t =
+                                          days![0].toString().split(" ").first;
+                                      print('t------------ $t');
+                                      controller.weekList.add(t);
+                                      controller.completeHabitList.add(t);
                                       controller.setDateController(
                                           controller.defSelectedList);
                                       print("week list daily == $weekList");
@@ -404,7 +423,9 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
                                     "------------------- ${_habitTrackStatusViewModel.selectedStatus}");
                                 print(
                                     "_habitTrackStatusViewModel.apiResponse.message  ${res.msg}");
-                                Get.to(() => UpdateProgressScreen());
+                                Get.to(() => UpdateProgressScreen(
+                                      selectedDateList: weekList!,
+                                    ));
                               } else if (_habitTrackStatusViewModel
                                       .apiResponse.status ==
                                   Status.ERROR) {

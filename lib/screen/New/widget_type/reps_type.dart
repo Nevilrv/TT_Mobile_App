@@ -11,6 +11,7 @@ Widget repsType(
     required String exercisesId,
     required String sets,
     required String reps,
+    required String exercisesMaxRep,
     String? repsData,
     required WorkoutBaseExerciseViewModel controller,
     required exerciseColor}) {
@@ -26,11 +27,15 @@ Widget repsType(
     print('repsData ========== > ${tmpRepsDataList}');
 
     for (int i = 0; i < tmpRepsDataList.length; i++) {
-      controller.repsList.add(int.parse(tmpRepsDataList[i]));
+      exercisesMaxRep == '1'
+          ? controller.repsList.add(int.parse('0'))
+          : controller.repsList.add(int.parse(tmpRepsDataList[i]));
     }
   } catch (e) {
     for (int i = 0; i < int.parse(sets); i++) {
-      controller.repsList.add(int.parse(reps.split("-").first));
+      exercisesMaxRep == '1'
+          ? controller.repsList.add(int.parse('0'))
+          : controller.repsList.add(int.parse(reps.split("-").first));
     }
   }
 
@@ -40,13 +45,20 @@ Widget repsType(
     print('tmpcount>>> ${tmpLoopCount}');
 
     for (int i = 0; i < tmpLoopCount; i++) {
-      controller.repsList.add(int.parse(reps.split("-").first));
+      exercisesMaxRep == '1'
+          ? controller.repsList.add(int.parse('0'))
+          : controller.repsList.add(int.parse(reps.split("-").first));
     }
     print('reps list >>> ${controller.repsList}');
   }
   controller.repsIndexMap
       .addAll({"${controller.currentIndex}": controller.repsList});
   print('repsIndexList >>> ${controller.repsIndexMap}');
+  repsText() {
+    String s = exercisesMaxRep == '1' ? "Maximum" : reps;
+    return s;
+  }
+
   // print('uyuyuy ${controller.repsIndexList["1"][0]}');
   return Scaffold(
     backgroundColor: ColorUtils.kBlack,
@@ -95,7 +107,7 @@ Widget repsType(
         SizedBox(
           height: Get.height * 0.015,
         ),
-        Text('$sets sets of $reps reps',
+        Text('$sets sets of ${repsText()} reps',
             style: FontTextStyle.kLightGray16W300Roboto.copyWith(
                 fontSize: Get.height * 0.023,
                 color: Colors.white.withOpacity(0.8),
@@ -127,6 +139,7 @@ Widget repsType(
                           borderRadius: BorderRadius.circular(6)),
                     ),
                     CounterCard(
+                      exercisesMaxReps: exercisesMaxRep,
                       index: index,
                       counter: int.tryParse(reps.split("-").first) != null
                           ? int.parse(reps.split("-").first)
@@ -170,10 +183,12 @@ Widget repsType(
 class CounterCard extends StatefulWidget {
   final int index;
   final int counter;
+  final String exercisesMaxReps;
   const CounterCard({
     Key? key,
     required this.index,
     required this.counter,
+    required this.exercisesMaxReps,
   }) : super(key: key);
 
   @override
@@ -185,6 +200,7 @@ class _CounterCardState extends State<CounterCard> {
       Get.put(WorkoutBaseExerciseViewModel());
   @override
   Widget build(BuildContext context) {
+    // print('exercisesmaxreps >>>> ${widget.exercisesMaxReps}');
     return GetBuilder<WorkoutBaseExerciseViewModel>(
       builder: (controller) {
         return Padding(
@@ -218,11 +234,17 @@ class _CounterCardState extends State<CounterCard> {
               SizedBox(width: Get.width * .08),
               RichText(
                   text: TextSpan(
-                      text:
-                          '${controller.repsIndexMap["${controller.currentIndex}"][widget.index]} ',
+                      text: widget.exercisesMaxReps == '1'
+                          ? '${(_workoutBaseExerciseViewModel.repsIndexMap["${_workoutBaseExerciseViewModel.currentIndex}"][widget.index].toString()) == '0' ? "-   " : '${controller.repsIndexMap["${controller.currentIndex}"][widget.index]} '}'
+                          : '${controller.repsIndexMap["${controller.currentIndex}"][widget.index]} '
                       // text:
                       //     '${controller.repsIndexList[controller.currentIndex][widget.index]} ',
-                      style: controller.repsIndexMap["${controller.currentIndex}"][widget.index] == 0 ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray) : FontTextStyle.kWhite24BoldRoboto,
+                      ,
+                      style: widget.exercisesMaxReps == '1'
+                          ? FontTextStyle.kWhite24BoldRoboto
+                          : controller.repsIndexMap["${controller.currentIndex}"][widget.index] == 0
+                              ? FontTextStyle.kWhite24BoldRoboto.copyWith(color: ColorUtils.kGray)
+                              : FontTextStyle.kWhite24BoldRoboto,
                       children: [
                     TextSpan(
                         text: 'reps', style: FontTextStyle.kWhite17W400Roboto)

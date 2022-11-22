@@ -4,6 +4,8 @@ import 'package:tcm/model/response_model/forum_response_model/get_all_forum_cate
 import 'package:tcm/repo/forum_repo/get_all_forum_category_repo.dart';
 
 class GetAllForumCategoryViewModel extends GetxController {
+  List allCategory = [];
+  List allCategoryId = [];
   ApiResponse _apiResponse = ApiResponse.initial(message: 'Initialization');
 
   ApiResponse get apiResponse => _apiResponse;
