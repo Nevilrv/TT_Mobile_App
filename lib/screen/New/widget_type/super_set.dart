@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tcm/model/response_model/training_plans_response_model/exercise_by_id_response_model.dart';
@@ -369,7 +368,7 @@ class _SuperSetExerciseState extends State<SuperSetExercise>
             );
           } else if (response.data![0].exerciseType == "WEIGHTED") {
             if (_workoutBaseExerciseViewModel.superSetApiCall == true) {
-              _workoutBaseExerciseViewModel.superSetApiCall == false;
+              _workoutBaseExerciseViewModel.superSetApiCall = false;
               controllerWorkoutBaseExercise.weightedRepsList.clear();
               controllerWorkoutBaseExercise.lbsList.clear();
               // print(

@@ -4,6 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
@@ -575,8 +576,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                           Status.COMPLETE) {
                                     if (status == 'pending') {
                                       return Container(
-                                        height: Get.height * 0.22,
-                                        width: Get.width * 0.99,
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 12),
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
@@ -589,7 +590,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                               padding: const EdgeInsets.only(
                                                   left: 20,
                                                   bottom: 10,
-                                                  top: 20,
                                                   right: 20),
                                               child: Text(
                                                 'Your Next Workout',
@@ -640,105 +640,110 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   SizedBox(
                                                     width: Get.width * .04,
                                                   ),
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      SizedBox(
-                                                        width: Get.width * 0.5,
-                                                        child: Text(
-                                                          '${workoutResponse!.data![0].workoutTitle}',
-                                                          style: FontTextStyle
-                                                              .kWhite17BoldRoboto,
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        '${Jiffy(today).format('EEEE, MMMM do')}',
-                                                        style: FontTextStyle
-                                                            .kGrey18BoldRoboto,
-                                                      ),
-                                                      SizedBox(
-                                                        height:
-                                                            Get.height * .01,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Get.to(WorkoutHomeNew(
-                                                            userProgramDate:
-                                                                responseDate
-                                                                    .data!
-                                                                    .userProgramDatesId!,
-                                                            superSetRound:
-                                                                responseDate
-                                                                    .data!
-                                                                    .round!,
-                                                            withoutWarmUpExercisesList:
-                                                                withoutWarmupAllId,
-                                                            warmUpList: responseDate
-                                                                .data!
-                                                                .selectedWarmup!,
-                                                            exercisesList:
-                                                                allId,
-                                                            workoutId:
-                                                                responseDate
-                                                                    .data!
-                                                                    .workoutId!,
-                                                            exerciseId:
-                                                                allId[0],
-                                                            superSetList:
-                                                                responseDate
-                                                                    .data!
-                                                                    .supersetExercisesIds!,
-                                                          ));
-
-                                                          oneTime = false;
-                                                        },
-                                                        child: Container(
-                                                          height: Get.height *
-                                                              0.042,
+                                                  Expanded(
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        SizedBox(
                                                           width:
                                                               Get.width * 0.5,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                                  gradient:
-                                                                      LinearGradient(
-                                                                    begin: Alignment
-                                                                        .topCenter,
-                                                                    end: Alignment
-                                                                        .bottomCenter,
-                                                                    stops: [
-                                                                      0.0,
-                                                                      1.0
-                                                                    ],
-                                                                    colors: ColorUtilsGradient
-                                                                        .kTintGradient,
-                                                                  ),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              6),
-                                                                  color:
-                                                                      ColorUtils
-                                                                          .kTint),
-                                                          child: Center(
-                                                              child: Text(
-                                                            'Start Workout',
-                                                            style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize:
-                                                                    Get.height *
-                                                                        0.02),
-                                                          )),
+                                                          child: Text(
+                                                            '${workoutResponse!.data![0].workoutTitle}',
+                                                            style: FontTextStyle
+                                                                .kWhite17BoldRoboto,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                        Text(
+                                                          '${Jiffy(today).format('EEEE, MMMM do')}',
+                                                          style: FontTextStyle
+                                                              .kGrey18BoldRoboto,
+                                                        ),
+                                                        SizedBox(
+                                                          height:
+                                                              Get.height * .01,
+                                                        ),
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Get.to(
+                                                                WorkoutHomeNew(
+                                                              userProgramDate:
+                                                                  responseDate
+                                                                      .data!
+                                                                      .userProgramDatesId!,
+                                                              superSetRound:
+                                                                  responseDate
+                                                                      .data!
+                                                                      .round!,
+                                                              withoutWarmUpExercisesList:
+                                                                  withoutWarmupAllId,
+                                                              warmUpList:
+                                                                  responseDate
+                                                                      .data!
+                                                                      .selectedWarmup!,
+                                                              exercisesList:
+                                                                  allId,
+                                                              workoutId:
+                                                                  responseDate
+                                                                      .data!
+                                                                      .workoutId!,
+                                                              exerciseId:
+                                                                  allId[0],
+                                                              superSetList:
+                                                                  responseDate
+                                                                      .data!
+                                                                      .supersetExercisesIds!,
+                                                            ));
+
+                                                            oneTime = false;
+                                                          },
+                                                          child: Container(
+                                                            height: Get.height *
+                                                                0.042,
+                                                            width:
+                                                                Get.width * 0.5,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                                    gradient:
+                                                                        LinearGradient(
+                                                                      begin: Alignment
+                                                                          .topCenter,
+                                                                      end: Alignment
+                                                                          .bottomCenter,
+                                                                      stops: [
+                                                                        0.0,
+                                                                        1.0
+                                                                      ],
+                                                                      colors: ColorUtilsGradient
+                                                                          .kTintGradient,
+                                                                    ),
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                6),
+                                                                    color: ColorUtils
+                                                                        .kTint),
+                                                            child: Center(
+                                                                child: Text(
+                                                              'Start Workout',
+                                                              style: TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize:
+                                                                      Get.height *
+                                                                          0.02),
+                                                            )),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   )
                                                 ],
                                               ),
@@ -748,28 +753,24 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     } else if (status == 'completed') {
                                       return Container(
-                                        height: Get.height * 0.22,
-                                        width: Get.width * 0.99,
+                                        padding:
+                                            EdgeInsets.symmetric(vertical: 16),
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(10),
                                             color: Color(0xff363636)),
                                         child: Column(
                                             crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                CrossAxisAlignment.center,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 20,
-                                                    bottom: 10,
-                                                    top: 20,
-                                                    right: 20),
-                                                child: Text(
-                                                  'You did it very well today, Now take rest',
-                                                  style: FontTextStyle
-                                                      .kWhite20BoldRoboto,
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                              Text(
+                                                'You did it very well today, Now take rest',
+                                                style: FontTextStyle
+                                                    .kWhite20BoldRoboto,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              SizedBox(
+                                                height: 10,
                                               ),
                                               Padding(
                                                 padding:
@@ -783,7 +784,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ),
                                               ),
                                               SizedBox(
-                                                height: Get.height * .025,
+                                                height: Get.height * .02,
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -834,8 +835,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     }
                                   }
                                   return Container(
-                                    height: Get.height * 0.22,
-                                    width: Get.width * 0.99,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: Get.width * 0.05,
+                                        horizontal: Get.width * 0.05),
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         color: Color(0xff363636)),
@@ -843,67 +845,51 @@ class _HomeScreenState extends State<HomeScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 20,
-                                                bottom: 10,
-                                                top: 20,
-                                                right: 20),
-                                            child: Text(
-                                              'No Workouts Scheduled',
-                                              style: FontTextStyle
-                                                  .kWhite20BoldRoboto,
-                                            ),
+                                          Text(
+                                            'No Workouts Scheduled',
+                                            style: FontTextStyle
+                                                .kWhite20BoldRoboto,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 20),
-                                            child: Text(
-                                              'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
-                                              style: FontTextStyle
-                                                  .kWhite16W300Roboto,
-                                            ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                            style: FontTextStyle
+                                                .kWhite16W300Roboto,
                                           ),
                                           SizedBox(
                                             height: Get.height * .03,
                                           ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: Get.width * 0.05),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Get.to(TrainingPlanScreen());
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.to(TrainingPlanScreen());
 
-                                                oneTime = false;
-                                              },
-                                              child: Container(
-                                                height: Get.height * .05,
-                                                width: Get.width * .9,
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                      begin:
-                                                          Alignment.topCenter,
-                                                      end: Alignment
-                                                          .bottomCenter,
-                                                      stops: [0.0, 1.0],
-                                                      colors: ColorUtilsGradient
-                                                          .kTintGradient,
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    color: ColorUtils.kTint),
-                                                child: Center(
-                                                    child: Text(
-                                                  'Choose a Workout Plan',
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize:
-                                                          Get.height * 0.02),
-                                                )),
-                                              ),
+                                              oneTime = false;
+                                            },
+                                            child: Container(
+                                              height: Get.height * .05,
+                                              width: Get.width * .9,
+                                              decoration: BoxDecoration(
+                                                  gradient: LinearGradient(
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                    stops: [0.0, 1.0],
+                                                    colors: ColorUtilsGradient
+                                                        .kTintGradient,
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  color: ColorUtils.kTint),
+                                              child: Center(
+                                                  child: Text(
+                                                'Choose a Workout Plan',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black,
+                                                    fontSize:
+                                                        Get.height * 0.02),
+                                              )),
                                             ),
                                           ),
                                         ]),
@@ -912,8 +898,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               });
                             } else {
                               return Container(
-                                height: Get.height * 0.22,
-                                width: Get.width * 0.99,
+                                padding: EdgeInsets.symmetric(
+                                    vertical: Get.width * 0.05,
+                                    horizontal: Get.width * 0.05),
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: Color(0xff363636)),
@@ -921,62 +908,48 @@ class _HomeScreenState extends State<HomeScreen> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 20,
-                                            bottom: 10,
-                                            top: 20,
-                                            right: 20),
-                                        child: Text(
-                                          'No Workouts Scheduled',
-                                          style:
-                                              FontTextStyle.kWhite20BoldRoboto,
-                                        ),
+                                      Text(
+                                        'No Workouts Scheduled',
+                                        style: FontTextStyle.kWhite20BoldRoboto,
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20),
-                                        child: Text(
-                                          'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
-                                          style:
-                                              FontTextStyle.kWhite16W300Roboto,
-                                        ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        'Looks like you don’t have any upcoming workouts. Get started by a plan.  ',
+                                        style: FontTextStyle.kWhite16W300Roboto,
                                       ),
                                       SizedBox(
                                         height: Get.height * .03,
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: Get.width * 0.05),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Get.to(TrainingPlanScreen());
+                                      GestureDetector(
+                                        onTap: () {
+                                          Get.to(TrainingPlanScreen());
 
-                                            oneTime = false;
-                                          },
-                                          child: Container(
-                                            height: Get.height * .05,
-                                            width: Get.width * .9,
-                                            decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  begin: Alignment.topCenter,
-                                                  end: Alignment.bottomCenter,
-                                                  stops: [0.0, 1.0],
-                                                  colors: ColorUtilsGradient
-                                                      .kTintGradient,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                color: ColorUtils.kTint),
-                                            child: Center(
-                                                child: Text(
-                                              'Choose a Workout Plan',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black,
-                                                  fontSize: Get.height * 0.02),
-                                            )),
-                                          ),
+                                          oneTime = false;
+                                        },
+                                        child: Container(
+                                          height: Get.height * .05,
+                                          width: Get.width * .9,
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                stops: [0.0, 1.0],
+                                                colors: ColorUtilsGradient
+                                                    .kTintGradient,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: ColorUtils.kTint),
+                                          child: Center(
+                                              child: Text(
+                                            'Choose a Workout Plan',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: Get.height * 0.02),
+                                          )),
                                         ),
                                       ),
                                     ]),

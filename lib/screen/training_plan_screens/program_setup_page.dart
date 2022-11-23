@@ -1442,7 +1442,6 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 _userWorkoutsDateViewModel.superSetsRound = responseApi.data!.round;
                                                                                 _userWorkoutsDateViewModel.userProgramDatesId = responseApi.data!.userProgramDatesId!;
                                                                                 _userWorkoutsDateViewModel.restTime = responseApi.data!.restTime!;
-
                                                                                 Navigator.push(
                                                                                   context,
                                                                                   MaterialPageRoute(
