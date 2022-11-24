@@ -500,6 +500,9 @@ class _ProfileSizerState extends State<ProfileSizer> {
               ),
             ),
           ),
+          SizedBox(
+            height: Get.height * .05,
+          )
         ]),
       ),
     );

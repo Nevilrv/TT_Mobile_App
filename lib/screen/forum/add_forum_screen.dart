@@ -13,7 +13,6 @@ import 'package:tcm/model/request_model/forum_request_model/add_forum_request_mo
 import 'package:tcm/model/response_model/forum_response_model/add_forum_response_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forum_category_response_model.dart';
 import 'package:tcm/model/response_model/forum_response_model/get_all_forums_response_model.dart';
-import 'package:tcm/model/response_model/forum_response_model/get_category_tag_response_model.dart';
 import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/forum/video_preview_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';

@@ -80,6 +80,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
 
   @override
   void initState() {
+    print('programme id >>> ${widget.workoutProgramId}');
     super.initState();
     _connectivityCheckViewModel.startMonitoring();
 
@@ -234,6 +235,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
         }
         log('days list --------- $days');
         _workoutByIdViewModel.listUpdate(value: days);
+        print('defSelected list >>> ${_workoutByIdViewModel.defSelectedList}');
         conflictApi();
       }
     }
@@ -691,6 +693,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                         separatorBuilder:
                                                                             (_,
                                                                                 index) {
+
                                                                           return Padding(
                                                                               padding: EdgeInsets.symmetric(vertical: Get.height * 0.01));
                                                                         },
@@ -703,6 +706,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                             .length,
                                                                         itemBuilder:
                                                                             (_, index) {
+
                                                                           return InkWell(
                                                                             onTap:
                                                                                 () async {
@@ -711,7 +715,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 updateWithSelection(weekLength: workResponse.data![0].daysAllData!.length, startDate: dateByUser == null ? DateTime.now() : dateByUser!);
                                                                                 controllerWork.setDateController(controllerWork.defSelectedList);
 
-                                                                                log('_workoutByIdViewModel.dayAddedList[0]  ${_workoutByIdViewModel.dayAddedList}');
+                                                                                print('_workoutByIdViewModel.dayAddedList[0]  ${_workoutByIdViewModel.dayAddedList}');
 
                                                                                 setNumber();
                                                                                 log('DATA>>>>>$data');
@@ -875,6 +879,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                             .kLightGray16W300Roboto),
                                                                 monthCellStyle:
                                                                     DateRangePickerMonthCellStyle(
+
                                                                   todayCellDecoration:
                                                                       BoxDecoration(
                                                                           color:
@@ -895,6 +900,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                 initialSelectedDates:
                                                                     controllerWork
                                                                         .defSelectedList,
+
                                                                 // cellBuilder: (BuildContext
                                                                 //         context,
                                                                 //     DateRangePickerCellDetails
@@ -1007,6 +1013,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                 },
                                                                 monthViewSettings:
                                                                     DateRangePickerMonthViewSettings(
+
                                                                   firstDayOfWeek:
                                                                       1,
                                                                   dayFormat:
@@ -1028,7 +1035,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                               ),
                                                             ),
                                                           ),
-                                                          controllerWork
+                                                          widget.isEdit == true?SizedBox():controllerWork
                                                                   .isConflict
                                                               ? Column(
                                                                   children: [
@@ -1372,6 +1379,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                               .workoutId;
                                                                           _request.exerciseId =
                                                                               "0";
+
                                                                           _request.startDate =
                                                                               startDate(controllerWork.defSelectedList);
                                                                           _request.endDate =
@@ -1384,6 +1392,7 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                               'print is edit ------------ ${widget.isEdit}');
                                                                           if (widget.isEdit ==
                                                                               true) {
+
                                                                             _request.workoutProgramId =
                                                                                 widget.workoutProgramId;
                                                                           }
@@ -1400,10 +1409,10 @@ class _ProgramSetupPageState extends State<ProgramSetupPage> {
                                                                                 message: '${saveWorkoutResponse.msg}',
                                                                                 duration: Duration(seconds: 2),
                                                                               ));
-                                                                              Get.showSnackbar(GetSnackBar(
+                                                                            /*  Get.showSnackbar(GetSnackBar(
                                                                                 message: 'Your old workout ${workResponse.data![0].workoutTitle} is not removed from schedule',
                                                                                 duration: Duration(seconds: 2),
-                                                                              ));
+                                                                              ));*/
                                                                               controllerWork.changeConflict(false);
                                                                               print('Keep Pressed');
                                                                               print('keep ${controllerWork.isConflict}');

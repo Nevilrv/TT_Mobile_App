@@ -521,6 +521,8 @@ class _MyScheduleScreenState extends State<MyScheduleScreen>
                                                               onTap: () {
                                                                 print(
                                                                     'date>>>>><<<<< ${scheduleResponse.data![index].date}');
+                                                                print(
+                                                                    'iD >>>>>>>>>      ${scheduleResponse.data![index].id}');
 
                                                                 openBottomSheet(
                                                                     scheduleByDateViewModel:

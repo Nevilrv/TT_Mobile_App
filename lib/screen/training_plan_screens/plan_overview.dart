@@ -459,6 +459,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                             },
                                                             itemBuilder:
                                                                 (_, index) {
+                                                              print(
+                                                                  '*****************  ${data[index].day}');
                                                               return GestureDetector(
                                                                 onTap: () {
                                                                   if ('${response.data![0].workoutVideo}'
@@ -898,6 +900,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                         },
                                                         itemBuilder:
                                                             (_, index) {
+                                                          print(
+                                                              '*****************  ${data[index].day}');
                                                           return GestureDetector(
                                                             onTap: () {
                                                               if ('${response.data![0].workoutVideo}'
@@ -1338,6 +1342,8 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                         },
                                                         itemBuilder:
                                                             (_, index) {
+                                                          print(
+                                                              '*****************  ${data[index].day}');
                                                           return GestureDetector(
                                                             onTap: () {
                                                               if ('${response.data![0].workoutVideo}'
@@ -1726,6 +1732,7 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                               return SizedBox(height: Get.height * .022);
                             },
                             itemBuilder: (_, index) {
+                              print('*****************  ${data[index].day}');
                               return GestureDetector(
                                 onTap: () {
                                   if ('${response.data![0].workoutVideo}'

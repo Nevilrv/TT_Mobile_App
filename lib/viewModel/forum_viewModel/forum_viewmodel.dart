@@ -46,7 +46,6 @@ class ForumViewModel extends GetxController {
 
   void setLikeDisLike(List<all.Datum> value) {
     _likeDisLike = value;
-    update();
   }
 
   RxString _selectedMenu = 'All Posts'.obs;

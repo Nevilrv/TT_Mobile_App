@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:jiffy/jiffy.dart';
-import 'package:screenshot/screenshot.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tcm/api_services/api_response.dart';
 import 'package:tcm/model/response_model/habit_tracker_model/get_habit_record_date_response_model.dart';
@@ -43,7 +41,8 @@ import 'subscription/subscription_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String? id;
-  HomeScreen({Key? key, this.id}) : super(key: key);
+  final String? profilePicUrl;
+  HomeScreen({Key? key, this.id, this.profilePicUrl}) : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -76,8 +75,12 @@ class _HomeScreenState extends State<HomeScreen> {
   WorkoutByIdViewModel _workoutByIdViewModel = Get.put(WorkoutByIdViewModel());
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
-
+  String? profileUrl;
   void initState() {
+    profileUrl = PreferenceManager.getProfilePic();
+    print('profilr pic ---- ${PreferenceManager.getProfilePic()}');
+    print('url ?>>>> $profileUrl');
+    print('widget >>>>>    ${widget.profilePicUrl}');
     getSubscriptionDetails();
 
     super.initState();
@@ -1138,7 +1141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(120),
                         child: CachedNetworkImage(
-                            imageUrl: '${PreferenceManager.getProfilePic()}',
+                            imageUrl: profileUrl.toString(),
                             fit: BoxFit.fill,
                             errorWidget: (context, url, error) => ClipRRect(
                                   borderRadius: BorderRadius.circular(120),

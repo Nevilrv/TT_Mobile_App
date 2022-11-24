@@ -5,6 +5,12 @@ import 'package:tcm/model/response_model/goal_res_model.dart';
 import '../repo/goal_repo.dart';
 
 class GoalViewModel extends GetxController {
+  bool isLoading = false;
+  setLoading(value) {
+    isLoading = value;
+    update();
+  }
+
   List selectedGoalList = [];
 
   selectedGoals({String? goals}) {

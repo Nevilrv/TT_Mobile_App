@@ -12,6 +12,7 @@ import 'package:tcm/preference_manager/preference_store.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
+import 'package:tcm/screen/forum/post_details_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
@@ -404,19 +405,31 @@ class _ForumScreenState extends State<ForumScreen> {
                         : Container(
                             width: Get.width,
                             height: Get.height * 0.23,
-                            child: CachedNetworkImage(
-                              imageUrl:
-                                  '${response.data![index].postImage![0]}',
-                              fit: BoxFit.cover,
-                              errorWidget: (context, url, error) => SizedBox(),
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      Shimmer.fromColors(
-                                baseColor: Colors.white.withOpacity(0.4),
-                                highlightColor: Colors.white.withOpacity(0.2),
-                                enabled: true,
-                                child: Container(
-                                  color: Colors.white,
+                            child: GestureDetector(
+                              onTap: () {
+                                Get.to(PostDetailsScreen(
+                                  isVideo: false,
+                                  index: index,
+                                  postId:
+                                      response.data![index].postId.toString(),
+                                  url: '${response.data![index].postImage![0]}',
+                                ));
+                              },
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    '${response.data![index].postImage![0]}',
+                                fit: BoxFit.cover,
+                                errorWidget: (context, url, error) =>
+                                    SizedBox(),
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) =>
+                                        Shimmer.fromColors(
+                                  baseColor: Colors.white.withOpacity(0.4),
+                                  highlightColor: Colors.white.withOpacity(0.2),
+                                  enabled: true,
+                                  child: Container(
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -439,29 +452,66 @@ class _ForumScreenState extends State<ForumScreen> {
                                             .data![index]
                                             .postImage![itemIndex]
                                             .isVideoFileName
-                                        ? ForumVideoScreen(
-                                            isPlay: _current == itemIndex
-                                                ? true
-                                                : false,
-                                            video: response.data![index]
-                                                .postImage![itemIndex])
-                                        : CachedNetworkImage(
-                                            imageUrl:
-                                                '${response.data![index].postImage![itemIndex]}',
-                                            fit: BoxFit.cover,
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    SizedBox(),
-                                            progressIndicatorBuilder: (context,
-                                                    url, downloadProgress) =>
-                                                Shimmer.fromColors(
-                                              baseColor:
-                                                  Colors.white.withOpacity(0.4),
-                                              highlightColor:
-                                                  Colors.white.withOpacity(0.2),
-                                              enabled: true,
-                                              child: Container(
-                                                color: Colors.white,
+                                        ? Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              ForumVideoScreen(
+                                                  isPlay: _current == itemIndex
+                                                      ? true
+                                                      : false,
+                                                  video: response.data![index]
+                                                      .postImage![itemIndex]),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Get.to(PostDetailsScreen(
+                                                    isVideo: true,
+                                                    index: index,
+                                                    postId: response
+                                                        .data![index].postId
+                                                        .toString(),
+                                                    url:
+                                                        '${response.data![index].postImage![itemIndex]}',
+                                                  ));
+                                                },
+                                                child: Container(
+                                                  color: Colors.transparent,
+                                                  height: Get.height,
+                                                  width: Get.width,
+                                                ),
+                                              ),
+                                            ],
+                                          )
+                                        : GestureDetector(
+                                            onTap: () {
+                                              Get.to(PostDetailsScreen(
+                                                isVideo: false,
+                                                index: index,
+                                                postId: response
+                                                    .data![index].postId
+                                                    .toString(),
+                                                url:
+                                                    '${response.data![index].postImage![itemIndex]}',
+                                              ));
+                                            },
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  '${response.data![index].postImage![itemIndex]}',
+                                              fit: BoxFit.cover,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      SizedBox(),
+                                              progressIndicatorBuilder:
+                                                  (context, url,
+                                                          downloadProgress) =>
+                                                      Shimmer.fromColors(
+                                                baseColor: Colors.white
+                                                    .withOpacity(0.4),
+                                                highlightColor: Colors.white
+                                                    .withOpacity(0.2),
+                                                enabled: true,
+                                                child: Container(
+                                                  color: Colors.white,
+                                                ),
                                               ),
                                             ),
                                           ),

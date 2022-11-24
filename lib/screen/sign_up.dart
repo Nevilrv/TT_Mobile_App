@@ -442,8 +442,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             itemStyle: FontTextStyle
                                                 .kWhite16W300Roboto),
                                         showTitleActions: true,
-                                        minTime: DateTime(1940, 1, 1),
-                                        maxTime: DateTime(2025, 12, 30),
+                                        minTime: DateTime(1920, 1, 1),
+                                        maxTime: DateTime(2010, 12, 30),
                                         onChanged: (date) {
                                           print('change $date');
                                         },
@@ -940,6 +940,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                 //   });
                                                 // },
                                                 onTap: () {},
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return "Please enter a weight";
+                                                  }
+                                                },
                                                 style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.white,
@@ -1180,19 +1185,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     onTap: () async {
                                       if (_formKeySignUp.currentState!
                                           .validate()) {
-                                        Get.to(SetProfilePage(
-                                          fname: fName.text,
-                                          lname: lName.text,
-                                          email: email.text.trim(),
-                                          pass: pass.text.trim(),
-                                          userName: userName.text,
-                                          gender: isRadioButton == 1
-                                              ? 'Male'
-                                              : 'Female',
-                                          phone: '9638527410',
-                                          weight: weight.text,
-                                          dob: pickedDate.toString(),
-                                        ));
+                                        if (pickedDate != null) {
+                                          Get.to(SetProfilePage(
+                                            fname: fName.text,
+                                            lname: lName.text,
+                                            email: email.text.trim(),
+                                            pass: pass.text.trim(),
+                                            userName: userName.text,
+                                            gender: isRadioButton == 1
+                                                ? 'Male'
+                                                : 'Female',
+                                            phone: '9638527410',
+                                            weight: weight.text,
+                                            dob: pickedDate.toString(),
+                                          ));
+                                        } else {
+                                          Get.showSnackbar(GetSnackBar(
+                                            message:
+                                                'Please select Date of Birth',
+                                            duration: Duration(seconds: 1),
+                                          ));
+                                        }
                                       } else {
                                         Get.showSnackbar(GetSnackBar(
                                           message:

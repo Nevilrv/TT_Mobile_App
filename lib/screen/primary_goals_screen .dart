@@ -281,197 +281,290 @@ class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
                               Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: Get.width * 0.05),
-                                child: GestureDetector(
-                                  onTap: () async {
-                                    if (response.success == true) {
-                                      RegisterRequestModel _request =
-                                          RegisterRequestModel();
-
-                                      _request.fname = widget.fname;
-                                      _request.lname = widget.lname;
-                                      _request.email = widget.email;
-                                      _request.password = widget.pass;
-                                      _request.username = widget.userName;
-                                      _request.gender = widget.gender;
-                                      _request.phone = widget.phone;
-                                      _request.dob = widget.dob;
-                                      _request.weight = widget.weight;
-                                      _request.experienceLevel =
-                                          widget.experienceLevel;
-
-                                      await _registerViewModel
-                                          .registerViewModel(_request);
-
-                                      if (_registerViewModel
-                                              .apiResponse.status ==
-                                          Status.COMPLETE) {
-                                        RegisterResponseModel response =
-                                            _registerViewModel.apiResponse.data;
-
-                                        print('response --- $response');
-
-                                        if (response.data != null ||
-                                            response.data != '') {
-                                          if (response.success == true &&
-                                              response.data != null) {
-                                            Get.showSnackbar(GetSnackBar(
-                                              message: 'Register Done',
-                                              duration: Duration(seconds: 1),
-                                            ));
-
-                                            ids = response.data!.id;
-                                            PreferenceManager.setEmail(
-                                                response.data!.email!);
-                                            PreferenceManager.setFirstName(
-                                                response.data!.fname!);
-                                            PreferenceManager.setLastName(
-                                                response.data!.lname!);
-                                            PreferenceManager.setPassword(
-                                                response.data!.password!);
-                                            PreferenceManager.setUserName(
-                                                response.data!.username!);
-                                            PreferenceManager.setUId(
-                                                response.data!.id!);
-                                            PreferenceManager.setWeight(
-                                                response.data!.weight!);
-                                            PreferenceManager.setPhoneNumber(
-                                                response.data!.phone!);
-                                            PreferenceManager.setDOB(response
-                                                .data!.birthday
-                                                .toString());
-                                            PreferenceManager.setUserType(
-                                                response.data!.gender!);
-                                            PreferenceManager.isSetLogin(true);
-
-                                            print(
-                                                'response.data!.id!=========== ${response.data!.id!}');
-                                            print(
-                                                'EMAIL ${PreferenceManager.getEmail()}');
-
-                                            /// create subscription api
-                                            SubscriptionRequestModel model =
-                                                SubscriptionRequestModel();
-                                            print('enter---------');
-                                            model.userId =
-                                                PreferenceManager.getUId();
-                                            model.startDate =
-                                                Jiffy().dateTime.toString();
-                                            model.endDate = Jiffy()
-                                                .add(days: 7)
-                                                .dateTime
-                                                .toString();
-                                            model.currentPlan = "free";
-                                            await createSubscriptionViewModel
-                                                .subscriptionViewModel(
-                                                    model,
-                                                    ApiRoutes()
-                                                        .createSubscriptionUrl);
-
-                                            Get.offAll(HomeScreen(
-                                              id: PreferenceManager.getUId(),
-                                            ));
-                                          } else {
-                                            Get.showSnackbar(GetSnackBar(
-                                              message: response.msg,
-                                              duration: Duration(seconds: 2),
-                                            ));
-                                          }
-                                        }
-                                      } else {
-                                        CircularProgressIndicator(
-                                          color: ColorUtils.kTint,
-                                        );
-                                      }
-
-                                      if (widget.image ==
-                                              "https://tcm.sataware.dev" ||
-                                          widget.image == null) {
-                                        Map<String, dynamic> data = {
-                                          'user_id': ids.toString(),
-                                          'profile_pic':
-                                              await dio.MultipartFile.fromFile(
-                                                  widget.skippedImage!),
-                                        };
-
-                                        Map<String, String> header = {
-                                          'content-type': 'application/json'
-                                        };
-
-                                        dio.FormData formData =
-                                            dio.FormData.fromMap(data);
-
-                                        dio.Response result = await dio.Dio().post(
-                                            'https://tcm.sataware.dev//json/data_user_profile.php',
-                                            data: formData,
-                                            options:
-                                                dio.Options(headers: header));
-                                        Map<String, dynamic> dataa =
-                                            result.data;
-                                        print(
-                                            'dataa profile===${dataa['data'][0]['profile_pic']}');
-                                        print(
-                                            'dataa all ===${dataa['data'][0]}');
-                                        print(
-                                            'dataa -----> ===${dataa['data']}');
-                                        print('dataa===$dataa');
-
-                                        PreferenceManager.setProfilePic(
-                                            dataa['data'][0]['profile_pic']);
-                                      } else {
-                                        Map<String, dynamic> data = {
-                                          'user_id': ids.toString(),
-                                          'profile_pic':
-                                              await dio.MultipartFile.fromFile(
-                                                  widget.image!.path),
-                                        };
-
-                                        Map<String, String> header = {
-                                          'content-type': 'application/json'
-                                        };
-
-                                        dio.FormData formData =
-                                            dio.FormData.fromMap(data);
-
-                                        dio.Response result = await dio.Dio().post(
-                                            'https://tcm.sataware.dev//json/data_user_profile.php',
-                                            data: formData,
-                                            options:
-                                                dio.Options(headers: header));
-                                        Map<String, dynamic> dataa =
-                                            result.data;
-                                        print(
-                                            'dataa profile===${dataa['data'][0]['profile_pic']}');
-                                        print(
-                                            'dataa all ===${dataa['data'][0]}');
-                                        print(
-                                            'dataa -----> ===${dataa['data']}');
-                                        print('dataa===$dataa');
-
-                                        PreferenceManager.setProfilePic(
-                                            dataa['data'][0]['profile_pic']);
-                                      }
-                                    } else {
-                                      CircularProgressIndicator(
+                                child: controller.isLoading == true
+                                    ? Center(
+                                        child: CircularProgressIndicator(
                                         color: ColorUtils.kTint,
-                                      );
-                                    }
-                                  },
-                                  child: Container(
-                                    height: Get.height * 0.06,
-                                    width: Get.width * 0.9,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(50),
-                                        color: ColorUtils.kTint),
-                                    child: Center(
-                                        child: Text(
-                                      'Finish Profile',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: Get.height * 0.02),
-                                    )),
-                                  ),
-                                ),
+                                      ))
+                                    : GestureDetector(
+                                        onTap: () async {
+                                          controller.setLoading(true);
+                                          if (response.success == true) {
+                                            RegisterRequestModel _request =
+                                                RegisterRequestModel();
+
+                                            _request.fname = widget.fname;
+                                            _request.lname = widget.lname;
+                                            _request.email = widget.email;
+                                            _request.password = widget.pass;
+                                            _request.username = widget.userName;
+                                            _request.gender = widget.gender;
+                                            _request.phone = widget.phone;
+                                            _request.dob = widget.dob;
+                                            _request.weight = widget.weight;
+                                            _request.experienceLevel =
+                                                widget.experienceLevel;
+
+                                            await _registerViewModel
+                                                .registerViewModel(_request);
+
+                                            if (_registerViewModel
+                                                    .apiResponse.status ==
+                                                Status.COMPLETE) {
+                                              RegisterResponseModel response =
+                                                  _registerViewModel
+                                                      .apiResponse.data;
+
+                                              print('response --- $response');
+
+                                              if (response.data != null ||
+                                                  response.data != '') {
+                                                if (response.success == true &&
+                                                    response.data != null) {
+                                                  ids = response.data!.id;
+                                                  PreferenceManager.setEmail(
+                                                      response.data!.email!);
+                                                  PreferenceManager
+                                                      .setFirstName(response
+                                                          .data!.fname!);
+                                                  PreferenceManager.setLastName(
+                                                      response.data!.lname!);
+                                                  PreferenceManager.setPassword(
+                                                      response.data!.password!);
+                                                  PreferenceManager.setUserName(
+                                                      response.data!.username!);
+                                                  PreferenceManager.setUId(
+                                                      response.data!.id!);
+                                                  PreferenceManager.setWeight(
+                                                      response.data!.weight!);
+                                                  PreferenceManager
+                                                      .setPhoneNumber(response
+                                                          .data!.phone!);
+                                                  PreferenceManager.setDOB(
+                                                      response.data!.birthday
+                                                          .toString());
+                                                  PreferenceManager.setUserType(
+                                                      response.data!.gender!);
+                                                  PreferenceManager.isSetLogin(
+                                                      true);
+
+                                                  print(
+                                                      'response.data!.id!=========== ${response.data!.id!}');
+                                                  print(
+                                                      'EMAIL ${PreferenceManager.getEmail()}');
+
+                                                  if (widget.image ==
+                                                          "https://tcm.sataware.dev" ||
+                                                      widget.image == null) {
+                                                    Map<String, dynamic> data =
+                                                        {
+                                                      'user_id': ids.toString(),
+                                                      // 'user_id': '139',
+                                                      'profile_pic': await dio
+                                                              .MultipartFile
+                                                          .fromFile(widget
+                                                              .skippedImage!),
+                                                    };
+
+                                                    Map<String, String> header =
+                                                        {
+                                                      'content-type':
+                                                          'application/json'
+                                                    };
+
+                                                    dio.FormData formData =
+                                                        dio.FormData.fromMap(
+                                                            data);
+
+                                                    dio.Response result =
+                                                        await dio.Dio().post(
+                                                            'https://tcm.sataware.dev//json/data_user_profile.php',
+                                                            data: formData,
+                                                            options: dio.Options(
+                                                                headers:
+                                                                    header));
+                                                    Map<String, dynamic> dataa =
+                                                        result.data;
+
+                                                    print(
+                                                        'dataa profile===${dataa['data'][0]['profile_pic']}');
+                                                    print(
+                                                        'dataa all ===${dataa['data'][0]}');
+                                                    print(
+                                                        'dataa -----> ===${dataa['data']}');
+                                                    print('dataa===$dataa');
+
+                                                    if (dataa['success'] ==
+                                                        true) {
+                                                      PreferenceManager
+                                                          .setProfilePic(dataa[
+                                                                  'data'][0]
+                                                              ['profile_pic']);
+
+                                                      /// create subscription api
+                                                      SubscriptionRequestModel
+                                                          model =
+                                                          SubscriptionRequestModel();
+                                                      print('enter---------');
+                                                      model.userId =
+                                                          PreferenceManager
+                                                              .getUId();
+                                                      model.startDate = Jiffy()
+                                                          .dateTime
+                                                          .toString();
+                                                      model.endDate = Jiffy()
+                                                          .add(days: 7)
+                                                          .dateTime
+                                                          .toString();
+                                                      model.currentPlan =
+                                                          "free";
+                                                      await createSubscriptionViewModel
+                                                          .subscriptionViewModel(
+                                                              model,
+                                                              ApiRoutes()
+                                                                  .createSubscriptionUrl);
+                                                      Get.showSnackbar(
+                                                          GetSnackBar(
+                                                        message:
+                                                            'Register Done',
+                                                        duration: Duration(
+                                                            seconds: 1),
+                                                      ));
+                                                      Get.offAll(HomeScreen(
+                                                        id: PreferenceManager
+                                                            .getUId(),
+                                                      ));
+                                                    }
+                                                  } else {
+                                                    Map<String, dynamic> data =
+                                                        {
+                                                      // 'user_id': '139',
+                                                      'user_id': ids.toString(),
+                                                      'profile_pic': await dio
+                                                              .MultipartFile
+                                                          .fromFile(widget
+                                                              .image!.path),
+                                                    };
+
+                                                    Map<String, String> header =
+                                                        {
+                                                      'content-type':
+                                                          'application/json'
+                                                    };
+
+                                                    dio.FormData formData =
+                                                        dio.FormData.fromMap(
+                                                            data);
+
+                                                    dio.Response result =
+                                                        await dio.Dio().post(
+                                                            'https://tcm.sataware.dev//json/data_user_profile.php',
+                                                            data: formData,
+                                                            options: dio.Options(
+                                                                headers:
+                                                                    header));
+                                                    Map<String, dynamic> dataa =
+                                                        result.data;
+                                                    print(
+                                                        'dataa profile===${dataa['data'][0]['profile_pic']}');
+                                                    print(
+                                                        'dataa all ===${dataa['data'][0]}');
+                                                    print(
+                                                        'dataa -----> ===${dataa['data']}');
+                                                    print('dataa===$dataa');
+
+                                                    if (dataa['success'] ==
+                                                        true) {
+                                                      PreferenceManager
+                                                          .setProfilePic(dataa[
+                                                                  'data'][0]
+                                                              ['profile_pic']);
+
+                                                      /// create subscription api
+                                                      SubscriptionRequestModel
+                                                          model =
+                                                          SubscriptionRequestModel();
+                                                      print('enter---------');
+                                                      model.userId =
+                                                          PreferenceManager
+                                                              .getUId();
+                                                      model.startDate = Jiffy()
+                                                          .dateTime
+                                                          .toString();
+                                                      model.endDate = Jiffy()
+                                                          .add(days: 7)
+                                                          .dateTime
+                                                          .toString();
+                                                      model.currentPlan =
+                                                          "free";
+                                                      await createSubscriptionViewModel
+                                                          .subscriptionViewModel(
+                                                              model,
+                                                              ApiRoutes()
+                                                                  .createSubscriptionUrl);
+                                                      Get.showSnackbar(
+                                                          GetSnackBar(
+                                                        message:
+                                                            'Register Done',
+                                                        duration: Duration(
+                                                            seconds: 1),
+                                                      ));
+                                                      controller
+                                                          .setLoading(false);
+                                                      Get.offAll(HomeScreen(
+                                                        id: PreferenceManager
+                                                            .getUId(),
+                                                      ));
+                                                    } else {
+                                                      controller
+                                                          .setLoading(false);
+                                                    }
+                                                    print(
+                                                        '>>> profile pic >>>>> ${PreferenceManager.getProfilePic()}');
+                                                  }
+                                                } else {
+                                                  controller.setLoading(false);
+                                                  Get.showSnackbar(GetSnackBar(
+                                                    message: response.msg,
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  ));
+                                                }
+                                              }
+                                            } else {
+                                              controller.setLoading(true);
+
+                                              CircularProgressIndicator(
+                                                color: ColorUtils.kTint,
+                                              );
+                                            }
+                                          } else {
+                                            controller.setLoading(true);
+
+                                            CircularProgressIndicator(
+                                              color: ColorUtils.kTint,
+                                            );
+                                          }
+                                          print(
+                                              'get profile pic >>>>> ${PreferenceManager.getProfilePic()}');
+                                        },
+                                        child: Container(
+                                          height: Get.height * 0.06,
+                                          width: Get.width * 0.9,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              color: ColorUtils.kTint),
+                                          child: Center(
+                                              child: Text(
+                                            'Finish Profile',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: Get.height * 0.02),
+                                          )),
+                                        ),
+                                      ),
                               ),
                               SizedBox(
                                 height: Get.height * 0.05,
