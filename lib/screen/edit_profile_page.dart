@@ -68,7 +68,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
   Future pickImage() async {
-    final pickedFile = await picker!.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker!.pickImage(source: ImageSource.gallery);
 
     _editProfileViewModel.image = File(pickedFile!.path);
     if (_editProfileViewModel.image != null) {
@@ -237,7 +237,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                 Positioned(
                                   top: 110,
                                   left: 90,
-                                  child: FlatButton(
+                                  child: ElevatedButton(
                                     onPressed: () async {
                                       pickImage();
                                     },
@@ -828,6 +828,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                                                         .setProfilePic(dataa[
                                                                 'data'][0]
                                                             ['profile_pic']);
+                                                    setState(() {});
+                                                    print(
+                                                        'profile pic>>. ${PreferenceManager.getProfilePic()}');
                                                   }
                                                   _connectivityCheckViewModel
                                                       .setUserData(
@@ -998,72 +1001,73 @@ class _ProfileSizerState extends State<ProfileSizer> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ColorUtils.kBlack,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(children: [
-          SizedBox(
-            height: Get.height * 0.01,
-          ),
-          Row(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Get.back();
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios_sharp,
-                    color: ColorUtils.kTint,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(children: [
+            SizedBox(
+              height: Get.height * 0.01,
+            ),
+            Row(
+              children: [
+                IconButton(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    icon: Icon(
+                      Icons.arrow_back_ios_sharp,
+                      color: ColorUtils.kTint,
+                    )),
+                Padding(
+                  padding: EdgeInsets.only(left: Get.width * 0.22),
+                  child: Text(
+                    'Position and Size',
+                    style: FontTextStyle.kWhite17BoldRoboto,
+                  ),
+                ),
+                Spacer(),
+                Padding(
+                  padding: EdgeInsets.only(top: Get.height * 0.01),
+                  child: InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Text('Skip', style: FontTextStyle.kTine16W400Roboto),
+                  ),
+                ),
+              ],
+            ),
+            Expanded(child: Crop.file(widget.image!, key: cropKey)),
+            Padding(
+              padding: EdgeInsets.only(
+                  left: Get.width * .05, right: Get.width * .05, bottom: 50),
+              child: GestureDetector(
+                onTap: () async {
+                  await _cropImage();
+                  Navigator.pop(context);
+                  // Get.off(EditProfilePage(
+                  //   image: image,
+                  // ));
+                },
+                child: Container(
+                  height: Get.height * 0.06,
+                  width: Get.width * 0.9,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(50),
+                      color: ColorUtils.kTint),
+                  child: Center(
+                      child: Text(
+                    'Next',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                        fontSize: 17),
                   )),
-              Padding(
-                padding: EdgeInsets.only(left: Get.width * 0.22),
-                child: Text(
-                  'Position and Size',
-                  style: FontTextStyle.kWhite17BoldRoboto,
                 ),
-              ),
-              Spacer(),
-              Padding(
-                padding: EdgeInsets.only(top: Get.height * 0.01),
-                child: InkWell(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: Text('Skip', style: FontTextStyle.kTine16W400Roboto),
-                ),
-              ),
-            ],
-          ),
-          Expanded(
-            child: Crop.file(widget.image!, key: cropKey),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Get.width * .05),
-            child: GestureDetector(
-              onTap: () async {
-                await _cropImage();
-                Navigator.pop(context);
-                // Get.off(EditProfilePage(
-                //   image: image,
-                // ));
-              },
-              child: Container(
-                height: Get.height * 0.06,
-                width: Get.width * 0.9,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(50),
-                    color: ColorUtils.kTint),
-                child: Center(
-                    child: Text(
-                  'Next',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 17),
-                )),
               ),
             ),
-          ),
-        ]),
+          ]),
+        ),
       ),
     );
   }

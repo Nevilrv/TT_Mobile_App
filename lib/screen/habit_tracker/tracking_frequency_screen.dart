@@ -34,7 +34,6 @@ class _TrackingFrequencyScreenState extends State<TrackingFrequencyScreen> {
   void initState() {
     super.initState();
     _connectivityCheckViewModel.startMonitoring();
-
     _habitTrackStatusViewModel.initialized;
   }
 

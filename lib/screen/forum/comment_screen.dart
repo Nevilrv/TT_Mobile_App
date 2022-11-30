@@ -92,7 +92,6 @@ class _CommentScreenState extends State<CommentScreen> {
                               SearchForumRequestModel();
                           model.title = '';
                           model.userId = PreferenceManager.getUId();
-
                           await forumViewModel.searchForumViewModel(model);
                         } else if (forumViewModel.selectedMenu ==
                             'Popular Posts') {
@@ -740,15 +739,13 @@ class _CommentScreenState extends State<CommentScreen> {
                                                       model.type = "text";
                                                       model.caption = "";
                                                       model.image = "";
-
+                                                      commentController.clear();
                                                       print(
                                                           'model ${model.toJson()}');
                                                       await controller
                                                           .addCommentsViewModel(
                                                               model)
                                                           .then((value) async {
-                                                        commentController
-                                                            .clear();
                                                         await controller
                                                             .getAllCommentsViewModel(
                                                           postId: widget.postId,

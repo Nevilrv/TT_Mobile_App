@@ -15,7 +15,6 @@ import 'package:tcm/utils/font_styles.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:tcm/viewModel/goal_view_model.dart';
 import 'package:tcm/viewModel/training_plan_viewModel/workout_by_filter_viewModel.dart';
-
 import '../../utils/images.dart';
 import '../../viewModel/training_plan_viewModel/workout_by_id_viewModel.dart';
 
@@ -40,7 +39,6 @@ class _TrainingPlanScreenState extends State<TrainingPlanScreen> {
   void initState() {
     super.initState();
     _connectivityCheckViewModel.startMonitoring();
-
     _goalViewModel.goals();
     _workoutByFilterViewModel.getWorkoutByFilterDetails(
       isLoading: true,

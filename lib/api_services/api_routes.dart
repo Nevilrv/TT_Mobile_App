@@ -82,4 +82,5 @@ class ApiRoutes {
   String getAllForumCategory = baseUrl + "/json/data_forum_category.php";
   String getCategoryTags =
       baseUrl + "/json/data_category_tags.php?category_id=";
+  String checkEmailExists = baseUrl + "/json/data_check_email_exist.php";
 }

@@ -479,6 +479,29 @@ class _PrimaryGoalsScreenState extends State<PrimaryGoalsScreen> {
                                                           .setProfilePic(dataa[
                                                                   'data'][0]
                                                               ['profile_pic']);
+                                                      _connectivityCheckViewModel.setUserData(
+                                                          firstName:
+                                                              PreferenceManager
+                                                                  .getFirstName(),
+                                                          lastName:
+                                                              PreferenceManager
+                                                                  .getLastName(),
+                                                          email:
+                                                              PreferenceManager
+                                                                  .getEmail(),
+                                                          dob: PreferenceManager
+                                                              .getDOB(),
+                                                          userName:
+                                                              PreferenceManager
+                                                                  .getUserName(),
+                                                          weight:
+                                                              PreferenceManager
+                                                                  .getWeight(),
+                                                          image: dataa['data']
+                                                                      [0][
+                                                                  'profile_pic'] ??
+                                                              PreferenceManager
+                                                                  .getProfilePic());
 
                                                       /// create subscription api
                                                       SubscriptionRequestModel

@@ -34,8 +34,19 @@ class WorkoutByIdViewModel extends GetxController {
   bool isCallOneTime = true;
   bool callOneTimeApiCall = true;
   int apiDayLength = 0;
+  /* bool loading = false;`
+  void changeLoading(bool value) async {
+    loading = value;
+    log('UPDATED LOADING:- $value');
+    update();
+  }*/
 
   List<DateTime> defSelectedList = [];
+  /* setDaysDefSelectedList(value) {
+    defSelectedList.add(value);
+    // update();
+  }*/
+
   DateRangePickerController dateRangePickerController =
       DateRangePickerController();
 
@@ -47,6 +58,7 @@ class WorkoutByIdViewModel extends GetxController {
 
   listUpdate({required List<DateTime> value}) {
     defSelectedList = value;
+    // update();
   }
 
   List<String> dayAddedList = [];

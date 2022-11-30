@@ -1112,59 +1112,67 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           Column(
             children: [
-              GestureDetector(
-                onTap: () {
-                  Navigator.pop(context);
-                  _connectivityCheckViewModel.userData.addAll({
-                    'firstName': PreferenceManager.getFirstName() ?? '',
-                    'lastName': PreferenceManager.getLastName() ?? '',
-                    'email': PreferenceManager.getEmail() ?? '',
-                    'dob': PreferenceManager.getDOB() ?? '',
-                    'userName': PreferenceManager.getUserName() ?? '',
-                    'weight': PreferenceManager.getWeight() ?? '',
-                    'image': PreferenceManager.getProfilePic() ?? '',
-                  });
-                  Get.to(ProfileViewScreen());
-                },
-                child: CircleAvatar(
-                  radius: 80,
-                  backgroundColor: Color(0xff363636),
-                  child: ClipRRect(
-                    child: Container(
-                      height: 160,
-                      width: 160,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(120),
-                        border: Border.all(color: Colors.white, width: 4),
-                        color: Color(0xff363636),
-                      ),
+              GetBuilder<ConnectivityCheckViewModel>(
+                builder: (controller) {
+                  print('image controller>>> ${controller.userData['image']}');
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context);
+                      _connectivityCheckViewModel.userData.addAll({
+                        'firstName': PreferenceManager.getFirstName() ?? '',
+                        'lastName': PreferenceManager.getLastName() ?? '',
+                        'email': PreferenceManager.getEmail() ?? '',
+                        'dob': PreferenceManager.getDOB() ?? '',
+                        'userName': PreferenceManager.getUserName() ?? '',
+                        'weight': PreferenceManager.getWeight() ?? '',
+                        'image': PreferenceManager.getProfilePic() ?? '',
+                      });
+                      Get.to(ProfileViewScreen());
+                    },
+                    child: CircleAvatar(
+                      radius: 80,
+                      backgroundColor: Color(0xff363636),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(120),
-                        child: CachedNetworkImage(
-                            imageUrl: profileUrl.toString(),
-                            fit: BoxFit.fill,
-                            errorWidget: (context, url, error) => ClipRRect(
-                                  borderRadius: BorderRadius.circular(120),
-                                  child: Image.asset(
-                                    AppImages.logo,
-                                    scale: 2,
-                                  ),
-                                ),
-                            progressIndicatorBuilder: (context, url,
-                                    downloadProgress) =>
-                                Shimmer.fromColors(
-                                  baseColor: Colors.white.withOpacity(0.4),
-                                  highlightColor: Colors.white.withOpacity(0.2),
-                                  enabled: true,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(120),
-                                    child: Container(color: Colors.white),
-                                  ),
-                                )),
+                        child: Container(
+                          height: 160,
+                          width: 160,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(120),
+                            border: Border.all(color: Colors.white, width: 4),
+                            color: Color(0xff363636),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(120),
+                            child: CachedNetworkImage(
+                                imageUrl: controller.userData['image'] ??
+                                    profileUrl.toString(),
+                                fit: BoxFit.fill,
+                                errorWidget: (context, url, error) => ClipRRect(
+                                      borderRadius: BorderRadius.circular(120),
+                                      child: Image.asset(
+                                        AppImages.logo,
+                                        scale: 2,
+                                      ),
+                                    ),
+                                progressIndicatorBuilder: (context, url,
+                                        downloadProgress) =>
+                                    Shimmer.fromColors(
+                                      baseColor: Colors.white.withOpacity(0.4),
+                                      highlightColor:
+                                          Colors.white.withOpacity(0.2),
+                                      enabled: true,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(120),
+                                        child: Container(color: Colors.white),
+                                      ),
+                                    )),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
               SizedBox(
                 height: Get.height * .01,

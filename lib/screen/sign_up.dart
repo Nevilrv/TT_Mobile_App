@@ -3,8 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:tcm/api_services/api_response.dart';
+import 'package:tcm/model/response_model/check_email_exists_response_model.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/set_profile_page.dart';
+import 'package:tcm/viewModel/check_email_exists_viewModel.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import '../utils/ColorUtils.dart';
 import '../utils/font_styles.dart';
@@ -49,6 +52,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   ConnectivityCheckViewModel _connectivityCheckViewModel =
       Get.put(ConnectivityCheckViewModel());
+  CheckEmailExistsViewModel checkEmailExistsViewModel =
+      Get.put(CheckEmailExistsViewModel());
   @override
   void initState() {
     _connectivityCheckViewModel.startMonitoring();
@@ -1178,187 +1183,213 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 //     // }
                                 //     return
 
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: Get.width * 0.05),
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      if (_formKeySignUp.currentState!
-                                          .validate()) {
-                                        if (pickedDate != null) {
-                                          Get.to(SetProfilePage(
-                                            fname: fName.text,
-                                            lname: lName.text,
-                                            email: email.text.trim(),
-                                            pass: pass.text.trim(),
-                                            userName: userName.text,
-                                            gender: isRadioButton == 1
-                                                ? 'Male'
-                                                : 'Female',
-                                            phone: '9638527410',
-                                            weight: weight.text,
-                                            dob: pickedDate.toString(),
-                                          ));
-                                        } else {
-                                          Get.showSnackbar(GetSnackBar(
-                                            message:
-                                                'Please select Date of Birth',
-                                            duration: Duration(seconds: 1),
-                                          ));
-                                        }
-                                      } else {
-                                        Get.showSnackbar(GetSnackBar(
-                                          message:
-                                              'Please check your credentials',
-                                          duration: Duration(seconds: 1),
-                                        ));
-                                      }
-                                    },
-                                    child: Container(
-                                      height: Get.height * 0.06,
-                                      width: Get.width * 0.9,
-                                      decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            stops: [0.0, 1.0],
-                                            colors: ColorUtilsGradient
-                                                .kTintGradient,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
-                                          color: ColorUtils.kTint),
-                                      child: Center(
-                                          child: Text(
-                                        'Start 7-Day Free Trial',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black,
-                                            fontSize: Get.height * 0.02),
-                                      )),
-                                    ),
-                                  ),
-                                  // child: GestureDetector(
-                                  //   onTap: () async {
-                                  //     setState(() {
-                                  //       loader = true;
-                                  //     });
-                                  //     if (_formKey.currentState!.validate()) {
-                                  //       RegisterRequestModel _request =
-                                  //           RegisterRequestModel();
-                                  //
-                                  //       _request.fname = fName.text;
-                                  //       _request.lname = lName.text;
-                                  //       _request.email = email.text.trim();
-                                  //       _request.password = pass.text.trim();
-                                  //       _request.username = userName.text;
-                                  //       _request.gender =
-                                  //           isRadioButton == 1 ? 'Male' : 'Female';
-                                  //       _request.phone = '9638527410';
-                                  //       _request.dob = pickedDate.toString();
-                                  //       _request.weight = weight.text.trim();
-                                  //       _request.experienceLevel = 'intermidiate';
-                                  //
-                                  //       await _registerViewModel
-                                  //           .registerViewModel(_request);
-                                  //
-                                  //       if (_registerViewModel.apiResponse.status ==
-                                  //           Status.COMPLETE) {
-                                  //         RegisterResponseModel response =
-                                  //             _registerViewModel.apiResponse.data;
-                                  //
-                                  //         if (response.data != null ||
-                                  //             response.data != '') {
-                                  //           Get.showSnackbar(GetSnackBar(
-                                  //             message: 'Register Done',
-                                  //             duration: Duration(seconds: 1),
-                                  //           ));
-                                  //
-                                  //           if (response.success == true &&
-                                  //               response.data != null) {
-                                  //             PreferenceManager.setEmail(
-                                  //                 response.data!.email!);
-                                  //             PreferenceManager.setPassword(
-                                  //                 response.data!.password!);
-                                  //             PreferenceManager.setName(
-                                  //                 response.data!.username!);
-                                  //             PreferenceManager.setUId(
-                                  //                 response.data!.id!);
-                                  //             PreferenceManager.setWeight(
-                                  //                 response.data!.weight!);
-                                  //             PreferenceManager.setPhoneNumber(
-                                  //                 response.data!.phone!);
-                                  //             PreferenceManager.setUserType(
-                                  //                 response.data!.gender!);
-                                  //             PreferenceManager.isSetLogin(true);
-                                  //
-                                  //             print(
-                                  //                 'response.data!.id!=========== ${response.data!.id!}');
-                                  //             print(
-                                  //                 'EMAIL ${PreferenceManager.getEmail()}');
-                                  //             Get.to(SetProfilePage(
-                                  //               id: response.data!.id,
-                                  //             ));
-                                  //           } else if (response.msg == null ||
-                                  //               response.msg == "" &&
-                                  //                   response.data == null ||
-                                  //               response.data == "") {
-                                  //             setState(() {
-                                  //               loader = false;
-                                  //             });
-                                  //             SizedBox();
-                                  //           }
-                                  //           setState(() {
-                                  //             loader = false;
-                                  //           });
-                                  //         }
-                                  //       } else if (controller.apiResponse.status ==
-                                  //           Status.ERROR) {
-                                  //         setState(() {
-                                  //           loader = false;
-                                  //         });
-                                  //         Get.showSnackbar(GetSnackBar(
-                                  //           message:
-                                  //               'Please check your credentials',
-                                  //           duration: Duration(seconds: 1),
-                                  //         ));
-                                  //       } else {
-                                  //         Get.showSnackbar(GetSnackBar(
-                                  //           message: 'Email already exists',
-                                  //           duration: Duration(seconds: 1),
-                                  //         ));
-                                  //         setState(() {
-                                  //           loader = false;
-                                  //         });
-                                  //       }
-                                  //     } else {
-                                  //       setState(() {
-                                  //         loader = false;
-                                  //       });
-                                  //       Get.showSnackbar(GetSnackBar(
-                                  //         message: 'Please check your credentials',
-                                  //         duration: Duration(seconds: 1),
-                                  //       ));
-                                  //     }
-                                  //   },
-                                  //   child: Container(
-                                  //     height: Get.height * 0.06,
-                                  //     width: Get.width * 0.9,
-                                  //     decoration: BoxDecoration(
-                                  //         borderRadius: BorderRadius.circular(50),
-                                  //         color: ColorUtils.kTint),
-                                  //     child: Center(
-                                  //         child: Text(
-                                  //       'Start 7-Day Free Trial',
-                                  //       style: TextStyle(
-                                  //           fontWeight: FontWeight.bold,
-                                  //           color: Colors.black,
-                                  //           fontSize: Get.height * 0.02),
-                                  //     )),
-                                  //   ),
-                                  // ),
-                                  //   );
-                                  // },
+                                GetBuilder<CheckEmailExistsViewModel>(
+                                  builder: (emailController) {
+                                    return Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.width * 0.05),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          if (_formKeySignUp.currentState!
+                                              .validate()) {
+                                            if (pickedDate != null) {
+                                              await emailController
+                                                  .checkEmailExistsViewModel({
+                                                'email': email.text.trim()
+                                              });
+                                              if (emailController
+                                                      .apiResponse.status ==
+                                                  Status.COMPLETE) {
+                                                CheckEmailExistsResponseModel
+                                                    response = emailController
+                                                        .apiResponse.data;
+                                                print(
+                                                    '>>>> email response -- ${response.success}');
+                                                if (response.success == false) {
+                                                  Get.to(SetProfilePage(
+                                                    fname: fName.text,
+                                                    lname: lName.text,
+                                                    email: email.text.trim(),
+                                                    pass: pass.text.trim(),
+                                                    userName: userName.text,
+                                                    gender: isRadioButton == 1
+                                                        ? 'Male'
+                                                        : 'Female',
+                                                    phone: '9638527410',
+                                                    weight: weight.text,
+                                                    dob: pickedDate.toString(),
+                                                  ));
+                                                } else {
+                                                  Get.showSnackbar(GetSnackBar(
+                                                    message:
+                                                        '${email.text} is already exists. Please use different email.',
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  ));
+                                                }
+                                              }
+                                            } else {
+                                              Get.showSnackbar(GetSnackBar(
+                                                message:
+                                                    'Please select Date of Birth',
+                                                duration: Duration(seconds: 1),
+                                              ));
+                                            }
+                                          } else {
+                                            Get.showSnackbar(GetSnackBar(
+                                              message:
+                                                  'Please check your credentials',
+                                              duration: Duration(seconds: 1),
+                                            ));
+                                          }
+                                        },
+                                        child: Container(
+                                          height: Get.height * 0.06,
+                                          width: Get.width * 0.9,
+                                          decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                stops: [0.0, 1.0],
+                                                colors: ColorUtilsGradient
+                                                    .kTintGradient,
+                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              color: ColorUtils.kTint),
+                                          child: Center(
+                                              child: Text(
+                                            'Start 7-Day Free Trial',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                                fontSize: Get.height * 0.02),
+                                          )),
+                                        ),
+                                      ),
+                                      // child: GestureDetector(
+                                      //   onTap: () async {
+                                      //     setState(() {
+                                      //       loader = true;
+                                      //     });
+                                      //     if (_formKey.currentState!.validate()) {
+                                      //       RegisterRequestModel _request =
+                                      //           RegisterRequestModel();
+                                      //
+                                      //       _request.fname = fName.text;
+                                      //       _request.lname = lName.text;
+                                      //       _request.email = email.text.trim();
+                                      //       _request.password = pass.text.trim();
+                                      //       _request.username = userName.text;
+                                      //       _request.gender =
+                                      //           isRadioButton == 1 ? 'Male' : 'Female';
+                                      //       _request.phone = '9638527410';
+                                      //       _request.dob = pickedDate.toString();
+                                      //       _request.weight = weight.text.trim();
+                                      //       _request.experienceLevel = 'intermidiate';
+                                      //
+                                      //       await _registerViewModel
+                                      //           .registerViewModel(_request);
+                                      //
+                                      //       if (_registerViewModel.apiResponse.status ==
+                                      //           Status.COMPLETE) {
+                                      //         RegisterResponseModel response =
+                                      //             _registerViewModel.apiResponse.data;
+                                      //
+                                      //         if (response.data != null ||
+                                      //             response.data != '') {
+                                      //           Get.showSnackbar(GetSnackBar(
+                                      //             message: 'Register Done',
+                                      //             duration: Duration(seconds: 1),
+                                      //           ));
+                                      //
+                                      //           if (response.success == true &&
+                                      //               response.data != null) {
+                                      //             PreferenceManager.setEmail(
+                                      //                 response.data!.email!);
+                                      //             PreferenceManager.setPassword(
+                                      //                 response.data!.password!);
+                                      //             PreferenceManager.setName(
+                                      //                 response.data!.username!);
+                                      //             PreferenceManager.setUId(
+                                      //                 response.data!.id!);
+                                      //             PreferenceManager.setWeight(
+                                      //                 response.data!.weight!);
+                                      //             PreferenceManager.setPhoneNumber(
+                                      //                 response.data!.phone!);
+                                      //             PreferenceManager.setUserType(
+                                      //                 response.data!.gender!);
+                                      //             PreferenceManager.isSetLogin(true);
+                                      //
+                                      //             print(
+                                      //                 'response.data!.id!=========== ${response.data!.id!}');
+                                      //             print(
+                                      //                 'EMAIL ${PreferenceManager.getEmail()}');
+                                      //             Get.to(SetProfilePage(
+                                      //               id: response.data!.id,
+                                      //             ));
+                                      //           } else if (response.msg == null ||
+                                      //               response.msg == "" &&
+                                      //                   response.data == null ||
+                                      //               response.data == "") {
+                                      //             setState(() {
+                                      //               loader = false;
+                                      //             });
+                                      //             SizedBox();
+                                      //           }
+                                      //           setState(() {
+                                      //             loader = false;
+                                      //           });
+                                      //         }
+                                      //       } else if (controller.apiResponse.status ==
+                                      //           Status.ERROR) {
+                                      //         setState(() {
+                                      //           loader = false;
+                                      //         });
+                                      //         Get.showSnackbar(GetSnackBar(
+                                      //           message:
+                                      //               'Please check your credentials',
+                                      //           duration: Duration(seconds: 1),
+                                      //         ));
+                                      //       } else {
+                                      //         Get.showSnackbar(GetSnackBar(
+                                      //           message: 'Email already exists',
+                                      //           duration: Duration(seconds: 1),
+                                      //         ));
+                                      //         setState(() {
+                                      //           loader = false;
+                                      //         });
+                                      //       }
+                                      //     } else {
+                                      //       setState(() {
+                                      //         loader = false;
+                                      //       });
+                                      //       Get.showSnackbar(GetSnackBar(
+                                      //         message: 'Please check your credentials',
+                                      //         duration: Duration(seconds: 1),
+                                      //       ));
+                                      //     }
+                                      //   },
+                                      //   child: Container(
+                                      //     height: Get.height * 0.06,
+                                      //     width: Get.width * 0.9,
+                                      //     decoration: BoxDecoration(
+                                      //         borderRadius: BorderRadius.circular(50),
+                                      //         color: ColorUtils.kTint),
+                                      //     child: Center(
+                                      //         child: Text(
+                                      //       'Start 7-Day Free Trial',
+                                      //       style: TextStyle(
+                                      //           fontWeight: FontWeight.bold,
+                                      //           color: Colors.black,
+                                      //           fontSize: Get.height * 0.02),
+                                      //     )),
+                                      //   ),
+                                      // ),
+                                      //   );
+                                      // },
+                                    );
+                                  },
                                 )
                               ],
                             ),

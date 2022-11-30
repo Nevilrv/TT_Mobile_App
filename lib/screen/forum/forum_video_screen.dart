@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
-import 'package:tcm/utils/shimmer_loading.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:developer' as d;
-import '../../utils/ColorUtils.dart';
 
 class ForumVideoScreen extends StatefulWidget {
   final String? video;
   final bool? isPlay;
-
+  final double? height;
   ForumVideoScreen({
     Key? key,
     this.video,
     this.isPlay,
+    this.height,
   }) : super(key: key);
 
   @override
@@ -71,7 +70,7 @@ class _ForumVideoScreenState extends State<ForumVideoScreen> {
     return GetBuilder<ConnectivityCheckViewModel>(builder: (control) {
       return control.isOnline
           ? Container(
-              height: Get.height * 0.23,
+              height: widget.height ?? Get.height * 0.23,
               width: Get.width,
               // color: Colors.red,
               child: Center(
@@ -83,7 +82,7 @@ class _ForumVideoScreenState extends State<ForumVideoScreen> {
                       )
                     : Shimmer.fromColors(
                         child: Container(
-                          height: Get.height * 0.23,
+                          height: widget.height ?? Get.height * 0.23,
                           width: Get.width,
                           color: Colors.white,
                         ),

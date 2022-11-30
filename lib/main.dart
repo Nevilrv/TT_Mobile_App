@@ -8,6 +8,7 @@ void main() async {
   await GetStorage.init();
 
   WidgetsFlutterBinding.ensureInitialized();
+
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) => runApp(MyApp()));
@@ -18,10 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      // home: HomePage(),
       home: SplashScreen(),
-      // home: DemoPage(),
-
       // home: YoutubePlayerDemoApp(),
     );
   }

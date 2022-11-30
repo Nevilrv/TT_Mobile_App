@@ -13,6 +13,7 @@ import 'package:tcm/screen/common_widget/conecction_check_screen.dart';
 import 'package:tcm/screen/forum/add_forum_screen.dart';
 import 'package:tcm/screen/forum/comment_screen.dart';
 import 'package:tcm/screen/forum/post_details_screen.dart';
+import 'package:tcm/screen/forum/post_view_screen.dart';
 import 'package:tcm/utils/ColorUtils.dart';
 import 'package:tcm/utils/images.dart';
 import 'package:tcm/viewModel/conecction_check_viewModel.dart';
@@ -394,12 +395,38 @@ class _ForumScreenState extends State<ForumScreen> {
                 ? SizedBox()
                 : response.data![index].postImage!.length == 1
                     ? response.data![index].postImage![0].isVideoFileName
-                        ? Center(
-                            child: Container(
-                              height: Get.height * 0.23,
-                              width: Get.width,
-                              child: ForumVideoScreen(
-                                  video: response.data![index].postImage![0]),
+                        ? Container(
+                            height: Get.height * 0.23,
+                            child: Stack(
+                              children: [
+                                Center(
+                                  child: Container(
+                                    height: Get.height * 0.23,
+                                    width: Get.width,
+                                    child: ForumVideoScreen(
+                                        video: response
+                                            .data![index].postImage![0]),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Get.to(PostDetailsScreen(
+                                      showFotter: true,
+                                      isVideo: true,
+                                      index: index,
+                                      postId: response.data![index].postId
+                                          .toString(),
+                                      url:
+                                          '${response.data![index].postImage![0]}',
+                                    ));
+                                  },
+                                  child: Container(
+                                    color: Colors.transparent,
+                                    height: Get.height,
+                                    width: Get.width,
+                                  ),
+                                ),
+                              ],
                             ),
                           )
                         : Container(
@@ -408,6 +435,7 @@ class _ForumScreenState extends State<ForumScreen> {
                             child: GestureDetector(
                               onTap: () {
                                 Get.to(PostDetailsScreen(
+                                  showFotter: true,
                                   isVideo: false,
                                   index: index,
                                   postId:
@@ -463,7 +491,8 @@ class _ForumScreenState extends State<ForumScreen> {
                                                       .postImage![itemIndex]),
                                               GestureDetector(
                                                 onTap: () {
-                                                  Get.to(PostDetailsScreen(
+                                                  /*  Get.to(PostDetailsScreen(
+                                                    showFotter: false,
                                                     isVideo: true,
                                                     index: index,
                                                     postId: response
@@ -471,6 +500,13 @@ class _ForumScreenState extends State<ForumScreen> {
                                                         .toString(),
                                                     url:
                                                         '${response.data![index].postImage![itemIndex]}',
+                                                  ));*/
+                                                  Get.to(PostViewAScreen(
+                                                    response: response,
+                                                    index: index,
+                                                    postId: response
+                                                        .data![index].postId
+                                                        .toString(),
                                                   ));
                                                 },
                                                 child: Container(
@@ -483,7 +519,7 @@ class _ForumScreenState extends State<ForumScreen> {
                                           )
                                         : GestureDetector(
                                             onTap: () {
-                                              Get.to(PostDetailsScreen(
+                                              /*     Get.to(PostDetailsScreen(
                                                 isVideo: false,
                                                 index: index,
                                                 postId: response
@@ -491,6 +527,13 @@ class _ForumScreenState extends State<ForumScreen> {
                                                     .toString(),
                                                 url:
                                                     '${response.data![index].postImage![itemIndex]}',
+                                              ));*/
+                                              Get.to(PostViewAScreen(
+                                                response: response,
+                                                index: index,
+                                                postId: response
+                                                    .data![index].postId
+                                                    .toString(),
                                               ));
                                             },
                                             child: CachedNetworkImage(

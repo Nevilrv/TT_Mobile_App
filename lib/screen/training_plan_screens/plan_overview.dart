@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -1491,22 +1490,24 @@ class _PlanOverviewScreenState extends State<PlanOverviewScreen> {
                                                             width: Get.width,
                                                             decoration:
                                                                 BoxDecoration(
-                                                                    gradient:
-                                                                        LinearGradient(
-                                                                      begin: Alignment
-                                                                          .topCenter,
-                                                                      end: Alignment
-                                                                          .bottomCenter,
-                                                                      stops: [
-                                                                        0.0,
-                                                                        1.0
-                                                                      ],
-                                                                      colors: ColorUtilsGradient
-                                                                          .kTintGradient,
-                                                                    ),
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            6)),
+                                                              gradient:
+                                                                  LinearGradient(
+                                                                begin: Alignment
+                                                                    .topCenter,
+                                                                end: Alignment
+                                                                    .bottomCenter,
+                                                                stops: [
+                                                                  0.0,
+                                                                  1.0
+                                                                ],
+                                                                colors: ColorUtilsGradient
+                                                                    .kTintGradient,
+                                                              ),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                            ),
                                                             child: Text(
                                                                 'Start Program',
                                                                 style: FontTextStyle
